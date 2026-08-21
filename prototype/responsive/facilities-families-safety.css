@@ -5,8 +5,8 @@
   #facilities, #families, #safety {
     padding: var(--section-pad) var(--gutter) !important;
   }
-  [data-r="testimonials"] { padding: 0 var(--gutter) var(--section-pad) !important; }
-  [data-r="testimonials"] > div { padding-top: 64px !important; }
+  [data-r="testimonials"] { padding: 0 0 var(--section-pad) !important; }
+  [data-r="testimonials"] > div:first-child { padding: 64px var(--gutter) 0 !important; margin-bottom: 40px !important; }
 
   /* headline triad: 58/67 -> 46/54 */
   #facilities h2, #families h2, #safety h2, [data-r="testimonials"] h2 { font-size: 46px !important; }
@@ -111,11 +111,10 @@
   /* the "hover a pillar" hint describes a mouse; nothing to hover on touch */
   [data-r="pillars"] a + span { display: none !important; }
 
-  /* ---- testimonials ---- */
-  [data-r="testimonials"] blockquote footer > span:first-child { flex: none; }
-  [data-r="testimonials"] blockquote { padding: 40px 34px 34px !important; }
-  [data-r="testimonials"] blockquote > p { font-size: 17px !important; }
-  [data-r="testimonials"] blockquote > span:first-child { left: 28px !important; }
+  /* ---- testimonials: rivers stay full-bleed, edge fades narrow, stats wrap ---- */
+  [data-r="rivers"] > div[aria-hidden] { width: 96px !important; }
+  [data-r="tstats"] { flex-wrap: wrap; gap: 32px 48px !important; padding: 0 var(--gutter) !important; }
+  [data-r="tstats"] b { font-size: 36px !important; }
 }
 
 /* ============ phone (<640) ============ */
@@ -172,11 +171,19 @@
   [data-r="pillars"] > div:first-child > div[style*="cursor: pointer"] p { font-size: 15px !important; }
   [data-r="pillars"] > div:last-child > div { aspect-ratio: 3 / 4; }
 
-  /* testimonials */
-  [data-r="testimonials"] > div > div:last-child { grid-template-columns: 1fr !important; }
-  [data-r="testimonials"] > div > div:first-child { flex-direction: column !important; align-items: flex-start !important; gap: 20px; margin-bottom: 36px !important; }
-  [data-r="testimonials"] > div > div:first-child > a { margin-left: 0 !important; }
-  [data-r="testimonials"] blockquote { padding: 36px 24px 28px !important; }
-  [data-r="testimonials"] blockquote > span:first-child { left: 20px !important; top: 18px !important; font-size: 90px !important; }
-  [data-r="testimonials"] blockquote > p { margin-top: 30px !important; }
+  /* testimonials: the rivers are the phone-friendly part. They run edge to edge
+     past the gutter, cards shrink to 260 so 1.4 show at once, rows tighten, and
+     the loop speeds up (same distance, shorter cards). Hover-pause does not exist
+     on touch; the rows are passive texture, the link below is the tap target.
+     Stats become a 2x2 grid. */
+  [data-r="testimonials"] > div:first-child { text-align: left !important; }
+  [data-r="rivers"] { gap: 10px !important; }
+  [data-r="rivers"] > div[aria-hidden] { width: 40px !important; }
+  [data-triver] { gap: 10px !important; animation-duration: 48s !important; }
+  [data-triver]:nth-child(odd) { animation-duration: 60s !important; }
+  [data-tcard] { width: 260px !important; padding: 14px 16px 12px !important; border-radius: 14px !important; }
+  [data-tcard] > p { font-size: 13.5px !important; margin-bottom: 10px !important; }
+  [data-tcard] footer > span:last-child { display: none !important; }
+  [data-r="tstats"] { display: grid !important; grid-template-columns: 1fr 1fr; gap: 28px 16px !important; margin-top: 40px !important; }
+  [data-r="tstats"] b { font-size: 32px !important; }
 }
