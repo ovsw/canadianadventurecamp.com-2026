@@ -794,7 +794,7 @@
       </div>
 
       <!-- safety pillars -->
-      <div data-r="pillars" style="display: grid; grid-template-columns: 1fr 600px; gap: 70px; align-items: center;">
+      <div data-r="pillars" style="display: grid; grid-template-columns: 1fr 600px; gap: 70px; align-items: start;">
         <div style="animation: riseUp 1ms both; animation-timeline: view(); animation-range: entry 0% entry 42%;">
           <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
             <div onMouseEnter="{{ p.enter }}" onClick="{{ p.enter }}" style="cursor: pointer; border-bottom: 1px solid {{ p.bd }}; padding: 24px 0; transition: border-color .45s ease;">
