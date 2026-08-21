@@ -34,7 +34,7 @@
   #programs [data-pc] { transform: none !important; }
   #programs [data-pmeta] { opacity: 1 !important; transform: none !important; }
   #programs [data-pmeta] span { letter-spacing: .08em !important; }
-  #programs [data-pglow], #programs [data-psheen] { display: none !important; }
+  #programs [data-pglow] { display: none !important; }
 
   /* #activities: number row, text + chips, build-a-day card */
   #activities {

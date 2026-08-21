@@ -35,8 +35,6 @@
   [data-pc]:hover [data-parrow] { transform: translateX(6px) rotate(-45deg); background: #E8A23B; border-color: #E8A23B; color: #16200F; }
   [data-pglow] { position: absolute; inset: 0; z-index: 6; pointer-events: none; border-radius: inherit; opacity: 0; transition: opacity .45s ease; background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 30%), rgba(255,231,187,.14), rgba(255,255,255,0) 65%); }
   [data-pc]:hover [data-pglow] { opacity: 1; }
-  [data-psheen] { position: absolute; top: -30%; bottom: -30%; left: 0; width: 40%; z-index: 4; pointer-events: none; opacity: 0; transform: translateX(-180%) skewX(-16deg); background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.32), rgba(255,255,255,0)); }
-  [data-pc]:hover [data-psheen] { opacity: 1; transform: translateX(330%) skewX(-16deg); transition: transform .9s cubic-bezier(.3,.6,.2,1), opacity .25s ease; }
   [data-pmeta] { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 5; display: flex; gap: 8px; flex-wrap: wrap; pointer-events: none; opacity: 0; transform: translateY(130%); transition: transform .5s cubic-bezier(.2,.7,.2,1), opacity .35s ease; }
   [data-pc]:hover [data-pmeta] { opacity: 1; transform: none; transition-delay: .06s; }
   [data-pnum] { transition: background .35s ease, color .35s ease; }
@@ -316,7 +314,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="prog-gymnastics" shape="rect" src="https://cdn.sanity.io/images/lwnx6aqb/production/77e784e893bf78eacae1501e6218249fbfa8e916-799x533.jpg" placeholder="Drop a gymnastics photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 18px; left: 20px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .2em; color: rgba(243,239,226,.9); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 6px 13px; pointer-events: none; z-index: 2;">01</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">FULLY-EQUIPPED GYM</span>
@@ -338,7 +335,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="prog-trampoline" shape="rect" src="https://cdn.sanity.io/images/lwnx6aqb/production/b9bd6d19b53a3a2fc14629927a245b7d16dea411-1536x1024.jpg" placeholder="Drop a trampoline photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 18px; left: 20px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .2em; color: rgba(243,239,226,.9); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 6px 13px; pointer-events: none; z-index: 2;">02</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">EXPERT SPOTTERS</span>
@@ -360,7 +356,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="prog-aerials" shape="rect" src="https://cdn.sanity.io/images/lwnx6aqb/production/857bf8d3dc3d03d21c1858560fc93e342332b3e3-2048x1365.jpg" placeholder="Drop an aerials photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 18px; left: 20px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .2em; color: rgba(243,239,226,.9); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 6px 13px; pointer-events: none; z-index: 2;">03</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">SILKS &amp; TRAPEZE</span>
@@ -382,7 +377,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="prog-waterski" shape="rect" src="https://cdn.sanity.io/images/lwnx6aqb/production/c400b0b0805731fc5dd67280a41aefc64a0a020d-2048x1365.jpg?w=1200&amp;auto=format" placeholder="Drop a waterski photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 18px; left: 20px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .2em; color: rgba(243,239,226,.9); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 6px 13px; pointer-events: none; z-index: 2;">04</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">PRIVATE WATER</span>
@@ -412,7 +406,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="prog-general" shape="rect" src="https://cdn.sanity.io/images/lwnx6aqb/production/558f87a42a337cdfce5ffdd26e3b5ae180ab6e63-2048x1365.jpg?w=1200&amp;auto=format" placeholder="Drop a general-program photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 20px; left: 22px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .2em; color: rgba(243,239,226,.9); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 6px 13px; pointer-events: none; z-index: 2;">05</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">PICK YOUR OWN DAY</span>
@@ -435,7 +428,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="prog-ylp" shape="rect" src="https://cdn.sanity.io/images/lwnx6aqb/production/82de7d703496b9a0136ae9b11547a81fa5f3d3b9-2048x1365.jpg?w=1200&amp;auto=format" placeholder="Drop a Y.L.P. / teen leadership photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div style="position: absolute; top: 20px; left: 22px; display: flex; gap: 8px; align-items: center; pointer-events: none; z-index: 2;">
                 <span data-pnum="" style="font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .2em; color: rgba(243,239,226,.9); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 6px 13px;">06</span>
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 12px; letter-spacing: .2em; color: #16200F; background: #E8A23B; border-radius: 999px; padding: 6px 13px;">FOR TEENS</span>
@@ -720,7 +712,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="leader-justin" shape="rect" src="./uploads/leader-justin.jpg" placeholder="Drop Justin's photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 18px; left: 20px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .18em; color: rgba(243,239,226,.92); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 7px 13px; pointer-events: none; z-index: 2;">CAMP DIRECTOR</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">20+ SUMMERS</span>
@@ -743,7 +734,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="leader-anna-g" shape="rect" src="./uploads/leader-anna-gerson.jpg" placeholder="Drop Anna G's photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 18px; left: 20px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .18em; color: rgba(243,239,226,.92); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 7px 13px; pointer-events: none; z-index: 2;">CO-DIRECTOR</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">ON ISLAND SINCE 2002</span>
@@ -766,7 +756,6 @@
               <div data-pimg="" style="position: absolute; inset: 0;">
                 <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="leader-anna-b" shape="rect" placeholder="Drop Anna B's photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               </div>
-              <div data-psheen=""></div>
               <div data-pnum="" style="position: absolute; top: 18px; left: 20px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .18em; color: rgba(243,239,226,.92); background: rgba(13,18,8,.45); backdrop-filter: blur(6px); border-radius: 999px; padding: 7px 13px; pointer-events: none; z-index: 2;">DIRECTOR OF YOUTH LEADERSHIP</div>
               <div data-pmeta="">
                 <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .12em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 7px 12px; white-space: nowrap;">AT CAC SINCE 2016</span>
