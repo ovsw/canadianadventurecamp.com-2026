@@ -72,6 +72,10 @@
 /* ---------- phone (<640) ---------- */
 @media (max-width: 639px) {
 
+  /* programs -> activities: one hairline, 56px either side */
+  #programs { padding-bottom: 56px !important; }
+  #activities > div { padding-top: 56px !important; }
+
   #island { gap: 44px !important; }
   #island p { max-width: none !important; }
   #island h2 { font-size: 36px !important; margin-bottom: 20px !important; }
