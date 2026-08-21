@@ -107,9 +107,10 @@
 
   [data-r="pillars"] { grid-template-columns: 1fr !important; gap: 40px !important; }
   /* pillar descriptions open at rest: there is no hover to reveal them */
-  [data-r="pillars"] > div:first-child > div[style*="cursor: pointer"] > div:last-child { max-height: none !important; opacity: 1 !important; }
+  [data-r="pillars"] > div:first-child > div[style*="cursor: pointer"] > div:last-child { height: auto !important; opacity: 1 !important; }
   [data-r="pillars"] > div:first-child > div[style*="cursor: pointer"] > div:first-child > span:nth-child(2) { font-size: 24px !important; }
-  [data-r="pillars"] > div:last-child > div { height: auto !important; aspect-ratio: 4 / 3; }
+  [data-r="pillars"] > div:last-child { min-height: 0 !important; }
+  [data-r="pillars"] > div:last-child > div { height: auto !important; min-height: 0 !important; aspect-ratio: 4 / 3; }
   /* the "hover a pillar" hint describes a mouse; nothing to hover on touch */
   [data-r="pillars"] a + span { display: none !important; }
 

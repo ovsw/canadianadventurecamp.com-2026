@@ -59,7 +59,11 @@
   [data-stop] [data-stoplbl] { transition: color .35s ease, background .35s ease, border-color .35s ease, transform .3s ease; }
   [data-stop]:hover [data-stoplbl] { transform: translateY(-2px); border-color: rgba(232,162,59,.85) !important; }
   [data-r="rivers"]:hover [data-triver] { animation-play-state: paused; }
+  /* Dashes march only while the map is hovered: stroke-dashoffset repaints the whole SVG every frame. */
+  [data-r="walk"]:hover [data-dash] { animation: wanderDash 2.8s linear infinite; }
   @keyframes wanderDash { to { stroke-dashoffset: -22; } }
+  /* idle gate (see _setIdle): forever-loops freeze while nobody is interacting; survives re-renders */
+  [data-idle] [style*="infinite"], [data-idle] [data-dash], [data-idle] [data-triver] { animation-play-state: paused !important; }
   @keyframes mapPing { 0% { transform: scale(.55); opacity: .9; } 70% { opacity: .25; } 100% { transform: scale(2.5); opacity: 0; } }
 </style>
 <link rel="stylesheet" href="./responsive/base.css">
@@ -153,6 +157,47 @@
       </div>
     </div>
     <sc-helmet><script>
+    // Perf bisect tool. In the console: _cacgpu.off("anims","blur") / _cacgpu.all() /
+    // _cacgpu.reset(), then watch Chrome's Task Manager (GPU process + this tab).
+    // Groups: loops (forever CSS animations), scroll (view()-timeline entrances),
+    // transitions, blur (backdrop-filter), shadows, video (hero), globe (WebGL + arcs), tick (1s state timer).
+    (function () {
+      var css = {
+        loops: "",
+        scroll: "[style*='animation-timeline'] { animation: none !important; opacity: 1 !important; transform: none !important; }",
+        transitions: "*, *::before, *::after { transition: none !important; }",
+        blur: "* { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }",
+        shadows: "* { box-shadow: none !important; text-shadow: none !important; filter: none !important; }"
+      };
+      var tool = { state: {}, groups: Object.keys(css).concat(["video", "globe", "tick"]) };
+      var tag = document.createElement("style"); tag.id = "cacgpu";
+      function loops(pause) {
+        document.getAnimations().forEach(function (a) {
+          if (!a.effect || a.effect.getTiming().iterations !== Infinity) return;
+          var t = a.effect.target, offscreen = t && t.closest && t.closest("[data-offscreen]");
+          if (pause) a.pause(); else if (!offscreen && !(t.closest && t.closest('[data-r="rivers"]:hover'))) a.play();
+        });
+      }
+      function apply() {
+        var s = tool.state, inst = window.__cac;
+        tag.textContent = Object.keys(css).filter(function (k) { return s[k]; }).map(function (k) { return css[k]; }).join("\n");
+        if (!tag.parentNode) document.head.appendChild(tag);
+        loops(!!s.loops);
+        if (inst) {
+          inst._syncHeroVideo && inst._syncHeroVideo();
+          if (s.globe) { inst._stopWorldLoop && inst._stopWorldLoop(); inst._setGlobeRunning(false); }
+          else if (inst._worldVis) { inst._startWorldLoop && inst._startWorldLoop(); inst._setGlobeRunning(true); }
+          if (s.tick && inst._timer) { clearInterval(inst._timer); inst._timer = null; }
+          else if (!s.tick && !inst._timer) inst._timer = setInterval(function () { inst._tick(); }, 1000);
+        }
+        console.log("_cacgpu off:", Object.keys(s).filter(function (k) { return s[k]; }).join(", ") || "(nothing)");
+      }
+      tool.off = function () { for (var i = 0; i < arguments.length; i++) tool.state[arguments[i]] = true; apply(); };
+      tool.on = function () { for (var i = 0; i < arguments.length; i++) tool.state[arguments[i]] = false; apply(); };
+      tool.all = function () { tool.off.apply(null, tool.groups); };
+      tool.reset = function () { tool.state = {}; apply(); };
+      window._cacgpu = tool;
+    })();
     (function () {
       var root = document.documentElement, opener = null;
       function isOpen() { return root.hasAttribute("data-menu-open"); }
@@ -561,43 +606,46 @@
               <div style="position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(13,18,8,.38) 0%, rgba(13,18,8,.04) 26%, rgba(13,18,8,.04) 58%, rgba(13,18,8,.5) 100%);"></div>
               <div style="position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 130px rgba(13,18,8,.55); border-radius: 26px;"></div>
 
-              <svg viewBox="0 0 1320 766" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;">
+              <svg viewBox="0 0 1320 766" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; will-change: transform;">
                 <path d="M363 165 C362 190 352 284 359 313 C366 342 387 346 403 337 C420 328 445 258 458 257 C471 256 476 325 483 331 C490 337 485 293 498 295 C511 297 543 341 560 345 C577 349 602 333 598 318 C595 303 538 274 539 257 C540 240 575 217 603 217 C631 218 683 241 706 260 C729 279 718 311 743 329 C768 347 811 363 858 368 C905 373 1012 381 1023 360 C1034 340 971 283 924 245 C877 207 771 152 740 133" fill="none" stroke="rgba(13,18,8,.5)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
-                <path d="M363 165 C362 190 352 284 359 313 C366 342 387 346 403 337 C420 328 445 258 458 257 C471 256 476 325 483 331 C490 337 485 293 498 295 C511 297 543 341 560 345 C577 349 602 333 598 318 C595 303 538 274 539 257 C540 240 575 217 603 217 C631 218 683 241 706 260 C729 279 718 311 743 329 C768 347 811 363 858 368 C905 373 1012 381 1023 360 C1034 340 971 283 924 245 C877 207 771 152 740 133" fill="none" stroke="rgba(243,239,226,.7)" stroke-width="3" stroke-dasharray="8 14" stroke-linecap="round" style="animation: wanderDash 2.8s linear infinite;"></path>
-                <path d="M363 165 C362 190 352 284 359 313 C366 342 387 346 403 337 C420 328 445 258 458 257 C471 256 476 325 483 331 C490 337 485 293 498 295 C511 297 543 341 560 345 C577 349 602 333 598 318 C595 303 538 274 539 257 C540 240 575 217 603 217 C631 218 683 241 706 260 C729 279 718 311 743 329 C768 347 811 363 858 368 C905 373 1012 381 1023 360 C1034 340 971 283 924 245 C877 207 771 152 740 133" pathLength="100" fill="none" stroke="#E8A23B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{{ mapTrail }}" style="transition: stroke-dasharray 1s cubic-bezier(.3,1.15,.35,1); filter: drop-shadow(0 2px 3px rgba(13,18,8,.8)) drop-shadow(0 0 9px rgba(232,162,59,.55));"></path>
+                <path d="M363 165 C362 190 352 284 359 313 C366 342 387 346 403 337 C420 328 445 258 458 257 C471 256 476 325 483 331 C490 337 485 293 498 295 C511 297 543 341 560 345 C577 349 602 333 598 318 C595 303 538 274 539 257 C540 240 575 217 603 217 C631 218 683 241 706 260 C729 279 718 311 743 329 C768 347 811 363 858 368 C905 373 1012 381 1023 360 C1034 340 971 283 924 245 C877 207 771 152 740 133" fill="none" stroke="rgba(243,239,226,.7)" stroke-width="3" stroke-dasharray="8 14" stroke-linecap="round" data-dash=""></path>
+                <path d="M363 165 C362 190 352 284 359 313 C366 342 387 346 403 337 C420 328 445 258 458 257 C471 256 476 325 483 331 C490 337 485 293 498 295 C511 297 543 341 560 345 C577 349 602 333 598 318 C595 303 538 274 539 257 C540 240 575 217 603 217 C631 218 683 241 706 260 C729 279 718 311 743 329 C768 347 811 363 858 368 C905 373 1012 381 1023 360 C1034 340 971 283 924 245 C877 207 771 152 740 133" pathLength="100" fill="none" stroke="rgba(232,162,59,.28)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{{ mapTrail }}" style="transition: stroke-dasharray 1s cubic-bezier(.3,1.15,.35,1);"></path>
+                <path d="M363 165 C362 190 352 284 359 313 C366 342 387 346 403 337 C420 328 445 258 458 257 C471 256 476 325 483 331 C490 337 485 293 498 295 C511 297 543 341 560 345 C577 349 602 333 598 318 C595 303 538 274 539 257 C540 240 575 217 603 217 C631 218 683 241 706 260 C729 279 718 311 743 329 C768 347 811 363 858 368 C905 373 1012 381 1023 360 C1034 340 971 283 924 245 C877 207 771 152 740 133" pathLength="100" fill="none" stroke="#E8A23B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="{{ mapTrail }}" style="transition: stroke-dasharray 1s cubic-bezier(.3,1.15,.35,1);"></path>
               </svg>
 
               <sc-for list="{{ walkStops }}" as="w" hint-placeholder-count="16">
                 <div data-stop="" onMouseEnter="{{ w.enter }}" onClick="{{ w.enter }}" style="position: absolute; left: {{ w.x }}; top: {{ w.y }}; transform: {{ w.tf }}; display: flex; flex-direction: {{ w.dir }}; align-items: center; gap: 8px; padding: 6px; z-index: 3;">
                   <span style="position: relative; display: grid; place-items: center; width: 22px; height: 22px;">
                     <span style="position: absolute; inset: 0; opacity: {{ w.ringO }}; transition: opacity .4s ease;">
-                      <span style="position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(232,162,59,.9); animation: mapPing 1.9s ease-out infinite;"></span>
+                      <span style="position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(232,162,59,.9); animation: {{ w.ping }};"></span>
                     </span>
                     <span data-stopdot="" style="width: 10px; height: 10px; border-radius: 3px; transform: rotate(45deg); background: {{ w.dotBg }}; border: 1.5px solid rgba(13,18,8,.6); box-sizing: border-box;"></span>
                   </span>
-                  <span data-stoplbl="" style="font-family: ui-monospace, Menlo, monospace; font-weight: 700; font-size: 9.5px; letter-spacing: .13em; color: {{ w.lblFg }}; background: {{ w.lblBg }}; border: 1px solid {{ w.lblBd }}; backdrop-filter: blur(6px); border-radius: 999px; padding: 5px 10px; white-space: nowrap; transform: translateX({{ w.ldx }});">{{ w.label }}</span>
+                  <span data-stoplbl="" style="font-family: ui-monospace, Menlo, monospace; font-weight: 700; font-size: 9.5px; letter-spacing: .13em; color: {{ w.lblFg }}; background: {{ w.lblBg }}; border: 1px solid {{ w.lblBd }}; border-radius: 999px; padding: 5px 10px; white-space: nowrap; transform: translateX({{ w.ldx }});">{{ w.label }}</span>
                 </div>
               </sc-for>
 
-              <div style="position: absolute; left: {{ walkX }}; top: {{ walkY }}; z-index: 4; pointer-events: none; transition: left .9s cubic-bezier(.3,1.15,.35,1), top .9s cubic-bezier(.3,1.15,.35,1); display: grid; place-items: center; width: 0; height: 0;">
+              <div style="position: absolute; inset: 0; z-index: 4; pointer-events: none; transform: translate({{ walkX }}, {{ walkY }}); transition: transform .9s cubic-bezier(.3,1.15,.35,1); will-change: transform;">
+              <div style="position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 0; height: 0;">
                 <span style="position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #E8A23B; border: 2px solid #16200F; box-sizing: border-box; transform: translate(-50%, -50%); box-shadow: 0 0 0 5px rgba(232,162,59,.25), 0 0 22px rgba(232,162,59,.65);"></span>
-                <span style="position: absolute; bottom: 18px; transform: translateX(-50%); font-family: Caveat, cursive; font-weight: 600; font-size: 29px; line-height: 1; color: #E8A23B; white-space: nowrap; background: rgba(13,18,8,.82); border: 1px solid rgba(232,162,59,.45); border-radius: 999px; padding: 6px 16px 8px; backdrop-filter: blur(6px); box-shadow: 0 4px 14px rgba(13,18,8,.5);">{{ walkName }}</span>
+                <span style="position: absolute; bottom: 18px; transform: translateX(-50%); font-family: Caveat, cursive; font-weight: 600; font-size: 29px; line-height: 1; color: #E8A23B; white-space: nowrap; background: rgba(13,18,8,.82); border: 1px solid rgba(232,162,59,.45); border-radius: 999px; padding: 6px 16px 8px; box-shadow: 0 4px 14px rgba(13,18,8,.5);">{{ walkName }}</span>
+              </div>
               </div>
               </div>
 
               <div style="position: absolute; top: 20px; left: 22px; z-index: 5; display: flex; align-items: center; gap: 10px;">
-                <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .16em; color: #F3EFE2; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 8px 14px; white-space: nowrap;">ADVENTURE ISLAND · LAKE TEMAGAMI</span>
-                <span ref="{{ coordRef }}" style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .1em; color: rgba(243,239,226,.75); background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 8px 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">46.9455° N · 80.0585° W</span>
+                <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .16em; color: #F3EFE2; background: rgba(13,18,8,.72); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 8px 14px; white-space: nowrap;">ADVENTURE ISLAND · LAKE TEMAGAMI</span>
+                <span ref="{{ coordRef }}" style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .1em; color: rgba(243,239,226,.75); background: rgba(13,18,8,.72); border: 1px solid rgba(243,239,226,.22); border-radius: 999px; padding: 8px 14px; white-space: nowrap; font-variant-numeric: tabular-nums;">46.9455° N · 80.0585° W</span>
               </div>
 
-              <div style="position: absolute; top: 20px; right: 22px; z-index: 5; width: 46px; height: 46px; border-radius: 50%; background: rgba(13,18,8,.55); backdrop-filter: blur(8px); border: 1px solid rgba(243,239,226,.22); display: grid; place-items: center;">
+              <div style="position: absolute; top: 20px; right: 22px; z-index: 5; width: 46px; height: 46px; border-radius: 50%; background: rgba(13,18,8,.72); border: 1px solid rgba(243,239,226,.22); display: grid; place-items: center;">
                 <span style="display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1;">
                   <span style="color: #E8A23B; font-size: 9px;">▲</span>
                   <span style="font-family: ui-monospace, Menlo, monospace; font-weight: 700; font-size: 11px; color: #F3EFE2;">N</span>
                 </span>
               </div>
 
-              <div data-r="walkcard" style="position: absolute; left: 22px; bottom: 22px; z-index: 5; width: 318px; background: rgba(13,18,8,.62); backdrop-filter: blur(14px); border: 1px solid rgba(243,239,226,.18); border-radius: 20px; padding: 22px 26px; box-sizing: border-box;">
+              <div data-r="walkcard" style="position: absolute; left: 22px; bottom: 22px; z-index: 5; width: 318px; background: rgba(13,18,8,.8); border: 1px solid rgba(243,239,226,.18); border-radius: 20px; padding: 22px 26px; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                   <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: .2em; color: rgba(243,239,226,.55);">STOP</span>
                   <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10px; letter-spacing: .2em; color: #E8A23B; font-variant-numeric: tabular-nums;">{{ walkIdxStr }} / {{ walkCount }}</span>
@@ -795,8 +843,8 @@
       </div>
 
       <!-- safety pillars -->
-      <div data-r="pillars" style="display: grid; grid-template-columns: 1fr 600px; gap: 70px; align-items: start;">
-        <div style="animation: riseUp 1ms both; animation-timeline: view(); animation-range: entry 0% entry 42%;">
+      <div data-r="pillars" style="display: grid; grid-template-columns: 1fr 600px; gap: 70px; align-items: stretch;">
+        <div ref="{{ pillarsRef }}" style="animation: riseUp 1ms both; animation-timeline: view(); animation-range: entry 0% entry 42%;">
           <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="3">
             <div onMouseEnter="{{ p.enter }}" onClick="{{ p.enter }}" style="cursor: pointer; border-bottom: 1px solid {{ p.bd }}; padding: 24px 0; transition: border-color .45s ease;">
               <div style="display: flex; align-items: baseline; gap: 18px;">
@@ -804,7 +852,7 @@
                 <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; line-height: 1.1; letter-spacing: -.015em; color: {{ p.titleFg }}; transition: color .35s ease;">{{ p.title }}</span>
                 <span style="margin-left: auto; flex: none; width: 10px; height: 10px; background: #E8A23B; border-radius: 3px; transform: rotate(45deg); opacity: {{ p.markOp }}; transition: opacity .35s ease;"></span>
               </div>
-              <div style="overflow: hidden; max-height: {{ p.mh }}; opacity: {{ p.op }}; transition: max-height .6s cubic-bezier(.2,.7,.2,1), opacity .45s ease;">
+              <div data-pbody style="overflow: hidden; height: {{ p.mh }}; opacity: {{ p.op }}; transition: height .6s cubic-bezier(.2,.7,.2,1), opacity .45s ease;">
                 <p style="margin: 14px 0 16px; padding-left: 44px; max-width: 540px; font-size: 15.5px; line-height: 1.62; color: rgba(243,239,226,.72);">{{ p.body }}</p>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 0 0 8px 44px;">
                   <sc-for list="{{ p.points }}" as="pt" hint-placeholder-count="3">
@@ -820,8 +868,8 @@
           </div>
         </div>
 
-        <div style="animation: riseUp 1ms both; animation-timeline: view(); animation-range: entry 5% entry 48%;">
-          <div style="position: relative; height: 600px; border-radius: 26px; overflow: hidden; background: #24331A; box-shadow: 0 36px 70px rgba(13,18,8,.45);">
+        <div style="animation: riseUp 1ms both; animation-timeline: view(); animation-range: entry 5% entry 48%; min-height: 600px;">
+          <div style="position: relative; height: 100%; min-height: 600px; border-radius: 26px; overflow: hidden; background: #24331A; box-shadow: 0 36px 70px rgba(13,18,8,.45);">
             <div style="position: absolute; inset: 0; opacity: {{ pOp0 }}; transform: {{ pSc0 }}; transition: opacity .6s ease, transform 1.4s cubic-bezier(.2,.7,.2,1);">
               <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="safety-waterfront" shape="rect" src="./uploads/lifeguard-on-duty.jpg" placeholder="Drop a lifeguard photo" hint-size="100%,100%" style="position: absolute; inset: 0;"></x-import>
               <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 150px; background: linear-gradient(180deg, rgba(13,18,8,0), rgba(13,18,8,.6));"></div>
@@ -1207,7 +1255,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;heroMedia&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;video&quot;,&quot;photo&quot;],&quot;default&quot;:&quot;photo&quot;,&quot;tsType&quot;:&quot;\&quot;video\&quot; | \&quot;photo\&quot;&quot;,&quot;section&quot;:&quot;Hero&quot;,&quot;description&quot;:&quot;Full-bleed video or still photo behind the hero&quot;},&quot;showEnrollBar&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Header&quot;,&quot;description&quot;:&quot;Thin 'Now enrolling for Summer 2026' banner above the hero&quot;}}">
 class Component extends DCLogic {
-  state = { sticky: false, sent: false, err: "", slots: [null, null, null, null], camper: 0, bigNum: 35, justAdded: null, fullTicks: 0, focusCity: null, dur: 0, price: 4145, ssP: 0, pillar: 0, sqft: 9000, ffSpot: 0, walkIdx: 4, btIdx: 0 };
+  state = { sticky: false, sent: false, err: "", slots: [null, null, null, null], camper: 0, bigNum: 35, justAdded: null, fullTicks: 0, focusCity: null, dur: 0, price: 4145, ssP: 0, pillar: 0, pillarH: 280, sqft: 9000, ffSpot: 0, walkIdx: 4, btIdx: 0 };
 
   bigtopData = [
     { id: "bigtop-aerials", src: "./uploads/big-top-panorama (1).png", cap: "INSIDE THE BIG TOP · AERIALS", title: "The aerials rig", ph: "Drop a Big Top photo" },
@@ -1225,6 +1273,7 @@ class Component extends DCLogic {
     { title: "Accredited, inspected, repeat", body: "CAC is accredited by both the Ontario Camps Association and the Canadian Camping Association — over 400 separate standards covering health, safety, leadership, food, staffing, programming, administration and maintenance.", points: ["OCA ACCREDITED", "CCA ACCREDITED", "400+ STANDARDS"] }
   ];
 
+  _pillarsRef = React.createRef();
   _globeRef = React.createRef();
   _arcsRef = React.createRef();
   _tagRef = React.createRef();
@@ -1336,16 +1385,88 @@ class Component extends DCLogic {
 
   _playHeroVideo() {
     const v = document.querySelector("video");
-    if (v) { v.muted = true; v.defaultMuted = true; v.play().catch(() => {}); }
+    if (!v) return;
+    v.muted = true; v.defaultMuted = true;
+    if (this._heroVideo !== v) {
+      this._heroVideo = v;
+      if (this._vio) this._vio.disconnect();
+      if ("IntersectionObserver" in window) {
+        this._vio = new IntersectionObserver((es) => es.forEach((en) => {
+          this._heroVis = en.isIntersecting;
+          this._syncHeroVideo();
+        }), { threshold: 0 });
+        this._vio.observe(v);
+      } else {
+        this._heroVis = true;
+      }
+    }
+    this._syncHeroVideo();
+  }
+
+  // Decoding a looping 1080p video is constant GPU work; only do it while the
+  // hero is on screen and the tab is in front.
+  _syncHeroVideo() {
+    const v = this._heroVideo;
+    if (!v) return;
+    const run = this._heroVis !== false && document.visibilityState !== "hidden" && !window._cacgpu?.state.video;
+    if (run) { if (v.paused) v.play().catch(() => {}); }
+    else if (!v.paused) v.pause();
+  }
+
+  // Idle gate: after 4s without input nothing moves (loops, auto-tours, globe),
+  // so a page left open costs ~0% GPU. Any input brings everything back at once.
+  _poke() {
+    this._setIdle(false);
+    clearTimeout(this._idleT);
+    this._idleT = setTimeout(() => this._setIdle(true), 4000);
+  }
+  _setIdle(idle) {
+    if (this._idle === idle) return;
+    this._idle = idle;
+    document.documentElement.toggleAttribute("data-idle", idle);
+    document.getAnimations().forEach((a) => {
+      if (!(a instanceof CSSAnimation) || a.effect.getTiming().iterations !== Infinity) return;
+      const t = a.effect.target;
+      if (idle) a.pause();
+      else if (!t.closest("[data-offscreen]") && !t.closest('[data-r="rivers"]:hover')) a.play();
+    });
+    if (idle) { clearInterval(this._timer); this._timer = null; }
+    else if (!this._timer) this._timer = setInterval(() => this._tick(), 1000);
+    if (idle) { if (this._stopWorldLoop) this._stopWorldLoop(); this._setGlobeRunning(false); }
+    else if (this._worldVis) { if (this._startWorldLoop) this._startWorldLoop(); this._setGlobeRunning(true); }
   }
 
   componentDidMount() {
+    window.__cac = this;
+    this._onPoke = () => this._poke();
+    ["pointermove", "pointerdown", "wheel", "scroll", "keydown", "touchstart"].forEach((e) => window.addEventListener(e, this._onPoke, { passive: true }));
+    this._poke();
+    this._onVis = () => this._syncHeroVideo();
+    document.addEventListener("visibilitychange", this._onVis);
     this._playHeroVideo();
     this._onScroll = () => {
       const s = window.scrollY > 640;
       if (s !== this.state.sticky) this.setState({ sticky: s });
     };
     window.addEventListener("scroll", this._onScroll, { passive: true });
+
+    this._observeAnimatedSections();
+    this._testimonialRivers = document.querySelector('[data-r="rivers"]');
+    if (this._testimonialRivers) {
+      this._pauseTestimonialRivers = () => {
+        this._testimonialRivers.getAnimations({ subtree: true })
+          .filter((animation) => animation instanceof CSSAnimation && animation.effect.getTiming().iterations === Infinity)
+          .forEach((animation) => animation.pause());
+      };
+      this._resumeTestimonialRivers = () => {
+        if (this._testimonialRivers.closest("section")?.dataset.offscreen === "1") return;
+        this._testimonialRivers.getAnimations({ subtree: true })
+          .filter((animation) => animation instanceof CSSAnimation && animation.effect.getTiming().iterations === Infinity)
+          .forEach((animation) => animation.play());
+      };
+      this._testimonialRivers.addEventListener("pointerenter", this._pauseTestimonialRivers);
+      this._testimonialRivers.addEventListener("pointerleave", this._resumeTestimonialRivers);
+    }
 
     // Programs + Safety: pointer-tracking tilt + cursor spotlight
     ["programs", "facilities", "safety"].forEach((tiltId) => {
@@ -1400,6 +1521,19 @@ class Component extends DCLogic {
       this._safetyVis = true;
       this._ssCount();
     }
+    // Safety pillars: open body always reserves the tallest body's height
+    this._measurePillars = () => {
+      const col = this._pillarsRef.current;
+      if (!col) return;
+      const h = Math.max(...[...col.querySelectorAll("[data-pbody]")].map((b) => b.scrollHeight));
+      if (h > 0 && h !== this.state.pillarH) this.setState({ pillarH: h });
+    };
+    if (this._pillarsRef.current && "ResizeObserver" in window) {
+      this._pro = new ResizeObserver(() => this._measurePillars());
+      this._pro.observe(this._pillarsRef.current);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(this._measurePillars);
+    this._measurePillars();
     // Facilities: sq-ft count-up + auto-tours run only while visible
     const fac = document.getElementById("facilities");
     if (fac && "IntersectionObserver" in window) {
@@ -1416,6 +1550,36 @@ class Component extends DCLogic {
 
     this._timer = setInterval(() => this._tick(), 1000);
     this._initWorld();
+  }
+
+  _observeAnimatedSections() {
+    if (!("IntersectionObserver" in window)) return;
+    if (!this._aio) {
+      this._aio = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const wasOffscreen = entry.target.dataset.offscreen === "1";
+          const animations = entry.target.getAnimations({ subtree: true })
+            .filter((animation) => animation instanceof CSSAnimation && animation.effect.getTiming().iterations === Infinity);
+
+          if (entry.isIntersecting) {
+            delete entry.target.dataset.offscreen;
+            if (wasOffscreen) {
+              animations.forEach((animation) => {
+                const hoveredRiver = animation.effect.target.closest('[data-r="rivers"]:hover');
+                if (animation.playState === "paused" && !hoveredRiver && !this._idle) animation.play();
+              });
+            }
+          } else {
+            entry.target.dataset.offscreen = "1";
+            animations.forEach((animation) => animation.pause());
+          }
+        });
+      }, { rootMargin: "20% 0px 0px", threshold: 0 });
+    } else {
+      this._aio.disconnect();
+    }
+    // the activity marquee strip sits between sections, so it is gated too
+    document.querySelectorAll('section, [data-r="marquee"]').forEach((section) => this._aio.observe(section));
   }
 
   _ssCount() {
@@ -1653,7 +1817,19 @@ class Component extends DCLogic {
     if (!cv || !ov || (cv === this._globeCv && this._worldVer === 2)) return;
     this._globeCv = cv;
     this._worldVer = 2;
-    if (this._wRaf) cancelAnimationFrame(this._wRaf);
+    this._startWorldLoop = () => {
+      if (this._wRaf) return;
+      const loop = () => {
+        this._stepWorld();
+        this._wRaf = requestAnimationFrame(loop);
+      };
+      loop();
+    };
+    this._stopWorldLoop = () => {
+      if (this._wRaf) cancelAnimationFrame(this._wRaf);
+      this._wRaf = null;
+    };
+    this._stopWorldLoop();
     if (this._globe) { try { this._globe.destroy(); } catch (e) {} this._globe = null; }
     this._globePaused = false;
     if (this._fbRaf) cancelAnimationFrame(this._fbRaf);
@@ -1685,15 +1861,18 @@ class Component extends DCLogic {
       this._wio = new IntersectionObserver((es) => es.forEach((en) => {
         this._worldVis = en.isIntersecting;
         this._setGlobeRunning(en.isIntersecting);
+        if (en.isIntersecting && !this._idle) this._startWorldLoop();
+        else this._stopWorldLoop();
       }), { threshold: 0.02 });
       this._wio.observe(sec);
+    } else {
+      this._worldVis = true;
+      this._startWorldLoop();
     }
     const markers = this.world.cities.map((c) => ({ location: [c.lat, c.lng], size: 0.05 }));
     markers.push({ location: [this.world.dest.lat, this.world.dest.lng], size: 0.1 });
-    // Arcs + camera drive themselves; cobe just reads phi/theta each frame.
-    // _stepWorld gates the (2D-canvas) arc drawing on visibility on its own.
-    const loop = () => { this._stepWorld(); this._wRaf = requestAnimationFrame(loop); };
-    loop();
+    // Arcs + camera run only while the section is visible; cobe reads their
+    // current phi/theta values each frame.
     import("https://esm.sh/cobe@0.6.4").then((m) => {
       if (this._globeCv !== cv) return;
       this._globe = (m.default)(cv, {
@@ -1738,18 +1917,29 @@ class Component extends DCLogic {
   componentDidUpdate() {
     this._playHeroVideo();
     this._initWorld();
+    this._observeAnimatedSections();
   }
 
   componentWillUnmount() {
     window.removeEventListener("scroll", this._onScroll);
+    if (this._testimonialRivers) {
+      this._testimonialRivers.removeEventListener("pointerenter", this._pauseTestimonialRivers);
+      this._testimonialRivers.removeEventListener("pointerleave", this._resumeTestimonialRivers);
+    }
     clearInterval(this._timer);
     clearTimeout(this._popT);
     if (this._priceRaf) cancelAnimationFrame(this._priceRaf);
     if (this._io) this._io.disconnect();
     if (this._sio) this._sio.disconnect();
     if (this._fio) this._fio.disconnect();
+    if (this._pro) this._pro.disconnect();
+    if (this._aio) this._aio.disconnect();
     if (this._wio) this._wio.disconnect();
-    if (this._wRaf) cancelAnimationFrame(this._wRaf);
+    if (this._vio) this._vio.disconnect();
+    document.removeEventListener("visibilitychange", this._onVis);
+    clearTimeout(this._idleT);
+    ["pointermove", "pointerdown", "wheel", "scroll", "keydown", "touchstart"].forEach((e) => window.removeEventListener(e, this._onPoke));
+    if (this._stopWorldLoop) this._stopWorldLoop();
     if (this._fbRaf) cancelAnimationFrame(this._fbRaf);
     if (this._globe) { try { this._globe.destroy(); } catch (e) {} this._globe = null; }
   }
@@ -1799,7 +1989,7 @@ class Component extends DCLogic {
           titleFg: on ? "#F3EFE2" : "rgba(243,239,226,.5)",
           markOp: on ? 1 : 0,
           bd: on ? "rgba(232,162,59,.45)" : "rgba(243,239,226,.14)",
-          mh: on ? "280px" : "0px",
+          mh: on ? this.state.pillarH + "px" : "0px",
           op: on ? 1 : 0,
           enter: () => { this._pillarHold = 8; this._sT = 0; if (this.state.pillar !== i) this.setState({ pillar: i }); }
         };
@@ -1887,9 +2077,10 @@ class Component extends DCLogic {
           tf: w.up ? "translate(-50%, calc(-100% + 23px))" : "translate(-50%, -11px)",
           ldx: (w.dx || 0) + "px",
           ringO: on ? 1 : 0,
+          ping: on ? "mapPing 1.9s ease-out infinite" : "none",
           dotBg: on ? "#E8A23B" : (w.main ? "#F3EFE2" : "rgba(243,239,226,.8)"),
           lblFg: on ? "#16200F" : "rgba(243,239,226,.88)",
-          lblBg: on ? "#E8A23B" : "rgba(13,18,8,.55)",
+          lblBg: on ? "#E8A23B" : "rgba(13,18,8,.7)",
           lblBd: on ? "#E8A23B" : (w.main ? "rgba(232,162,59,.55)" : "rgba(243,239,226,.2)"),
           enter: () => { this._wkHold = 6; if (this.state.walkIdx !== i) this.setState({ walkIdx: i }); }
         };
@@ -1923,6 +2114,7 @@ class Component extends DCLogic {
         this.setState({ sent: true, err: "" });
       },
       reset: () => this.setState({ sent: false, err: "" }),
+      pillarsRef: this._pillarsRef,
       globeRef: this._globeRef,
       arcsRef: this._arcsRef,
       tagRef: this._tagRef,
