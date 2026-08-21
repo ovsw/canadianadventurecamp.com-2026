@@ -1,5 +1,43 @@
 /* island-programs-activities: phone and tablet overrides. See base.css for the why. */
 
+/* ---------- #activities breaks earlier than the others (<1400) ----------
+   Desktop is a 3-col grid: the 300px-type "35" measures ~422px, the card
+   340px, plus 2x60px gaps and 2x56px gutters = ~994px of fixed width.
+   Below ~1400 the text column starves, so the tablet arrangement (number
+   row on top, text + card below) takes over at 1399 instead of 1023. */
+@media (max-width: 1399px) {
+  #activities {
+    padding: 0 var(--gutter) var(--section-pad) !important;
+  }
+  #activities > div {
+    grid-template-columns: 1fr 320px !important;
+    gap: 40px !important;
+    padding-top: 72px !important; /* mirrors #programs' 72px bottom pad */
+    align-items: start !important;
+  }
+  #activities > div > div:first-child {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+  #activities > div > div:first-child > div:first-child {
+    font-size: 160px !important;
+    line-height: 1 !important;
+    min-width: 0 !important;
+    -webkit-text-stroke-width: 2.5px !important;
+  }
+  #activities > div > div:first-child > div:last-child {
+    margin-top: 0 !important;
+    font-size: 34px !important;
+  }
+  #activities > div > div:nth-child(2) p { max-width: none !important; }
+  #activities button { min-height: 44px !important; }
+  #activities > div > div:nth-child(2) > div:nth-of-type(1) { gap: 10px !important; }
+  #activities > div > div:last-child > div { transform: rotate(-1deg) !important; }
+}
+
 /* ---------- tablet and phone (<1024) ---------- */
 @media (max-width: 1023px) {
 
@@ -37,37 +75,8 @@
   #programs [data-pmeta] span { letter-spacing: .08em !important; }
   #programs [data-pglow] { display: none !important; }
 
-  /* #activities: number row, text + chips, build-a-day card */
-  #activities {
-    padding: 0 var(--gutter) var(--section-pad) !important;
-  }
-  #activities > div {
-    grid-template-columns: 1fr 320px !important;
-    gap: 40px !important;
-    padding-top: 64px !important;
-    align-items: start !important;
-  }
-  #activities > div > div:first-child {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-  }
-  #activities > div > div:first-child > div:first-child {
-    font-size: 160px !important;
-    line-height: 1 !important;
-    min-width: 0 !important;
-    -webkit-text-stroke-width: 2.5px !important;
-  }
-  #activities > div > div:first-child > div:last-child {
-    margin-top: 0 !important;
-    font-size: 34px !important;
-  }
-  #activities > div > div:nth-child(2) p { max-width: none !important; }
-  #activities button { min-height: 44px !important; }
-  #activities > div > div:nth-child(2) > div:nth-of-type(1) { gap: 10px !important; }
-  #activities > div > div:last-child > div { transform: rotate(-1deg) !important; }
+  /* programs -> activities: 64px either side of the hairline */
+  #activities > div { padding-top: 64px !important; }
 }
 
 /* ---------- phone (<640) ---------- */
