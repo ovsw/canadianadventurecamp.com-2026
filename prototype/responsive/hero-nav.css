@@ -89,25 +89,44 @@
 @media (max-width: 639px) {
   [data-page] > div[style*="position: fixed"] > a > span { display: none !important; }
   [data-r="nav"] > a > span:last-child { display: none !important; }
-  [data-r="ticker"] { font-size: 11px !important; letter-spacing: 0 !important; padding-left: 12px !important; padding-right: 12px !important; gap: 6px !important; }
-  #top { padding-top: 128px; padding-bottom: 32px; }
   [data-r="nav"] > a > span:first-child { font-size: 13px !important; }
   [data-r="enroll"] { padding: 0 16px; font-size: 13.5px; }
-  [data-r="badge"] { border-radius: 16px !important; padding: 8px 14px !important; margin-bottom: 18px !important; }
-  [data-r="badge"] > span:last-child { font-size: 11px !important; letter-spacing: .14em !important; line-height: 1.5; }
-  [data-r="badge"] > span:first-child { flex: none; }
-  #top h1 { font-size: 48px !important; margin-bottom: 18px !important; }
-  #top h1 em { font-size: 54px !important; }
+
+  /* ---------- Hero "B": poster on top, plate below ----------
+     First screen = photo (52vh) + solid Forest Floor plate with headline,
+     one line, one button. Film button sits on the photo. Stats become a
+     Pine Night band under the fold. Ticker and badge are gone on phone. */
+  [data-r="ticker"] { display: none !important; }
+  #top { padding: 0 !important; min-height: 0 !important; display: block !important; }
+  [data-r="nav"] { margin-top: 0 !important; }
+  #top video, #top > sc-if > img, #top img[alt^="Aerial"] { height: 52vh !important; min-height: 300px; }
+  [data-r="badge"] { display: none !important; }
+  [data-r="hero-copy"] {
+    margin: max(52vh, 300px) 0 0 !important; padding: 28px var(--gutter) 28px !important; left: 0 !important; right: 0 !important; bottom: auto !important;
+    background: #35491F; position: relative !important; z-index: 6;
+    min-height: calc(100vh - max(52vh, 300px)); box-sizing: border-box; display: flex; flex-direction: column;
+  }
+  #top h1 { font-size: 46px !important; margin-bottom: 16px !important; animation: none !important; }
+  #top h1 em { font-size: 53px !important; }
   #top h1 br { display: none; }
-  [data-r="hero-row"] { flex-direction: column !important; align-items: stretch !important; gap: 22px !important; }
-  [data-r="hero-row"] p { max-width: none !important; }
-  [data-r="hero-ctas"] { flex-direction: column !important; margin-left: 0 !important; gap: 12px !important; }
-  [data-r="hero-ctas"] > a { justify-content: center; padding-left: 24px !important; padding-right: 24px !important; font-size: 15px !important; }
-  #top [data-r="stats"] { display: grid !important; grid-template-columns: 1fr 1fr !important; margin-top: 30px !important; }
-  #top [data-r="stats"] > div { padding: 14px 0 0 !important; border-left: none !important; }
-  #top [data-r="stats"] > div:nth-child(even) { padding-left: 16px !important; border-left: 1px solid rgba(243,239,226,.22) !important; }
+  [data-r="hero-row"] { flex-direction: column !important; align-items: stretch !important; gap: 0 !important; flex: 1; animation: none !important; }
+  [data-r="hero-row"] > p:first-child { display: none !important; }
+  [data-r="hero-short"] { display: block !important; }
+  [data-r="hero-ctas"] { margin: auto 0 0 !important; padding-top: 26px; flex-direction: column !important; gap: 0 !important; }
+  [data-r="hero-ctas"] > a:first-child { justify-content: center; min-height: 50px; font-size: 16px !important; }
+  [data-r="hero-ctas"] > a:last-child {
+    position: absolute; left: var(--gutter); bottom: calc(100% + 16px); z-index: 7;
+    min-height: 46px; padding: 0 20px !important; font-size: 15px !important;
+    background: rgba(22,32,15,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  #top [data-r="stats"] {
+    position: relative !important; left: 0 !important; right: 0 !important; bottom: auto !important; z-index: 6; display: grid !important; grid-template-columns: 1fr 1fr !important;
+    margin: 0 !important; padding: 8px var(--gutter) 36px; background: #16200F; border-top: none !important; animation: none !important;
+  }
+  #top [data-r="stats"] > div { padding: 18px 0 0 !important; border-left: none !important; }
+  #top [data-r="stats"] > div:nth-child(even) { padding-left: 16px !important; border-left: 1px solid rgba(243,239,226,.18) !important; }
   #top [data-r="stats"] > div:nth-child(odd) { padding-right: 16px !important; }
-  #top [data-r="stats"] > div:nth-child(n+3) { margin-top: 14px; border-top: 1px solid rgba(243,239,226,.22) !important; }
+  #top [data-r="stats"] > div:nth-child(n+3) { margin-top: 18px; border-top: 1px solid rgba(243,239,226,.18) !important; }
   #top [data-r="stats"] span:first-child { font-size: 19px !important; }
   [data-r="cue"] { display: none !important; }
   [data-r="marquee"] { padding: 12px 0 !important; }
