@@ -2,9 +2,11 @@
 
 /* ============ tablet and phone (<1024) ============ */
 @media (max-width: 1023px) {
-  #facilities, #families, #safety {
+  #facilities, #families {
     padding: var(--section-pad) var(--gutter) !important;
   }
+  /* safety -> testimonials share a field: 64px either side of the hairline */
+  #safety { padding: var(--section-pad) var(--gutter) 64px !important; }
   [data-r="testimonials"] { padding: 0 0 var(--section-pad) !important; }
   [data-r="testimonials"] > div:first-child { padding: 64px var(--gutter) 0 !important; margin-bottom: 40px !important; }
 
@@ -176,7 +178,8 @@
      the loop speeds up (same distance, shorter cards). Hover-pause does not exist
      on touch; the rows are passive texture, the link below is the tap target.
      Stats become a 2x2 grid. */
-  [data-r="testimonials"] > div:first-child { text-align: left !important; }
+  [data-r="testimonials"] > div:first-child { text-align: left !important; padding-top: 56px !important; }
+  #safety { padding-bottom: 56px !important; }
   [data-r="rivers"] { gap: 10px !important; }
   [data-r="rivers"] > div[aria-hidden] { width: 40px !important; }
   [data-triver] { gap: 10px !important; animation-duration: 48s !important; }

@@ -21,8 +21,9 @@
   }
 
   /* #programs */
+  /* programs -> activities share a field: 64px either side of the hairline */
   #programs {
-    padding: var(--section-pad) var(--gutter) !important;
+    padding: var(--section-pad) var(--gutter) 64px !important;
   }
   #programs h2 { font-size: 46px !important; }
   #programs h2 em { font-size: 53px !important; }
@@ -43,7 +44,7 @@
   #activities > div {
     grid-template-columns: 1fr 320px !important;
     gap: 40px !important;
-    padding-top: var(--section-pad) !important;
+    padding-top: 64px !important;
     align-items: start !important;
   }
   #activities > div > div:first-child {
