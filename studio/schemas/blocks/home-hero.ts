@@ -42,7 +42,7 @@ export default defineType({
     defineField({
       name: "title",
       title: "Heading",
-      type: "rudimentaryRichText",
+      type: "minimalRichText",
       description:
         "The main heading. Use italic for the accent word or phrase that gets the handwritten style.",
       validation: (rule) => rule.required(),

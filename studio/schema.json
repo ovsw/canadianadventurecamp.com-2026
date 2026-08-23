@@ -242,7 +242,7 @@
           "type": "objectAttribute",
           "value": {
             "type": "inline",
-            "name": "rudimentaryRichText"
+            "name": "minimalRichText"
           },
           "optional": true
         },
@@ -1981,7 +1981,7 @@
     }
   },
   {
-    "name": "rudimentaryRichText",
+    "name": "minimalRichText",
     "type": "type",
     "value": {
       "type": "array",

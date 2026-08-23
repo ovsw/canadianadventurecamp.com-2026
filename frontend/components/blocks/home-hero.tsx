@@ -18,7 +18,7 @@ type HomeHeroProps = HomeHeroBlock & {
   dataAttribute?: (path: string) => string | undefined;
 };
 
-/** Rudimentary rich text: bold/italic only, italic gets the accent (handwritten) style. */
+/** Minimal rich text: bold/italic only, italic gets the accent (handwritten) style. */
 const headingComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => <>{children}</>,

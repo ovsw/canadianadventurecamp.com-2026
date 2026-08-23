@@ -7,8 +7,8 @@ import { defineArrayMember, defineType } from "sanity";
  * introduce any structural or navigational elements.
  */
 export default defineType({
-  name: "rudimentaryRichText",
-  title: "Rudimentary Rich Text",
+  name: "minimalRichText",
+  title: "Minimal Rich Text",
   type: "array",
   of: [
     defineArrayMember({

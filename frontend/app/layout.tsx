@@ -1,9 +1,38 @@
 import type { Metadata } from "next";
+import { Bricolage_Grotesque, Archivo, Caveat } from "next/font/google";
 import { siteUrl } from "@/lib/site-url";
 import { siteName } from "@/lib/site-name";
 import { Toaster } from "@/components/ui/sonner";
 
+import "./globals.css";
+
 const isProduction = process.env.NEXT_PUBLIC_SITE_ENV === "production";
+
+/**
+ * Display font — headlines, hero, section openers.
+ * Variable font with optical-size axis for sharper rendering at large sizes.
+ */
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-bricolage",
+  axes: ["opsz"],
+});
+
+/** Body font — paragraphs, buttons, navigation links. */
+const archivo = Archivo({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-archivo",
+});
+
+/** Script/accent font — the handwritten aside in headlines. */
+const caveat = Caveat({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["500", "600"],
+  variable: "--font-caveat",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -31,7 +60,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${bricolage.variable} ${archivo.variable} ${caveat.variable}`}
+    >
       <link rel="icon" href="/favicon.ico" />
       <body>
         {children}

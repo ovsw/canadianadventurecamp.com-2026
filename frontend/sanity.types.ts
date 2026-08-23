@@ -61,7 +61,7 @@ export type FeatureGridItemIcon = {
 export type HomeHero = {
   _type: "homeHero";
   badge?: string;
-  title?: RudimentaryRichText;
+  title?: MinimalRichText;
   body?: SimpleRichText;
   shortBody?: string;
   buttons?: Array<
@@ -342,7 +342,7 @@ export type BlogPostSidebarAction = {
   button?: Button;
 };
 
-export type RudimentaryRichText = Array<{
+export type MinimalRichText = Array<{
   children?: Array<{
     marks?: Array<string>;
     text?: string;
@@ -1103,7 +1103,7 @@ export type AllSanitySchemaTypes =
   | Hero
   | BlogPostSidebar
   | BlogPostSidebarAction
-  | RudimentaryRichText
+  | MinimalRichText
   | SimpleRichText
   | RichTextContent
   | ButtonLink
