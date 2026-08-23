@@ -1,4 +1,4 @@
-export const SITE_NAME = "Next.js + Sanity Starter";
+export const SITE_NAME = "Canadian Adventure Camp";
 
 const IMPORTANT_TERMS = ["website", "company", "service"] as const;
 
