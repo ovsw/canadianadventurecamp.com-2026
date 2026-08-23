@@ -187,8 +187,8 @@
           inst._syncHeroVideo && inst._syncHeroVideo();
           if (s.globe) { inst._stopWorldLoop && inst._stopWorldLoop(); inst._setGlobeRunning(false); }
           else if (inst._worldVis) { inst._startWorldLoop && inst._startWorldLoop(); inst._setGlobeRunning(true); }
-          if (s.tick && inst._timer) { clearInterval(inst._timer); inst._timer = null; }
-          else if (!s.tick && !inst._timer) inst._timer = setInterval(function () { inst._tick(); }, 1000);
+          if (s.tick && inst._timer) { inst._stopTicking(); }
+          else if (!s.tick && !inst._timer) inst._startTicking();
         }
         console.log("_cacgpu off:", Object.keys(s).filter(function (k) { return s[k]; }).join(", ") || "(nothing)");
       }
@@ -524,7 +524,7 @@
             <span style="width: 8px; height: 8px; border-radius: 50%; background: #E8A23B; animation: blink 1.6s ease-in-out infinite;"></span>
             <span style="font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .22em; color: rgba(22,32,15,.55);">BUILDING A DAY…</span>
           </div>
-          <div style="font-family: Caveat, cursive; font-weight: 600; font-size: 34px; color: #16200F; margin-bottom: 10px;">{{ camperLine }}</div>
+          <div style="font-family: Caveat, cursive; font-weight: 600; font-size: 34px; color: #16200F; margin-bottom: 10px;"><span style="color: {{ camperLineColor }}; text-decoration: {{ camperLineDecoration }};">{{ camperLineName }}</span>{{ camperLineRest }}</div>
           <sc-for list="{{ slotRows }}" as="slot" hint-placeholder-count="4">
             <div style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px dashed rgba(22,32,15,.18); min-height: 30px;">
               <span style="flex: none; width: 44px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; letter-spacing: .08em; color: rgba(22,32,15,.5);">{{ slot.time }}</span>
@@ -1255,7 +1255,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;heroMedia&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;video&quot;,&quot;photo&quot;],&quot;default&quot;:&quot;photo&quot;,&quot;tsType&quot;:&quot;\&quot;video\&quot; | \&quot;photo\&quot;&quot;,&quot;section&quot;:&quot;Hero&quot;,&quot;description&quot;:&quot;Full-bleed video or still photo behind the hero&quot;},&quot;showEnrollBar&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Header&quot;,&quot;description&quot;:&quot;Thin 'Now enrolling for Summer 2026' banner above the hero&quot;}}">
 class Component extends DCLogic {
-  state = { sticky: false, sent: false, err: "", slots: [null, null, null, null], camper: 0, bigNum: 35, justAdded: null, fullTicks: 0, focusCity: null, dur: 0, price: 4145, ssP: 0, pillar: 0, pillarH: 280, sqft: 9000, ffSpot: 0, walkIdx: 4, btIdx: 0 };
+  state = { sticky: false, sent: false, err: "", slots: [null, null, null, null], camper: 0, manual: false, bigNum: 35, justAdded: null, fullTicks: 0, focusCity: null, dur: 0, price: 4145, ssP: 0, pillar: 0, pillarH: 280, sqft: 9000, ffSpot: 0, walkIdx: 4, btIdx: 0 };
 
   bigtopData = [
     { id: "bigtop-aerials", src: "./uploads/big-top-panorama (1).png", cap: "INSIDE THE BIG TOP · AERIALS", title: "The aerials rig", ph: "Drop a Big Top photo" },
@@ -1430,8 +1430,8 @@ class Component extends DCLogic {
       if (idle) a.pause();
       else if (!t.closest("[data-offscreen]") && !t.closest('[data-r="rivers"]:hover')) a.play();
     });
-    if (idle) { clearInterval(this._timer); this._timer = null; }
-    else if (!this._timer) this._timer = setInterval(() => this._tick(), 1000);
+    if (idle) { this._stopTicking(); }
+    else if (!this._timer) this._startTicking();
     if (idle) { if (this._stopWorldLoop) this._stopWorldLoop(); this._setGlobeRunning(false); }
     else if (this._worldVis) { if (this._startWorldLoop) this._startWorldLoop(); this._setGlobeRunning(true); }
   }
@@ -1494,7 +1494,7 @@ class Component extends DCLogic {
 
     // Activities: schedule builder runs only while section is visible
     this._vis = false;
-    this._pause = 0;
+    this._pauseUntil = 0;
     const act = document.getElementById("activities");
     if (act && "IntersectionObserver" in window) {
       this._io = new IntersectionObserver((entries) => {
@@ -1548,8 +1548,32 @@ class Component extends DCLogic {
       this._facVis = true;
     }
 
-    this._timer = setInterval(() => this._tick(), 1000);
+    this._startTicking();
     this._initWorld();
+  }
+
+  // Drift-corrected tick loop: setInterval fires a burst of queued callbacks
+  // when a background/throttled tab wakes up, which was blowing through the
+  // manual-pick pause and refilling the whole schedule in one frame. Chaining
+  // setTimeout off the real elapsed time means a late wake-up only ever runs
+  // one tick, never a catch-up burst.
+  _startTicking() {
+    this._nextTickAt = performance.now() + 1000;
+    const loop = () => {
+      this._timer = setTimeout(() => {
+        this._tick();
+        this._nextTickAt += 1000;
+        const drift = performance.now() - this._nextTickAt;
+        if (drift > 1000) this._nextTickAt = performance.now(); // fell too far behind (throttled tab) — resync, don't burst
+        loop();
+      }, Math.max(0, this._nextTickAt - performance.now()));
+    };
+    loop();
+  }
+
+  _stopTicking() {
+    clearTimeout(this._timer);
+    this._timer = null;
   }
 
   _observeAnimatedSections() {
@@ -1646,13 +1670,13 @@ class Component extends DCLogic {
     this._safetyTick();
     this._facTick();
     if (!this._vis) return;
-    if (this._pause > 0) { this._pause--; return; }
+    if (this._pauseUntil && performance.now() < this._pauseUntil) return;
     const slots = this.state.slots.slice();
     const i = slots.indexOf(null);
     if (i === -1) {
       const ft = this.state.fullTicks + 1;
       if (ft >= 3) {
-        this.setState((s) => ({ slots: [null, null, null, null], fullTicks: 0, justAdded: null, camper: (s.camper + 1) % this.campers.length }));
+        this.setState((s) => ({ slots: [null, null, null, null], fullTicks: 0, justAdded: null, manual: false, camper: (s.camper + 1) % this.campers.length }));
       } else {
         this.setState({ fullTicks: ft });
       }
@@ -1667,18 +1691,18 @@ class Component extends DCLogic {
   }
 
   _pick(name) {
-    this._pause = 3;
+    this._pauseUntil = performance.now() + 6500; // hold the auto-builder off the custom list for ~6.5s
     let slots = this.state.slots.slice();
     if (slots.includes(name)) {
       const rest = slots.filter((x) => x && x !== name);
       while (rest.length < 4) rest.push(null);
-      this.setState({ slots: rest, fullTicks: 0, justAdded: null });
+      this.setState({ slots: rest, fullTicks: 0, justAdded: null, manual: true });
       return;
     }
     const i = slots.indexOf(null);
     if (i === -1) slots = [slots[1], slots[2], slots[3], name];
     else slots[i] = name;
-    this.setState({ slots, justAdded: name, fullTicks: 0 });
+    this.setState({ slots, justAdded: name, fullTicks: 0, manual: true });
     clearTimeout(this._popT);
     this._popT = setTimeout(() => this.setState({ justAdded: null }), 380);
   }
@@ -1926,7 +1950,7 @@ class Component extends DCLogic {
       this._testimonialRivers.removeEventListener("pointerenter", this._pauseTestimonialRivers);
       this._testimonialRivers.removeEventListener("pointerleave", this._resumeTestimonialRivers);
     }
-    clearInterval(this._timer);
+    this._stopTicking();
     clearTimeout(this._popT);
     if (this._priceRaf) cancelAnimationFrame(this._priceRaf);
     if (this._io) this._io.disconnect();
@@ -1972,7 +1996,10 @@ class Component extends DCLogic {
         anim: s ? "entryPop .45s cubic-bezier(.2,.7,.2,1) both" : "none",
         caretDisp: (!s && this.state.slots.indexOf(null) === i) ? "inline-block" : "none"
       })),
-      camperLine: this.campers[this.state.camper] + "'s " + this.days[this.state.camper],
+      camperLineName: this.state.manual ? "Your" : this.campers[this.state.camper] + "'s",
+      camperLineColor: this.state.manual ? "#C0392B" : "#16200F",
+      camperLineDecoration: this.state.manual ? "underline" : "none",
+      camperLineRest: " " + this.days[this.state.camper],
       dayFull: this.state.slots.indexOf(null) === -1,
       ssStandards: Math.round(400 * this.state.ssP) + "+",
       ssAge: Math.round(19 * this.state.ssP) + "+",
