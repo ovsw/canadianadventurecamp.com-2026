@@ -1,40 +1,22 @@
 # Domain context
 
-This file defines the shared language for the Starter.
+Shared language for the Canadian Adventure Camp (CAC) website and content system.
 
-## Product terms
-
-**Starter**
-
-This reusable repository before a project creator copies it.
-
-**Project copy**
-
-An independently owned repository created from the Starter. It owns its code, configuration, content, credentials, and deployments.
-
-**Project creator**
-
-The person who configures a project copy for a specific Website.
+## The site
 
 **Website**
 
-The public Next.js application in `frontend/`.
+The public Next.js application in `frontend/`. Marketing site for CAC, a family-run overnight summer camp on Adventure Island, Lake Temagami, Ontario.
 
 **Studio**
 
 The separately deployed Sanity editing application in `studio/`.
 
-**Sanity project**
-
-A hosted Sanity resource owned by the project creator. The Starter never creates or supplies one.
-
-**Dataset**
-
-The named content store inside the project creator's Sanity project.
-
 **Site settings**
 
 Global editable Website identity and content, including the site name, navigation, footer, and contact details.
+
+## Content editing
 
 **Page Builder**
 
@@ -56,9 +38,88 @@ Content available to public Website visitors.
 
 A permanent route from an old public URL to its current destination.
 
+## Camp calendar
+
+**Season**
+
+One camp year (e.g. the 2027 season). Owns all sessions, prices, and enrollment deadlines for that year. Staff update the season's details in Sanity before each enrollment cycle.
+
+**Session**
+
+A single purchasable block of camp within a season. Has one length (2, 4, 6, or 8 weeks), one set of dates, one price, and one availability status. A parent picks one session and checks out. Sessions are not composed or combined.
+_Avoid_: stay, booking period
+
+**Availability status**
+
+A session's enrollment status: Full, Limited, Open, or a spot count (e.g. "Under 5 spots"). Staff-set in Sanity, not synced from any external system.
+
+## Programs and activities
+
+**Program**
+
+A named track that shapes a camper's stay, chosen at enrollment. Has its own page on the site. Examples: Gymnastics, Trampoline, Aerials, Waterski & Wakeboard (specialty programs), General Program, Y.L.P.
+_Avoid_: course, stream
+
+**Activity**
+
+One of the 35 daily choices available to every camper. No enrollment required, no dedicated page. Listed on the Activities page.
+_Avoid_: class, lesson
+
+**Y.L.P.**
+
+Youth Leadership Program. A program for older campers.
+
+## Conversion funnel
+
+**Visitor**
+
+An anonymous person browsing the site. No contact information known.
+
+**Lead**
+
+A person whose contact information the site or camp has captured. The first conversion point (info request form) turns a visitor into a lead.
+_Avoid_: prospect, contact
+
+**Qualified lead**
+
+A lead ready to purchase. The second conversion point (enrollment system link) hands them off to enroll.
+
+**Info request**
+
+A form submission containing parent name, email, camper age, and optional notes. Delivered to the camp office via Formspark. The artifact that turns a visitor into a lead.
+_Avoid_: inquiry, contact form submission
+
+## External systems
+
+**Enrollment system**
+
+The external service where parents complete enrollment and payment. Currently CampBrain (`canadianadventurecamp.campbrainregistration.com`). The site links to it but does not host or track enrollment.
+_Avoid_: registration system, sign-up portal
+
+**Staff application portal**
+
+The external service where prospective staff apply. Currently CampBrain (`canadianadventurecamp.campbrainstaff.com`).
+
+**Camper photo portal**
+
+The external platform where parents view daily photos and weekly videos during the season. The site links to it but does not host media.
+
+## Places and things
+
+**Adventure Island**
+
+CAC's private island on Lake Temagami. The physical location of the camp.
+
+**Big Top**
+
+The camp's large gymnastics and performance facility.
+
+**Tuck shop**
+
+The on-island camp store. A $150 deposit is added per camper; unused funds are refunded.
+
 ## Ownership rules
 
 - Code owns layout, rendering rules, validation, and safe fallbacks.
 - Sanity owns editor-managed content and site settings.
-- Each project copy owns its Sanity project, dataset, credentials, and hosting.
-- The Starter contains no shared credentials or hosted-resource fallback identifiers.
+- This repository owns its Sanity project, dataset, credentials, and hosting.

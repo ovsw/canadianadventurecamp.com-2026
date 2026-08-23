@@ -2,8 +2,6 @@
 
 Read this guide before adding or changing a section in a page's `blocks` array.
 
-The [Schema UI starter guide](https://schemaui.com/docs/how-to-use) is useful for upstream examples. This repository and this guide are authoritative when they differ from the starter documentation.
-
 ## How a section reaches the page
 
 A top-level section passes through this flow:
