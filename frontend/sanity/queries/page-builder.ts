@@ -6,6 +6,7 @@ import { richTextBlockQuery } from "./rich-text-block";
 import { storyFeatureQuery } from "./story-feature";
 import { teamMembersQuery } from "./team-members";
 import { heroQuery } from "./hero";
+import { homeHeroQuery } from "./home-hero";
 
 export const pageBuilderQuery = `
   blocks[]{
@@ -18,6 +19,7 @@ export const pageBuilderQuery = `
     ${richTextBlockQuery},
     ${ctaBannerQuery},
     ${benefitCardsQuery},
-    ${heroQuery}
+    ${heroQuery},
+    ${homeHeroQuery}
   }
 `;

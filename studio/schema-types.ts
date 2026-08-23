@@ -30,6 +30,7 @@ import button from "./schemas/blocks/shared/button";
 import buttonLink from "./schemas/blocks/shared/button-link";
 import richTextContent from "./schemas/blocks/shared/rich-text-content";
 import simpleRichText from "./schemas/blocks/shared/simple-rich-text";
+import rudimentaryRichText from "./schemas/blocks/shared/rudimentary-rich-text";
 import {
   blogPostSidebar,
   blogPostSidebarAction,
@@ -44,6 +45,7 @@ import teamMembers from "./schemas/blocks/team-members";
 import richTextBlock from "./schemas/blocks/rich-text-block";
 import ctaBanner from "./schemas/blocks/cta-banner";
 import benefitCards from "./schemas/blocks/benefit-cards";
+import homeHero from "./schemas/blocks/home-hero";
 
 export const schemaTypes = [
   // documents
@@ -76,6 +78,7 @@ export const schemaTypes = [
   buttonLink,
   richTextContent,
   simpleRichText,
+  rudimentaryRichText,
   blogPostSidebarAction,
   blogPostSidebar,
   // blocks
@@ -88,4 +91,5 @@ export const schemaTypes = [
   richTextBlock,
   ctaBanner,
   benefitCards,
+  homeHero,
 ];

@@ -9,6 +9,7 @@ import RichTextBlock from "@/components/blocks/rich-text-block";
 import CtaBanner from "@/components/blocks/cta-banner";
 import BenefitCards from "@/components/blocks/benefit-cards";
 import Hero from "@/components/blocks/hero";
+import HomeHero from "@/components/blocks/home-hero";
 import { dataset, projectId } from "@/sanity/lib/env";
 
 type Block =
@@ -31,6 +32,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "ctaBanner",
   "benefitCards",
   "hero",
+  "homeHero",
 ]);
 
 const componentMap: Partial<{
@@ -46,6 +48,7 @@ const componentMap: Partial<{
   ctaBanner: CtaBanner,
   benefitCards: BenefitCards,
   hero: Hero,
+  homeHero: HomeHero,
 };
 
 export default function Blocks({
