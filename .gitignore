@@ -50,3 +50,4 @@ studio/backups/
 
 # local Codex MCP credentials
 .codex/config.toml
+prototype/videos/
