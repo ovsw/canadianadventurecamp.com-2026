@@ -72,5 +72,4 @@ src/plugins/impeccable-live.client.ts
 !.env.template
 !.env*.template
 
-
-frontend/prototype/videos/
+prototype/videos/*
