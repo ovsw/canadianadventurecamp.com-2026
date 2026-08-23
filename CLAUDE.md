@@ -47,6 +47,8 @@ Use [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): 
 - Keep explaining *why* in the body. The prefix classifies the change; it does not replace the reasoning.
 - Note that commits predating this rule use plain imperative subjects with no prefix. Follow the convention above, not the older style.
 
+## Agent skills
+
 ### Issue tracker
 
 Issues and PRDs are tracked in this repository's GitHub Issues. See `docs/agents/issue-tracker.md`.
@@ -62,6 +64,10 @@ This repository uses a single-context domain-doc layout. See `docs/agents/domain
 ### Page Builder work
 
 Before adding or changing a Page Builder section, read `docs/agents/page-builder.md`.
+
+### Sanity CLI
+
+Always pass `SANITY_AUTH_TOKEN` from `studio/.env.local` when invoking the Sanity CLI. See `docs/agents/sanity-cli.md`.
 
 ### Development workflow
 
