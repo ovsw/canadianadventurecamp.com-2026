@@ -110,6 +110,7 @@
 :root {
   --gutter: 56px;
   --section-pad: 120px;
+  --header-height: 80px;
 }
 
 @media (max-width: 1023px) {

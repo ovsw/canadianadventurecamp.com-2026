@@ -1,60 +1,57 @@
 import Link from "next/link";
 import { HeaderBrand } from "./brand";
+import { DesktopNav } from "./desktop-nav";
 import { HeaderLink } from "./header-link";
-import type { HeaderModel, HeaderNavigationModel } from "./model";
-import { NavigationIcon } from "./navigation-icon";
+import { MobileNav } from "./mobile-nav";
+import type { HeaderModel } from "./model";
+import { SiteHeaderShell } from "./site-header-shell";
+import type { HeaderTheme } from "./theme";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export function HeaderNavigation({
-  navigation,
+export function Header({
+  model,
+  theme = "dark",
 }: {
-  navigation: HeaderNavigationModel;
+  model: HeaderModel;
+  theme?: HeaderTheme;
 }) {
-  return (
-    <nav aria-label="Main navigation">
-      <ul>
-        {navigation.items.map((item) => (
-          <li key={item.key}>
-            {item.kind === "link" ? (
-              <HeaderLink link={item.link} />
-            ) : (
-              <details>
-                <summary>{item.label}</summary>
-                <ul>
-                  {item.links.map((child) => (
-                    <li key={child.key}>
-                      <HeaderLink link={child.link}>
-                        {child.icon ? <NavigationIcon icon={child.icon} /> : null}
-                        {child.label}
-                      </HeaderLink>
-                      {child.description ? <p>{child.description}</p> : null}
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            )}
-          </li>
-        ))}
-      </ul>
-      {navigation.actions.length ? (
-        <ul>
-          {navigation.actions.map((action) => (
-            <li key={action.key}>
-              <HeaderLink link={action.link} />
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </nav>
-  );
-}
+  const brand = <HeaderBrand brand={model.brand} />;
 
-export function Header({ model }: { model: HeaderModel }) {
   return (
-    <header>
-      <Link aria-label={`${model.brand.label} home page`} href="/">
-        <HeaderBrand brand={model.brand} />
-      </Link>
-      <HeaderNavigation navigation={model.navigation} />
-    </header>
+    <SiteHeaderShell theme={theme}>
+      <div className="container-content flex h-(--header-height) items-center justify-between gap-3 lg:gap-5">
+        <Link
+          aria-label={`${model.brand.label} home page`}
+          className="flex shrink-0 items-center rounded-control font-display text-[15px] font-extrabold tracking-[0.035em] focus-ring [&_img]:max-h-11 [&_img]:w-auto"
+          href="/"
+        >
+          {brand}
+        </Link>
+        <DesktopNav navigation={model.navigation} theme={theme} />
+        <div className="hidden shrink-0 items-center gap-2 lg:flex">
+          {model.navigation.actions.map((action, index) => {
+            const primary = index === model.navigation.actions.length - 1;
+            return (
+              <HeaderLink
+                className={cn(
+                  buttonVariants({
+                    size: "compact",
+                    variant: primary ? "primary" : "outline",
+                  }),
+                  theme === "dark" && !primary &&
+                    "border-birch-bark/45 text-birch-bark hover:border-birch-bark/70 hover:bg-birch-bark/8 hover:text-birch-bark",
+                )}
+                key={action.key}
+                link={action.link}
+              />
+            );
+          })}
+        </div>
+        <div className="flex shrink-0 items-center lg:hidden">
+          <MobileNav brand={brand} navigation={model.navigation} theme={theme} />
+        </div>
+      </div>
+    </SiteHeaderShell>
   );
 }

@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { Header } from "./site-header";
 import type { HeaderModel } from "./model";
@@ -50,20 +51,38 @@ const model: HeaderModel = {
 };
 
 describe("Site Header", () => {
-  it("renders authored identity, navigation, and safe actions", () => {
+  it("renders authored identity, interactive navigation, and safe actions", async () => {
+    const user = userEvent.setup();
     render(<Header model={model} />);
 
     expect(screen.getByRole("banner")).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Main navigation" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Northline home page" })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
-    expect(screen.getByText("Find the clearest path through a hard problem.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Strategy" })).toHaveAttribute("href", "/strategy");
+    await user.click(screen.getByRole("button", { name: "Services" }));
+
+    expect(
+      await screen.findByText("Find the clearest path through a hard problem."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^Strategy/ })).toHaveAttribute(
+      "href",
+      "/strategy",
+    );
 
     const action = screen.getByRole("link", { name: "Start a project" });
     expect(action).toHaveAttribute("href", "https://example.com/book");
     expect(action).toHaveAttribute("rel", "noopener noreferrer");
     expect(action).toHaveAttribute("target", "_blank");
     expect(document.querySelector('a[href="#"]')).not.toBeInTheDocument();
+  });
+
+  it("uses the dark theme by default and accepts the light theme", () => {
+    const { rerender } = render(<Header model={model} />);
+
+    expect(screen.getByRole("banner")).toHaveAttribute("data-theme", "dark");
+
+    rerender(<Header model={model} theme="light" />);
+
+    expect(screen.getByRole("banner")).toHaveAttribute("data-theme", "light");
   });
 });
