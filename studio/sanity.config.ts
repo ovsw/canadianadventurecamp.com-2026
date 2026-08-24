@@ -1,4 +1,5 @@
 import { visionTool } from "@sanity/vision";
+import { rasterPlugin } from "@raster-app/sanity-plugin-raster";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { presentationTool } from "sanity/presentation";
@@ -35,6 +36,13 @@ const SANITY_STUDIO_PREVIEW_URL = requireStudioEnvironmentValue(
   "SANITY_STUDIO_PREVIEW_URL",
   process.env.SANITY_STUDIO_PREVIEW_URL,
 );
+
+const rasterApiKey = process.env.SANITY_STUDIO_RASTER_API_KEY?.trim();
+const rasterOrgId = process.env.SANITY_STUDIO_RASTER_ORG_ID?.trim();
+const rasterPlugins =
+  rasterApiKey && rasterOrgId
+    ? [rasterPlugin({ apiKey: rasterApiKey, orgId: rasterOrgId })]
+    : [];
 
 export default defineConfig({
   title,
@@ -76,5 +84,6 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
     media(),
+    ...rasterPlugins,
   ],
 });

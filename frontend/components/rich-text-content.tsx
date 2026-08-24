@@ -60,6 +60,11 @@ function createRichTextHeadingComponents(getHeadingId?: GetHeadingId) {
 const richTextBlockComponents = {
   normal: ({ children }) => <p className="mb-4">{children}</p>,
   ...createRichTextHeadingComponents(),
+  blockquote: ({ children }) => (
+    <blockquote className="my-6 border-l-2 border-border pl-4 italic">
+      {children}
+    </blockquote>
+  ),
   inline: ({ children }) => <span>{children}</span>,
 } satisfies RichTextBlockComponents;
 

@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",
+    "@raster-app/sanity-plugin-raster": "^1.0.14",
     "@sanity/functions": "^1.2.1",
     "@sanity/icons": "^5.0.0",
     "@sanity/image-url": "^2.1.1",

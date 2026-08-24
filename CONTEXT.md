@@ -100,17 +100,21 @@ The site state during the camp session weeks, when enrolled families are the mai
 
 **Lead**
 
-A person whose contact information the site or camp has captured. The first conversion point (info request form) turns a visitor into a lead.
+A person whose contact information the camp has captured, typically via the fit quiz. The first conversion point.
 _Avoid_: prospect, contact
+
+**Fit quiz**
+
+The lead-capture quiz. Gauges a child's fit and program interests and returns a personalized artifact (e.g. a sample camper week, emailed as a PDF) in exchange for parent contact info and consent. Primary target of ads and social; on the Website it appears only as in-page blocks, never a header call to action. The Website itself is the information tier and must answer all standard questions without a form.
+_Avoid_: request info, contact form
+
+**Director call**
+
+The scheduled sales conversation with a camp director. Booked via a scheduling page; turns a lead into a qualified lead.
 
 **Qualified lead**
 
-A lead ready to purchase. The second conversion point (enrollment system link) hands them off to enroll.
-
-**Info request**
-
-A form submission containing parent name, email, camper age, and optional notes. Delivered to the camp office via Formspark. The artifact that turns a visitor into a lead.
-_Avoid_: inquiry, contact form submission
+A lead who has booked or completed a director call. The second conversion point is the call booking, not the enrollment-system click.
 
 ## External systems
 

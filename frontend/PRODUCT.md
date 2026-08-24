@@ -15,11 +15,11 @@ Primary: parents (and guardians) deciding where to send their kid to overnight c
 
 Secondary: the kids themselves (browsing activities, watching the film), alumni parents re-enrolling, and prospective staff (Join Our Team, sent to the CampBrain staff portal).
 
-Job: get enough confidence to request info, call the directors, or enroll before a session fills.
+Job: get enough confidence to book a director call or enroll before a session fills.
 
 ## Product Purpose
 
-Marketing website for Canadian Adventure Camp (CAC), a family-run overnight summer camp on Adventure Island, its own island on Lake Temagami, Ontario, running since 1975. The site exists to turn parent research into enrollments and info requests for the upcoming season.
+Marketing website for Canadian Adventure Camp (CAC), a family-run overnight summer camp on Adventure Island, its own island on Lake Temagami, Ontario, running since 1975. The site exists to turn parent research into enrollments and booked director calls for the upcoming season.
 
 Success: info-form submissions, calls, and click-throughs to the external enrollment system, especially before sessions sell out.
 
@@ -36,7 +36,7 @@ Claims a neighbouring camp cannot copy:
 ## Operating Context
 
 - Session-based enrollment; sessions sell out (prototype shows Session 2 full). Seasonal urgency matters from fall through spring.
-- Enrollment is two-path: Enroll CTAs link out to CampBrain (https://canadianadventurecamp.campbrainregistration.com/); the site also captures leads with a request-info form (parent name, email, camper age, notes) that emails the camp office. Phone and email are real contact channels (905-886-1406, info@canadianadventurecamp.com).
+- Enrollment is two-path: Enroll CTAs link out to CampBrain (https://canadianadventurecamp.campbrainregistration.com/); the secondary header CTA is Talk to the Directors (scheduling page for the sales call; confirm directors staff the Sep-Mar calendar before shipping). No request-info form: the site is the information tier and must answer standard questions itself. Lead capture happens via the fit quiz (ads/social asset; in-page blocks only). Phone and email stay real contact channels (905-886-1406, info@canadianadventurecamp.com). See docs/adr/0001-conversion-funnel-and-header-ctas.md.
 - Parents stay connected during the season via daily photos and weekly videos, hosted on an external platform (CampBrain/Bunk1-type); the site links to it, does not host it.
 - Supervised bus from the Toronto area; airport service for international campers.
 - Winter office: 6 Hubner Drive, Richmond Hill, ON L4E 4W5.
@@ -53,7 +53,7 @@ Claims a neighbouring camp cannot copy:
 - Old site URLs must keep working: build redirects from canadianadventurecamp.com paths to new slugs.
 - Content is edited by non-technical camp staff; Studio must keep dates, prices, availability, photos, testimonials, jobs simple to edit.
 - Join Our Team links to the CampBrain staff portal: https://canadianadventurecamp.campbrainstaff.com/. No newsletter (not on the old site; do not introduce one).
-- Forms (request info) submit via Formspark, delivering to the camp office inbox.
+- Forms (fit quiz, contact) submit via Formspark, delivering to the camp office inbox.
 - Hosting: Vercel.
 - Old site content lives in an existing Sanity dataset; the new site gets a new Sanity project, content imported from the old one. Inner-page copy is rewritten in the prototype homepage's voice using old-site facts.
 - Prototype interactions (build-a-day, spinning globe, island walk, pillar tour, session-length toggle) are all required in production.
@@ -82,7 +82,7 @@ Claims a neighbouring camp cannot copy:
 1. Sell the island and the kid's agency (35 activities, their pick) before anything else.
 2. Every safety claim is specific and verifiable; parents are the buyers.
 3. Urgency is real, never invented: show live availability per session.
-4. Two doors always within reach: enroll (CampBrain) and request info (on-site form).
+4. Two doors always within reach: enroll (CampBrain) and talk to the directors (booking page).
 5. International parents are first-class: travel, supervision, and time zones are explained, not assumed.
 
 ## Accessibility & Inclusion

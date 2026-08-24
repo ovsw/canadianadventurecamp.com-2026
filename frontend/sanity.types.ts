@@ -384,7 +384,8 @@ export type RichTextContent = Array<
         _type: "span";
         _key: string;
       }>;
-      style?: "normal" | "h2" | "h3" | "h4" | "h5" | "h6" | "inline";
+      style?:
+        "normal" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote" | "inline";
       listItem?: "number" | "bullet";
       markDefs?: Array<
         | ({
@@ -939,6 +940,15 @@ export type Page = {
   _rev: string;
   title?: string;
   description?: string;
+  headerImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    caption?: string;
+    _type: "image";
+  };
   slug?: Slug;
   blocks?: Array<
     | ({
@@ -1345,7 +1355,14 @@ export type BLOG_INDEX_QUERY_RESULT =
                     _key: string;
                   }> | null;
                   style?:
-                    "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
+                    | "blockquote"
+                    | "h2"
+                    | "h3"
+                    | "h4"
+                    | "h5"
+                    | "h6"
+                    | "inline"
+                    | "normal";
                   listItem?: "bullet" | "number";
                   markDefs: Array<
                     | {
@@ -1953,7 +1970,14 @@ export type BLOG_INDEX_QUERY_RESULT =
                     _key: string;
                   }> | null;
                   style?:
-                    "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
+                    | "blockquote"
+                    | "h2"
+                    | "h3"
+                    | "h4"
+                    | "h5"
+                    | "h6"
+                    | "inline"
+                    | "normal";
                   listItem?: "bullet" | "number";
                   markDefs: Array<
                     | {
@@ -2523,7 +2547,14 @@ export type BLOG_INDEX_QUERY_RESULT =
                     _key: string;
                   }> | null;
                   style?:
-                    "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
+                    | "blockquote"
+                    | "h2"
+                    | "h3"
+                    | "h4"
+                    | "h5"
+                    | "h6"
+                    | "inline"
+                    | "normal";
                   listItem?: "bullet" | "number";
                   markDefs: Array<
                     | {
@@ -3388,7 +3419,15 @@ export type HOME_PAGE_QUERY_RESULT = {
                 _type: "span";
                 _key: string;
               }> | null;
-              style?: "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
+              style?:
+                | "blockquote"
+                | "h2"
+                | "h3"
+                | "h4"
+                | "h5"
+                | "h6"
+                | "inline"
+                | "normal";
               listItem?: "bullet" | "number";
               markDefs: Array<
                 | {
@@ -4018,7 +4057,15 @@ export type PAGE_QUERY_RESULT = {
                 _type: "span";
                 _key: string;
               }> | null;
-              style?: "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
+              style?:
+                | "blockquote"
+                | "h2"
+                | "h3"
+                | "h4"
+                | "h5"
+                | "h6"
+                | "inline"
+                | "normal";
               listItem?: "bullet" | "number";
               markDefs: Array<
                 | {
@@ -4326,7 +4373,8 @@ export type POST_QUERY_RESULT = {
           _type: "span";
           _key: string;
         }> | null;
-        style?: "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
+        style?:
+          "blockquote" | "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
         listItem?: "bullet" | "number";
         markDefs: Array<
           | {
@@ -4494,7 +4542,8 @@ export type PUBLISHED_POST_QUERY_RESULT = {
           _type: "span";
           _key: string;
         }> | null;
-        style?: "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
+        style?:
+          "blockquote" | "h2" | "h3" | "h4" | "h5" | "h6" | "inline" | "normal";
         listItem?: "bullet" | "number";
         markDefs: Array<
           | {

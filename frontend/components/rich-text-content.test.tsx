@@ -15,6 +15,31 @@ function callout(title: string | null, body: string | null) {
 }
 
 describe("RichTextContent", () => {
+  it("renders blockquotes as quote content", () => {
+    render(
+      <RichTextContent
+        value={[
+          {
+            _key: "quote",
+            _type: "block",
+            children: [
+              {
+                _key: "quote-text",
+                _type: "span",
+                marks: [],
+                text: "Camp is a second home.",
+              },
+            ],
+            markDefs: [],
+            style: "blockquote",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Camp is a second home.").tagName).toBe("BLOCKQUOTE");
+  });
+
   it("renders callouts as aside content", () => {
     const { container } = render(
       <RichTextContent value={callout("Important", "Keep this in mind.")} />,

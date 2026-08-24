@@ -76,6 +76,31 @@ export default defineType({
       group: "content",
     }),
     defineField({
+      name: "headerImage",
+      title: "Header Image",
+      type: "image",
+      group: "content",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative Text",
+          type: "string",
+          validation: (rule) =>
+            rule.custom((value, context) => {
+              const parent = context.parent as { asset?: unknown } | undefined;
+              return parent?.asset && !value
+                ? "Describe the image for visitors who cannot see it"
+                : true;
+            }),
+        }),
+        defineField({
+          name: "caption",
+          type: "string",
+        }),
+      ],
+    }),
+    defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
