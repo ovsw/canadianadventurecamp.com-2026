@@ -73,7 +73,30 @@ Youth Leadership Program. A program for older campers.
 
 **Visitor**
 
-An anonymous person browsing the site. No contact information known.
+An anonymous person browsing the site. No contact information known. Every visitor is one of the visitor types below; the site is organized by what they are trying to do, not by asking them who they are.
+
+**Prospective parent**
+
+A parent or guardian deciding whether to send their child to CAC. The buyer. The primary visitor type; most of the site serves them.
+_Avoid_: prospective family, user
+
+**Prospective camper**
+
+A child who may attend camp, browsing activities and media. Influences the parent's decision but does not buy.
+
+**Prospective staff**
+
+A person considering working at camp. A separate audience from parents; handed off to the staff application portal.
+_Avoid_: job seeker, applicant (until they apply)
+
+**Enrolled family**
+
+A parent whose camper is enrolled for the coming or current season. Needs logistics before camp and updates during it.
+_Avoid_: current family, returning family (alumni parents re-enrolling are prospective parents until they enroll)
+
+**In-season mode**
+
+The site state during the camp session weeks, when enrolled families are the main visitors. Switches navigation, homepage, and possibly other parts of the site to serve them. The rest of the year is off-season. Enrollment, pre-camp preparation, and staff recruiting all overlap within off-season and are not separate modes.
 
 **Lead**
 
@@ -108,7 +131,8 @@ The external platform where parents view daily photos and weekly videos during t
 
 **Adventure Island**
 
-CAC's private island on Lake Temagami. The physical location of the camp.
+The island on Lake Temagami that CAC owns and operates. The physical location of the camp.
+_Avoid_: private island, secluded, exclusive, hideaway (see Copy voice)
 
 **Big Top**
 
@@ -117,6 +141,13 @@ The camp's large gymnastics and performance facility.
 **Tuck shop**
 
 The on-island camp store. A $150 deposit is added per camper; unused funds are refunded.
+
+## Copy voice
+
+**Trust language**
+
+Site copy describes the island and camp through supervision, accreditation, and history, never through isolation. Prefer: supervised, community-based, accredited, family legacy, structured program, staff-to-camper ratio, OCA and CCA accredited, operating since 1975.
+_Avoid_: private, secluded, hideaway, exclusive, escape the world, in the middle of nowhere
 
 ## Ownership rules
 

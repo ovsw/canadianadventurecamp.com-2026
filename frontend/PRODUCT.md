@@ -19,7 +19,7 @@ Job: get enough confidence to request info, call the directors, or enroll before
 
 ## Product Purpose
 
-Marketing website for Canadian Adventure Camp (CAC), a family-run overnight summer camp on its own private island on Lake Temagami, Ontario, running since 1975. The site exists to turn parent research into enrollments and info requests for the upcoming season.
+Marketing website for Canadian Adventure Camp (CAC), a family-run overnight summer camp on Adventure Island, its own island on Lake Temagami, Ontario, running since 1975. The site exists to turn parent research into enrollments and info requests for the upcoming season.
 
 Success: info-form submissions, calls, and click-throughs to the external enrollment system, especially before sessions sell out.
 
@@ -27,9 +27,9 @@ Success: info-form submissions, calls, and click-throughs to the external enroll
 
 Claims a neighbouring camp cannot copy:
 
-- Whole private island (Adventure Island), no roads in, in the Temagami wilderness.
+- The whole of Adventure Island is the camp: one supervised community, reached by boat, in the Temagami wilderness.
 - Campers build their own day from 35 activities, no fixed timetable.
-- World-class specialty coaching (gymnastics, trampoline, aerials, waterski/wakeboard) with serious facilities in the middle of nowhere (the Big Top, upgraded 2019; fully equipped gym; private water with dedicated boats).
+- World-class specialty coaching (gymnastics, trampoline, aerials, waterski/wakeboard) with serious facilities on-island (the Big Top, upgraded 2019; fully equipped gym; dedicated waterfront and boats).
 - International camper body, met at Toronto airport and escorted to the dock.
 - Family-run by camp parents for 50+ summers; directors aim to know every camper by name.
 
