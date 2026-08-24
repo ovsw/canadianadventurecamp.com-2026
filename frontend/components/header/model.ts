@@ -2,6 +2,7 @@ import { stegaClean } from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { siteName } from "@/lib/site-name";
 import type { SETTINGS_QUERY_RESULT } from "@/sanity.types";
+import { CALL_DIRECTORS_HREF } from "./call-directors";
 import type { NavigationIconModel } from "./navigation-icon";
 
 export type HeaderLinkModel = {
@@ -181,11 +182,14 @@ export function createHeaderNavigationModel(
     }
   }
 
-  const actions = (raw?.actions ?? []).slice(0, 2).flatMap((action) => {
-    const key = action._key?.trim();
-    const link = normalizeLink(action.label, action.destination);
-    return key && link ? [{ key, link }] : [];
-  });
+  const actions = (raw?.actions ?? [])
+    .flatMap((action) => {
+      const key = action._key?.trim();
+      const link = normalizeLink(action.label, action.destination);
+      return key && link ? [{ key, link }] : [];
+    })
+    .filter((action) => action.link.href !== CALL_DIRECTORS_HREF)
+    .slice(0, 1);
 
   return { items, actions };
 }

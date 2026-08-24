@@ -58,6 +58,7 @@ describe("Site Header", () => {
     expect(screen.getByRole("banner")).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Main navigation" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Northline home page" })).toHaveAttribute("href", "/");
+    expect(screen.getAllByText("Temagami, Ontario · Est. 1975").length).toBeGreaterThan(0);
     expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
     await user.click(screen.getByRole("button", { name: "Services" }));
 
@@ -73,6 +74,9 @@ describe("Site Header", () => {
     expect(action).toHaveAttribute("href", "https://example.com/book");
     expect(action).toHaveAttribute("rel", "noopener noreferrer");
     expect(action).toHaveAttribute("target", "_blank");
+    expect(
+      screen.getByRole("link", { name: "Call Justin & Anna at 905-886-1406" }),
+    ).toHaveAttribute("href", "tel:+19058861406");
     expect(document.querySelector('a[href="#"]')).not.toBeInTheDocument();
   });
 

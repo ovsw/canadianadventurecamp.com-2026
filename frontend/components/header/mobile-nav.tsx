@@ -20,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { CallDirectorsAction } from "./call-directors-action";
 import { HeaderLink } from "./header-link";
 import type { HeaderNavigationModel } from "./model";
 import { NavigationIcon } from "./navigation-icon";
@@ -173,34 +174,27 @@ export function MobileNav({
             )}
           </Accordion>
         </nav>
-        {navigation.actions.length ? (
-          <SheetFooter
-            className={cn(
-              "border-t p-4",
-              dark ? "border-birch-bark/15" : "border-pine-night/15",
-            )}
-          >
-            {navigation.actions.map((action, index) => {
-              const primary = index === navigation.actions.length - 1;
-              return (
-                <HeaderLink
-                  className={cn(
-                    buttonVariants({
-                      size: "default",
-                      variant: primary ? "primary" : "outline",
-                    }),
-                    "w-full",
-                    dark && !primary &&
-                      "border-birch-bark/45 text-birch-bark hover:border-birch-bark/70 hover:bg-birch-bark/8 hover:text-birch-bark",
-                  )}
-                  key={action.key}
-                  link={action.link}
-                  onClick={close}
-                />
-              );
-            })}
-          </SheetFooter>
-        ) : null}
+        <SheetFooter
+          className={cn(
+            "gap-4 border-t p-4",
+            dark ? "border-birch-bark/15" : "border-pine-night/15",
+          )}
+        >
+          {navigation.actions.map((action) => (
+            <HeaderLink
+              className={cn(
+                buttonVariants({ size: "default", variant: "outline" }),
+                "w-full",
+                dark &&
+                  "border-birch-bark/45 text-birch-bark hover:border-birch-bark/70 hover:bg-birch-bark/8 hover:text-birch-bark",
+              )}
+              key={action.key}
+              link={action.link}
+              onClick={close}
+            />
+          ))}
+          <CallDirectorsAction className="justify-self-start" onClick={close} theme={theme} />
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

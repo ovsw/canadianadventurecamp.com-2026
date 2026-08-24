@@ -36,6 +36,14 @@ describe("createHeaderNavigationModel", () => {
       ],
       actions: [
         {
+          _key: "legacy-call",
+          label: "Call Justin",
+          destination: {
+            href: "tel:+19058861406",
+            openInNewTab: false,
+          },
+        },
+        {
           _key: "schedule",
           label: "Start a project",
           destination: {
@@ -84,6 +92,41 @@ describe("createHeaderNavigationModel", () => {
         },
       ],
     });
+  });
+
+  it("keeps one configurable action and ignores the fixed directors call", () => {
+    const model = createHeaderNavigationModel({
+      _id: "navigation",
+      items: [],
+      actions: [
+        {
+          _key: "call",
+          label: "Call Justin",
+          destination: { href: "tel:+19058861406" },
+        },
+        {
+          _key: "enroll",
+          label: "Enroll",
+          destination: { href: "https://example.com/enroll" },
+        },
+        {
+          _key: "extra",
+          label: "Extra",
+          destination: { href: "/extra" },
+        },
+      ],
+    });
+
+    expect(model.actions).toEqual([
+      {
+        key: "enroll",
+        link: {
+          href: "https://example.com/enroll",
+          label: "Enroll",
+          openInNewTab: false,
+        },
+      },
+    ]);
   });
 
   it("omits invalid destinations and structurally empty groups", () => {

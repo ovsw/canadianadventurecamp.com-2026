@@ -20,10 +20,14 @@ function Logo({
 }
 
 export function HeaderBrand({ brand }: { brand: HeaderBrandModel }) {
-  if (!brand.light && !brand.dark) {
-    return <span>{brand.label}</span>;
-  }
-
   const logo = brand.light ?? brand.dark;
-  return logo ? <Logo alt={brand.label} logo={logo} /> : null;
+
+  return (
+    <span className="grid gap-[7px] whitespace-nowrap">
+      {logo ? <Logo alt={brand.label} logo={logo} /> : <span>{brand.label}</span>}
+      <span className="font-mono text-[9px] leading-none font-normal tracking-[0.12em] uppercase opacity-60 max-[520px]:hidden">
+        Temagami, Ontario · Est. 1975
+      </span>
+    </span>
+  );
 }

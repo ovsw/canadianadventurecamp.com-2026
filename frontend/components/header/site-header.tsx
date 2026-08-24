@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HeaderBrand } from "./brand";
+import { CallDirectorsAction } from "./call-directors-action";
 import { DesktopNav } from "./desktop-nav";
 import { HeaderLink } from "./header-link";
 import { MobileNav } from "./mobile-nav";
@@ -29,17 +30,16 @@ export function Header({
           {brand}
         </Link>
         <DesktopNav navigation={model.navigation} theme={theme} />
-        <div className="hidden shrink-0 items-center gap-2 lg:flex">
-          {model.navigation.actions.map((action, index) => {
-            const primary = index === model.navigation.actions.length - 1;
+        <div className="hidden shrink-0 items-center gap-6 lg:flex">
+          {model.navigation.actions.map((action) => {
             return (
               <HeaderLink
                 className={cn(
                   buttonVariants({
                     size: "compact",
-                    variant: primary ? "primary" : "outline",
+                    variant: "outline",
                   }),
-                  theme === "dark" && !primary &&
+                  theme === "dark" &&
                     "border-birch-bark/45 text-birch-bark hover:border-birch-bark/70 hover:bg-birch-bark/8 hover:text-birch-bark",
                 )}
                 key={action.key}
@@ -47,6 +47,7 @@ export function Header({
               />
             );
           })}
+          <CallDirectorsAction theme={theme} />
         </div>
         <div className="flex shrink-0 items-center lg:hidden">
           <MobileNav brand={brand} navigation={model.navigation} theme={theme} />
