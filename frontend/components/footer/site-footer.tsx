@@ -55,8 +55,8 @@ function FooterAction({
       <span
         className={
           primary
-            ? "inline-flex items-center rounded-pill bg-campfire-amber px-[30px] py-4 font-bold text-pine-night transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-campfire-amber-deep"
-            : "inline-flex items-center rounded-pill border-[1.5px] border-birch-bark/50 px-[30px] py-[15.5px] font-semibold text-birch-bark transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-birch-bark/90"
+            ? "inline-flex items-center rounded-pill bg-campfire-amber px-[30px] py-4 font-bold text-pine-night transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-campfire-amber-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            : "inline-flex items-center rounded-pill border-[1.5px] border-birch-bark/50 px-[30px] py-[15.5px] font-semibold text-birch-bark transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-birch-bark/90 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         }
       >
         {link.label}

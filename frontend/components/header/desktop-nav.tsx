@@ -279,7 +279,7 @@ export function DesktopNav({
             <ChevronDown
               aria-hidden="true"
               className={cn(
-                "size-3 shrink-0 -translate-y-px transition-transform motion-fast",
+                "size-3 shrink-0 -translate-y-px transition-transform motion-fast motion-reduce:transition-none",
                 isActive && "rotate-180",
               )}
             />

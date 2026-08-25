@@ -97,7 +97,7 @@ export default function FaqAccordion({
                   >
                     <AccordionTrigger className="group items-center py-6 typo-title-minor hover:no-underline [&>svg]:hidden">
                       <span>{faq.title}</span>
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border-strong bg-card text-foreground transition-transform motion-fast group-data-[state=open]:rotate-45">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border-strong bg-card text-foreground transition-transform motion-fast group-data-[state=open]:rotate-45 motion-reduce:transition-none">
                         <Plus aria-hidden="true" className="size-4" strokeWidth={1.5} />
                       </span>
                     </AccordionTrigger>

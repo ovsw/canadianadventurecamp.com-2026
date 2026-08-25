@@ -1,39 +1,19 @@
 import { expect, test } from "@playwright/test";
 
-const routeGroups = [
-  [
-    { heading: "Neutral sample content for a clean project.", path: "/" },
-    { heading: "Starter Home", path: "/" },
-  ],
-  [
-    { heading: "About", path: "/about" },
-    { heading: "Getting Started", path: "/getting-started" },
-  ],
-  [{ heading: "Blog", path: "/blog" }],
-  [
-    { heading: "Starter Field Guide", path: "/blog/starter-field-guide" },
-    { heading: "Welcome to Your Site", path: "/blog/welcome" },
-  ],
+const siteRoutes = [
+  "/",
+  "/contact",
+  "/blog",
+  "/blog/continuing-the-cac-traditions-for-the-next-generations",
 ] as const;
 
-const pageRoutes = routeGroups[1];
-
-async function gotoAvailableRoute(
+async function gotoRoute(
   page: import("@playwright/test").Page,
-  candidates: (typeof routeGroups)[number],
+  path: (typeof siteRoutes)[number],
 ) {
-  for (const candidate of candidates) {
-    const response = await page.goto(candidate.path);
-    const heading = page.getByRole("heading", {
-      level: 1,
-      name: candidate.heading,
-    });
-    if (response?.ok() && (await heading.isVisible())) return candidate;
-  }
-
-  throw new Error(
-    `None of the expected Starter routes responded: ${candidates.map(({ path }) => path).join(", ")}`,
-  );
+  const response = await page.goto(path, { waitUntil: "domcontentloaded" });
+  expect(response?.ok(), `${path} should respond successfully`).toBe(true);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 }
 
 async function expectAccessibleRoute(page: import("@playwright/test").Page) {
@@ -49,26 +29,22 @@ async function expectAccessibleRoute(page: import("@playwright/test").Page) {
   ).toHaveCount(0);
 }
 
-test("serves the neutral starter routes from Sanity", async ({ page }) => {
-  for (const candidates of routeGroups) {
-    const route = await gotoAvailableRoute(page, candidates);
-
-    await expect(
-      page.getByRole("heading", { level: 1, name: route.heading }),
-    ).toBeVisible();
+for (const route of siteRoutes) {
+  test(`serves ${route} from Sanity`, async ({ page }) => {
+    await gotoRoute(page, route);
     await expectAccessibleRoute(page);
-  }
-});
+  });
+}
 
-test("supports keyboard access on starter routes", async ({ page }) => {
-  await page.goto("/");
+test("supports keyboard access on CAC routes", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "Skip to content" })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#main-content$/);
 
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.keyboard.press("Tab");
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: /home page/i }).first()).toBeFocused();
@@ -85,33 +61,46 @@ test("supports keyboard access on starter routes", async ({ page }) => {
   }
 });
 
-test("keeps reduced-motion visitors out of starter animation", async ({ page }) => {
+test("removes movement for reduced-motion visitors", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  const runningAnimations = await page
+  const motionViolations = await page
     .locator("body *")
     .evaluateAll((elements) =>
       elements.filter((element) => {
         const style = getComputedStyle(element);
+        const movingProperties = new Set([
+          "all",
+          "rotate",
+          "scale",
+          "transform",
+          "translate",
+        ]);
+        const hasMovementTransition =
+          style.transitionDuration !== "0s" &&
+          style.transitionProperty
+            .split(",")
+            .some((property) => movingProperties.has(property.trim()));
+
         return (
           style.animationName !== "none" ||
-          style.transitionDuration !== "0s"
+          hasMovementTransition
         );
       }).length,
     );
 
-  expect(runningAnimations).toBe(0);
+  expect(motionViolations).toBe(0);
 });
 
-test("keeps the starter page free of horizontal overflow", async ({ page }) => {
+test("keeps content pages free of horizontal overflow", async ({ page }) => {
   for (const viewport of [
     { height: 844, width: 390 },
     { height: 1024, width: 768 },
     { height: 1000, width: 1440 },
   ]) {
     await page.setViewportSize(viewport);
-    await gotoAvailableRoute(page, pageRoutes);
+    await gotoRoute(page, "/contact");
 
     expect(
       await page

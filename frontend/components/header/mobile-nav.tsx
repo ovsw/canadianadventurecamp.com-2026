@@ -28,7 +28,7 @@ import type { HeaderTheme } from "./theme";
 
 function HamburgerIcon({ open }: { open: boolean }) {
   const bar =
-    "h-[1.5px] w-full origin-center rounded-full bg-current transition-all motion-base";
+    "h-[1.5px] w-full origin-center rounded-full bg-current transition-all motion-base motion-reduce:transition-none";
 
   return (
     <span aria-hidden="true" className="flex w-4 flex-col gap-1">
