@@ -3,10 +3,13 @@ import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { Button } from "@/components/ui/button";
+import { NavigationIcon } from "@/components/header/navigation-icon";
 import HomeHeroVideoLightbox from "@/components/blocks/home-hero-video-lightbox";
+import { getHomeHeroVideoEmbedUrl } from "@/components/blocks/home-hero-video";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
+import type { ComponentProps } from "react";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -17,6 +20,27 @@ type HomeHeroBlock = Extract<PageBlock, { _type: "homeHero" }>;
 type HomeHeroProps = HomeHeroBlock & {
   dataAttribute?: (path: string) => string | undefined;
 };
+
+type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
+
+export function resolveHomeHeroButtonVariant(
+  variant: string | null | undefined,
+  index: number,
+): ButtonVariant {
+  const cleanVariant = stegaClean(variant);
+
+  if (
+    cleanVariant === "default" ||
+    cleanVariant === "secondary" ||
+    cleanVariant === "outline" ||
+    cleanVariant === "ghost" ||
+    cleanVariant === "link"
+  ) {
+    return cleanVariant;
+  }
+
+  return index === 0 ? "outline" : "ghost";
+}
 
 /** Minimal rich text: bold/italic only, italic gets the accent (handwritten) style. */
 const headingComponents: PortableTextComponents = {
@@ -156,17 +180,23 @@ export default function HomeHero({
               {buttons.slice(0, 2).map((button, index) => {
                 const href = getSafeLinkHref(button.href);
                 const label = stegaClean(button.text) || "Learn more";
+                const variant = resolveHomeHeroButtonVariant(
+                  button.variant,
+                  index,
+                );
+                const iconName = stegaClean(button.icon?.name)?.trim();
+                const iconSvg = stegaClean(button.icon?.svg)?.trim();
                 if (!href) return null;
 
-                // Second button with a YouTube-shaped URL gets the lightbox
-                const isYouTube = /youtu\.?be/i.test(stegaClean(href) ?? "");
-                if (index === 1 && isYouTube) {
+                if (getHomeHeroVideoEmbedUrl(href)) {
                   return (
                     <HomeHeroVideoLightbox
                       buttonKey={button._key}
                       href={href}
+                      icon={button.icon}
                       key={button._key}
                       label={label}
+                      variant={variant}
                     />
                   );
                 }
@@ -174,11 +204,11 @@ export default function HomeHero({
                 return (
                   <Button
                     asChild
-                    emphasis={index === 0}
                     key={button._key}
+                    lift={false}
                     onDark
                     size="hero"
-                    variant={index === 0 ? "copper" : "outline"}
+                    variant={variant}
                   >
                     <Link
                       href={href}
@@ -191,6 +221,11 @@ export default function HomeHero({
                         stegaClean(button.openInNewTab) ? "_blank" : undefined
                       }
                     >
+                      {iconName && iconSvg ? (
+                        <NavigationIcon
+                          icon={{ name: iconName, svg: iconSvg }}
+                        />
+                      ) : null}
                       {button.text}
                     </Link>
                   </Button>

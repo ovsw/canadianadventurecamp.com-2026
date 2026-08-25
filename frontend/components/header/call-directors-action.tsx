@@ -24,7 +24,11 @@ export function CallDirectorsAction({
     <Link
       aria-label={`${CALL_DIRECTORS_LABEL} at ${CALL_DIRECTORS_PHONE}`}
       className={cn(
-        "group grid min-h-11 grid-cols-[auto_1fr] items-center gap-2 rounded-control focus-ring",
+        "group relative isolate grid min-h-11 grid-cols-[auto_1fr] items-center gap-2 rounded-control px-2 py-1 focus-ring",
+        // Hover pill lives on a pseudo-element so it can extend past the
+        // link's box without growing the header row.
+        "before:absolute before:-inset-x-1.5 before:-inset-y-1.5 before:-z-10 before:rounded-control before:opacity-0 before:transition-opacity before:motion-fast hover:before:opacity-100 motion-reduce:before:transition-none",
+        dark ? "before:bg-birch-bark/8" : "before:bg-cedar/10",
         className,
       )}
       href={CALL_DIRECTORS_HREF}

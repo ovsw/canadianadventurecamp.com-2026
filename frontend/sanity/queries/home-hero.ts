@@ -19,6 +19,10 @@ export const homeHeroQuery = groq`
       _type,
       text,
       variant,
+      icon {
+        name,
+        svg
+      },
       "openInNewTab": url.openInNewTab,
       "href": select(
         url.type == "internal" => ${urlInternalHref},

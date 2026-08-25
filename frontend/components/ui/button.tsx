@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  * Call sites should not override height, padding, or radius.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control font-semibold transition-[background-color,border-color,color,box-shadow,translate] motion-base hover:-translate-y-0.5 hover:shadow-interactive-lift disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-ring hover:[--focus-ring-keep:var(--shadow-interactive-lift)] motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control font-semibold transition-[background-color,border-color,color,box-shadow,translate] motion-base hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0",
   {
     variants: {
       variant: {
@@ -56,6 +56,11 @@ const buttonVariants = cva(
         true: "shadow-teal-action hover:shadow-teal-action",
         false: "",
       },
+      lift: {
+        true:
+          "hover:shadow-interactive-lift hover:[--focus-ring-keep:var(--shadow-interactive-lift)]",
+        false: "hover:shadow-none",
+      },
     },
     compoundVariants: [
       {
@@ -63,6 +68,11 @@ const buttonVariants = cva(
         onDark: true,
         class:
           "border-edge-on-dark-strong text-white hover:border-white/45 hover:bg-white/10 hover:text-white",
+      },
+      {
+        variant: "ghost",
+        onDark: true,
+        class: "text-white hover:bg-white/10 hover:text-white",
       },
       {
         variant: "copper",
@@ -76,6 +86,7 @@ const buttonVariants = cva(
       size: "default",
       onDark: false,
       emphasis: false,
+      lift: true,
     },
   }
 );
@@ -86,6 +97,7 @@ function Button({
   size,
   onDark,
   emphasis,
+  lift,
   asChild = false,
   ...props
 }: React.ComponentProps<"button"> &
@@ -97,7 +109,9 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, onDark, emphasis, className }))}
+      className={cn(
+        buttonVariants({ variant, size, onDark, emphasis, lift, className }),
+      )}
       {...props}
     />
   );

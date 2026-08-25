@@ -65,7 +65,7 @@ export default defineType({
       name: "buttons",
       type: "array",
       description:
-        "Up to two call-to-action buttons. The first renders as the primary action, the second as a ghost/outline action.",
+        "Up to two call-to-action buttons. Choose each button's style; when unset, the first uses Outline and the second uses Ghost.",
       of: [defineArrayMember({ type: "button" })],
       validation: (rule) => rule.max(2),
     }),

@@ -30,7 +30,7 @@ export function Header({
           {brand}
         </Link>
         <DesktopNav navigation={model.navigation} theme={theme} />
-        <div className="hidden shrink-0 items-center gap-6 lg:flex">
+        <div className="hidden shrink-0 items-center gap-4 lg:flex">
           {model.navigation.actions.map((action) => {
             return (
               <HeaderLink

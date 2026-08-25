@@ -218,10 +218,12 @@ export function DesktopNav({
     : { duration: 0 };
   const fade = { duration: prefersReducedMotion ? 0 : 0.14 };
   const primaryLinkClassName = cn(
-    "flex min-h-11 items-center whitespace-nowrap rounded-control px-1 text-[15px] font-medium transition-colors motion-fast focus-ring",
+    // px-2 -mx-1 keeps the same flow width as the old px-1 while giving the
+    // hover pill room around the label.
+    "-mx-1 flex min-h-11 items-center whitespace-nowrap rounded-control px-2 text-[15px] font-medium transition-colors motion-fast focus-ring",
     dark
-      ? "text-birch-bark/85 hover:text-birch-bark"
-      : "text-pine-night/85 hover:text-cedar-deep",
+      ? "text-birch-bark/85 hover:bg-birch-bark/8 hover:text-birch-bark"
+      : "text-pine-night/85 hover:bg-cedar/10 hover:text-cedar-deep",
   );
 
   return (
@@ -251,11 +253,11 @@ export function DesktopNav({
             aria-expanded={isActive}
             className={cn(
               primaryLinkClassName,
-              "gap-1.5 px-2.5",
+              "mx-0 gap-1.5 px-2.5",
               isActive &&
                 (dark
-                  ? "bg-forest-panel text-birch-bark hover:text-birch-bark"
-                  : "bg-birch-bark-bright text-pine-night shadow-card-rest-cream hover:text-pine-night"),
+                  ? "bg-birch-bark/8 text-birch-bark hover:text-birch-bark"
+                  : "bg-cedar/10 text-pine-night hover:text-pine-night"),
             )}
             key={item.key}
             onClick={(event) => {

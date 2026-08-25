@@ -26,3 +26,10 @@ test("published visitors keep Sanity cache invalidation active", () => {
   assert.ok(mainContent < sanityLive);
   assert.ok(sanityLive < draftControls);
 });
+
+test("skip link stays hidden until keyboard focus", () => {
+  assert.match(
+    layoutSource,
+    /className="[^"]*-translate-y-\[calc\(100%\+2rem\)\][^"]*focus:translate-y-0[^"]*"[\s\S]*href="#main-content"/,
+  );
+});

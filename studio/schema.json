@@ -1,6 +1,29 @@
 [
   {
     "type": "type",
+    "name": "icon",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "name": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "svg": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
     "name": "keyDetails",
     "value": {
       "type": "object",
@@ -174,7 +197,7 @@
   },
   {
     "type": "type",
-    "name": "icon",
+    "name": "navigationChildLink.icon",
     "value": {
       "type": "object",
       "attributes": {
@@ -2664,6 +2687,10 @@
               },
               {
                 "type": "string",
+                "value": "ghost"
+              },
+              {
+                "type": "string",
                 "value": "link"
               }
             ]
@@ -2674,6 +2701,14 @@
           "type": "objectAttribute",
           "value": {
             "type": "string"
+          },
+          "optional": true
+        },
+        "icon": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "icon"
           },
           "optional": true
         },
@@ -4273,7 +4308,7 @@
           "type": "objectAttribute",
           "value": {
             "type": "inline",
-            "name": "icon"
+            "name": "navigationChildLink.icon"
           },
           "optional": true
         },

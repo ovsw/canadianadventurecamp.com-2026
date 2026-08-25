@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { stegaClean } from "next-sanity";
 import { Button } from "@/components/ui/button";
+import { NavigationIcon } from "@/components/header/navigation-icon";
+import { getHomeHeroVideoEmbedUrl } from "@/components/blocks/home-hero-video";
+import type { ComponentProps } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,50 +13,38 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-/** Extract a YouTube embed URL from a watch/short/youtu.be link. */
-function toYouTubeEmbed(url: string): string | null {
-  const clean = stegaClean(url)?.trim();
-  if (!clean) return null;
-
-  try {
-    const parsed = new URL(clean);
-    let videoId: string | null = null;
-
-    if (parsed.hostname.includes("youtu.be")) {
-      videoId = parsed.pathname.slice(1);
-    } else if (parsed.hostname.includes("youtube.com")) {
-      videoId =
-        parsed.searchParams.get("v") ||
-        parsed.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/)?.[1] ||
-        null;
-    }
-
-    return videoId
-      ? `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`
-      : null;
-  } catch {
-    return null;
-  }
-}
-
 export default function HomeHeroVideoLightbox({
   buttonKey,
+  icon,
   label,
   href,
+  variant,
 }: {
   buttonKey: string;
+  icon?: { name?: string | null; svg?: string | null } | null;
   label: string;
   href: string;
+  variant: NonNullable<ComponentProps<typeof Button>["variant"]>;
 }) {
   const [open, setOpen] = useState(false);
-  const embedUrl = toYouTubeEmbed(href);
+  const embedUrl = getHomeHeroVideoEmbedUrl(href);
+  const iconName = stegaClean(icon?.name)?.trim();
+  const iconSvg = stegaClean(icon?.svg)?.trim();
   if (!embedUrl) return null;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button key={buttonKey} variant="outline" size="hero" onDark>
-          <span aria-hidden="true">▶</span>
+        <Button
+          key={buttonKey}
+          lift={false}
+          variant={variant}
+          size="hero"
+          onDark
+        >
+          {iconName && iconSvg ? (
+            <NavigationIcon icon={{ name: iconName, svg: iconSvg }} />
+          ) : null}
           {label}
         </Button>
       </DialogTrigger>
