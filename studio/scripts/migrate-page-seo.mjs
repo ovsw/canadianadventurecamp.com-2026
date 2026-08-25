@@ -2,15 +2,14 @@
 
 import process from "node:process";
 import { getCliClient } from "sanity/cli";
+import { assertCacProductionTarget } from "./assert-cac-production-target.mjs";
 
 const APPLY = process.argv.includes("--apply");
 const API_VERSION = "2026-03-23";
 const client = getCliClient({ apiVersion: API_VERSION });
 const { dataset, projectId } = client.config();
 
-if (dataset !== "production") {
-  throw new Error(`Expected production dataset, received ${dataset}`);
-}
+assertCacProductionTarget({ dataset, projectId });
 
 const pages = await client.fetch(`
   *[
@@ -35,13 +34,17 @@ const plans = pages.map((page) => {
     throw new Error(`${page._id}: legacy SEO description is not a string`);
   }
   if (page.meta?.title !== undefined && page.meta.title !== title) {
-    throw new Error(`${page._id}: meta.title already contains a different value`);
+    throw new Error(
+      `${page._id}: meta.title already contains a different value`,
+    );
   }
   if (
     page.meta?.description !== undefined &&
     page.meta.description !== description
   ) {
-    throw new Error(`${page._id}: meta.description already contains a different value`);
+    throw new Error(
+      `${page._id}: meta.description already contains a different value`,
+    );
   }
 
   return {

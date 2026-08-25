@@ -23,8 +23,8 @@ function BlogImage({
         blurDataURL={post.image.asset.metadata?.lqip || undefined}
         height={post.image.asset.metadata?.dimensions?.height ?? 900}
         placeholder={post.image.asset.metadata?.lqip ? "blur" : undefined}
-        sizes="100vw"
-        src={urlFor(post.image).url()}
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        src={urlFor(post.image).width(1200).url()}
         width={post.image.asset.metadata?.dimensions?.width ?? 1600}
       />
     </figure>
@@ -79,7 +79,13 @@ export function documentDataAttribute({
     }).toString();
 }
 
-export function LatestPostCard({ post, stega }: { post: BlogPost; stega: boolean }) {
+export function LatestPostCard({
+  post,
+  stega,
+}: {
+  post: BlogPost;
+  stega: boolean;
+}) {
   const slug = stegaClean(post.slug?.current);
   if (!slug) return null;
   const postHref = postPath(slug);
@@ -88,7 +94,11 @@ export function LatestPostCard({ post, stega }: { post: BlogPost; stega: boolean
   const categoryLabel = stegaClean(category?.title);
   const categorySlug = stegaClean(category?.slug?.current);
   const categoryHref = categoryPath(categorySlug);
-  const dataAttribute = documentDataAttribute({ id: post._id, stega, type: "post" });
+  const dataAttribute = documentDataAttribute({
+    id: post._id,
+    stega,
+    type: "post",
+  });
   const categoryDataAttribute = category
     ? documentDataAttribute({ id: category._id, stega, type: "category" })
     : undefined;
@@ -104,25 +114,28 @@ export function LatestPostCard({ post, stega }: { post: BlogPost; stega: boolean
         </Link>
       ) : null}
       <div>
-        <PublicationDate dataAttribute={dataAttribute} value={post.publishedAt} />
-        <h3
-          data-sanity={dataAttribute?.("title")}
-        >
+        <PublicationDate
+          dataAttribute={dataAttribute}
+          value={post.publishedAt}
+        />
+        <h3 data-sanity={dataAttribute?.("title")}>
           <Link href={postHref}>{post.title}</Link>
         </h3>
         {post.excerpt ? (
-          <p
-            data-sanity={dataAttribute?.("excerpt")}
-          >
-            {post.excerpt}
-          </p>
+          <p data-sanity={dataAttribute?.("excerpt")}>{post.excerpt}</p>
         ) : null}
       </div>
     </article>
   );
 }
 
-export function RegularPostCard({ post, stega }: { post: BlogPost; stega: boolean }) {
+export function RegularPostCard({
+  post,
+  stega,
+}: {
+  post: BlogPost;
+  stega: boolean;
+}) {
   const slug = stegaClean(post.slug?.current);
   if (!slug) return null;
   const postHref = postPath(slug);
@@ -131,31 +144,39 @@ export function RegularPostCard({ post, stega }: { post: BlogPost; stega: boolea
   const category = stegaClean(categoryReference?.title);
   const categorySlug = stegaClean(categoryReference?.slug?.current);
   const categoryHref = categoryPath(categorySlug);
-  const dataAttribute = documentDataAttribute({ id: post._id, stega, type: "post" });
+  const dataAttribute = documentDataAttribute({
+    id: post._id,
+    stega,
+    type: "post",
+  });
   const categoryDataAttribute = categoryReference
-    ? documentDataAttribute({ id: categoryReference._id, stega, type: "category" })
+    ? documentDataAttribute({
+        id: categoryReference._id,
+        stega,
+        type: "category",
+      })
     : undefined;
   return (
     <article>
       <BlogImage dataAttribute={dataAttribute} post={post} />
       {category && categoryHref ? (
-        <Link data-sanity={categoryDataAttribute?.("title")} href={categoryHref}>
+        <Link
+          data-sanity={categoryDataAttribute?.("title")}
+          href={categoryHref}
+        >
           {category}
         </Link>
       ) : null}
       <div>
-        <PublicationDate dataAttribute={dataAttribute} value={post.publishedAt} />
-        <h3
-          data-sanity={dataAttribute?.("title")}
-        >
+        <PublicationDate
+          dataAttribute={dataAttribute}
+          value={post.publishedAt}
+        />
+        <h3 data-sanity={dataAttribute?.("title")}>
           <Link href={postHref}>{post.title}</Link>
         </h3>
         {post.excerpt ? (
-          <p
-            data-sanity={dataAttribute?.("excerpt")}
-          >
-            {post.excerpt}
-          </p>
+          <p data-sanity={dataAttribute?.("excerpt")}>{post.excerpt}</p>
         ) : null}
       </div>
     </article>

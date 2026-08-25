@@ -86,7 +86,10 @@ test("listing cards expose every visible post field to Presentation", () => {
   assert.match(cardSource, /categoryDataAttribute\?\.\("title"\)/);
   assert.match(cardSource, /<Link href=\{postHref\}>\{post\.title\}<\/Link>/);
   assert.match(querySource, /category->\{_id, title, slug\}/);
-  assert.match(cardSource, /stegaClean\(categoryReference\?\.slug\?\.current\)/);
+  assert.match(
+    cardSource,
+    /stegaClean\(categoryReference\?\.slug\?\.current\)/,
+  );
 
   const latestArticlesSource = readFileSync(
     new URL("../components/blocks/latest-articles.tsx", import.meta.url),
@@ -101,6 +104,16 @@ test("listing cards expose every visible post field to Presentation", () => {
   assert.match(latestArticlesSource, /categoryPath\(cleanSlug\)/);
   assert.match(articleCardSource, /return \(\s*<article/);
   assert.doesNotMatch(articleCardSource, /return \(\s*<Link\s/);
+});
+
+test("listing cards request bounded Sanity images", () => {
+  const cardSource = readFileSync(
+    new URL("../components/blog-card.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(cardSource, /urlFor\(post\.image\)\.width\(1200\)\.url\(\)/);
+  assert.match(cardSource, /sizes="\(min-width: 1024px\) 33vw/);
 });
 
 test("accepts only pagination route segments greater than one", () => {
@@ -123,21 +136,37 @@ test("builds canonical pagination and category paths", () => {
   assert.equal(getBlogPaginationUrl(2), "/blog/2");
   assert.equal(getBlogCanonicalPath(1), "/blog");
   assert.equal(getBlogCanonicalPath(3), "/blog/3");
-  assert.equal(getBlogPaginationUrl(1, "/blog/category/news/"), "/blog/category/news");
-  assert.equal(getBlogPaginationUrl(2, "/blog/category/news/"), "/blog/category/news/2");
+  assert.equal(
+    getBlogPaginationUrl(1, "/blog/category/news/"),
+    "/blog/category/news",
+  );
+  assert.equal(
+    getBlogPaginationUrl(2, "/blog/category/news/"),
+    "/blog/category/news/2",
+  );
   assert.equal(getCategoryArchivePath("news"), "/blog/category/news");
 });
 
 test("keeps category static generation non-empty before archive copy or pagination exists", () => {
-  assert.deepEqual(getCategoryStaticParams([]), [{ slug: "__missing-category__" }]);
-  assert.deepEqual(getCategoryStaticParams([{ slug: "tutorials" }]), [{ slug: "tutorials" }]);
-  assert.deepEqual(getCategoryPaginatedStaticParams([]), [{ page: "2", slug: "__missing-category__" }]);
+  assert.deepEqual(getCategoryStaticParams([]), [
+    { slug: "__missing-category__" },
+  ]);
+  assert.deepEqual(getCategoryStaticParams([{ slug: "tutorials" }]), [
+    { slug: "tutorials" },
+  ]);
+  assert.deepEqual(getCategoryPaginatedStaticParams([]), [
+    { page: "2", slug: "__missing-category__" },
+  ]);
   assert.deepEqual(
-    getCategoryPaginatedStaticParams([{ slug: "tutorials", publishedPostCount: 12 }]),
+    getCategoryPaginatedStaticParams([
+      { slug: "tutorials", publishedPostCount: 12 },
+    ]),
     [{ page: "2", slug: "tutorials" }],
   );
   assert.deepEqual(
-    getCategoryPaginatedStaticParams([{ slug: "tutorials", publishedPostCount: 13 }]),
+    getCategoryPaginatedStaticParams([
+      { slug: "tutorials", publishedPostCount: 13 },
+    ]),
     [{ page: "2", slug: "tutorials" }],
   );
   assert.deepEqual(
@@ -156,9 +185,17 @@ test("uses one category indexability rule for post count, description, and noind
     true,
   );
   for (const input of [
-    { description: "Useful archive introduction", metaNoindex: false, publishedPostCount: 0 },
+    {
+      description: "Useful archive introduction",
+      metaNoindex: false,
+      publishedPostCount: 0,
+    },
     { description: "   ", metaNoindex: false, publishedPostCount: 1 },
-    { description: "Useful archive introduction", metaNoindex: true, publishedPostCount: 1 },
+    {
+      description: "Useful archive introduction",
+      metaNoindex: true,
+      publishedPostCount: 1,
+    },
   ]) {
     assert.equal(isIndexableCategory(input), false);
   }
@@ -177,7 +214,10 @@ test("reports result counts for the regular collection only", () => {
 
 test("the first blog page shows a clear one-post archive empty state", () => {
   const source = readFileSync(
-    new URL("../app/(main)/blog/_components/blog-index-route.tsx", import.meta.url),
+    new URL(
+      "../app/(main)/blog/_components/blog-index-route.tsx",
+      import.meta.url,
+    ),
     "utf8",
   );
 

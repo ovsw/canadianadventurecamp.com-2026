@@ -48,13 +48,19 @@ async function CachedIndexPage({ perspective, stega }: DynamicFetchOptions) {
     return MissingSanityPage({ document: "homePage", documentId: "homePage" });
   }
 
+  const blocks = page.blocks ?? [];
+  const hasHero = blocks.some(
+    (block) => block._type === "homeHero" || block._type === "hero",
+  );
+
   return (
     <>
       <WebsiteJsonLd siteUrl={siteUrl} />
-      <FaqPageJsonLd blocks={page.blocks ?? []} />
-      <VideoJsonLd content={page.blocks ?? []} />
+      <FaqPageJsonLd blocks={blocks} />
+      <VideoJsonLd content={blocks} />
+      {!hasHero ? <h1>{page.title}</h1> : null}
       <Blocks
-        blocks={page.blocks ?? []}
+        blocks={blocks}
         documentId={page._id}
         documentType="homePage"
         perspective={perspective}

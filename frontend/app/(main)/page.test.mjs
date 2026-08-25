@@ -4,7 +4,12 @@ import test from "node:test";
 
 const pageSource = readFileSync(new URL("./page.tsx", import.meta.url), "utf8");
 
-test("homepage body renders only Page Builder sections", () => {
+test("homepage renders Page Builder sections and a title fallback without a hero", () => {
   assert.doesNotMatch(pageSource, /<header>/);
-  assert.match(pageSource, /<Blocks[\s\S]*blocks=\{page\.blocks \?\? \[\]\}/);
+  assert.match(
+    pageSource,
+    /block\._type === "homeHero" \|\| block\._type === "hero"/,
+  );
+  assert.match(pageSource, /!hasHero \? <h1>\{page\.title\}<\/h1> : null/);
+  assert.match(pageSource, /<Blocks[\s\S]*blocks=\{blocks\}/);
 });
