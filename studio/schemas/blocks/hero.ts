@@ -1,44 +1,64 @@
 import { LayoutTemplate } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+/** Flatten a minimalRichText value into plain text for the Studio preview. */
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
+    .join(" ")
+    .trim();
+};
+
 export default defineType({
   name: "hero",
-  title: "Hero",
+  title: "Page Header",
   type: "object",
   icon: LayoutTemplate,
   description:
-    "An editorial introduction with a heading, supporting copy, actions, and optional image.",
+    "The opening section of an interior page: forest gradient, big heading with a handwritten accent, optional supporting copy, actions, and photo.",
   initialValue: {
-    eyebrow: "Independent practice",
-    title: "Clear thinking for complicated work.",
-    body: [
+    eyebrow: "Adventure Island",
+    title: [
       {
-        _key: "starter-hero-body",
+        _key: "starter-page-header-title",
         _type: "block",
         children: [
           {
-            _key: "starter-hero-body-text",
+            _key: "starter-page-header-title-text",
             _type: "span",
             marks: [],
-            text: "Use this space to explain what your organization does and why it matters.",
+            text: "Life on ",
+          },
+          {
+            _key: "starter-page-header-title-accent",
+            _type: "span",
+            marks: ["em"],
+            text: "the island.",
           },
         ],
         markDefs: [],
         style: "normal",
       },
     ],
-    buttons: [
+    body: [
       {
-        _key: "starter-hero-action",
-        _type: "button",
-        text: "Explore our work",
-        url: {
-          _type: "customUrl",
-          type: "internal",
-          internal: { _type: "reference", _ref: "homePage" },
-          openInNewTab: false,
-        },
-        variant: "default",
+        _key: "starter-page-header-body",
+        _type: "block",
+        children: [
+          {
+            _key: "starter-page-header-body-text",
+            _type: "span",
+            marks: [],
+            text: "A sentence or two that tells parents what this page covers.",
+          },
+        ],
+        markDefs: [],
+        style: "normal",
       },
     ],
   },
@@ -46,11 +66,15 @@ export default defineType({
     defineField({
       name: "eyebrow",
       type: "string",
-      description: "Optional short context shown above the heading.",
+      description:
+        'Short amber label above the heading, e.g. "Adventure Island · Since 1975".',
     }),
     defineField({
       name: "title",
-      type: "string",
+      title: "Heading",
+      type: "minimalRichText",
+      description:
+        "The page heading. Use italic for the word or phrase that gets the handwritten amber style.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -66,9 +90,11 @@ export default defineType({
     }),
     defineField({
       name: "image",
+      title: "Photo",
       type: "image",
       options: { hotspot: true },
-      description: "Optional image shown with the introduction.",
+      description:
+        "Optional. Blends into the right side of the gradient behind the heading; without it the header uses the forest glow alone.",
       fields: [
         defineField({
           name: "alt",
@@ -88,8 +114,8 @@ export default defineType({
   preview: {
     select: { media: "image", title: "title" },
     prepare: ({ media, title }) => ({
-      title: title || "Untitled Hero",
-      subtitle: "Hero",
+      title: richTextToPlainText(title) || "Untitled Page Header",
+      subtitle: "Page Header",
       media,
     }),
   },

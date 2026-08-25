@@ -20,7 +20,7 @@ const paragraph = (key: string, text: string) => ({
 });
 
 describe("core Page Builder sections", () => {
-  it("renders the neutral hero with its safe action", () => {
+  it("renders the page header with its accent phrase and safe action", () => {
     const hero = {
       _key: "hero",
       _type: "hero",
@@ -35,19 +35,39 @@ describe("core Page Builder sections", () => {
           variant: "default",
         },
       ],
-      eyebrow: "Independent practice",
+      eyebrow: "Adventure Island",
       image: null,
-      title: "Clear thinking for complicated work.",
+      title: [
+        {
+          _key: "hero-title",
+          _type: "block",
+          children: [
+            {
+              _key: "hero-title-text",
+              _type: "span",
+              marks: [],
+              text: "Life on ",
+            },
+            {
+              _key: "hero-title-accent",
+              _type: "span",
+              marks: ["em"],
+              text: "the island.",
+            },
+          ],
+          markDefs: [],
+          style: "normal",
+        },
+      ],
     } as unknown as ComponentProps<typeof Hero>;
     render(
       <Hero {...hero} />,
     );
 
     expect(
-      screen.getByRole("heading", {
-        name: "Clear thinking for complicated work.",
-      }),
+      screen.getByRole("heading", { name: "Life on the island." }),
     ).toBeInTheDocument();
+    expect(screen.getByText("the island.")).toHaveClass("font-accent");
     expect(screen.getByRole("link", { name: "See our work" })).toHaveAttribute(
       "href",
       "/work",

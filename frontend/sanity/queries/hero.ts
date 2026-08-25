@@ -7,7 +7,9 @@ import { urlInternalHref } from "./shared/internal-href";
 export const heroQuery = groq`
   _type == "hero" => {
     eyebrow,
-    title,
+    title[]{
+      ...
+    },
     body[]{
       ${bodyQuery}
     },
