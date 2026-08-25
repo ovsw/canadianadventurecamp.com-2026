@@ -9,6 +9,7 @@ export default defineConfig([
     ".next/**",
     "legacy-donor-prototype/**",
     "out/**",
+    "prototype/support.js",
     "build/**",
     "next-env.d.ts",
   ]),
