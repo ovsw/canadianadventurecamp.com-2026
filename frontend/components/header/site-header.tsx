@@ -24,7 +24,7 @@ export function Header({
       <div className="container-content flex h-(--header-height) items-center justify-between gap-3 lg:gap-5">
         <Link
           aria-label={`${model.brand.label} home page`}
-          className="flex shrink-0 items-center rounded-control font-display text-[15px] font-extrabold tracking-[0.035em] focus-ring [&_img]:max-h-11 [&_img]:w-auto"
+          className="flex shrink-0 items-center rounded-control font-display text-[15px] font-extrabold tracking-[0.035em] focus-ring"
           href="/"
         >
           {brand}

@@ -11,6 +11,7 @@ function Logo({
   return (
     <Image
       alt={alt}
+      className="h-13 w-auto"
       height={logo.height}
       priority
       src={logo.src}
@@ -24,10 +25,16 @@ export function HeaderBrand({ brand }: { brand: HeaderBrandModel }) {
 
   return (
     <span className="grid gap-[7px] whitespace-nowrap">
-      {logo ? <Logo alt={brand.label} logo={logo} /> : <span>{brand.label}</span>}
-      <span className="font-mono text-[9px] leading-none font-normal tracking-[0.12em] uppercase opacity-60 max-[520px]:hidden">
-        Temagami, Ontario · Est. 1975
-      </span>
+      {logo ? (
+        <Logo alt={brand.label} logo={logo} />
+      ) : (
+        <>
+          <span>{brand.label}</span>
+          <span className="font-mono text-[9px] leading-none font-normal tracking-[0.12em] uppercase opacity-60 max-[520px]:hidden">
+            Temagami, Ontario · Est. 1975
+          </span>
+        </>
+      )}
     </span>
   );
 }

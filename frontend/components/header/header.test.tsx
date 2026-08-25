@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+import { HeaderBrand } from "./brand";
 import { Header } from "./site-header";
 import type { HeaderModel } from "./model";
 
@@ -51,6 +52,29 @@ const model: HeaderModel = {
 };
 
 describe("Site Header", () => {
+  it("shows the location subtitle only with the text fallback", () => {
+    const { rerender } = render(<HeaderBrand brand={model.brand} />);
+
+    expect(screen.getByText("Northline")).toBeInTheDocument();
+    expect(screen.getByText("Temagami, Ontario · Est. 1975")).toBeInTheDocument();
+
+    rerender(
+      <HeaderBrand
+        brand={{
+          ...model.brand,
+          light: {
+            src: "https://cdn.sanity.io/images/example/logo.png",
+            width: 216,
+            height: 48,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("img", { name: "Northline" })).toHaveClass("h-13", "w-auto");
+    expect(screen.queryByText("Temagami, Ontario · Est. 1975")).not.toBeInTheDocument();
+  });
+
   it("renders authored identity, interactive navigation, and safe actions", async () => {
     const user = userEvent.setup();
     render(<Header model={model} />);
