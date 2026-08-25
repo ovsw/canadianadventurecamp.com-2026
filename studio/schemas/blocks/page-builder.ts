@@ -2,7 +2,6 @@ import { defineField } from "sanity";
 
 export const generalPageBuilderBlockTypes = [
   "hero",
-  "homeHero",
   "richTextBlock",
   "benefitCards",
   "storyFeature",
@@ -23,9 +22,13 @@ export const contentPageBuilderBlockTypes = [
 ] as const;
 
 export const pageBuilderBlockTypes = generalPageBuilderBlockTypes;
-export const homePagePageBuilderBlockTypes = generalPageBuilderBlockTypes;
+export const homePagePageBuilderBlockTypes = [
+  "hero",
+  "homeHero",
+  ...contentPageBuilderBlockTypes,
+] as const;
 
-type PageBuilderBlockType = (typeof generalPageBuilderBlockTypes)[number];
+type PageBuilderBlockType = (typeof homePagePageBuilderBlockTypes)[number];
 
 function validateBlocks(
   blocks: Array<{ _type?: string }> | undefined,

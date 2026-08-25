@@ -1000,9 +1000,6 @@ export type Page = {
       } & Hero)
     | ({
         _key: string;
-      } & HomeHero)
-    | ({
-        _key: string;
       } & RichTextBlock)
     | ({
         _key: string;
@@ -2479,84 +2476,6 @@ export type BLOG_INDEX_QUERY_RESULT =
               alt?: string;
               _type: "image";
             } | null;
-          }
-        | {
-            _key: string;
-            _type: "homeHero";
-            badge: string | null;
-            title: Array<{
-              children?: Array<{
-                marks?: Array<string>;
-                text?: string;
-                _type: "span";
-                _key: string;
-              }>;
-              style?: "normal";
-              listItem?: never;
-              markDefs?: null;
-              level?: number;
-              _type: "block";
-              _key: string;
-            }> | null;
-            body: Array<{
-              children?: Array<{
-                marks?: Array<string>;
-                text?: string;
-                _type: "span";
-                _key: string;
-              }>;
-              style?: "normal";
-              listItem?: never;
-              markDefs: Array<{
-                _key: string;
-                _type: "customLink";
-                customLink?: CustomUrl;
-                href: string | null | "/";
-                openInNewTab: boolean | null;
-              }> | null;
-              level?: number;
-              _type: "block";
-              _key: string;
-            }> | null;
-            shortBody: string | null;
-            buttons: Array<{
-              _key: string;
-              _type: "button";
-              text: string | null;
-              variant:
-                "default" | "ghost" | "link" | "outline" | "secondary" | null;
-              icon: {
-                name: string | null;
-                svg: string | null;
-              } | null;
-              openInNewTab: boolean | null;
-              href: string | null | "/";
-            }> | null;
-            videoUrl: string | null;
-            image: {
-              asset: {
-                _id: string;
-                url: string | null;
-                mimeType: string | null;
-                metadata: {
-                  lqip: string | null;
-                  dimensions: {
-                    width: number | null;
-                    height: number | null;
-                  } | null;
-                } | null;
-              } | null;
-              media?: unknown;
-              hotspot?: SanityImageHotspot;
-              crop?: SanityImageCrop;
-              alt?: string;
-              _type: "image";
-            } | null;
-            stats: Array<{
-              _key: string;
-              value: string | null;
-              label: string | null;
-            }> | null;
           }
         | {
             _key: string;
@@ -4079,84 +3998,6 @@ export type PAGE_QUERY_RESULT = {
           alt?: string;
           _type: "image";
         } | null;
-      }
-    | {
-        _key: string;
-        _type: "homeHero";
-        badge: string | null;
-        title: Array<{
-          children?: Array<{
-            marks?: Array<string>;
-            text?: string;
-            _type: "span";
-            _key: string;
-          }>;
-          style?: "normal";
-          listItem?: never;
-          markDefs?: null;
-          level?: number;
-          _type: "block";
-          _key: string;
-        }> | null;
-        body: Array<{
-          children?: Array<{
-            marks?: Array<string>;
-            text?: string;
-            _type: "span";
-            _key: string;
-          }>;
-          style?: "normal";
-          listItem?: never;
-          markDefs: Array<{
-            _key: string;
-            _type: "customLink";
-            customLink?: CustomUrl;
-            href: string | null | "/";
-            openInNewTab: boolean | null;
-          }> | null;
-          level?: number;
-          _type: "block";
-          _key: string;
-        }> | null;
-        shortBody: string | null;
-        buttons: Array<{
-          _key: string;
-          _type: "button";
-          text: string | null;
-          variant:
-            "default" | "ghost" | "link" | "outline" | "secondary" | null;
-          icon: {
-            name: string | null;
-            svg: string | null;
-          } | null;
-          openInNewTab: boolean | null;
-          href: string | null | "/";
-        }> | null;
-        videoUrl: string | null;
-        image: {
-          asset: {
-            _id: string;
-            url: string | null;
-            mimeType: string | null;
-            metadata: {
-              lqip: string | null;
-              dimensions: {
-                width: number | null;
-                height: number | null;
-              } | null;
-            } | null;
-          } | null;
-          media?: unknown;
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          alt?: string;
-          _type: "image";
-        } | null;
-        stats: Array<{
-          _key: string;
-          value: string | null;
-          label: string | null;
-        }> | null;
       }
     | {
         _key: string;

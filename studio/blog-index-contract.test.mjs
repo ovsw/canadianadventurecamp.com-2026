@@ -5,6 +5,8 @@ import {
   blocksField,
   contentBlocksField,
   contentPageBuilderBlockTypes,
+  homePageBlocksField,
+  homePagePageBuilderBlockTypes,
   pageBuilderBlockTypes,
 } from "./schemas/blocks/page-builder.ts";
 import {
@@ -29,6 +31,15 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
   ]);
   assert.equal(blocksField.of.some(({ hidden }) => hidden), false);
   assert.equal(new Set(pageBuilderBlockTypes).size, pageBuilderBlockTypes.length);
+});
+
+test("the homepage alone offers the homepage hero", () => {
+  assert.deepEqual(
+    homePageBlocksField.of.filter(({ hidden }) => !hidden).map(({ type }) => type),
+    [...homePagePageBuilderBlockTypes],
+  );
+  assert.equal(homePagePageBuilderBlockTypes.includes("homeHero"), true);
+  assert.equal(pageBuilderBlockTypes.includes("homeHero"), false);
 });
 
 test("blogIndex uses the singleton configuration", () => {

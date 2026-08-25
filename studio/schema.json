@@ -5891,21 +5891,6 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "homeHero"
-                }
-              },
-              {
-                "type": "object",
-                "attributes": {
-                  "_key": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "rest": {
-                  "type": "inline",
                   "name": "richTextBlock"
                 }
               },
