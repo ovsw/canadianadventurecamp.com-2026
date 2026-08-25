@@ -2,10 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import HomeHeroBackgroundVideo from "@/components/blocks/home-hero-background-video";
 import { Button } from "@/components/ui/button";
 import { NavigationIcon } from "@/components/header/navigation-icon";
 import HomeHeroVideoLightbox from "@/components/blocks/home-hero-video-lightbox";
 import { getHomeHeroVideoEmbedUrl } from "@/components/blocks/home-hero-video";
+import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
@@ -55,13 +57,6 @@ const headingComponents: PortableTextComponents = {
   },
 };
 
-/** Simple rich text for the body: paragraphs with bold, italic, inline links. */
-const bodyComponents: PortableTextComponents = {
-  block: {
-    normal: ({ children }) => <p>{children}</p>,
-  },
-};
-
 export default function HomeHero({
   _key,
   badge,
@@ -90,17 +85,7 @@ export default function HomeHero({
       id={`hero-${stegaClean(_key)}`}
     >
       {/* Background media */}
-      {cleanVideoUrl ? (
-        <video
-          autoPlay
-          className="absolute inset-0 size-full object-cover"
-          loop
-          muted
-          playsInline
-          poster={posterUrl}
-          src={cleanVideoUrl}
-        />
-      ) : image?.asset?._id ? (
+      {image?.asset?._id ? (
         <Image
           alt={stegaClean(image.alt) || ""}
           blurDataURL={image.asset.metadata?.lqip || undefined}
@@ -112,6 +97,9 @@ export default function HomeHero({
           sizes="100vw"
           src={urlFor(image).width(1920).height(1080).fit("crop").url()}
         />
+      ) : null}
+      {cleanVideoUrl ? (
+        <HomeHeroBackgroundVideo poster={posterUrl} src={cleanVideoUrl} />
       ) : null}
 
       {/* Gradient overlay */}
@@ -153,7 +141,7 @@ export default function HomeHero({
               className="hidden max-w-xl text-lg leading-relaxed text-white/85 lg:block"
               data-sanity={dataAttribute?.("body")}
             >
-              <PortableText components={bodyComponents} value={body} />
+              <PortableText components={simpleRichTextComponents} value={body} />
             </div>
           ) : null}
 
@@ -167,7 +155,7 @@ export default function HomeHero({
             </p>
           ) : body?.length ? (
             <div className="max-w-md text-base leading-normal text-white/85 lg:hidden">
-              <PortableText components={bodyComponents} value={body} />
+              <PortableText components={simpleRichTextComponents} value={body} />
             </div>
           ) : null}
 

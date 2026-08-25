@@ -74,6 +74,45 @@ describe("core Page Builder sections", () => {
     );
   });
 
+  it("renders inline links in the page header copy", () => {
+    const hero = {
+      _key: "hero",
+      _type: "hero",
+      body: [
+        {
+          ...paragraph("hero-body", "Learn more"),
+          children: [
+            {
+              _key: "hero-body-span",
+              _type: "span",
+              marks: ["learn-link"],
+              text: "Learn more",
+            },
+          ],
+          markDefs: [
+            {
+              _key: "learn-link",
+              _type: "customLink",
+              href: "/learn",
+              openInNewTab: false,
+            },
+          ],
+        },
+      ],
+      buttons: [],
+      eyebrow: null,
+      image: null,
+      title: [paragraph("hero-title", "Camp")],
+    } as unknown as ComponentProps<typeof Hero>;
+
+    render(<Hero {...hero} />);
+
+    expect(screen.getByRole("link", { name: "Learn more" })).toHaveAttribute(
+      "href",
+      "/learn",
+    );
+  });
+
   it("renders rich text and a closing call to action", () => {
     const richText = {
       _key: "story",

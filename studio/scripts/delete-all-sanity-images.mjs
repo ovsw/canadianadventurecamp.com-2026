@@ -2,6 +2,7 @@
 
 import process from "node:process";
 import { getCliClient } from "sanity/cli";
+import { assertCacProductionTarget } from "./assert-cac-production-target.mjs";
 
 const APPLY = process.argv.includes("--apply");
 const API_VERSION = "2026-03-23";
@@ -10,9 +11,7 @@ const DROP = Symbol("drop-image-value");
 const client = getCliClient({ apiVersion: API_VERSION });
 const { dataset, projectId } = client.config();
 
-if (dataset !== "production") {
-  throw new Error(`Expected production dataset, received ${dataset}`);
-}
+assertCacProductionTarget({ dataset, projectId });
 
 const imageAssets = await client.fetch(
   `*[_type == "sanity.imageAsset"] | order(_id asc) {_id}`,

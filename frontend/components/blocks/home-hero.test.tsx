@@ -72,4 +72,39 @@ describe("resolveHomeHeroButtonVariant", () => {
     expect(button.className).toContain("hover:shadow-none");
     expect(button.querySelector("svg")).not.toBeNull();
   });
+
+  it("renders inline links in the supporting copy", () => {
+    render(
+      <HomeHero
+        {...loneVideoButtonHero}
+        body={[
+          {
+            _key: "body",
+            _type: "block",
+            children: [
+              {
+                _key: "body-text",
+                _type: "span",
+                marks: ["apply-link"],
+                text: "Apply now",
+              },
+            ],
+            markDefs: [
+              {
+                _key: "apply-link",
+                _type: "customLink",
+                href: "/apply",
+                openInNewTab: false,
+              },
+            ],
+            style: "normal",
+          },
+        ]}
+      />,
+    );
+
+    const links = screen.getAllByRole("link", { name: "Apply now" });
+    expect(links).toHaveLength(2);
+    for (const link of links) expect(link).toHaveAttribute("href", "/apply");
+  });
 });

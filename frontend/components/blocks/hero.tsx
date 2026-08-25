@@ -5,6 +5,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { resolveHomeHeroButtonVariant } from "@/components/blocks/home-hero";
 import { Button } from "@/components/ui/button";
 import { getSafeLinkHref } from "@/lib/safe-href";
+import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { urlFor } from "@/sanity/lib/image";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 
@@ -37,12 +38,6 @@ const headingComponents: PortableTextComponents = {
     em: ({ children }) => (
       <em className="font-accent not-italic text-accent">{children}</em>
     ),
-  },
-};
-
-const bodyComponents: PortableTextComponents = {
-  block: {
-    normal: ({ children }) => <p>{children}</p>,
   },
 };
 
@@ -117,7 +112,7 @@ export default function Hero({
             className="mt-6 max-w-xl animate-hero-rise text-base leading-relaxed text-birch-bark/75 [animation-delay:180ms] motion-reduce:animate-none"
             data-sanity={dataAttribute?.("body")}
           >
-            <PortableText components={bodyComponents} value={body} />
+            <PortableText components={simpleRichTextComponents} value={body} />
           </div>
         ) : null}
 
