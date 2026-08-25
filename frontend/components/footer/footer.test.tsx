@@ -11,8 +11,37 @@ const link = (
 ) => ({ key, label, href, openInNewTab });
 
 const model: FooterModel = {
-  brand: { label: "Northline", image: null },
-  intro: "Clear thinking for complicated work.",
+  eyebrow: "Temagami, Ontario · Est. 1975",
+  heading: "Until next summer,",
+  accent: "see you on the island",
+  actions: [link("enroll", "Enroll", "https://example.com", true)],
+  logos: [
+    {
+      key: "cac",
+      alt: "Canadian Adventure Camp logo",
+      image: {
+        src: "https://cdn.sanity.io/images/test-project/test/logo.png",
+        width: 200,
+        height: 100,
+      },
+      link: link("cac", "Canadian Adventure Camp logo", "/"),
+    },
+  ],
+  contactLinks: [
+    {
+      icon: "pin",
+      link: link(
+        "address",
+        "10 Main Street\nExample City",
+        "https://maps.example.com",
+        true,
+      ),
+    },
+    {
+      icon: "email",
+      link: link("email", "hello@example.com", "mailto:hello@example.com"),
+    },
+  ],
   columns: [
     {
       key: "company",
@@ -20,36 +49,24 @@ const model: FooterModel = {
       links: [link("about", "About", "/about")],
     },
   ],
-  contact: {
-    email: link(
-      "contact-email",
-      "hello@example.com",
-      "mailto:hello@example.com",
-    ),
-    phone: link("contact-phone", "+1 555 0100", "tel:+15550100"),
-    addressLines: ["10 Main Street", "Example City"],
-  },
-  socialLinks: [
-    link(
-      "linkedin",
-      "LinkedIn",
-      "https://linkedin.com/company/example",
-      true,
-    ),
-  ],
   legalLinks: [link("privacy", "Privacy", "/privacy")],
   copyrightYears: "2024-2026",
   copyrightOwner: "Northline Studio",
 };
 
 describe("SiteFooter", () => {
-  it("renders authored identity, navigation, contact, and social links", () => {
+  it("renders sign-off, logos, navigation, and linked contact rows", () => {
     render(<SiteFooter model={model} />);
     const footer = screen.getByRole("contentinfo");
 
     expect(
-      within(footer).getByRole("link", { name: "Northline home page" }),
-    ).toHaveAttribute("href", "/");
+      within(footer).getByRole("heading", { name: /Until next summer/ }),
+    ).toHaveAttribute("id", "site-footer-heading");
+    expect(
+      within(footer).getByRole("img", {
+        name: "Canadian Adventure Camp logo",
+      }),
+    ).toBeInTheDocument();
     expect(
       within(footer).getByRole("heading", { name: "Company" }),
     ).toBeInTheDocument();
@@ -58,9 +75,8 @@ describe("SiteFooter", () => {
       "/about",
     );
     expect(
-      within(footer).getByRole("link", { name: /LinkedIn/ }),
-    ).toHaveAttribute("target", "_blank");
-    expect(within(footer).getByText("10 Main Street")).toBeInTheDocument();
+      within(footer).getByRole("link", { name: /10 Main Street/ }),
+    ).toHaveAttribute("href", "https://maps.example.com");
     expect(document.querySelector('a[href="#"]')).not.toBeInTheDocument();
   });
 
@@ -69,12 +85,10 @@ describe("SiteFooter", () => {
     render(<SiteFooter dataAttribute={dataAttribute} model={model} />);
 
     expect(
-      document.querySelector('[data-sanity="field:intro"]'),
-    ).toHaveTextContent("Clear thinking");
+      document.querySelector('[data-sanity="field:eyebrow"]'),
+    ).toHaveTextContent("Temagami");
     expect(
-      document.querySelector(
-        '[data-sanity="field:copyrightStartYear"]',
-      ),
+      document.querySelector('[data-sanity="field:copyrightStartYear"]'),
     ).toHaveTextContent("2024-2026");
     expect(
       document.querySelector('[data-sanity="field:copyrightOwner"]'),

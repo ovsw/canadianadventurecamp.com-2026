@@ -1,7 +1,7 @@
 import { createFooterModel } from "./model";
 import { SiteFooter } from "./site-footer";
 import { createDataAttribute } from "next-sanity";
-import { fetchSanityFooter, fetchSanitySettings, getCurrentYear } from "@/sanity/lib/fetch";
+import { fetchSanityFooter, getCurrentYear } from "@/sanity/lib/fetch";
 import { getDynamicFetchOptions, type DynamicFetchOptions } from "@/sanity/lib/live";
 import { dataset, projectId } from "@/sanity/lib/env";
 
@@ -9,7 +9,10 @@ export { SiteFooter } from "./site-footer";
 
 function FooterUnavailable() {
   return (
-    <footer data-footer-state="unavailable">
+    <footer
+      className="bg-pine-night px-content-x py-10 text-birch-bark"
+      data-footer-state="unavailable"
+    >
       Footer information is temporarily unavailable.
     </footer>
   );
@@ -21,12 +24,11 @@ export async function DynamicFooter() {
 }
 
 export async function CachedFooter({ perspective, stega }: DynamicFetchOptions) {
-  const [rawFooter, settings, year] = await Promise.all([
+  const [rawFooter, year] = await Promise.all([
     fetchSanityFooter({ perspective, stega }),
-    fetchSanitySettings({ perspective, stega }),
     getCurrentYear(),
   ]);
-  const model = createFooterModel(rawFooter, settings, year);
+  const model = createFooterModel(rawFooter, year);
   const dataAttribute = stega
     ? (path: string) =>
         createDataAttribute({

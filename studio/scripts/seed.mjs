@@ -375,7 +375,18 @@ export const starterDocuments = [
     _id: "footer",
     _type: "footer",
     ...marker,
-    intro: "Neutral footer copy for the optional Starter seed.",
+    eyebrow: "Example location · Est. 2026",
+    heading: "A clear closing thought,",
+    accent: "followed by a warm sign-off",
+    actions: [
+      { _key: "starter-footer-action", _type: "footerLink", label: "Open Blog", destination: { _type: "footerDestination", kind: "internal", internal: ref("blogIndex"), openInNewTab: false } },
+    ],
+    logos: [
+      { _key: "starter-footer-logo", _type: "footerLogo", alt: "Starter Example", image: imageRef, destination: { _type: "footerDestination", kind: "internal", internal: ref("homePage"), openInNewTab: false } },
+    ],
+    contactLinks: [
+      { _key: "starter-footer-email", _type: "footerContactLink", icon: "email", label: "hello@example.com", destination: { _type: "footerDestination", kind: "external", external: "mailto:hello@example.com", openInNewTab: false } },
+    ],
     columns: [
       {
         _key: "starter-footer-main",

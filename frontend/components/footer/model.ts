@@ -1,5 +1,4 @@
 import { urlFor } from "@/sanity/lib/image";
-import { siteName } from "@/lib/site-name";
 
 export type FooterLinkModel = {
   key: string;
@@ -14,23 +13,32 @@ export type FooterColumnModel = {
   links: FooterLinkModel[];
 };
 
+export type FooterLogoModel = {
+  key: string;
+  alt: string;
+  image: {
+    src: string;
+    width: number;
+    height: number;
+  };
+  link: FooterLinkModel;
+};
+
+export type FooterContactIcon = "pin" | "phone" | "email";
+
+export type FooterContactLinkModel = {
+  icon: FooterContactIcon;
+  link: FooterLinkModel;
+};
+
 export type FooterModel = {
-  brand: {
-    label: string;
-    image: {
-      src: string;
-      width: number;
-      height: number;
-    } | null;
-  };
-  intro: string | null;
+  eyebrow: string;
+  heading: string;
+  accent: string;
+  actions: FooterLinkModel[];
+  logos: FooterLogoModel[];
+  contactLinks: FooterContactLinkModel[];
   columns: FooterColumnModel[];
-  contact: {
-    email: FooterLinkModel | null;
-    phone: FooterLinkModel | null;
-    addressLines: string[];
-  };
-  socialLinks: FooterLinkModel[];
   legalLinks: FooterLinkModel[];
   copyrightYears: string;
   copyrightOwner: string;
@@ -43,9 +51,33 @@ type RawLink = {
   destination?: RawDestination | null;
 };
 
+type RawImage = {
+  asset?: {
+    _id?: string | null;
+    metadata?: {
+      dimensions?: { width?: number | null; height?: number | null } | null;
+    } | null;
+  } | null;
+};
+
 export type RawFooter = {
   _id?: string | null;
-  intro?: string | null;
+  eyebrow?: string | null;
+  heading?: string | null;
+  accent?: string | null;
+  actions?: RawLink[] | null;
+  logos?: Array<{
+    _key?: string | null;
+    alt?: string | null;
+    image?: RawImage | null;
+    destination?: RawDestination | null;
+  } | null> | null;
+  contactLinks?: Array<{
+    _key?: string | null;
+    icon?: string | null;
+    label?: string | null;
+    destination?: RawDestination | null;
+  } | null> | null;
   columns?: Array<{
     _key?: string | null;
     heading?: string | null;
@@ -54,21 +86,6 @@ export type RawFooter = {
   legalLinks?: RawLink[] | null;
   copyrightStartYear?: number | null;
   copyrightOwner?: string | null;
-} | null;
-
-export type RawFooterSettings = {
-  siteName?: string | null;
-  logo?: { light?: unknown; dark?: unknown } | null;
-  contact?: {
-    email?: string | null;
-    phone?: string | null;
-    addressLines?: Array<string | null> | null;
-  } | null;
-  socialLinks?: Array<{
-    _key?: string | null;
-    label?: string | null;
-    url?: string | null;
-  } | null> | null;
 } | null;
 
 function text(value: string | null | undefined): string | null {
@@ -107,56 +124,38 @@ function links(raw: RawLink[] | null | undefined): FooterLinkModel[] {
   });
 }
 
-type RawImage = {
-  asset?: {
-    metadata?: { dimensions?: { width?: number | null; height?: number | null } | null } | null;
-  } | null;
-};
-
-function logo(settings: RawFooterSettings): FooterModel["brand"]["image"] {
-  const source = settings?.logo?.light ?? settings?.logo?.dark;
-  if (!source) return null;
-  const dimensions = (source as RawImage).asset?.metadata?.dimensions;
+function image(source: RawImage | null | undefined) {
+  const dimensions = source?.asset?.metadata?.dimensions;
+  if (!source || !dimensions?.width || !dimensions.height) return null;
   try {
     return {
       src: urlFor(source as Parameters<typeof urlFor>[0]).url(),
-      width: dimensions?.width ?? 216,
-      height: dimensions?.height ?? 48,
+      width: dimensions.width,
+      height: dimensions.height,
     };
   } catch {
     return null;
   }
 }
 
-function contactLink(
-  kind: "email" | "phone",
-  value: string | null | undefined,
-): FooterLinkModel | null {
-  const label = text(value);
-  if (!label) return null;
-  const phone = kind === "phone" ? label.replace(/[^+\d]/g, "") : null;
-  if (kind === "phone" && !/\d/.test(phone ?? "")) return null;
-  const href = kind === "email" ? `mailto:${label}` : `tel:${phone}`;
-  return {
-    key: `contact-${kind}`,
-    label,
-    href,
-    openInNewTab: false,
-  };
+function isContactIcon(value: string): value is FooterContactIcon {
+  return value === "pin" || value === "phone" || value === "email";
 }
 
 export function createFooterModel(
   raw: RawFooter,
-  settings: RawFooterSettings,
   currentYear: number,
 ): FooterModel | null {
-  if (!settings) return null;
-  const label = settings.siteName?.trim() || siteName;
+  const eyebrow = text(raw?.eyebrow);
+  const heading = text(raw?.heading);
+  const accent = text(raw?.accent);
   const owner = text(raw?.copyrightOwner);
   const startYear = raw?.copyrightStartYear;
   if (
     raw?._id !== "footer" ||
-    !label ||
+    !eyebrow ||
+    !heading ||
+    !accent ||
     !owner ||
     !Number.isInteger(startYear) ||
     !Number.isInteger(currentYear)
@@ -164,39 +163,50 @@ export function createFooterModel(
     return null;
   }
 
+  const actions = links(raw.actions);
+  const logos = (raw.logos ?? []).flatMap((item) => {
+    const key = text(item?._key);
+    const alt = text(item?.alt);
+    const logoImage = image(item?.image);
+    const logoLink = link(
+      item
+        ? { _key: item._key, label: item.alt, destination: item.destination }
+        : null,
+    );
+    return key && alt && logoImage && logoLink
+      ? [{ key, alt, image: logoImage, link: logoLink }]
+      : [];
+  });
+  const contactLinks = (raw.contactLinks ?? []).flatMap((item) => {
+    const icon = text(item?.icon);
+    const contactLink = link(item);
+    return icon && isContactIcon(icon) && contactLink
+      ? [{ icon, link: contactLink }]
+      : [];
+  });
   const columns = (raw.columns ?? []).flatMap((column) => {
     const key = text(column?._key);
-    const heading = text(column?.heading);
+    const columnHeading = text(column?.heading);
     const columnLinks = links(column?.links);
-    return key && heading && columnLinks.length
-      ? [{ key, heading, links: columnLinks }]
+    return key && columnHeading && columnLinks.length
+      ? [{ key, heading: columnHeading, links: columnLinks }]
       : [];
-  });
-  const socialLinks = (settings.socialLinks ?? []).flatMap((item) => {
-    const key = text(item?._key);
-    const socialLabel = text(item?.label);
-    const href = normalizeHref(item?.url);
-    return key && socialLabel && href
-      ? [{ key, label: socialLabel, href, openInNewTab: true }]
-      : [];
-  });
-  const addressLines = (settings.contact?.addressLines ?? []).flatMap((line) => {
-    const value = text(line);
-    return value ? [value] : [];
   });
   const copyrightYears =
     startYear! < currentYear ? `${startYear}-${currentYear}` : `${currentYear}`;
 
+  if (!actions.length || !logos.length || !contactLinks.length || !columns.length) {
+    return null;
+  }
+
   return {
-    brand: { label, image: logo(settings) },
-    intro: text(raw.intro),
+    eyebrow,
+    heading,
+    accent,
+    actions,
+    logos,
+    contactLinks,
     columns,
-    contact: {
-      email: contactLink("email", settings.contact?.email),
-      phone: contactLink("phone", settings.contact?.phone),
-      addressLines,
-    },
-    socialLinks,
     legalLinks: links(raw.legalLinks),
     copyrightYears,
     copyrightOwner: owner,

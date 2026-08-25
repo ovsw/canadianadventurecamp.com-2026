@@ -23,7 +23,30 @@ const linkProjection = `{
 export const FOOTER_QUERY = defineQuery(`
   *[_type == "footer" && _id == "footer"][0]{
     _id,
-    intro,
+    eyebrow,
+    heading,
+    accent,
+    actions[]${linkProjection},
+    logos[]{
+      _key,
+      alt,
+      image{
+        ...,
+        asset->{
+          _id,
+          url,
+          mimeType,
+          metadata { lqip, dimensions { width, height } }
+        }
+      },
+      destination${destinationProjection}
+    },
+    contactLinks[]{
+      _key,
+      icon,
+      label,
+      destination${destinationProjection}
+    },
     columns[]{
       _key,
       heading,

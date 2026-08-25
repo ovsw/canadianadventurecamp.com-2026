@@ -1,14 +1,27 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { FooterLink } from "./footer-link";
-import type { FooterColumnModel, FooterLinkModel, FooterModel } from "./model";
+import type {
+  FooterColumnModel,
+  FooterLinkModel,
+  FooterModel,
+} from "./model";
+
+const contactIcons = { email: Mail, phone: Phone, pin: MapPin } as const;
 
 function LinkList({ links }: { links: FooterLinkModel[] }) {
   return (
-    <ul>
+    <ul className="flex flex-col items-start gap-[13px]">
       {links.map((link) => (
         <li key={link.key}>
-          <FooterLink link={link} />
+          <FooterLink
+            link={link}
+            dataSanity={undefined}
+          >
+            <span className="text-[14.5px] text-birch-bark/70 transition-colors duration-200 hover:text-campfire-amber">
+              {link.label}
+            </span>
+          </FooterLink>
         </li>
       ))}
     </ul>
@@ -19,9 +32,36 @@ function FooterColumn({ column }: { column: FooterColumnModel }) {
   const headingId = `footer-column-${column.key}`;
   return (
     <section aria-labelledby={headingId}>
-      <h2 id={headingId}>{column.heading}</h2>
+      <h2
+        className="mb-[19px] font-display text-[15px] font-bold uppercase tracking-[0.08em] text-birch-bark"
+        id={headingId}
+      >
+        {column.heading}
+      </h2>
       <LinkList links={column.links} />
     </section>
+  );
+}
+
+function FooterAction({
+  link,
+  primary,
+}: {
+  link: FooterLinkModel;
+  primary: boolean;
+}) {
+  return (
+    <FooterLink link={link}>
+      <span
+        className={
+          primary
+            ? "inline-flex items-center rounded-pill bg-campfire-amber px-[30px] py-4 font-bold text-pine-night transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-campfire-amber-deep"
+            : "inline-flex items-center rounded-pill border-[1.5px] border-birch-bark/50 px-[30px] py-[15.5px] font-semibold text-birch-bark transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-birch-bark/90"
+        }
+      >
+        {link.label}
+      </span>
+    </FooterLink>
   );
 }
 
@@ -32,60 +72,118 @@ export function SiteFooter({
   dataAttribute?: (path: string) => string | undefined;
   model: FooterModel;
 }) {
-  const hasContact = Boolean(
-    model.contact.email ||
-      model.contact.phone ||
-      model.contact.addressLines.length,
-  );
-
   return (
-    <footer data-footer-state="ready">
-      <Link aria-label={`${model.brand.label} home page`} href="/">
-        {model.brand.image ? (
-          <Image
-            alt={model.brand.label}
-            height={model.brand.image.height}
-            src={model.brand.image.src}
-            width={model.brand.image.width}
-          />
-        ) : (
-          model.brand.label
-        )}
-      </Link>
-      {model.intro ? (
-        <p data-sanity={dataAttribute?.("intro")}>{model.intro}</p>
-      ) : null}
-      {model.columns.map((column) => (
-        <FooterColumn column={column} key={column.key} />
-      ))}
-      {hasContact ? (
-        <section aria-labelledby="footer-contact">
-          <h2 id="footer-contact">Contact</h2>
-          {model.contact.email ? <FooterLink link={model.contact.email} /> : null}
-          {model.contact.phone ? <FooterLink link={model.contact.phone} /> : null}
-          {model.contact.addressLines.length ? (
-            <address>
-              {model.contact.addressLines.map((line) => (
-                <div key={line}>{line}</div>
+    <footer
+      className="rounded-t-[28px] bg-pine-night px-content-x pb-8 pt-16 text-birch-bark/75 phone:rounded-t-[44px] phone:pb-10 phone:pt-[100px]"
+      data-footer-state="ready"
+    >
+      <div className="mx-auto max-w-[1320px]">
+        <div className="flex flex-wrap items-end justify-between gap-[34px] pb-[70px]">
+          <div>
+            <p
+              className="mb-5 font-mono text-xs uppercase tracking-[0.24em] text-campfire-amber"
+              data-sanity={dataAttribute?.("eyebrow")}
+            >
+              {model.eyebrow}
+            </p>
+            <h2
+              className="text-headline font-display text-birch-bark"
+              id="site-footer-heading"
+            >
+              <span data-sanity={dataAttribute?.("heading")}>{model.heading}</span>
+              <br />
+              <span
+                className="font-accent text-[1.15em] font-semibold text-campfire-amber"
+                data-sanity={dataAttribute?.("accent")}
+              >
+                {model.accent}
+              </span>
+            </h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-3.5">
+            {model.actions.map((action, index) => (
+              <FooterAction
+                key={action.key}
+                link={action}
+                primary={index === model.actions.length - 1}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-11 border-y border-birch-bark/15 py-[60px] tablet:grid-cols-2 desktop:grid-cols-[1.5fr_repeat(4,1fr)] desktop:gap-12">
+          <section aria-label="Canadian Adventure Camp contact information">
+            <div className="mb-[26px] flex flex-wrap items-center gap-3">
+              {model.logos.map((logo) => (
+                <FooterLink key={logo.key} link={logo.link}>
+                  <span className="flex h-[72px] items-center justify-center">
+                    <Image
+                      alt={logo.alt}
+                      className="max-h-[72px] w-auto max-w-[86px] object-contain"
+                      data-sanity={dataAttribute?.(
+                        `logos[_key==\"${logo.key}\"].image`,
+                      )}
+                      height={logo.image.height}
+                      sizes="86px"
+                      src={logo.image.src}
+                      width={logo.image.width}
+                    />
+                  </span>
+                </FooterLink>
               ))}
-            </address>
-          ) : null}
-        </section>
-      ) : null}
-      <p>
-        © <span data-sanity={dataAttribute?.("copyrightStartYear")}>{model.copyrightYears}</span>{" "}
-        <span data-sanity={dataAttribute?.("copyrightOwner")}>{model.copyrightOwner}</span>
-      </p>
-      {model.socialLinks.length ? (
-        <nav aria-label="Social links">
-          <LinkList links={model.socialLinks} />
-        </nav>
-      ) : null}
-      {model.legalLinks.length ? (
-        <nav aria-label="Legal links">
-          <LinkList links={model.legalLinks} />
-        </nav>
-      ) : null}
+            </div>
+            <ul className="grid grid-cols-[20px_1fr] items-start gap-x-3.5 gap-y-3">
+              {model.contactLinks.map(({ icon, link }) => {
+                const ContactIcon = contactIcons[icon];
+                return (
+                <li className="contents" key={link.key}>
+                  <ContactIcon
+                    aria-hidden="true"
+                    className="mt-px size-4 text-birch-bark/55"
+                    strokeWidth={1.8}
+                  />
+                  <FooterLink link={link}>
+                    <span className="whitespace-pre-line font-mono text-[12.5px] leading-6 tracking-[0.02em] text-birch-bark/70 transition-colors duration-200 hover:text-campfire-amber">
+                      <span className="sr-only">
+                        {icon === "pin"
+                          ? "Address: "
+                          : icon === "phone"
+                            ? "Phone: "
+                            : "Email: "}
+                      </span>
+                      {link.label}
+                    </span>
+                  </FooterLink>
+                </li>
+                );
+              })}
+            </ul>
+          </section>
+
+          {model.columns.map((column) => (
+            <FooterColumn column={column} key={column.key} />
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-[26px] gap-y-3 pt-7 text-[13px] text-birch-bark/55">
+          <p className="desktop:mr-auto">
+            ©
+            <span data-sanity={dataAttribute?.("copyrightStartYear")}>
+              {model.copyrightYears}
+            </span>{" "}
+            <span data-sanity={dataAttribute?.("copyrightOwner")}>
+              {model.copyrightOwner}
+            </span>
+          </p>
+          {model.legalLinks.map((link) => (
+            <FooterLink key={link.key} link={link}>
+              <span className="transition-colors duration-200 hover:text-campfire-amber">
+                {link.label}
+              </span>
+            </FooterLink>
+          ))}
+        </div>
+      </div>
     </footer>
   );
 }

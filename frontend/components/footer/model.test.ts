@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  createFooterModel,
-  type RawFooter,
-  type RawFooterSettings,
-} from "./model";
-import { siteName } from "@/lib/site-name";
+import { createFooterModel, type RawFooter } from "./model";
 
 const rawLink = (
   key: string,
@@ -15,7 +10,31 @@ const rawLink = (
 
 const rawFooter: RawFooter = {
   _id: "footer",
-  intro: "Clear thinking for complicated work.",
+  eyebrow: "Temagami, Ontario · Est. 1975",
+  heading: "Until next summer,",
+  accent: "see you on the island",
+  actions: [rawLink("enroll", "Enroll", "https://example.com", true)],
+  logos: [
+    {
+      _key: "cac",
+      alt: "Canadian Adventure Camp",
+      image: {
+        asset: {
+          _id: "image-4477c44717fcc82a76174b8fa4bc4dc323b05c6b-2182x1006-png",
+          metadata: { dimensions: { width: 2182, height: 1006 } },
+        },
+      },
+      destination: { href: "/", openInNewTab: false },
+    },
+  ],
+  contactLinks: [
+    {
+      _key: "address",
+      icon: "pin",
+      label: "10 Main Street\nExample City",
+      destination: { href: "https://maps.example.com", openInNewTab: true },
+    },
+  ],
   columns: [
     {
       _key: "company",
@@ -31,27 +50,10 @@ const rawFooter: RawFooter = {
   copyrightOwner: "Northline Studio",
 };
 
-const settings: RawFooterSettings = {
-  siteName: "Northline",
-  contact: {
-    email: "hello@example.com",
-    phone: "+1 555 0100",
-    addressLines: ["10 Main Street", "Example City"],
-  },
-  socialLinks: [
-    {
-      _key: "linkedin",
-      label: "LinkedIn",
-      url: "https://linkedin.com/company/example",
-    },
-  ],
-};
-
 describe("createFooterModel", () => {
-  it("builds a neutral footer from authored settings and safe links", () => {
-    const model = createFooterModel(rawFooter, settings, 2026);
+  it("builds the footer from authored links, logos, and contact rows", () => {
+    const model = createFooterModel(rawFooter, 2026);
 
-    expect(model?.brand.label).toBe("Northline");
     expect(model?.columns[0]?.links).toEqual([
       {
         href: "/about",
@@ -60,27 +62,19 @@ describe("createFooterModel", () => {
         openInNewTab: false,
       },
     ]);
-    expect(model?.contact.email?.href).toBe("mailto:hello@example.com");
-    expect(model?.contact.phone?.href).toBe("tel:+15550100");
-    expect(model?.socialLinks[0]?.openInNewTab).toBe(true);
+    expect(model?.logos[0]?.alt).toBe("Canadian Adventure Camp");
+    expect(model?.contactLinks[0]?.link.label).toBe(
+      "10 Main Street\nExample City",
+    );
+    expect(model?.actions[0]?.openInNewTab).toBe(true);
     expect(model?.copyrightYears).toBe("2024-2026");
   });
 
-  it("supports settings documents from before siteName", () => {
+  it("returns unavailable when required footer data is missing", () => {
+    expect(createFooterModel(null, 2026)).toBeNull();
     expect(
-      createFooterModel(rawFooter, { ...settings, siteName: null }, 2026)
-        ?.brand.label,
-    ).toBe(siteName);
-  });
-
-  it("returns unavailable when settings or required footer data is missing", () => {
-    expect(createFooterModel(rawFooter, null, 2026)).toBeNull();
-    expect(
-      createFooterModel(
-        { ...rawFooter, copyrightOwner: null },
-        settings,
-        2026,
-      ),
+      createFooterModel({ ...rawFooter, copyrightOwner: null }, 2026),
     ).toBeNull();
+    expect(createFooterModel({ ...rawFooter, logos: [] }, 2026)).toBeNull();
   });
 });
