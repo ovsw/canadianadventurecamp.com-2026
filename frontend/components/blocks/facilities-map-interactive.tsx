@@ -350,7 +350,7 @@ export default function FacilitiesMapInteractive({
                     labelClassNames[placement.labelPosition]
                   }`}
                 >
-                  {placement.name}
+                  <span className={styles.stopLabelText}>{placement.name}</span>
                 </span>
               </button>
             ))}
