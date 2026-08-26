@@ -25,7 +25,8 @@ describe("core Page Builder sections", () => {
   it("chooses feature-card columns from each row's card count", () => {
     expect(getFeatureCardColumnCount(2)).toBe(2);
     expect(getFeatureCardColumnCount(3)).toBe(3);
-    expect(getFeatureCardColumnCount(4)).toBe(2);
+    expect(getFeatureCardColumnCount(4)).toBe(4);
+    expect(getFeatureCardColumnCount(4, false)).toBe(2);
     expect(getFeatureCardColumnCount(5)).toBe(3);
     expect(getFeatureCardColumnCount(6)).toBe(3);
   });

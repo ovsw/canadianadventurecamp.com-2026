@@ -492,6 +492,13 @@
                   },
                   "optional": true
                 },
+                "singleRowUpToFour": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "boolean"
+                  },
+                  "optional": true
+                },
                 "cards": {
                   "type": "objectAttribute",
                   "value": {

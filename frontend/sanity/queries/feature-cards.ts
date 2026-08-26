@@ -14,6 +14,7 @@ export const featureCardsQuery = groq`
       _key,
       heading,
       description,
+      "singleRowUpToFour": coalesce(singleRowUpToFour, true),
       "cards": array::compact(cards[]{
         _key,
         image {

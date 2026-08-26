@@ -72,6 +72,9 @@ const featureCardGroup = defineArrayMember({
   name: "featureCardGroup",
   title: "Row",
   type: "object",
+  initialValue: {
+    singleRowUpToFour: true,
+  },
   fields: [
     defineField({
       name: "heading",
@@ -84,10 +87,22 @@ const featureCardGroup = defineArrayMember({
       rows: 3,
     }),
     defineField({
+      name: "singleRowUpToFour",
+      title: "Keep up to four cards in one row",
+      type: "boolean",
+      description:
+        "When enabled, four cards stay together on one row on desktop. Turn it off for a two-by-two layout.",
+      initialValue: true,
+      components: {
+        input: (props) =>
+          props.renderDefault({ ...props, value: props.value ?? true }),
+      },
+    }),
+    defineField({
       name: "cards",
       type: "array",
       description:
-        "Add 2 to 6 cards. Two or four cards use two columns; three, five, or six use three columns on desktop.",
+        "Add 2 to 6 cards. The layout follows the number of cards and the row setting above.",
       of: [featureCard],
       validation: (rule) => rule.required().min(2).max(6),
     }),

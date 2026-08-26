@@ -33,7 +33,11 @@ function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
 }
 
-export function getFeatureCardColumnCount(cardCount: number) {
+export function getFeatureCardColumnCount(
+  cardCount: number,
+  singleRowUpToFour = true,
+) {
+  if (cardCount === 4 && singleRowUpToFour) return 4;
   return cardCount === 3 || cardCount === 5 || cardCount === 6 ? 3 : 2;
 }
 
@@ -96,12 +100,18 @@ export default function FeatureCards({
 
             if (!group.cards?.length || !hasText(group.heading)) return null;
 
-            const columnCount = getFeatureCardColumnCount(group.cards.length);
+            const columnCount = getFeatureCardColumnCount(
+              group.cards.length,
+              stegaClean(group.singleRowUpToFour) !== false,
+            );
 
             return (
               <section
                 aria-labelledby={`${headingId}-${group._key}`}
                 className={styles.reveal}
+                data-sanity={dataAttribute?.(
+                  `${groupPath}.singleRowUpToFour`,
+                )}
                 key={group._key}
               >
                 <header className="mb-6 max-w-2xl">
@@ -126,6 +136,7 @@ export default function FeatureCards({
                   className={cn(
                     "grid list-none gap-px overflow-hidden rounded-lg bg-birch-bark/15 p-0 md:grid-cols-2",
                     columnCount === 3 && "lg:grid-cols-3",
+                    columnCount === 4 && "lg:grid-cols-4",
                   )}
                   data-sanity={dataAttribute?.(`${groupPath}.cards`)}
                 >
@@ -165,7 +176,9 @@ export default function FeatureCards({
                                   : undefined
                               }
                               sizes={
-                                columnCount === 3
+                                columnCount === 4
+                                  ? "(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                                  : columnCount === 3
                                   ? "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                                   : "(min-width: 768px) 50vw, 100vw"
                               }
