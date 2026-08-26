@@ -46,6 +46,7 @@ import richTextBlock from "./schemas/blocks/rich-text-block";
 import ctaBanner from "./schemas/blocks/cta-banner";
 import benefitCards from "./schemas/blocks/benefit-cards";
 import homeHero from "./schemas/blocks/home-hero";
+import imageCollageFeature from "./schemas/blocks/image-collage-feature";
 
 export const schemaTypes = [
   // documents
@@ -92,4 +93,5 @@ export const schemaTypes = [
   ctaBanner,
   benefitCards,
   homeHero,
+  imageCollageFeature,
 ];
