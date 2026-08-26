@@ -412,18 +412,24 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  padding: 5px 10px;
+  width: max-content;
+  /* The 0.13em tracking makes each character ~1.2ch wide, so the cap
+     budgets 15ch of glyphs plus padding; long single words stay inside. */
+  max-width: calc(15ch + 16px);
+  padding: 4px 8px;
   border: 1px solid rgb(243 239 226 / 24%);
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgb(13 18 8 / 74%);
   color: var(--color-birch-bark);
   font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.13em;
+  line-height: 1.4;
   pointer-events: none;
+  text-align: center;
   text-transform: uppercase;
-  white-space: nowrap;
+  text-wrap: balance;
   transition: opacity 0.2s ease;
 }
 
