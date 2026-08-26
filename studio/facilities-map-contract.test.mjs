@@ -20,7 +20,8 @@ test("the map editor keeps native array editing and opens markers by key", async
   );
 
   assert.match(source, /props\.renderDefault\(props\)/);
-  assert.match(source, /props\.onItemOpen\(\[\{ _key: placement\._key \}\]\)/);
+  assert.match(source, /props\.onItemOpen\(itemPath\)/);
+  assert.match(source, /props\.onPathFocus\(\[\.\.\.itemPath, "facility"\]\)/);
   assert.match(source, /set\(current\.x, \[\{ _key: current\.key \}, "x"\]\)/);
   assert.match(source, /set\(current\.y, \[\{ _key: current\.key \}, "y"\]\)/);
 });

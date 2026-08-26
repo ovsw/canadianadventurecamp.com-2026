@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./facilities-map-section.module.css";
 
 export type BigTopSlide = {
@@ -20,8 +20,12 @@ export default function FacilitiesMapBigTopCarousel({
   slides: BigTopSlide[];
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [keyboardFocused, setKeyboardFocused] = useState(false);
+  const [manuallyPaused, setManuallyPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const resumeTimerRef = useRef<number | undefined>(undefined);
+  const paused = hovered || keyboardFocused || manuallyPaused;
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -39,23 +43,43 @@ export default function FacilitiesMapBigTopCarousel({
     return () => window.clearInterval(timer);
   }, [autoplay, paused, reducedMotion, slides.length]);
 
+  useEffect(
+    () => () => {
+      if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
+    },
+    [],
+  );
+
   if (!slides.length) return null;
   const activeSlide = slides[activeIndex] ?? slides[0];
 
   const select = (index: number) => {
     setActiveIndex(index);
-    setPaused(true);
+    setManuallyPaused(true);
+    if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = window.setTimeout(() => {
+      setManuallyPaused(false);
+    }, 7000);
   };
 
   return (
     <div
       className={styles.carousel}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false);
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setKeyboardFocused(false);
+        }
       }}
-      onFocus={() => setPaused(true)}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onFocus={(event) => {
+        if (
+          event.target instanceof HTMLElement &&
+          event.target.matches(":focus-visible")
+        ) {
+          setKeyboardFocused(true);
+        }
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {slides.map((slide, index) => (
         <div

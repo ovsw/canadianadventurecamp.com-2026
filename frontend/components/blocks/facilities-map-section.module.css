@@ -3,10 +3,10 @@
   z-index: 2;
   margin-top: -44px;
   overflow: hidden;
-  border-radius: 44px 44px 0 0;
-  background: #16200f;
-  color: #f3efe2;
-  padding: 130px 56px;
+  border-radius: var(--radius-section) var(--radius-section) 0 0;
+  background: var(--color-pine-night);
+  color: var(--color-birch-bark);
+  padding: var(--section-pad) var(--gutter);
 }
 
 .glow {
@@ -22,7 +22,7 @@
 
 .inner {
   position: relative;
-  width: min(100%, 1320px);
+  width: min(100%, var(--container-content));
   margin-inline: auto;
 }
 
@@ -35,15 +35,15 @@
 
 .eyebrow {
   margin-bottom: 20px;
-  color: #e8a23b;
-  font-family: ui-monospace, Menlo, monospace;
+  color: var(--color-campfire-amber);
+  font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.24em;
 }
 
 .title {
   margin: 0;
-  color: #f3efe2;
+  color: var(--color-birch-bark);
   font-family: var(--font-display), sans-serif;
   font-size: 58px;
   font-weight: 800;
@@ -54,7 +54,7 @@
 
 .title em,
 .mapHeading em {
-  color: #e8a23b;
+  color: var(--color-campfire-amber);
   font-family: var(--font-accent), cursive;
   font-style: normal;
   font-weight: 600;
@@ -88,8 +88,8 @@
   position: relative;
   height: 560px;
   overflow: hidden;
-  border-radius: 26px;
-  background: #24331a;
+  border-radius: var(--radius-xl);
+  background: var(--color-forest-panel);
   box-shadow: 0 36px 70px rgb(0 0 0 / 50%);
 }
 
@@ -128,8 +128,8 @@
 .coordinateChip {
   border: 1px solid rgb(243 239 226 / 22%);
   background: rgb(13 18 8 / 72%);
-  color: #f3efe2;
-  font-family: ui-monospace, Menlo, monospace;
+  color: var(--color-birch-bark);
+  font-family: var(--font-mono);
   font-size: 11px;
   white-space: nowrap;
 }
@@ -158,7 +158,7 @@
   border: 1px solid rgb(243 239 226 / 28%);
   border-radius: 50%;
   background: rgb(13 18 8 / 42%);
-  color: #f3efe2;
+  color: var(--color-birch-bark);
   cursor: pointer;
   font-size: 22px;
   line-height: 1;
@@ -167,7 +167,7 @@
 
 .carouselButton:hover,
 .carouselButton:focus-visible {
-  border-color: #e8a23b;
+  border-color: var(--color-campfire-amber);
   background: rgb(13 18 8 / 75%);
 }
 
@@ -202,7 +202,7 @@
 
 .carouselDotActive {
   width: 27px;
-  background: #e8a23b;
+  background: var(--color-campfire-amber);
 }
 
 .bigTopHeading {
@@ -230,12 +230,12 @@
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.9;
-  -webkit-text-stroke: 2.5px #e8a23b;
+  -webkit-text-stroke: 2.5px var(--color-campfire-amber);
 }
 
 .metricUnit {
   padding-bottom: 8px;
-  color: #e8a23b;
+  color: var(--color-campfire-amber);
   font-size: 52px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -245,7 +245,7 @@
 .metricTagline {
   display: block;
   margin-top: 6px;
-  color: #f3efe2;
+  color: var(--color-birch-bark);
   font-family: var(--font-accent), cursive;
   font-size: 29px;
   font-weight: 600;
@@ -270,7 +270,7 @@
 
 .mapHeading {
   margin: 0 0 50px;
-  color: #f3efe2;
+  color: var(--color-birch-bark);
   font-size: 38px;
   font-weight: 800;
   letter-spacing: -0.015em;
@@ -289,7 +289,7 @@
 .mapScroller {
   overflow-x: auto;
   overscroll-behavior-inline: contain;
-  scrollbar-color: #e8a23b #0d1208;
+  scrollbar-color: var(--color-campfire-amber) var(--color-pine-night);
 }
 
 .mapViewport {
@@ -298,8 +298,8 @@
   width: 100%;
   aspect-ratio: 1320 / 766;
   border: 1px solid rgb(243 239 226 / 14%);
-  border-radius: 26px;
-  background: #0d1626;
+  border-radius: var(--radius-xl);
+  background: var(--color-lake-night);
   box-shadow: 0 42px 84px rgb(0 0 0 / 50%);
   cursor: crosshair;
 }
@@ -361,7 +361,7 @@
 }
 
 .mapPathProgress {
-  stroke: #e8a23b;
+  stroke: var(--color-campfire-amber);
   stroke-width: 6;
 }
 
@@ -386,7 +386,7 @@
   transform: translate(-50%, -50%) rotate(45deg);
   border: 1.5px solid rgb(13 18 8 / 60%);
   border-radius: 3px;
-  background: #f3efe2;
+  background: var(--color-birch-bark);
 }
 
 .stopProminent .stopDot {
@@ -395,16 +395,17 @@
 }
 
 .stopActive .stopDot {
-  background: #e8a23b;
+  background: var(--color-campfire-amber);
 }
 
 .stopActive::before {
   position: absolute;
   inset: 0;
-  border: 1.5px solid #e8a23b;
+  border: 1.5px solid var(--color-campfire-amber);
   border-radius: 50%;
   content: "";
-  animation: mapPing 1.8s ease-out infinite;
+  opacity: 0.65;
+  transform: scale(1.45);
 }
 
 .stopLabel {
@@ -415,8 +416,8 @@
   border: 1px solid rgb(243 239 226 / 24%);
   border-radius: 999px;
   background: rgb(13 18 8 / 74%);
-  color: #f3efe2;
-  font-family: ui-monospace, Menlo, monospace;
+  color: var(--color-birch-bark);
+  font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.13em;
@@ -426,9 +427,9 @@
 }
 
 .stopActive .stopLabel {
-  border-color: #e8a23b;
-  background: #e8a23b;
-  color: #16200f;
+  border-color: var(--color-campfire-amber);
+  background: var(--color-campfire-amber);
+  color: var(--color-pine-night);
 }
 
 .labelAbove,
@@ -461,9 +462,9 @@
   width: 14px;
   height: 14px;
   transform: translate(-50%, -50%);
-  border: 2px solid #16200f;
+  border: 2px solid var(--color-pine-night);
   border-radius: 50%;
-  background: #e8a23b;
+  background: var(--color-campfire-amber);
   box-shadow: 0 0 0 5px rgb(232 162 59 / 25%), 0 0 22px rgb(232 162 59 / 65%);
 }
 
@@ -476,7 +477,7 @@
   border-radius: 999px;
   background: rgb(13 18 8 / 82%);
   box-shadow: 0 4px 14px rgb(13 18 8 / 50%);
-  color: #e8a23b;
+  color: var(--color-campfire-amber);
   font-family: var(--font-accent), cursive;
   font-size: 29px;
   font-weight: 600;
@@ -520,8 +521,8 @@
   border: 1px solid rgb(243 239 226 / 22%);
   border-radius: 50%;
   background: rgb(13 18 8 / 72%);
-  color: #f3efe2;
-  font-family: ui-monospace, Menlo, monospace;
+  color: var(--color-birch-bark);
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   line-height: 1;
@@ -530,7 +531,7 @@
 .compassArrow {
   display: block;
   margin-bottom: 2px;
-  color: #e8a23b;
+  color: var(--color-campfire-amber);
   font-size: 9px;
 }
 
@@ -552,13 +553,13 @@
   gap: 10px;
   margin-bottom: 10px;
   color: rgb(243 239 226 / 55%);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.2em;
 }
 
 .facilityNumber {
-  color: #e8a23b;
+  color: var(--color-campfire-amber);
   font-variant-numeric: tabular-nums;
 }
 
@@ -569,7 +570,7 @@
 }
 
 .facilityName {
-  color: #e8a23b;
+  color: var(--color-campfire-amber);
   font-family: var(--font-accent), cursive;
   font-size: 35px;
   font-weight: 600;
@@ -593,7 +594,7 @@
   padding: 10px 10px 0;
   transform: rotate(3deg);
   border-radius: 8px;
-  background: #faf7ee;
+  background: var(--color-birch-bark-bright);
   box-shadow: 0 30px 60px rgb(0 0 0 / 55%);
   transition: transform 0.35s ease;
 }
@@ -612,18 +613,13 @@
 .facilityPhoto figcaption {
   padding: 11px 4px;
   color: rgb(22 32 15 / 65%);
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.06em;
 }
 
-@keyframes mapPing {
-  from { opacity: 0.8; transform: scale(0.65); }
-  to { opacity: 0; transform: scale(1.8); }
-}
-
 @media (max-width: 1023px) {
-  .section { padding: 96px 32px; }
+  .section { padding: var(--section-pad) var(--gutter); }
   .sectionHeader { align-items: flex-start; flex-direction: column; gap: 22px; margin-bottom: 48px; }
   .introduction { max-width: 520px; margin: 0; }
   .title { font-size: 46px; }
@@ -632,13 +628,22 @@
   .carousel { height: auto; aspect-ratio: 4 / 3; }
   .carouselButton { width: 44px; height: 44px; }
   .metricNumber { font-size: 92px; }
-  .mapScroller { margin-inline: -32px; padding-inline: 32px; }
-  .mapViewport { width: 1120px; }
+  .mapScroller { margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .mapViewport { width: 1120px; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+  .facilityCard {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    margin: 0;
+    border-top: 0;
+    border-radius: 0 0 20px 20px;
+  }
   .facilityPhoto { position: relative; top: auto; right: auto; margin: 28px 0 0 auto; }
 }
 
 @media (max-width: 639px) {
-  .section { padding: 72px 20px; }
+  .section { padding: var(--section-pad) var(--gutter); }
   .title { font-size: 36px; line-height: 1.08; }
   .title em { font-size: 42px; }
   .carousel { aspect-ratio: 1; }
@@ -649,11 +654,11 @@
   .metricUnit { font-size: 34px; }
   .mapHeading { font-size: 32px; }
   .mapHeading em { display: block; margin: 5px 0 0; font-size: 40px; }
-  .mapScroller { margin-inline: -20px; padding-inline: 20px; }
+  .mapScroller { margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
   .mapViewport { width: 800px; }
   .stop { width: 44px; height: 44px; }
   .stopLabel { display: none; }
-  .facilityCard { bottom: 14px; left: 14px; width: 280px; padding: 18px 20px; }
+  .facilityCard { width: 100%; padding: 18px 20px; }
   .facilityName { font-size: 30px; }
   .mapTopBar { top: 14px; left: 14px; }
   .coordinateChip { display: none; }
@@ -666,5 +671,4 @@
   .carouselSlide,
   .carouselDot,
   .facilityPhoto { transition: none; }
-  .stopActive::before { animation: none; }
 }

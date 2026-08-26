@@ -55,7 +55,9 @@ export default function FacilitiesMapSection({
   map,
   mapDataAttribute,
   mapHeading,
+  mapLocationLabel,
   showBigTop,
+  stopLabel,
 }: FacilitiesMapSectionProps) {
   const displayEyebrow = stegaClean(eyebrow)?.trim();
   const displayIntroduction = stegaClean(introduction)?.trim();
@@ -64,6 +66,9 @@ export default function FacilitiesMapSection({
   const displayBigTopUnit = stegaClean(bigTopUnit)?.trim();
   const displayBigTopArea = stegaClean(bigTopArea);
   const displayBigTop = stegaClean(showBigTop) !== false;
+  const displayMapLocationLabel =
+    stegaClean(mapLocationLabel)?.trim() || "ADVENTURE ISLAND · LAKE TEMAGAMI";
+  const displayStopLabel = stegaClean(stopLabel)?.trim() || "STOP";
   const sectionKey = stegaClean(_key);
   const headingId = `facilities-map-${sectionKey}-title`;
   const mapHeadingId = `facilities-map-${sectionKey}-map-title`;
@@ -242,9 +247,13 @@ export default function FacilitiesMapSection({
             <FacilitiesMapInteractive
               mapAlt={mapAlt}
               mapDataAttribute={mapDataAttribute?.("mapImage")}
+              mapLocationDataAttribute={dataAttribute?.("mapLocationLabel")}
+              mapLocationLabel={displayMapLocationLabel}
               mapLqip={map.mapImage?.asset?.metadata?.lqip || undefined}
               mapUrl={mapUrl}
               placements={placements}
+              stopLabel={displayStopLabel}
+              stopLabelDataAttribute={dataAttribute?.("stopLabel")}
               websiteAutoplay={stegaClean(map.websiteAutoplay) !== false}
             />
           </div>

@@ -73,16 +73,24 @@ function getStopDistances(
 export default function FacilitiesMapInteractive({
   mapAlt,
   mapDataAttribute,
+  mapLocationDataAttribute,
+  mapLocationLabel,
   mapLqip,
   mapUrl,
   placements,
+  stopLabel,
+  stopLabelDataAttribute,
   websiteAutoplay,
 }: {
   mapAlt: string;
   mapDataAttribute?: string;
+  mapLocationDataAttribute?: string;
+  mapLocationLabel: string;
   mapLqip?: string;
   mapUrl: string;
   placements: PublicFacilityPlacement[];
+  stopLabel: string;
+  stopLabelDataAttribute?: string;
   websiteAutoplay: boolean;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -311,7 +319,12 @@ export default function FacilitiesMapInteractive({
           </div>
 
           <div className={styles.mapTopBar}>
-            <span className={styles.mapChip}>ADVENTURE ISLAND · LAKE TEMAGAMI</span>
+            <span
+              className={styles.mapChip}
+              data-sanity={mapLocationDataAttribute}
+            >
+              {mapLocationLabel}
+            </span>
             <span className={styles.coordinateChip}>{coordinate}</span>
           </div>
           <div aria-label="North" className={styles.compass}>
@@ -319,29 +332,29 @@ export default function FacilitiesMapInteractive({
               <span className={styles.compassArrow}>▲</span>N
             </span>
           </div>
-
-          <div className={styles.facilityCard} aria-live="polite">
-            <div className={styles.facilityCardMeta}>
-              <span>STOP</span>
-              <span className={styles.facilityNumber}>
-                {String(activeIndex + 1).padStart(2, "0")} / {placements.length}
-              </span>
-              <span className={styles.facilityRule} />
-            </div>
-            <div
-              className={styles.facilityName}
-              data-sanity={activePlacement.nameDataAttribute}
-            >
-              {activePlacement.name}
-            </div>
-            <p
-              className={styles.facilityDescription}
-              data-sanity={activePlacement.descriptionDataAttribute}
-            >
-              {activePlacement.description}
-            </p>
-          </div>
         </div>
+      </div>
+
+      <div className={styles.facilityCard} aria-live="polite">
+        <div className={styles.facilityCardMeta}>
+          <span data-sanity={stopLabelDataAttribute}>{stopLabel}</span>
+          <span className={styles.facilityNumber}>
+            {String(activeIndex + 1).padStart(2, "0")} / {placements.length}
+          </span>
+          <span className={styles.facilityRule} />
+        </div>
+        <div
+          className={styles.facilityName}
+          data-sanity={activePlacement.nameDataAttribute}
+        >
+          {activePlacement.name}
+        </div>
+        <p
+          className={styles.facilityDescription}
+          data-sanity={activePlacement.descriptionDataAttribute}
+        >
+          {activePlacement.description}
+        </p>
       </div>
 
       {activePlacement.featuredImage ? (

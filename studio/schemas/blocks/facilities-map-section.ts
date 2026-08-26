@@ -139,6 +139,8 @@ export default defineType({
       },
     ],
     mapHeading: defaultMapHeading,
+    mapLocationLabel: "ADVENTURE ISLAND · LAKE TEMAGAMI",
+    stopLabel: "STOP",
     bigTopGalleryAutoplay: true,
   },
   fields: [
@@ -235,6 +237,20 @@ export default defineType({
     defineField({
       name: "mapHeading",
       type: "minimalRichText",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "mapLocationLabel",
+      title: "Map Location Label",
+      type: "string",
+      initialValue: "ADVENTURE ISLAND · LAKE TEMAGAMI",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "stopLabel",
+      title: "Tour Stop Label",
+      type: "string",
+      initialValue: "STOP",
       validation: (rule) => rule.required(),
     }),
   ],

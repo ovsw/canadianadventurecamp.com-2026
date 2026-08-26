@@ -110,25 +110,37 @@ export default function FacilityMapPlacementsInput(
       return;
     }
 
-    void client
-      .fetch<Array<{ _id: string; name?: string }>>(
+    const versionIds = referenceIds.flatMap((id) => [id, `drafts.${id}`]);
+    const refreshFacilityNames = async () => {
+      const facilities = await client.fetch<
+        Array<{ _id: string; name?: string }>
+      >(
         `*[_type == "facility" && _id in $ids]{_id, name}`,
-        { ids: referenceIds },
-      )
-      .then((facilities) => {
-        if (cancelled) return;
-        setFacilityNames(
-          Object.fromEntries(
-            facilities.map((facility) => [
-              facility._id,
-              facility.name || "Untitled Facility",
-            ]),
-          ),
-        );
+        { ids: versionIds },
+        { perspective: "raw" },
+      );
+      if (cancelled) return;
+
+      const names: Record<string, string> = {};
+      for (const facility of facilities) {
+        const publishedId = facility._id.replace(/^drafts\./, "");
+        if (facility._id.startsWith("drafts.") || !names[publishedId]) {
+          names[publishedId] = facility.name || "Untitled Facility";
+        }
+      }
+      setFacilityNames(names);
+    };
+
+    void refreshFacilityNames();
+    const subscription = client
+      .listen(`*[_type == "facility" && _id in $ids]`, { ids: versionIds })
+      .subscribe(() => {
+        void refreshFacilityNames();
       });
 
     return () => {
       cancelled = true;
+      subscription.unsubscribe();
     };
   }, [client, referenceIdsKey]);
 
@@ -171,6 +183,11 @@ export default function FacilityMapPlacementsInput(
         : placement.y,
   }));
   const pathData = createPath(editorPlacements);
+  const openPlacement = (key: string) => {
+    const itemPath = [{ _key: key }];
+    props.onItemOpen(itemPath);
+    props.onPathFocus([...itemPath, "facility"]);
+  };
 
   const updateDrag = (event: React.PointerEvent<HTMLButtonElement>) => {
     const current = dragRef.current;
@@ -200,7 +217,7 @@ export default function FacilityMapPlacementsInput(
     event.currentTarget.releasePointerCapture(event.pointerId);
     dragRef.current = undefined;
     setDragState(undefined);
-    draggedRef.current = current.moved;
+    draggedRef.current = true;
 
     if (current.moved) {
       props.onChange(
@@ -209,6 +226,8 @@ export default function FacilityMapPlacementsInput(
           set(current.y, [{ _key: current.key }, "y"]),
         ]),
       );
+    } else {
+      openPlacement(current.key);
     }
   };
 
@@ -335,7 +354,7 @@ export default function FacilityMapPlacementsInput(
                           draggedRef.current = false;
                           return;
                         }
-                        props.onItemOpen([{ _key: placement._key }]);
+                        openPlacement(placement._key);
                       }}
                       onPointerCancel={cancelDrag}
                       onPointerDown={(event) => {

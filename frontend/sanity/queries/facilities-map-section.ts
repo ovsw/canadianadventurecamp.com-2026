@@ -21,6 +21,8 @@ export const facilitiesMapSectionQuery = groq`
       ${imageQuery}
     },
     mapHeading,
+    mapLocationLabel,
+    stopLabel,
     "map": *[_id == "facilitiesMap" && _type == "facilitiesMap"][0]{
       _id,
       title,

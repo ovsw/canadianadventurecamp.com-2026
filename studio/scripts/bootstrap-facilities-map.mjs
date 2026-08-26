@@ -319,6 +319,8 @@ function createSectionBlock() {
     bigTopGallery: gallery,
     bigTopGalleryAutoplay: true,
     mapHeading,
+    mapLocationLabel: "ADVENTURE ISLAND · LAKE TEMAGAMI",
+    stopLabel: "STOP",
   };
 }
 
@@ -426,14 +428,40 @@ const hasFacilitiesMapSection = (document) =>
     (block) => block?._type === "facilitiesMapSection",
   );
 
+const facilitiesMapSectionNeedsLabels = (document) => {
+  const section = (document?.blocks ?? []).find(
+    (block) => block?._type === "facilitiesMapSection",
+  );
+  return Boolean(section && (!section.mapLocationLabel || !section.stopLabel));
+};
+
 async function ensureHomepageSection(client, document) {
-  if (!document || hasFacilitiesMapSection(document)) return false;
-  await client
-    .patch(document._id)
-    .ifRevisionId(document._rev)
-    .setIfMissing({ blocks: [] })
-    .append("blocks", [createSectionBlock()])
-    .commit({ visibility: "sync" });
+  if (!document) return false;
+  const section = (document.blocks ?? []).find(
+    (block) => block?._type === "facilitiesMapSection",
+  );
+  const patch = client.patch(document._id).ifRevisionId(document._rev);
+
+  if (!section) {
+    await patch
+      .setIfMissing({ blocks: [] })
+      .append("blocks", [createSectionBlock()])
+      .commit({ visibility: "sync" });
+    return true;
+  }
+
+  const missingLabels = {};
+  if (!section.mapLocationLabel) {
+    missingLabels[
+      `blocks[_key=="${section._key}"].mapLocationLabel`
+    ] = "ADVENTURE ISLAND · LAKE TEMAGAMI";
+  }
+  if (!section.stopLabel) {
+    missingLabels[`blocks[_key=="${section._key}"].stopLabel`] = "STOP";
+  }
+  if (!Object.keys(missingLabels).length) return false;
+
+  await patch.setIfMissing(missingLabels).commit({ visibility: "sync" });
   return true;
 }
 
@@ -461,6 +489,10 @@ async function run() {
         appendHomepageSection: {
           draft: Boolean(state.homePageDraft && !draftHasSection),
           published: !publishedHasSection,
+        },
+        updateHomepageSectionLabels: {
+          draft: facilitiesMapSectionNeedsLabels(state.homePageDraft),
+          published: facilitiesMapSectionNeedsLabels(state.homePage),
         },
       },
       null,

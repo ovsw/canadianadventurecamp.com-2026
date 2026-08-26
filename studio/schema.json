@@ -511,6 +511,20 @@
             "name": "minimalRichText"
           },
           "optional": true
+        },
+        "mapLocationLabel": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "stopLabel": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
         }
       }
     }
