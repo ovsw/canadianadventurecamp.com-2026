@@ -64,7 +64,7 @@ export default function ActivityScheduleBuilder({
   const pauseAutomation = useRef(false);
   const pauseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fullTicks = useRef(0);
-  const popTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateSlots = useCallback((nextSlots: Array<string | null>) => {
     slotsRef.current = nextSlots;
@@ -73,13 +73,13 @@ export default function ActivityScheduleBuilder({
 
   const showAdded = useCallback((title: string) => {
     setLastAdded(title);
-    if (popTimer.current) clearTimeout(popTimer.current);
-    popTimer.current = setTimeout(() => setLastAdded(null), 380);
+    if (revealTimer.current) clearTimeout(revealTimer.current);
+    revealTimer.current = setTimeout(() => setLastAdded(null), 220);
   }, []);
 
   useEffect(
     () => () => {
-      if (popTimer.current) clearTimeout(popTimer.current);
+      if (revealTimer.current) clearTimeout(revealTimer.current);
       if (pauseTimer.current) clearTimeout(pauseTimer.current);
     },
     [],
@@ -194,7 +194,7 @@ export default function ActivityScheduleBuilder({
             return (
               <button
                 aria-pressed={selected}
-                className="focus-ring rounded-pill border border-birch-bark/30 px-5 py-3 text-sm font-semibold text-birch-bark transition-[transform,background-color,border-color,color] duration-300 hover:-translate-y-0.5 hover:border-campfire-amber motion-reduce:transition-none data-[selected=true]:border-campfire-amber data-[selected=true]:bg-campfire-amber data-[selected=true]:text-pine-night"
+                className="focus-ring rounded-pill border border-birch-bark/30 px-5 py-3 text-sm font-semibold text-birch-bark transition-[background-color,border-color,color] duration-150 hover:border-campfire-amber hover:bg-birch-bark/[0.06] motion-reduce:transition-none data-[selected=true]:border-campfire-amber data-[selected=true]:bg-campfire-amber data-[selected=true]:text-pine-night"
                 data-sanity={activity.titleDataAttribute}
                 data-selected={selected}
                 key={activity._key}
@@ -259,16 +259,10 @@ export default function ActivityScheduleBuilder({
                     {time}
                   </span>
                   <span
-                    className={`font-accent text-3xl leading-none text-forest-floor ${lastAdded === activity ? styles.activityPop : ""}`}
+                    className={`font-accent text-3xl leading-none text-forest-floor ${lastAdded === activity ? styles.activityReveal : ""}`}
                   >
                     {activity || ""}
                   </span>
-                  {!activity ? (
-                    <span
-                      aria-hidden="true"
-                      className={styles.caret}
-                    />
-                  ) : null}
                 </li>
               );
             })}

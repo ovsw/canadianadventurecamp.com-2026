@@ -63,8 +63,8 @@ describe("ActivitySchedule", () => {
     fireEvent.click(activity);
     expect(activity).toHaveAttribute("aria-pressed", "true");
     expect(
-      screen.getByText("Activity 1", { selector: "ol span" }),
-    ).toBeInTheDocument();
+      screen.getByText("Activity 1", { selector: "ol span" }).className,
+    ).toMatch(/activityReveal/);
     expect(
       screen.getByRole("list", { name: "Your Tuesday schedule" }),
     ).toBeInTheDocument();
@@ -72,6 +72,18 @@ describe("ActivitySchedule", () => {
 
     fireEvent.click(activity);
     expect(activity).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("keeps Activity buttons stationary on hover and leaves blank lines empty", () => {
+    render(<ActivitySchedule {...activitySchedule} />);
+
+    const activity = screen.getByRole("button", { name: "Activity 1" });
+    const schedule = screen.getByRole("list", {
+      name: "Maya's Tuesday schedule",
+    });
+
+    expect(activity).not.toHaveClass("hover:-translate-y-0.5");
+    expect(schedule.querySelector("[aria-hidden='true']")).toBeNull();
   });
 
   it("shows a complete static schedule when reduced motion is preferred", () => {
