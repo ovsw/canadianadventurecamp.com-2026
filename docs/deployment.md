@@ -23,7 +23,7 @@ Add the values from `studio/.env.local.example`, then deploy manually from the r
 pnpm --dir studio deploy
 ```
 
-Do not add Studio deployment CI. The Starter also omits one-click Vercel deployment because every copy needs its own Sanity project and credentials.
+Studio deployment remains manual. Vercel deployment uses the existing project configuration and credentials.
 
 ## Before the first production deploy
 
@@ -31,4 +31,4 @@ Do not add Studio deployment CI. The Starter also omits one-click Vercel deploym
 - Add the Website and Studio origins to the Sanity project's CORS settings.
 - Confirm the Vercel root directory is `frontend`.
 - Confirm the GitHub `Release gate` check is required on `main`.
-- Confirm the Studio hostname belongs to this copy of the Starter.
+- Confirm the Studio hostname is correct.

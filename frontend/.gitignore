@@ -8,8 +8,6 @@
 
 # testing
 /coverage
-/playwright-report
-/test-results
 
 # next.js
 /.next/
@@ -69,7 +67,5 @@ src/plugins/impeccable-live.client.ts
 .env*
 !.env.example
 !.env*.example
-!.env.template
-!.env*.template
 
 prototype/videos/*

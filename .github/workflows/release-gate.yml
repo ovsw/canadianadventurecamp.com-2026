@@ -33,7 +33,7 @@ jobs:
       SANITY_STUDIO_API_VERSION: ${{ vars.NEXT_PUBLIC_SANITY_API_VERSION || '2026-03-23' }}
       SANITY_STUDIO_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID || 'bf76qlx9' }}
       SANITY_STUDIO_DATASET: ${{ vars.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
-      SANITY_STUDIO_HOSTNAME: ci-starter
+      SANITY_STUDIO_HOSTNAME: ci-canadian-adventure-camp
 
     steps:
       - name: Check out repository
@@ -50,9 +50,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Install verification browser
-        run: pnpm --dir frontend exec playwright install --with-deps chrome
 
       - name: Verify repository
         run: pnpm verify

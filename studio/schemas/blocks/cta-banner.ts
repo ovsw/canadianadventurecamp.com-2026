@@ -8,24 +8,6 @@ export default defineType({
   icon: Megaphone,
   description:
     "A clear closing invitation with a heading, supporting line, and up to two actions.",
-  initialValue: {
-    title: "Have a complicated idea?",
-    description: "Tell us what you are working through.",
-    buttons: [
-      {
-        _key: "starter-cta-action",
-        _type: "button",
-        text: "Start a conversation",
-        url: {
-          _type: "customUrl",
-          type: "internal",
-          internal: { _type: "reference", _ref: "homePage" },
-          openInNewTab: false,
-        },
-        variant: "default",
-      },
-    ],
-  },
   fields: [
     defineField({
       name: "title",

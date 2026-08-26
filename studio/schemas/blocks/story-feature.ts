@@ -44,26 +44,6 @@ export default defineType({
   icon: BookOpenText,
   description:
     "A reusable image-and-text section for a story, service, or point of view.",
-  initialValue: {
-    eyebrow: "Story",
-    title: "Pair a useful image with clear editorial context.",
-    richText: [
-      {
-        _key: "starter-image-text-body",
-        _type: "block",
-        children: [
-          {
-            _key: "starter-image-text-span",
-            _type: "span",
-            marks: [],
-            text: "Replace this sample with the context visitors need before they continue.",
-          },
-        ],
-        markDefs: [],
-        style: "normal",
-      },
-    ],
-  },
   fields: [
     defineField({
       name: "useCreamBackground",
