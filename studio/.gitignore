@@ -4,7 +4,6 @@
 /node_modules
 /.pnp
 .pnp.js
-.pnpm-store
 .yarn/install-state.gz
 
 # testing
@@ -17,9 +16,6 @@
 # production
 /build
 
-# local dataset backups
-/backups/
-
 # misc
 .DS_Store
 *.pem
@@ -30,7 +26,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env
 .env*.local
 
 # vercel
@@ -40,14 +35,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# sanity dataset exports (backups taken before destructive/verification work)
-studio/backups/
-.env*
-!.env.example
-!.env*.example
-!.env.template
-!.env*.template
+/dist
 
-# local Codex MCP credentials
-.codex/config.toml
+# sanity runtime (auto-generated)
+/.sanity/
 
+# dataset backups
+/backups/

@@ -1,0 +1,329 @@
+@import "tailwindcss";
+
+/*
+ * Canadian Adventure Camp — Design System
+ *
+ * Tokens from DESIGN.md and .impeccable/design.json.
+ * Font families are loaded via next/font/google in layout.tsx and injected as
+ * CSS variables (--font-display, --font-body, --font-accent). The mono/label
+ * stack is a system font — no web font needed.
+ *
+ * Colour names follow the prototype palette (13 named colours + translucent
+ * derivatives). Only the named stops are registered — no 50-950 ramps.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Theme                                                               */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  /* ---- Colours ---- */
+  --color-campfire-amber: oklch(76.3% 0.141 73);
+  --color-campfire-amber-deep: oklch(67.3% 0.135 71);
+
+  --color-cedar: oklch(50.7% 0.095 131);
+  --color-cedar-deep: oklch(40.7% 0.079 131);
+  --color-sunlit-moss: oklch(86.4% 0.096 122);
+  --color-moss: oklch(78% 0.118 123);
+
+  --color-pine-night: oklch(22.8% 0.034 133);
+  --color-forest-floor: oklch(37.7% 0.07 130);
+  --color-forest-panel: oklch(30% 0.047 134);
+  --color-birch-bark: oklch(95.2% 0.018 93);
+  --color-birch-bark-bright: oklch(97.6% 0.012 92);
+  --color-lake-night: oklch(20% 0.035 261);
+
+  --color-ember-red: oklch(53.5% 0.154 38);
+
+  /* Semantic aliases used by components (home-hero, button, etc.) */
+  --color-cream: var(--color-birch-bark);
+  --color-accent: var(--color-campfire-amber);
+  --color-accent-hover: var(--color-campfire-amber-deep);
+  --color-forest-900: var(--color-forest-floor);
+
+  /* shadcn/ui semantic tokens — mapped to the camp palette */
+  --color-background: var(--color-birch-bark);
+  --color-foreground: var(--color-pine-night);
+  --color-primary: var(--color-campfire-amber);
+  --color-primary-foreground: var(--color-pine-night);
+  --color-secondary: var(--color-forest-panel);
+  --color-secondary-foreground: var(--color-birch-bark);
+  --color-muted: var(--color-birch-bark-bright);
+  --color-muted-foreground: oklch(22.8% 0.034 133 / 65%);
+  --color-card: var(--color-birch-bark);
+  --color-card-foreground: var(--color-pine-night);
+  --color-destructive: var(--color-ember-red);
+
+  /* ---- Typography ---- */
+
+  /* Font families — CSS variables are set by next/font in layout.tsx. */
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-accent: "Caveat", var(--font-caveat), cursive;
+  --font-mono: ui-monospace, Menlo, "Cascadia Mono", "Segoe UI Mono",
+    "Liberation Mono", monospace;
+
+  /* ---- Border Radius ---- */
+  --radius-xs: 3px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
+
+  /* ---- Spacing ---- */
+  --spacing-section: 120px;
+  --spacing-gutter: 56px;
+
+  /* ---- Shadows ---- */
+  --shadow-lift: 0 40px 70px -22px rgba(13, 18, 8, 0.65);
+  --shadow-media-rest: 0 36px 70px rgba(13, 18, 8, 0.45);
+  --shadow-globe-rest: 0 42px 84px rgba(0, 0, 0, 0.5);
+  --shadow-card-rest-cream: 0 22px 44px rgba(22, 32, 15, 0.12);
+  --shadow-stamp: 0 10px 24px rgba(13, 18, 8, 0.35);
+  --shadow-hero-cta: 0 12px 32px rgba(0, 0, 0, 0.35);
+
+  /* ---- Container ---- */
+  --container-content: 1320px;
+
+  /* ---- Breakpoints ---- */
+  --breakpoint-phone: 640px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+
+  /* ---- Easing ---- */
+  --ease-reveal: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-standard: ease;
+
+  /* ---- Animation ---- */
+  --animate-hero-rise: hero-rise 0.9s var(--ease-reveal) both;
+  --animate-rise-up: rise-up 0.9s var(--ease-reveal) both;
+  --animate-marquee-left: marquee-left 40s linear infinite;
+  --animate-stamp-in: stamp-in 0.4s var(--ease-overshoot) both;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive layout custom properties                                 */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --gutter: 56px;
+  --section-pad: 120px;
+  --header-height: 80px;
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --gutter: 32px;
+    --section-pad: 96px;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --gutter: 20px;
+    --section-pad: 72px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                           */
+/* ------------------------------------------------------------------ */
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+  }
+}
+
+@keyframes rise-up {
+  from {
+    opacity: 0;
+    transform: translateY(46px);
+  }
+}
+
+@keyframes marquee-left {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes stamp-in {
+  from {
+    opacity: 0;
+    transform: scale(1.7) rotate(-7deg);
+  }
+  to {
+    transform: scale(1) rotate(-7deg);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Utility classes                                                     */
+/* ------------------------------------------------------------------ */
+
+/* Content padding — maps to responsive --gutter */
+@utility px-content-x {
+  padding-inline: var(--gutter);
+}
+
+/* Section vertical padding */
+@utility py-section {
+  padding-block: var(--section-pad);
+}
+
+/* Content container */
+@utility container-content {
+  max-width: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ------------------------------------------------------------------ */
+/* Typography utilities                                                */
+/* ------------------------------------------------------------------ */
+
+/* Display — hero headline only */
+@utility text-display-hero {
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  font-variation-settings: "opsz" 96;
+}
+
+/* Display, page-header scale — interior page openers */
+@utility text-display-page {
+  font-size: clamp(2.625rem, 6vw, 4.875rem);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  font-variation-settings: "opsz" 96;
+}
+
+/* Headline — section openers */
+@utility text-headline {
+  font-size: clamp(2.25rem, 5vw, 3.625rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+/* Title — cards, program titles, stat numbers */
+@utility text-title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Eyebrow — small label above headlines */
+@utility text-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* Label — chips, map markers, stamps, metadata */
+@utility text-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ */
+/* Button / control utilities (consumed by components/ui/button.tsx)    */
+/* ------------------------------------------------------------------ */
+
+@utility rounded-control {
+  border-radius: var(--radius-pill);
+}
+
+@utility typo-button {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@utility typo-button-lg {
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion utilities                                                    */
+/* ------------------------------------------------------------------ */
+
+@utility motion-base {
+  transition-duration: 200ms;
+  transition-timing-function: var(--ease-standard);
+}
+
+@utility motion-fast {
+  transition-duration: 150ms;
+  transition-timing-function: var(--ease-standard);
+}
+
+/* ------------------------------------------------------------------ */
+/* Focus ring                                                          */
+/* ------------------------------------------------------------------ */
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-campfire-amber);
+    outline-offset: 3px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Shadow utilities                                                    */
+/* ------------------------------------------------------------------ */
+
+@utility shadow-interactive-lift {
+  box-shadow: var(--shadow-lift);
+}
+
+/* ------------------------------------------------------------------ */
+/* Border utilities                                                    */
+/* ------------------------------------------------------------------ */
+
+@utility border-strong {
+  border-color: rgba(22, 32, 15, 0.18);
+}
+
+@utility edge-on-dark-strong {
+  border-color: rgba(243, 239, 226, 0.22);
+}
+
+/* ------------------------------------------------------------------ */
+/* Control height / padding custom properties (used by button sizes)   */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --control-height: 48px;
+  --control-inline: 30px;
+  --control-height-hero: 56px;
+  --control-inline-hero: 34px;
+  --control-height-compact: 38px;
+  --control-inline-compact: 22px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Base styles                                                         */
+/* ------------------------------------------------------------------ */
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-pine-night);
+  background-color: var(--color-birch-bark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
