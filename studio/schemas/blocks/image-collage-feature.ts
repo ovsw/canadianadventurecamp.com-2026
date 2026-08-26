@@ -53,34 +53,6 @@ export default defineType({
   icon: Images,
   description:
     "A reusable story section with supporting points and two overlapping photos.",
-  initialValue: {
-    eyebrow: "Featured story",
-    title: [
-      {
-        _key: "starter-image-collage-title",
-        _type: "block",
-        children: [
-          {
-            _key: "starter-image-collage-title-span",
-            _type: "span",
-            marks: [],
-            text: "Tell one focused story.",
-          },
-        ],
-        markDefs: [],
-        style: "normal",
-      },
-    ],
-    body: "Give visitors the context they need to understand why this story matters.",
-    points: [
-      {
-        _key: "starter-image-collage-point",
-        _type: "imageCollageFeaturePoint",
-        title: "Lead with the useful detail",
-        body: "Add the short explanation that helps visitors make their next decision.",
-      },
-    ],
-  },
   fields: [
     defineField({
       name: "eyebrow",
