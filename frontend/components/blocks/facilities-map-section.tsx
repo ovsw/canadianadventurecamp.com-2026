@@ -160,6 +160,18 @@ export default function FacilitiesMapSection({
   const mapUrl = map.mapImage?.asset?._id
     ? urlFor(map.mapImage).width(2000).fit("max").url()
     : undefined;
+  // The frame follows the image the visitor actually sees: the asset's
+  // dimensions reduced by any Studio crop.
+  const mapDimensions = map.mapImage?.asset?.metadata?.dimensions;
+  const mapCrop = map.mapImage?.crop;
+  const mapWidth = mapDimensions?.width
+    ? mapDimensions.width * (1 - (mapCrop?.left ?? 0) - (mapCrop?.right ?? 0))
+    : undefined;
+  const mapHeight = mapDimensions?.height
+    ? mapDimensions.height * (1 - (mapCrop?.top ?? 0) - (mapCrop?.bottom ?? 0))
+    : undefined;
+  const mapAspectRatio =
+    mapWidth && mapHeight ? `${mapWidth} / ${mapHeight}` : undefined;
 
   return (
     <section
@@ -246,6 +258,7 @@ export default function FacilitiesMapSection({
             </h3>
             <FacilitiesMapInteractive
               mapAlt={mapAlt}
+              mapAspectRatio={mapAspectRatio}
               mapDataAttribute={mapDataAttribute?.("mapImage")}
               mapLocationDataAttribute={dataAttribute?.("mapLocationLabel")}
               mapLocationLabel={displayMapLocationLabel}

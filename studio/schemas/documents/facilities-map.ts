@@ -24,8 +24,9 @@ export default defineType({
       name: "mapImage",
       title: "Map Image",
       type: "image",
+      options: { hotspot: true },
       description:
-        "Use the uncropped island map. Replacing its geography requires repositioning every marker.",
+        "Changing the image or its crop moves the visible geography, so markers may need repositioning afterwards.",
       fields: [
         defineField({
           name: "alt",

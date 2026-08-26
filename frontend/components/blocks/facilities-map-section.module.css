@@ -296,19 +296,17 @@
   position: relative;
   overflow: hidden;
   width: 100%;
+  /* Fallback only; the component sets the uploaded image's real ratio inline. */
   aspect-ratio: 1320 / 766;
   border: 1px solid rgb(243 239 226 / 14%);
   border-radius: var(--radius-xl);
   background: var(--color-lake-night);
   box-shadow: 0 42px 84px rgb(0 0 0 / 50%);
-  cursor: crosshair;
 }
 
 .mapInner {
   position: absolute;
   inset: 0;
-  transform: translate(-30.77%, 0) scale(1.5385);
-  transform-origin: 0 0;
 }
 
 .mapShade {

@@ -27,6 +27,7 @@ type PlacementValue = {
 
 type MapImageValue = {
   asset?: { _ref?: string; _type?: "reference" };
+  crop?: { bottom?: number; left?: number; right?: number; top?: number };
 };
 
 type DragState = {
@@ -42,8 +43,7 @@ type DragState = {
 const clampPercentage = (value: number) =>
   Math.min(100, Math.max(0, Number(value.toFixed(2))));
 
-const MAP_TRANSLATE_X = -30.77;
-const MAP_ZOOM = 1.5385;
+const FALLBACK_ASPECT_RATIO = "1320 / 766";
 
 function labelTransform(position: PlacementValue["labelPosition"]) {
   switch (position) {
@@ -166,23 +166,26 @@ export default function FacilityMapPlacementsInput(
       .fit("max")
       .url();
   }, [client, mapImage]);
+  // Match the website frame: the asset's dimensions (encoded in its _ref)
+  // reduced by any Studio crop.
+  const mapAspectRatio = useMemo(() => {
+    const match = mapImage?.asset?._ref?.match(/-(\d+)x(\d+)-/);
+    if (!match) return FALLBACK_ASPECT_RATIO;
+    const crop = mapImage?.crop;
+    const width =
+      Number(match[1]) * (1 - (crop?.left ?? 0) - (crop?.right ?? 0));
+    const height =
+      Number(match[2]) * (1 - (crop?.top ?? 0) - (crop?.bottom ?? 0));
+    return width > 0 && height > 0
+      ? `${width} / ${height}`
+      : FALLBACK_ASPECT_RATIO;
+  }, [mapImage]);
   const displayedPlacements = placements.map((placement) =>
     dragState?.key === placement._key
       ? { ...placement, x: dragState.x, y: dragState.y }
       : placement,
   );
-  const editorPlacements = displayedPlacements.map((placement) => ({
-    ...placement,
-    x:
-      typeof placement.x === "number"
-        ? MAP_TRANSLATE_X + placement.x * MAP_ZOOM
-        : placement.x,
-    y:
-      typeof placement.y === "number"
-        ? placement.y * MAP_ZOOM
-        : placement.y,
-  }));
-  const pathData = createPath(editorPlacements);
+  const pathData = createPath(displayedPlacements);
   const openPlacement = (key: string) => {
     const itemPath = [{ _key: key }];
     props.onItemOpen(itemPath);
@@ -203,8 +206,8 @@ export default function FacilityMapPlacementsInput(
     const next = {
       ...current,
       moved,
-      x: clampPercentage((outerX - MAP_TRANSLATE_X) / MAP_ZOOM),
-      y: clampPercentage(outerY / MAP_ZOOM),
+      x: clampPercentage(outerX),
+      y: clampPercentage(outerY),
     };
     dragRef.current = next;
     setDragState(next);
@@ -266,27 +269,18 @@ export default function FacilityMapPlacementsInput(
               style={{
                 background: "#16200f",
                 borderRadius: 3,
-                aspectRatio: "1320 / 766",
+                aspectRatio: mapAspectRatio,
                 overflow: "hidden",
                 position: "relative",
                 touchAction: "none",
               }}
             >
-              <div
-                style={{
-                  inset: 0,
-                  position: "absolute",
-                  transform: `translate(${MAP_TRANSLATE_X}%, 0) scale(${MAP_ZOOM})`,
-                  transformOrigin: "0 0",
-                }}
-              >
-                <img
-                  alt="Facilities Map editor preview"
-                  draggable={false}
-                  src={mapUrl}
-                  style={{ height: "100%", objectFit: "cover", position: "absolute", width: "100%" }}
-                />
-              </div>
+              <img
+                alt="Facilities Map editor preview"
+                draggable={false}
+                src={mapUrl}
+                style={{ height: "100%", objectFit: "cover", position: "absolute", width: "100%" }}
+              />
 
               {pathData ? (
                 <svg
@@ -311,10 +305,8 @@ export default function FacilityMapPlacementsInput(
                 if (typeof placement.x !== "number" || typeof placement.y !== "number") {
                   return null;
                 }
-                const placementX = placement.x;
-                const placementY = placement.y;
-                const editorX = MAP_TRANSLATE_X + placementX * MAP_ZOOM;
-                const editorY = placementY * MAP_ZOOM;
+                const editorX = placement.x;
+                const editorY = placement.y;
                 const referenceId = placement.facility?._ref;
                 const name = referenceId
                   ? facilityNames[referenceId] || "Facility"
@@ -366,8 +358,8 @@ export default function FacilityMapPlacementsInput(
                           pointerId: event.pointerId,
                           startX: event.clientX,
                           startY: event.clientY,
-                          x: placementX,
-                          y: placementY,
+                          x: editorX,
+                          y: editorY,
                         };
                         dragRef.current = next;
                         setDragState(next);

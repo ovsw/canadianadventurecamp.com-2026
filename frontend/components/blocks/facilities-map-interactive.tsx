@@ -99,6 +99,7 @@ function getRouteMeasurements(
 
 export default function FacilitiesMapInteractive({
   mapAlt,
+  mapAspectRatio,
   mapDataAttribute,
   mapLocationDataAttribute,
   mapLocationLabel,
@@ -110,6 +111,8 @@ export default function FacilitiesMapInteractive({
   websiteAutoplay,
 }: {
   mapAlt: string;
+  /** CSS aspect-ratio ("width / height") of the uploaded map image. */
+  mapAspectRatio?: string;
   mapDataAttribute?: string;
   mapLocationDataAttribute?: string;
   mapLocationLabel: string;
@@ -282,6 +285,7 @@ export default function FacilitiesMapInteractive({
       <div className={styles.mapScroller}>
         <div
           className={styles.mapViewport}
+          style={mapAspectRatio ? { aspectRatio: mapAspectRatio } : undefined}
           onPointerMove={(event) => {
             const bounds = event.currentTarget.getBoundingClientRect();
             const x = (event.clientX - bounds.left) / bounds.width;
@@ -302,7 +306,7 @@ export default function FacilitiesMapInteractive({
               fill
               placeholder={mapLqip ? "blur" : "empty"}
               priority={false}
-              sizes="(max-width: 1023px) 1723px, 154vw"
+              sizes="(max-width: 639px) 800px, (max-width: 1023px) 1120px, 1320px"
               src={mapUrl}
             />
             <div className={styles.mapShade} />
