@@ -12,7 +12,9 @@
     "email": "email dev",
     "typegen": "pnpm --dir ../studio typegen",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:smoke": "playwright test e2e/cac.spec.ts"
   },
   "dependencies": {
     "@fontsource/source-serif-4": "^5.3.0",
@@ -50,6 +52,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@sanity/client": "^7.26.2",
     "@tailwindcss/postcss": "^4.3.2",
     "@testing-library/jest-dom": "^7.0.0",

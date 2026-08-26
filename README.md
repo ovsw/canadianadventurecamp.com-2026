@@ -16,8 +16,8 @@ Requirements:
 Create local environment files, then add the required credentials:
 
 ```bash
-cp frontend/.env.local.example frontend/.env.local
-cp studio/.env.local.example studio/.env.local
+install -m 600 frontend/.env.local.example frontend/.env.local
+install -m 600 studio/.env.local.example studio/.env.local
 ```
 
 The read token powers Sanity Presentation draft previews. The auth token powers Studio-side CLI jobs and repository-scoped Sanity MCP access in Codex. Add optional integration credentials to the local env files only when the matching feature needs them. The committed `.env.local.example` files list the supported names.

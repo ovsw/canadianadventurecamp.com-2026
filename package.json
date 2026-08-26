@@ -14,7 +14,7 @@
     "typecheck": "pnpm --dir frontend typecheck && pnpm --dir studio typecheck",
     "lint": "pnpm --dir frontend lint",
     "test": "pnpm --dir frontend test && node --test 'frontend/**/*.test.mjs' 'studio/**/*.test.mjs'",
-    "verify": "pnpm verify:typegen && pnpm typecheck && pnpm lint && pnpm test && pnpm build"
+    "verify": "pnpm verify:typegen && pnpm typecheck && pnpm lint && pnpm test && pnpm build && PLAYWRIGHT_REUSE_BUILD=1 pnpm --dir frontend test:smoke"
   },
   "engines": {
     "node": "24.x",

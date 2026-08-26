@@ -110,6 +110,9 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.62.1
+        version: 1.62.1
       '@sanity/client':
         specifier: ^7.26.2
         version: 7.26.2
@@ -10892,7 +10895,6 @@ snapshots:
   '@playwright/test@1.62.1':
     dependencies:
       playwright: 1.62.1
-    optional: true
 
   '@pnpm/config.env-replace@1.1.0': {}
 
@@ -16747,15 +16749,13 @@ snapshots:
     transitivePeerDependencies:
       - react
 
-  playwright-core@1.62.1:
-    optional: true
+  playwright-core@1.62.1: {}
 
   playwright@1.62.1:
     dependencies:
       playwright-core: 1.62.1
     optionalDependencies:
       fsevents: 2.3.2
-    optional: true
 
   pluralize-esm@9.0.5: {}
 
