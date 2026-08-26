@@ -5,6 +5,7 @@ import CtaBanner from "./cta-banner";
 import BenefitCards from "./benefit-cards";
 import FaqAccordion from "./faq-accordion";
 import Hero from "./hero";
+import { getHotspotPosition } from "./image-collage-feature";
 import RichTextBlock from "./rich-text-block";
 import StoryFeature from "./story-feature";
 import TeamMembers from "./team-members";
@@ -20,6 +21,29 @@ const paragraph = (key: string, text: string) => ({
 });
 
 describe("core Page Builder sections", () => {
+  it("positions collage images around their hotspot after applying the editor crop", () => {
+    expect(
+      getHotspotPosition({
+        _type: "image",
+        asset: null,
+        crop: {
+          _type: "sanity.imageCrop",
+          bottom: 0.1,
+          left: 0.2,
+          right: 0.1,
+          top: 0.1,
+        },
+        hotspot: {
+          _type: "sanity.imageHotspot",
+          height: 0.2,
+          width: 0.2,
+          x: 0.55,
+          y: 0.5,
+        },
+      }),
+    ).toBe("50% 50%");
+  });
+
   it("renders the page header with its accent phrase and safe action", () => {
     const hero = {
       _key: "hero",

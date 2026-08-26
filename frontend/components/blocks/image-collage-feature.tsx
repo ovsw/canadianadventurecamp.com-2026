@@ -21,6 +21,25 @@ type ImageCollageFeatureProps = Extract<
   dataAttribute?: (path: string) => string | undefined;
 };
 
+type CollageImage = NonNullable<ImageCollageFeatureProps["primaryImage"]>;
+
+export function getHotspotPosition(image: CollageImage) {
+  if (image.hotspot?.x == null || image.hotspot.y == null) return undefined;
+
+  const crop = image.crop;
+  const visibleWidth = 1 - (crop?.left ?? 0) - (crop?.right ?? 0);
+  const visibleHeight = 1 - (crop?.top ?? 0) - (crop?.bottom ?? 0);
+
+  if (visibleWidth <= 0 || visibleHeight <= 0) return undefined;
+
+  const x = ((image.hotspot.x - (crop?.left ?? 0)) / visibleWidth) * 100;
+  const y = ((image.hotspot.y - (crop?.top ?? 0)) / visibleHeight) * 100;
+  const clamp = (value: number) =>
+    Number(Math.min(100, Math.max(0, value)).toFixed(4));
+
+  return `${clamp(x)}% ${clamp(y)}%`;
+}
+
 const headingComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => <>{children}</>,
@@ -133,7 +152,9 @@ export default function ImageCollageFeature({
                   }
                   target={stegaClean(cta?.openInNewTab) ? "_blank" : undefined}
                 >
-                  <span data-sanity={dataAttribute?.("cta.text")}>{ctaText}</span>
+                  <span data-sanity={dataAttribute?.("cta.text")}>
+                    {ctaText}
+                  </span>
                   <ArrowRight aria-hidden="true" />
                 </Link>
               </Button>
@@ -147,15 +168,23 @@ export default function ImageCollageFeature({
               className="absolute right-0 top-0 h-[78%] w-[86%] overflow-hidden rounded-xl shadow-media-rest"
               data-sanity={dataAttribute?.("primaryImage")}
             >
-              <div className={cn("absolute -inset-y-[8%] inset-x-0", styles.parallax)}>
+              <div
+                className={cn(
+                  "absolute -inset-y-[8%] inset-x-0",
+                  styles.parallax,
+                )}
+              >
                 <Image
                   alt={stegaClean(primaryImage.alt) || ""}
                   blurDataURL={primaryImage.asset.metadata?.lqip || undefined}
                   className="object-cover"
                   fill
-                  placeholder={primaryImage.asset.metadata?.lqip ? "blur" : undefined}
+                  placeholder={
+                    primaryImage.asset.metadata?.lqip ? "blur" : undefined
+                  }
                   sizes="(min-width: 1024px) 48vw, 100vw"
-                  src={urlFor(primaryImage).width(1400).height(1050).fit("crop").url()}
+                  src={urlFor(primaryImage).width(1400).url()}
+                  style={{ objectPosition: getHotspotPosition(primaryImage) }}
                 />
               </div>
             </div>
@@ -174,9 +203,12 @@ export default function ImageCollageFeature({
                 blurDataURL={secondaryImage.asset.metadata?.lqip || undefined}
                 className="object-cover"
                 fill
-                placeholder={secondaryImage.asset.metadata?.lqip ? "blur" : undefined}
+                placeholder={
+                  secondaryImage.asset.metadata?.lqip ? "blur" : undefined
+                }
                 sizes="(min-width: 1024px) 22vw, 46vw"
-                src={urlFor(secondaryImage).width(800).height(600).fit("crop").url()}
+                src={urlFor(secondaryImage).width(800).url()}
+                style={{ objectPosition: getHotspotPosition(secondaryImage) }}
               />
             </div>
           ) : null}
