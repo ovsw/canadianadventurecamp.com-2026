@@ -11,6 +11,7 @@ import BenefitCards from "@/components/blocks/benefit-cards";
 import Hero from "@/components/blocks/hero";
 import HomeHero from "@/components/blocks/home-hero";
 import ImageCollageFeature from "@/components/blocks/image-collage-feature";
+import FeatureCards from "@/components/blocks/feature-cards";
 import { dataset, projectId } from "@/sanity/lib/env";
 
 type Block =
@@ -35,6 +36,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "hero",
   "homeHero",
   "imageCollageFeature",
+  "featureCards",
 ]);
 
 const componentMap: Partial<{
@@ -52,6 +54,7 @@ const componentMap: Partial<{
   hero: Hero,
   homeHero: HomeHero,
   imageCollageFeature: ImageCollageFeature,
+  featureCards: FeatureCards,
 };
 
 export default function Blocks({

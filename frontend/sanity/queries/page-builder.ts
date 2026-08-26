@@ -8,6 +8,7 @@ import { teamMembersQuery } from "./team-members";
 import { heroQuery } from "./hero";
 import { homeHeroQuery } from "./home-hero";
 import { imageCollageFeatureQuery } from "./image-collage-feature";
+import { featureCardsQuery } from "./feature-cards";
 
 export const pageBuilderQuery = `
   blocks[]{
@@ -22,6 +23,7 @@ export const pageBuilderQuery = `
     ${benefitCardsQuery},
     ${heroQuery},
     ${homeHeroQuery},
-    ${imageCollageFeatureQuery}
+    ${imageCollageFeatureQuery},
+    ${featureCardsQuery}
   }
 `;

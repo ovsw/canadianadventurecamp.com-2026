@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import CtaBanner from "./cta-banner";
 import BenefitCards from "./benefit-cards";
 import FaqAccordion from "./faq-accordion";
+import FeatureCards, { getFeatureCardColumnCount } from "./feature-cards";
 import Hero from "./hero";
 import { getHotspotPosition } from "./image-collage-feature";
 import RichTextBlock from "./rich-text-block";
@@ -21,6 +22,67 @@ const paragraph = (key: string, text: string) => ({
 });
 
 describe("core Page Builder sections", () => {
+  it("chooses feature-card columns from each row's card count", () => {
+    expect(getFeatureCardColumnCount(2)).toBe(2);
+    expect(getFeatureCardColumnCount(3)).toBe(3);
+    expect(getFeatureCardColumnCount(4)).toBe(2);
+    expect(getFeatureCardColumnCount(5)).toBe(3);
+    expect(getFeatureCardColumnCount(6)).toBe(3);
+  });
+
+  it("continues feature-card numbering across rows", () => {
+    const card = (key: string, title: string) => ({
+      _key: key,
+      _type: "featureCardItem" as const,
+      image: null,
+      link: {
+        href: `/${key}`,
+        openInNewTab: false,
+        text: `Explore ${title}`,
+      },
+      text: `${title} details`,
+      title,
+    });
+    const featureCards = {
+      _key: "programs",
+      _type: "featureCards",
+      description: "Choose the program that fits.",
+      eyebrow: "02 · Programs",
+      groups: [
+        {
+          _key: "specialty",
+          _type: "featureCardGroup",
+          cards: [
+            card("gymnastics", "Gymnastics"),
+            card("trampoline", "Trampoline"),
+          ],
+          description: null,
+          heading: "Specialty Programs",
+        },
+        {
+          _key: "general",
+          _type: "featureCardGroup",
+          cards: [
+            card("general-program", "General Program"),
+            card("leadership", "Youth Leadership"),
+          ],
+          description: null,
+          heading: "General & Leadership",
+        },
+      ],
+      title: [paragraph("program-title", "Choose their adventure.")],
+    } as unknown as ComponentProps<typeof FeatureCards>;
+
+    render(<FeatureCards {...featureCards} />);
+
+    for (const number of ["01", "02", "03", "04"]) {
+      expect(screen.getByText(number)).toBeInTheDocument();
+    }
+    expect(
+      screen.getByRole("heading", { name: "General & Leadership" }),
+    ).toBeInTheDocument();
+  });
+
   it("positions collage images around their hotspot after applying the editor crop", () => {
     expect(
       getHotspotPosition({
