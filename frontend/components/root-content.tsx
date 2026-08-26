@@ -18,8 +18,6 @@ import {
 } from "@/components/post-sidebar/post-sidebar";
 import { documentDataAttribute } from "@/components/blog-card";
 import RichTextContent from "@/components/rich-text-content";
-import Image from "next/image";
-import { urlFor } from "@/sanity/lib/image";
 import { dataset, projectId } from "@/sanity/lib/env";
 import type { DynamicFetchOptions } from "@/sanity/lib/live";
 import type { PAGE_QUERY_RESULT, POST_QUERY_RESULT } from "@/sanity.types";
@@ -33,18 +31,12 @@ function PageContent({
   perspective: DynamicFetchOptions["perspective"];
   stega: boolean;
 }) {
-  const pageBlocks = page.blocks ?? [];
-  const blocks =
-    page.headerImage?.asset &&
-    pageBlocks[0]?._type === "hero" &&
-    !pageBlocks[0].image
-      ? [{ ...pageBlocks[0], image: page.headerImage }, ...pageBlocks.slice(1)]
-      : pageBlocks;
+  const blocks = page.blocks ?? [];
   const needsTitleHeader =
     blocks[0]?._type !== "hero" &&
     stegaClean(page.title)?.trim();
   const rootDataAttribute = stega
-    ? (path: "description" | "headerImage" | "title") =>
+    ? (path: "description" | "title") =>
         createDataAttribute({
           baseUrl: process.env.NEXT_PUBLIC_STUDIO_URL || "http://localhost:3333",
           dataset,
@@ -73,16 +65,6 @@ function PageContent({
             <p data-sanity={rootDataAttribute?.("description")}>
               {page.description}
             </p>
-          ) : null}
-          {page.headerImage?.asset ? (
-            <Image
-              alt={page.headerImage.alt || ""}
-              data-sanity={rootDataAttribute?.("headerImage")}
-              height={page.headerImage.asset.metadata?.dimensions?.height || 800}
-              sizes="100vw"
-              src={urlFor(page.headerImage).width(2000).fit("max").url()}
-              width={page.headerImage.asset.metadata?.dimensions?.width || 1200}
-            />
           ) : null}
         </header>
       ) : null}
