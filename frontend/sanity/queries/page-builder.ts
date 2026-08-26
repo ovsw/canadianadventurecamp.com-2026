@@ -10,6 +10,7 @@ import { homeHeroQuery } from "./home-hero";
 import { imageCollageFeatureQuery } from "./image-collage-feature";
 import { featureCardsQuery } from "./feature-cards";
 import { activityScheduleQuery } from "./activity-schedule";
+import { facilitiesMapSectionQuery } from "./facilities-map-section";
 
 export const pageBuilderQuery = `
   blocks[]{
@@ -26,6 +27,7 @@ export const pageBuilderQuery = `
     ${homeHeroQuery},
     ${imageCollageFeatureQuery},
     ${featureCardsQuery},
-    ${activityScheduleQuery}
+    ${activityScheduleQuery},
+    ${facilitiesMapSectionQuery}
   }
 `;

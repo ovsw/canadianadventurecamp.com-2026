@@ -1,0 +1,670 @@
+.section {
+  position: relative;
+  z-index: 2;
+  margin-top: -44px;
+  overflow: hidden;
+  border-radius: 44px 44px 0 0;
+  background: #16200f;
+  color: #f3efe2;
+  padding: 130px 56px;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    760px circle at 16% 10%,
+    rgb(82 112 51 / 26%),
+    rgb(82 112 51 / 0%) 70%
+  );
+}
+
+.inner {
+  position: relative;
+  width: min(100%, 1320px);
+  margin-inline: auto;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  gap: 40px;
+  margin-bottom: 76px;
+}
+
+.eyebrow {
+  margin-bottom: 20px;
+  color: #e8a23b;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.24em;
+}
+
+.title {
+  margin: 0;
+  color: #f3efe2;
+  font-family: var(--font-display), sans-serif;
+  font-size: 58px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  white-space: pre-line;
+}
+
+.title em,
+.mapHeading em {
+  color: #e8a23b;
+  font-family: var(--font-accent), cursive;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.title em {
+  font-size: 67px;
+}
+
+.introduction {
+  max-width: 400px;
+  margin: 0 0 6px auto;
+  color: rgb(243 239 226 / 72%);
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+
+.bigTop {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  gap: 80px;
+  margin-bottom: 45px;
+}
+
+.bigTopWithoutGallery {
+  grid-template-columns: 1fr;
+}
+
+.carousel {
+  position: relative;
+  height: 560px;
+  overflow: hidden;
+  border-radius: 26px;
+  background: #24331a;
+  box-shadow: 0 36px 70px rgb(0 0 0 / 50%);
+}
+
+.carouselSlide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(1.035);
+  transition:
+    opacity 0.9s ease,
+    transform 6s ease;
+}
+
+.carouselSlideActive {
+  z-index: 1;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.carouselImage,
+.mapImage,
+.facilityImage {
+  object-fit: cover;
+}
+
+.carouselShade {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgb(13 18 8 / 62%), rgb(13 18 8 / 0%) 40%);
+}
+
+.carouselCaption,
+.mapChip,
+.coordinateChip {
+  border: 1px solid rgb(243 239 226 / 22%);
+  background: rgb(13 18 8 / 72%);
+  color: #f3efe2;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.carouselCaption {
+  position: absolute;
+  z-index: 3;
+  bottom: 18px;
+  left: 18px;
+  border-radius: 999px;
+  padding: 8px 14px;
+  letter-spacing: 0.14em;
+  backdrop-filter: blur(8px);
+}
+
+.carouselButton {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 0 0 3px;
+  transform: translateY(-50%);
+  border: 1px solid rgb(243 239 226 / 28%);
+  border-radius: 50%;
+  background: rgb(13 18 8 / 42%);
+  color: #f3efe2;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  backdrop-filter: blur(8px);
+}
+
+.carouselButton:hover,
+.carouselButton:focus-visible {
+  border-color: #e8a23b;
+  background: rgb(13 18 8 / 75%);
+}
+
+.carouselPrevious {
+  left: 14px;
+}
+
+.carouselNext {
+  right: 14px;
+}
+
+.carouselDots {
+  position: absolute;
+  z-index: 4;
+  right: 16px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.carouselDot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(243 239 226 / 42%);
+  cursor: pointer;
+  transition: width 0.4s ease;
+}
+
+.carouselDotActive {
+  width: 27px;
+  background: #e8a23b;
+}
+
+.bigTopHeading {
+  margin: 0 0 20px;
+  font-size: 46px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+
+.metric {
+  margin-bottom: 26px;
+}
+
+.metricRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.metricNumber {
+  color: transparent;
+  font-size: 124px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  -webkit-text-stroke: 2.5px #e8a23b;
+}
+
+.metricUnit {
+  padding-bottom: 8px;
+  color: #e8a23b;
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+}
+
+.metricTagline {
+  display: block;
+  margin-top: 6px;
+  color: #f3efe2;
+  font-family: var(--font-accent), cursive;
+  font-size: 29px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.bigTopBody {
+  max-width: 520px;
+  color: rgb(243 239 226 / 75%);
+  font-size: 17px;
+  line-height: 1.62;
+}
+
+.bigTopBody p {
+  margin: 0;
+}
+
+.mapSection {
+  margin-top: 45px;
+  padding-top: 50px;
+}
+
+.mapHeading {
+  margin: 0 0 50px;
+  color: #f3efe2;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+}
+
+.mapHeading em {
+  margin-left: 10px;
+  font-size: 47px;
+}
+
+.mapArea {
+  position: relative;
+}
+
+.mapScroller {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: #e8a23b #0d1208;
+}
+
+.mapViewport {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1320 / 766;
+  border: 1px solid rgb(243 239 226 / 14%);
+  border-radius: 26px;
+  background: #0d1626;
+  box-shadow: 0 42px 84px rgb(0 0 0 / 50%);
+  cursor: crosshair;
+}
+
+.mapInner {
+  position: absolute;
+  inset: 0;
+  transform: translate(-30.77%, 0) scale(1.5385);
+  transform-origin: 0 0;
+}
+
+.mapShade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(13 18 8 / 38%),
+      rgb(13 18 8 / 4%) 26%,
+      rgb(13 18 8 / 4%) 58%,
+      rgb(13 18 8 / 50%)
+    ),
+    radial-gradient(circle, transparent 44%, rgb(13 18 8 / 48%));
+}
+
+.mapPath {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mapPathShadow,
+.mapPathDashed,
+.mapPathGlow,
+.mapPathProgress {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.mapPathShadow {
+  stroke: rgb(13 18 8 / 50%);
+  stroke-width: 10;
+}
+
+.mapPathDashed {
+  stroke: rgb(243 239 226 / 70%);
+  stroke-width: 3;
+  stroke-dasharray: 8 14;
+}
+
+.mapPathGlow {
+  stroke: rgb(232 162 59 / 28%);
+  stroke-width: 16;
+}
+
+.mapPathProgress {
+  stroke: #e8a23b;
+  stroke-width: 6;
+}
+
+.stop {
+  position: absolute;
+  z-index: 3;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.stopDot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border: 1.5px solid rgb(13 18 8 / 60%);
+  border-radius: 3px;
+  background: #f3efe2;
+}
+
+.stopProminent .stopDot {
+  width: 13px;
+  height: 13px;
+}
+
+.stopActive .stopDot {
+  background: #e8a23b;
+}
+
+.stopActive::before {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid #e8a23b;
+  border-radius: 50%;
+  content: "";
+  animation: mapPing 1.8s ease-out infinite;
+}
+
+.stopLabel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 5px 10px;
+  border: 1px solid rgb(243 239 226 / 24%);
+  border-radius: 999px;
+  background: rgb(13 18 8 / 74%);
+  color: #f3efe2;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  pointer-events: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.stopActive .stopLabel {
+  border-color: #e8a23b;
+  background: #e8a23b;
+  color: #16200f;
+}
+
+.labelAbove,
+.labelAuto {
+  transform: translate(-50%, calc(-100% - 10px));
+}
+
+.labelBelow {
+  transform: translate(-50%, 10px);
+}
+
+.labelLeft {
+  transform: translate(calc(-100% - 10px), -50%);
+}
+
+.labelRight {
+  transform: translate(10px, -50%);
+}
+
+.walker {
+  position: absolute;
+  z-index: 4;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.walkerDot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #16200f;
+  border-radius: 50%;
+  background: #e8a23b;
+  box-shadow: 0 0 0 5px rgb(232 162 59 / 25%), 0 0 22px rgb(232 162 59 / 65%);
+}
+
+.walkerName {
+  position: absolute;
+  bottom: 18px;
+  padding: 6px 16px 8px;
+  transform: translateX(-50%);
+  border: 1px solid rgb(232 162 59 / 45%);
+  border-radius: 999px;
+  background: rgb(13 18 8 / 82%);
+  box-shadow: 0 4px 14px rgb(13 18 8 / 50%);
+  color: #e8a23b;
+  font-family: var(--font-accent), cursive;
+  font-size: 29px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mapTopBar {
+  position: absolute;
+  z-index: 5;
+  top: 20px;
+  left: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.mapChip,
+.coordinateChip {
+  border-radius: 999px;
+  padding: 8px 14px;
+  letter-spacing: 0.16em;
+}
+
+.coordinateChip {
+  color: rgb(243 239 226 / 75%);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+}
+
+.compass {
+  position: absolute;
+  z-index: 5;
+  top: 20px;
+  right: 22px;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid rgb(243 239 226 / 22%);
+  border-radius: 50%;
+  background: rgb(13 18 8 / 72%);
+  color: #f3efe2;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.compassArrow {
+  display: block;
+  margin-bottom: 2px;
+  color: #e8a23b;
+  font-size: 9px;
+}
+
+.facilityCard {
+  position: absolute;
+  z-index: 5;
+  bottom: 22px;
+  left: 22px;
+  width: 318px;
+  padding: 22px 26px;
+  border: 1px solid rgb(243 239 226 / 18%);
+  border-radius: 20px;
+  background: rgb(13 18 8 / 80%);
+}
+
+.facilityCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: rgb(243 239 226 / 55%);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+
+.facilityNumber {
+  color: #e8a23b;
+  font-variant-numeric: tabular-nums;
+}
+
+.facilityRule {
+  flex: 1;
+  height: 1px;
+  background: rgb(243 239 226 / 18%);
+}
+
+.facilityName {
+  color: #e8a23b;
+  font-family: var(--font-accent), cursive;
+  font-size: 35px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.facilityDescription {
+  margin: 9px 0 0;
+  color: rgb(243 239 226 / 78%);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.facilityPhoto {
+  position: absolute;
+  z-index: 6;
+  top: -100px;
+  right: 100px;
+  width: 264px;
+  margin: 0;
+  padding: 10px 10px 0;
+  transform: rotate(3deg);
+  border-radius: 8px;
+  background: #faf7ee;
+  box-shadow: 0 30px 60px rgb(0 0 0 / 55%);
+  transition: transform 0.35s ease;
+}
+
+.facilityPhoto:hover {
+  transform: rotate(0deg) scale(1.04);
+}
+
+.facilityPhotoImage {
+  position: relative;
+  width: 244px;
+  height: 184px;
+  overflow: hidden;
+}
+
+.facilityPhoto figcaption {
+  padding: 11px 4px;
+  color: rgb(22 32 15 / 65%);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+@keyframes mapPing {
+  from { opacity: 0.8; transform: scale(0.65); }
+  to { opacity: 0; transform: scale(1.8); }
+}
+
+@media (max-width: 1023px) {
+  .section { padding: 96px 32px; }
+  .sectionHeader { align-items: flex-start; flex-direction: column; gap: 22px; margin-bottom: 48px; }
+  .introduction { max-width: 520px; margin: 0; }
+  .title { font-size: 46px; }
+  .title em { font-size: 54px; }
+  .bigTop { grid-template-columns: 1fr; gap: 40px; }
+  .carousel { height: auto; aspect-ratio: 4 / 3; }
+  .carouselButton { width: 44px; height: 44px; }
+  .metricNumber { font-size: 92px; }
+  .mapScroller { margin-inline: -32px; padding-inline: 32px; }
+  .mapViewport { width: 1120px; }
+  .facilityPhoto { position: relative; top: auto; right: auto; margin: 28px 0 0 auto; }
+}
+
+@media (max-width: 639px) {
+  .section { padding: 72px 20px; }
+  .title { font-size: 36px; line-height: 1.08; }
+  .title em { font-size: 42px; }
+  .carousel { aspect-ratio: 1; }
+  .carouselDots { top: 18px; bottom: auto; }
+  .carouselCaption { max-width: calc(100% - 36px); overflow: hidden; text-overflow: ellipsis; }
+  .bigTopHeading { font-size: 38px; }
+  .metricNumber { font-size: 64px; }
+  .metricUnit { font-size: 34px; }
+  .mapHeading { font-size: 32px; }
+  .mapHeading em { display: block; margin: 5px 0 0; font-size: 40px; }
+  .mapScroller { margin-inline: -20px; padding-inline: 20px; }
+  .mapViewport { width: 800px; }
+  .stop { width: 44px; height: 44px; }
+  .stopLabel { display: none; }
+  .facilityCard { bottom: 14px; left: 14px; width: 280px; padding: 18px 20px; }
+  .facilityName { font-size: 30px; }
+  .mapTopBar { top: 14px; left: 14px; }
+  .coordinateChip { display: none; }
+  .compass { top: 14px; right: 14px; }
+  .facilityPhoto { width: 244px; }
+  .facilityPhotoImage { width: 224px; height: 170px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carouselSlide,
+  .carouselDot,
+  .facilityPhoto { transition: none; }
+  .stopActive::before { animation: none; }
+}

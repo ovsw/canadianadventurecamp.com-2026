@@ -18,6 +18,8 @@ import homePage from "./schemas/documents/home-page";
 import footer, { footerSchemaTypes } from "./schemas/documents/footer";
 import redirect from "./schemas/documents/redirect";
 import activity from "./schemas/documents/activity";
+import facility from "./schemas/documents/facility";
+import facilitiesMap from "./schemas/documents/facilities-map";
 
 // Schema UI shared objects
 import blockContent from "./schemas/blocks/shared/block-content";
@@ -50,6 +52,8 @@ import homeHero from "./schemas/blocks/home-hero";
 import imageCollageFeature from "./schemas/blocks/image-collage-feature";
 import featureCards from "./schemas/blocks/feature-cards";
 import activitySchedule from "./schemas/blocks/activity-schedule";
+import facilitiesMapSection from "./schemas/blocks/facilities-map-section";
+import facilityMapPlacement from "./schemas/objects/facility-map-placement";
 
 export const schemaTypes = [
   // documents
@@ -70,6 +74,8 @@ export const schemaTypes = [
   footer,
   redirect,
   activity,
+  facility,
+  facilitiesMap,
   ...footerSchemaTypes,
   // shared objects
   blockContent,
@@ -86,6 +92,7 @@ export const schemaTypes = [
   minimalRichText,
   blogPostSidebarAction,
   blogPostSidebar,
+  facilityMapPlacement,
   // blocks
   hero,
   hero1,
@@ -100,4 +107,5 @@ export const schemaTypes = [
   imageCollageFeature,
   featureCards,
   activitySchedule,
+  facilitiesMapSection,
 ];

@@ -142,6 +142,14 @@ _Avoid_: private island, secluded, exclusive, hideaway (see Copy voice)
 
 The camp's large gymnastics and performance facility.
 
+**Facility**
+
+A named building or activity space on Adventure Island that visitors can explore on the Website.
+
+**Facilities Map**
+
+The Website section that lets visitors explore Facilities on Adventure Island. Facility placement reflects the island's rough geography, while the connecting route communicates tour order rather than literal walking paths. The Big Top feature may accompany the map but is optional.
+
 **Tuck shop**
 
 The on-island camp store. A $150 deposit is added per camper; unused funds are refunded.
