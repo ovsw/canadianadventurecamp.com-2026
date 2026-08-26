@@ -15,6 +15,32 @@ function callout(title: string | null, body: string | null) {
 }
 
 describe("RichTextContent", () => {
+  it("requests a bounded Sanity image while preserving its intrinsic ratio", () => {
+    render(
+      <RichTextContent
+        value={[
+          {
+            _key: "photo",
+            _type: "image",
+            alt: "Campers on the lake",
+            resolvedAsset: {
+              _id: "image-abc-3200x1800-jpg",
+              url: "https://cdn.sanity.io/images/test/production/abc-3200x1800.jpg",
+              metadata: { dimensions: { height: 1800, width: 3200 } },
+            },
+          },
+        ] as PortableTextProps["value"]}
+      />,
+    );
+
+    const image = screen.getByRole("img", { name: "Campers on the lake" });
+    expect(image).toHaveAttribute("width", "3200");
+    expect(image).toHaveAttribute("height", "1800");
+    const src = decodeURIComponent(image.getAttribute("src") ?? "");
+    expect(src).toContain("w=1600");
+    expect(src).toContain("fit=max");
+  });
+
   it("renders blockquotes as quote content", () => {
     render(
       <RichTextContent

@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { CustomLinkMarkRenderer } from "@/components/portable-text/custom-link-mark";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { cn } from "@/lib/utils";
+import { urlFor } from "@/sanity/lib/image";
 import { stegaClean } from "next-sanity";
 import Image from "next/image";
 import Link from "next/link";
@@ -114,7 +115,7 @@ export const richTextContentComponents: PortableTextProps["components"] = {
             placeholder={asset.metadata?.lqip ? "blur" : undefined}
             quality={100}
             sizes="(min-width: 1024px) 896px, calc(100vw - 2rem)"
-            src={asset.url}
+            src={urlFor(asset._id).width(1600).fit("max").url()}
             width={asset.metadata?.dimensions?.width ?? 1600}
           />
           {value.caption ? (

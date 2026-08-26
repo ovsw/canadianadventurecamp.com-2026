@@ -472,18 +472,27 @@ export async function seed(client) {
     filename: "starter-example.svg",
     contentType: "image/svg+xml",
   });
-  const documents = JSON.parse(
-    JSON.stringify(starterDocuments).replaceAll(
-      STARTER_IMAGE_ASSET_ID,
-      asset._id,
-    ),
-  );
-  let transaction = client.transaction();
-  for (const document of documents) {
-    transaction = transaction.createIfNotExists(document);
+  try {
+    const documents = JSON.parse(
+      JSON.stringify(starterDocuments).replaceAll(
+        STARTER_IMAGE_ASSET_ID,
+        asset._id,
+      ),
+    );
+    let transaction = client.transaction();
+    for (const document of documents) {
+      transaction = transaction.createIfNotExists(document);
+    }
+    await transaction.commit();
+    return { documents: documents.length, assetId: asset._id };
+  } catch (error) {
+    try {
+      await client.delete(asset._id);
+    } catch {
+      // Preserve the seed failure; cleanup is best-effort and scoped to this upload.
+    }
+    throw error;
   }
-  await transaction.commit();
-  return { documents: documents.length, assetId: asset._id };
 }
 
 export async function unseed(client) {

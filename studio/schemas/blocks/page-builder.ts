@@ -30,7 +30,7 @@ export const homePagePageBuilderBlockTypes = [
 
 type PageBuilderBlockType = (typeof homePagePageBuilderBlockTypes)[number];
 
-function validateBlocks(
+export function validateBlocks(
   blocks: Array<{ _type?: string }> | undefined,
 ): true | string {
   const heroTypes = new Set(["hero", "homeHero"]);
@@ -44,6 +44,9 @@ function validateBlocks(
   const faqCount =
     blocks?.filter((block) => block?._type === "faqAccordion").length ?? 0;
   if (faqCount > 1) return "Add no more than one FAQ section";
+  const teamCount =
+    blocks?.filter((block) => block?._type === "teamMembers").length ?? 0;
+  if (teamCount > 1) return "Add no more than one Team Members section";
   return true;
 }
 

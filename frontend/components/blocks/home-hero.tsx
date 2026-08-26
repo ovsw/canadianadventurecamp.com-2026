@@ -214,7 +214,7 @@ export default function HomeHero({
                           icon={{ name: iconName, svg: iconSvg }}
                         />
                       ) : null}
-                      {button.text}
+                      {label}
                     </Link>
                   </Button>
                 );

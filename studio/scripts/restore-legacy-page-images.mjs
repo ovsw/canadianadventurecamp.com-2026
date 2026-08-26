@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import process from "node:process";
 import { isDeepStrictEqual } from "node:util";
 import { getCliClient } from "sanity/cli";
+import { assertCacProductionTarget } from "./assert-cac-production-target.mjs";
 
 const APPLY = process.argv.includes("--apply");
 const sourceArgument = process.argv.find((argument) =>
@@ -19,9 +20,7 @@ const client = getCliClient({ apiVersion: "2026-03-23" });
 const { dataset, projectId } = client.config();
 const DROP = Symbol("drop-image-value");
 
-if (dataset !== "production") {
-  throw new Error(`Expected production dataset, received ${dataset}`);
-}
+assertCacProductionTarget({ dataset, projectId });
 
 let imageValueCount = 0;
 

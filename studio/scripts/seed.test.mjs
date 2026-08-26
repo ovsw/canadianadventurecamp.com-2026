@@ -14,9 +14,12 @@ function createFakeClient({
   count = 0,
   documents = starterDocuments,
   assetRefs = [],
+  commitError,
+  deleteError,
 } = {}) {
   const calls = {
     commits: [],
+    deletes: [],
     uploads: [],
   };
 
@@ -27,6 +30,10 @@ function createFakeClient({
         calls.uploads.push({ body, options, type });
         return { _id: STARTER_IMAGE_ASSET_ID };
       },
+    },
+    async delete(id) {
+      calls.deletes.push(id);
+      if (deleteError) throw deleteError;
     },
     async fetch(query) {
       if (query.startsWith("count(")) return count;
@@ -47,6 +54,7 @@ function createFakeClient({
         },
         async commit() {
           calls.commits.push(operations);
+          if (commitError) throw commitError;
         },
       };
     },
@@ -77,6 +85,25 @@ test("seed refuses to write into a non-empty dataset", async () => {
   );
   assert.equal(client.calls.uploads.length, 0);
   assert.equal(client.calls.commits.length, 0);
+});
+
+test("seed removes only its new asset and preserves the commit failure", async () => {
+  const commitError = new Error("transaction unavailable");
+  const client = createFakeClient({ commitError });
+
+  await assert.rejects(seed(client), (error) => error === commitError);
+  assert.deepEqual(client.calls.deletes, [STARTER_IMAGE_ASSET_ID]);
+});
+
+test("seed preserves the commit failure when uploaded-asset cleanup fails", async () => {
+  const commitError = new Error("transaction unavailable");
+  const client = createFakeClient({
+    commitError,
+    deleteError: new Error("cleanup unavailable"),
+  });
+
+  await assert.rejects(seed(client), (error) => error === commitError);
+  assert.deepEqual(client.calls.deletes, [STARTER_IMAGE_ASSET_ID]);
 });
 
 test("unseed deletes marked starter IDs and preserves unrelated documents", async () => {

@@ -73,6 +73,30 @@ describe("resolveHomeHeroButtonVariant", () => {
     expect(button.querySelector("svg")).not.toBeNull();
   });
 
+  it("renders the fallback label for an ordinary link without button text", () => {
+    render(
+      <HomeHero
+        {...loneVideoButtonHero}
+        buttons={[
+          {
+            _key: "apply",
+            _type: "button",
+            href: "/apply",
+            icon: null,
+            openInNewTab: false,
+            text: null,
+            variant: "outline",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "Learn more" })).toHaveAttribute(
+      "href",
+      "/apply",
+    );
+  });
+
   it("renders inline links in the supporting copy", () => {
     render(
       <HomeHero
