@@ -47,7 +47,7 @@ build/run obstacles, accumulated as you first hit them).
    does that account have?
 5. **DRIFT**: enumerate everything that can differ between the author's own
    session and the test user's environment (feature flags, plans and
-   entitlements, roles, seeded vs empty data, locale, A/B buckets). Every item
+   entitlements, roles, data availability, locale, A/B buckets). Every item
    is a way a RED can become untrustworthy; this list feeds the C-gate
    (`reference/red-test-robustness.md`).
 6. **LOOP**: the unattended iteration for your rig. Push → build → e2e

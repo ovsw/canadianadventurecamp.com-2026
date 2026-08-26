@@ -8,25 +8,6 @@ export default defineType({
   icon: ListCollapse,
   description:
     "A reusable question and answer that can be selected in FAQ sections.",
-  initialValue: {
-    title: "What should visitors know before getting started?",
-    body: [
-      {
-        _key: "starter-faq-answer",
-        _type: "block",
-        children: [
-          {
-            _key: "starter-faq-answer-span",
-            _type: "span",
-            marks: [],
-            text: "Replace this with a clear answer to a common visitor question.",
-          },
-        ],
-        markDefs: [],
-        style: "normal",
-      },
-    ],
-  },
   fields: [
     defineField({
       name: "title",

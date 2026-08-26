@@ -21,47 +21,6 @@ export default defineType({
   icon: LayoutTemplate,
   description:
     "The opening section of an interior page: forest gradient, big heading with a handwritten accent, optional supporting copy, actions, and photo.",
-  initialValue: {
-    eyebrow: "Adventure Island",
-    title: [
-      {
-        _key: "starter-page-header-title",
-        _type: "block",
-        children: [
-          {
-            _key: "starter-page-header-title-text",
-            _type: "span",
-            marks: [],
-            text: "Life on ",
-          },
-          {
-            _key: "starter-page-header-title-accent",
-            _type: "span",
-            marks: ["em"],
-            text: "the island.",
-          },
-        ],
-        markDefs: [],
-        style: "normal",
-      },
-    ],
-    body: [
-      {
-        _key: "starter-page-header-body",
-        _type: "block",
-        children: [
-          {
-            _key: "starter-page-header-body-text",
-            _type: "span",
-            marks: [],
-            text: "A sentence or two that tells parents what this page covers.",
-          },
-        ],
-        markDefs: [],
-        style: "normal",
-      },
-    ],
-  },
   fields: [
     defineField({
       name: "eyebrow",

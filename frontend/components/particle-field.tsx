@@ -9,18 +9,18 @@ type Particle = {
   outerStyle: CSSProperties;
 };
 
-function pseudoRandom(seed: number) {
-  const value = Math.sin(seed * 12.9898) * 43_758.5453;
+function pseudoRandom(input: number) {
+  const value = Math.sin(input * 12.9898) * 43_758.5453;
   return value - Math.floor(value);
 }
 
 function createParticles(): Particle[] {
   const particles: Particle[] = [];
-  let seed = 1;
+  let randomInput = 1;
 
   for (let index = 0; index < 90; index++) {
-    const x = pseudoRandom(seed++) * 100;
-    const y = pseudoRandom(seed++) * 100;
+    const x = pseudoRandom(randomInput++) * 100;
+    const y = pseudoRandom(randomInput++) * 100;
     const dx = (x - 50) / 50;
     const dy = (y - 50) / 46;
     const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
@@ -28,11 +28,11 @@ function createParticles(): Particle[] {
     if (distanceFromCenter < 0.5) continue;
 
     const fade = Math.min(1, (distanceFromCenter - 0.5) / 0.55);
-    const size = 1.2 + pseudoRandom(seed++) * 2.6;
-    const brightness = 0.45 + pseudoRandom(seed++) * 0.55;
-    const glow = size * (1.6 + pseudoRandom(seed++) * 1.4);
-    const duration = 2.6 + pseudoRandom(seed++) * 4.5;
-    const delay = -pseudoRandom(seed++) * duration;
+    const size = 1.2 + pseudoRandom(randomInput++) * 2.6;
+    const brightness = 0.45 + pseudoRandom(randomInput++) * 0.55;
+    const glow = size * (1.6 + pseudoRandom(randomInput++) * 1.4);
+    const duration = 2.6 + pseudoRandom(randomInput++) * 4.5;
+    const delay = -pseudoRandom(randomInput++) * duration;
 
     particles.push({
       id: index,

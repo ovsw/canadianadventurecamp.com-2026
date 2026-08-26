@@ -69,35 +69,6 @@ export default defineType({
   icon: LayoutGrid,
   description:
     "A reusable grid for features, services, reasons, or benefits.",
-  initialValue: {
-    eyebrow: "Highlights",
-    title: "Useful features for common marketing pages.",
-    intro:
-      "Replace this sample with a short explanation of what these items help visitors understand.",
-    cards: [
-      {
-        _key: "starter-feature-one",
-        _type: "featureGridItem",
-        title: "Clear content structure",
-        body: [
-          {
-            _key: "starter-feature-one-body",
-            _type: "block",
-            children: [
-              {
-                _key: "starter-feature-one-span",
-                _type: "span",
-                marks: [],
-                text: "Explain one reusable strength, service, or outcome.",
-              },
-            ],
-            markDefs: [],
-            style: "normal",
-          },
-        ],
-      },
-    ],
-  },
   fields: [
     defineField({
       name: "useCreamBackground",

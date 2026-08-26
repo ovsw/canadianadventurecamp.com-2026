@@ -1,5 +1,5 @@
-// @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
-// Copied omelette starter. Re-running copy_starter_component with this kind overwrites this file with the latest version (page content is unaffected).
+// @ds-adherence-ignore -- omelette scaffold (raw elements/hex/px by design)
+// Copied from omelette. Re-running the source copy command overwrites this file (page content is unaffected).
 /* BEGIN USAGE */
 /**
  * <image-slot> — user-fillable image placeholder.
@@ -709,7 +709,7 @@
       // width%/height% in _applyView encode the frame aspect at call time —
       // a host resize (responsive grid, pane divider) would stretch the
       // image until the next _render. Re-render on size change: _render()
-      // re-seeds _view from stored before clamp/apply, so a shrink→grow
+      // restores _view from stored before clamp/apply, so a shrink→grow
       // cycle round-trips instead of ratcheting x/y toward the narrower
       // frame's clamp range.
       this._ro = new ResizeObserver(() => this._render());

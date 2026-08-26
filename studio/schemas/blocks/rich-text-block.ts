@@ -7,26 +7,6 @@ export default defineType({
   type: "object",
   icon: TextIcon,
   description: "Long-form editorial content with an optional introduction.",
-  initialValue: {
-    eyebrow: "What we do",
-    title: "Built to make the next decision easier.",
-    richText: [
-      {
-        _key: "starter-rich-text",
-        _type: "block",
-        children: [
-          {
-            _key: "starter-rich-text-span",
-            _type: "span",
-            marks: [],
-            text: "Replace this sample with the useful details visitors need to understand your work and take the next step.",
-          },
-        ],
-        markDefs: [],
-        style: "normal",
-      },
-    ],
-  },
   fields: [
     defineField({
       name: "eyebrow",

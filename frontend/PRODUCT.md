@@ -43,7 +43,7 @@ Claims a neighbouring camp cannot copy:
 
 ## Capabilities and Constraints
 
-- Target build: Next.js + Sanity monorepo, scaffolded from Ovi's own improved Schema UI-based starter (repo link pending). Nothing built yet; only the homepage prototype exists.
+- Target build: this Next.js + Sanity monorepo. The homepage prototype defines the initial visual direction.
 - Old site: Nuxt frontend https://github.com/ovsw/cac-web3 and Sanity Studio https://github.com/ovsw/cac-studio. Source for redirects, analytics setup, old schema, and content import.
 - Site map (from prototype nav/footer): Home, The Island, Programs (Specialty: Gymnastics, Trampoline, Aerials, Waterski & Wakeboard; General Program; Y.L.P. Youth Leadership), Activities, Facilities, Dates & Rates, For Parents (Health & Safety), Testimonials, History & Goal, Leadership, Join Our Team, Contact, Privacy, Terms.
 - Terminology: CAC; Adventure Island; the Big Top; Y.L.P. (Youth Leadership Program); OCA (Ontario Camps Association); CCA (Canadian Camping Association); tuck shop.
