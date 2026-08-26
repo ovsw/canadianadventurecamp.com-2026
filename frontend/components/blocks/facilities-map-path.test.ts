@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   createFacilitiesMapPath,
-  getFacilitiesMapTrailDasharray,
+  createFacilitiesMapTrailPath,
+  type FacilitiesMapRouteSample,
 } from "./facilities-map-path";
 
 describe("createFacilitiesMapPath", () => {
@@ -31,12 +32,29 @@ describe("createFacilitiesMapPath", () => {
   });
 });
 
-describe("getFacilitiesMapTrailDasharray", () => {
-  it("uses the measured route length so the highlight does not repeat", () => {
-    expect(getFacilitiesMapTrailDasharray(68, 160)).toBe("68 92");
+describe("createFacilitiesMapTrailPath", () => {
+  const samples: FacilitiesMapRouteSample[] = [
+    { distance: 0, point: { x: 0, y: 50 } },
+    { distance: 50, point: { x: 25, y: 50 } },
+    { distance: 100, point: { x: 50, y: 50 } },
+    { distance: 150, point: { x: 75, y: 50 } },
+    { distance: 200, point: { x: 100, y: 50 } },
+  ];
+
+  it("draws one contiguous stroke from the start to the exact distance", () => {
+    expect(createFacilitiesMapTrailPath(samples, 125)).toBe(
+      "M0,50L25,50L50,50L62.5,50",
+    );
   });
 
-  it("keeps the route empty before its rendered length is measured", () => {
-    expect(getFacilitiesMapTrailDasharray(0, 0)).toBe("0 1");
+  it("covers the whole route at full distance", () => {
+    expect(createFacilitiesMapTrailPath(samples, 200)).toBe(
+      "M0,50L25,50L50,50L75,50L100,50",
+    );
+  });
+
+  it("draws nothing before the walker leaves the first stop", () => {
+    expect(createFacilitiesMapTrailPath(samples, 0)).toBeUndefined();
+    expect(createFacilitiesMapTrailPath([], 40)).toBeUndefined();
   });
 });

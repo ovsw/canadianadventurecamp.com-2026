@@ -11,7 +11,8 @@ import {
 import styles from "./facilities-map-section.module.css";
 import {
   createFacilitiesMapPath,
-  getFacilitiesMapTrailDasharray,
+  createFacilitiesMapTrailPath,
+  type FacilitiesMapRouteSample,
 } from "./facilities-map-path";
 
 export type PublicFacilityPlacement = {
@@ -37,13 +38,7 @@ type Point = { x: number; y: number };
 
 type RouteMeasurements = {
   distances: number[];
-  samples: {
-    distance: number;
-    point: Point;
-    screenDistance: number;
-  }[];
-  screenDistances: number[];
-  screenTotal: number;
+  samples: FacilitiesMapRouteSample[];
   total: number;
 };
 
@@ -60,40 +55,23 @@ function getRouteMeasurements(
   placements: PublicFacilityPlacement[],
 ): RouteMeasurements {
   const total = path.getTotalLength();
-  const matrix = path.getScreenCTM();
-  if (!total || !matrix || !placements.length) {
+  if (!total || !placements.length) {
     return {
       distances: [],
       samples: [],
-      screenDistances: [],
-      screenTotal: 0,
       total: 0,
     };
   }
   const sampleCount = Math.max(800, placements.length * 100);
   const samples: RouteMeasurements["samples"] = [];
-  let previousScreenPoint: Point | undefined;
-  let screenTotal = 0;
 
   for (let index = 0; index <= sampleCount; index += 1) {
     const distance = (total * index) / sampleCount;
     const point = path.getPointAtLength(distance);
-    const screenPoint = {
-      x: matrix.a * point.x + matrix.c * point.y + matrix.e,
-      y: matrix.b * point.x + matrix.d * point.y + matrix.f,
-    };
-    if (previousScreenPoint) {
-      screenTotal += Math.hypot(
-        screenPoint.x - previousScreenPoint.x,
-        screenPoint.y - previousScreenPoint.y,
-      );
-    }
-    samples.push({ distance, point, screenDistance: screenTotal });
-    previousScreenPoint = screenPoint;
+    samples.push({ distance, point });
   }
 
   const distances: number[] = [];
-  const screenDistances: number[] = [];
   let minimumSampleIndex = 0;
 
   for (const placement of placements) {
@@ -113,32 +91,10 @@ function getRouteMeasurements(
     }
     const closestSample = samples[closestSampleIndex];
     distances.push(closestSample?.distance ?? 0);
-    screenDistances.push(closestSample?.screenDistance ?? 0);
     minimumSampleIndex = Math.min(samples.length - 1, closestSampleIndex + 1);
   }
 
-  return { distances, samples, screenDistances, screenTotal, total };
-}
-
-function getScreenDistanceAtRouteDistance(
-  measurements: RouteMeasurements,
-  distance: number,
-) {
-  if (!measurements.total || measurements.samples.length < 2) return 0;
-  const samplePosition =
-    (Math.min(Math.max(0, distance), measurements.total) /
-      measurements.total) *
-    (measurements.samples.length - 1);
-  const lowerIndex = Math.floor(samplePosition);
-  const upperIndex = Math.ceil(samplePosition);
-  const lower = measurements.samples[lowerIndex];
-  const upper = measurements.samples[upperIndex];
-  if (!lower || !upper) return 0;
-  const progress = samplePosition - lowerIndex;
-  return (
-    lower.screenDistance +
-    (upper.screenDistance - lower.screenDistance) * progress
-  );
+  return { distances, samples, total };
 }
 
 export default function FacilitiesMapInteractive({
@@ -187,6 +143,13 @@ export default function FacilitiesMapInteractive({
     () => createFacilitiesMapPath(placements),
     [placements],
   );
+  const trailPath = useMemo(
+    () =>
+      routeMeasurements
+        ? createFacilitiesMapTrailPath(routeMeasurements.samples, trailDistance)
+        : undefined,
+    [routeMeasurements, trailDistance],
+  );
   const activePlacement = placements[activeIndex] ?? placements[0];
 
   useEffect(() => {
@@ -222,7 +185,7 @@ export default function FacilitiesMapInteractive({
       const distance = measured.distances[index] ?? 0;
       setRouteMeasurements(measured);
       walkerDistanceRef.current = distance;
-      setTrailDistance(measured.screenDistances[index] ?? 0);
+      setTrailDistance(distance);
       setWalkerPoint({
         x: placements[index]?.x ?? 0,
         y: placements[index]?.y ?? 0,
@@ -270,9 +233,7 @@ export default function FacilitiesMapInteractive({
       walkerDistanceRef.current = targetDistance;
       const point = path.getPointAtLength(targetDistance);
       setWalkerPoint(point);
-      setTrailDistance(
-        routeMeasurements.screenDistances[activeIndex] ?? 0,
-      );
+      setTrailDistance(targetDistance);
       return;
     }
 
@@ -285,9 +246,7 @@ export default function FacilitiesMapInteractive({
       const distance = startDistance + (targetDistance - startDistance) * eased;
       walkerDistanceRef.current = distance;
       setWalkerPoint(path.getPointAtLength(distance));
-      setTrailDistance(
-        getScreenDistanceAtRouteDistance(routeMeasurements, distance),
-      );
+      setTrailDistance(distance);
       if (progress < 1) animationRef.current = requestAnimationFrame(animate);
     };
     animationRef.current = requestAnimationFrame(animate);
@@ -355,25 +314,18 @@ export default function FacilitiesMapInteractive({
                 preserveAspectRatio="none"
                 viewBox="0 0 100 100"
               >
-                <path className={styles.mapPathShadow} d={pathData} />
-                <path className={styles.mapPathDashed} d={pathData} />
                 <path
-                  className={styles.mapPathGlow}
-                  d={pathData}
-                  strokeDasharray={getFacilitiesMapTrailDasharray(
-                    trailDistance,
-                    routeMeasurements?.screenTotal ?? 0,
-                  )}
-                />
-                <path
-                  className={styles.mapPathProgress}
+                  className={styles.mapPathShadow}
                   d={pathData}
                   ref={pathRef}
-                  strokeDasharray={getFacilitiesMapTrailDasharray(
-                    trailDistance,
-                    routeMeasurements?.screenTotal ?? 0,
-                  )}
                 />
+                <path className={styles.mapPathDashed} d={pathData} />
+                {trailPath ? (
+                  <>
+                    <path className={styles.mapPathGlow} d={trailPath} />
+                    <path className={styles.mapPathProgress} d={trailPath} />
+                  </>
+                ) : null}
               </svg>
             ) : null}
 
