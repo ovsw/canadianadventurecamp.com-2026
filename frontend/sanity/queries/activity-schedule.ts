@@ -7,7 +7,7 @@ export const activityScheduleQuery = groq`
     description,
     camperNames,
     "activityCount": count(*[_type == "activity"]),
-    "featuredActivities": array::compact(featuredActivities[]{
+    "featuredActivities": array::compact(featuredActivities[0...18][]{
       _key,
       ...(@->{
         _id,

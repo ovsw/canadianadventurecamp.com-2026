@@ -36,6 +36,16 @@ export const homePagePageBuilderBlockTypes = [
 
 type PageBuilderBlockType = (typeof homePagePageBuilderBlockTypes)[number];
 
+const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>(
+  homePagePageBuilderBlockTypes.filter((type) => type !== "hero"),
+);
+
+export function getPageBuilderPreviewImageUrl(schemaTypeName: string) {
+  return pageBuilderPreviewBlockTypes.has(schemaTypeName as PageBuilderBlockType)
+    ? `/static/images/preview/${schemaTypeName}.jpg`
+    : undefined;
+}
+
 export function validateBlocks(
   blocks: Array<{ _type?: string }> | undefined,
 ): true | string {
@@ -74,7 +84,13 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
           { name: "hero", title: "Hero", of: heroTypes },
           { name: "content", title: "Content", of: contentTypes },
         ],
-        views: [{ name: "list" }],
+        views: [
+          { name: "list" },
+          {
+            name: "grid",
+            previewImageUrl: getPageBuilderPreviewImageUrl,
+          },
+        ],
       },
     },
   });

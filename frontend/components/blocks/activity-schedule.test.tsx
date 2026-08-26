@@ -66,6 +66,30 @@ describe("ActivitySchedule", () => {
     ).toHaveAttribute("href", "/summer-camp-activities");
   });
 
+  it("never displays more than 18 featured Activities from stale data", () => {
+    render(
+      <ActivitySchedule
+        {...activitySchedule}
+        activityCount={25}
+        featuredActivities={[
+          ...featuredActivities,
+          { _id: "activity-19", _key: "activity-19", title: "Activity 19" },
+          { _id: "activity-20", _key: "activity-20", title: "Activity 20" },
+        ]}
+      />,
+    );
+
+    expect(screen.getAllByRole("button", { name: /^Activity \d+$/ })).toHaveLength(
+      18,
+    );
+    expect(
+      screen.getByRole("link", { name: "+ 7 more Activities" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Activity 19" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("lets visitors add and remove a featured Activity", () => {
     render(<ActivitySchedule {...activitySchedule} />);
 
@@ -130,6 +154,74 @@ describe("ActivitySchedule", () => {
     );
     act(() => vi.advanceTimersByTime(1000));
     expect(screen.getByRole("list")).toHaveTextContent(/Activity \d+/);
+  });
+
+  it("updates a selected Activity when its title changes while paused", () => {
+    const { rerender } = render(<ActivitySchedule {...activitySchedule} />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Pause automatic schedule" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Activity 1" }));
+
+    rerender(
+      <ActivitySchedule
+        {...activitySchedule}
+        featuredActivities={featuredActivities.map((activity) =>
+          activity._id === "activity-1"
+            ? { ...activity, title: "Updated Activity" }
+            : activity,
+        )}
+      />,
+    );
+
+    expect(screen.getByRole("list")).toHaveTextContent("Updated Activity");
+    expect(screen.getByRole("list")).not.toHaveTextContent("Activity 1");
+    expect(
+      screen.getByRole("button", { name: "Resume automatic schedule" }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("removes a selected Activity that is removed from the props while paused", () => {
+    const { rerender } = render(<ActivitySchedule {...activitySchedule} />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Pause automatic schedule" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Activity 1" }));
+
+    rerender(
+      <ActivitySchedule
+        {...activitySchedule}
+        featuredActivities={featuredActivities.filter(
+          (activity) => activity._id !== "activity-1",
+        )}
+      />,
+    );
+
+    expect(screen.getByRole("list")).not.toHaveTextContent("Activity 1");
+    expect(
+      screen.getByRole("button", { name: "Resume automatic schedule" }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("resumes immediately after a manual selection made while paused", () => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    motion.inView = true;
+    render(<ActivitySchedule {...activitySchedule} />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Pause automatic schedule" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Activity 1" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Resume automatic schedule" }),
+    );
+
+    act(() => vi.advanceTimersByTime(1000));
+
+    expect(screen.getByRole("list")).toHaveTextContent("Activity 2");
   });
 
   it("hydrates safely when the reduced-motion preference resolves in the browser", async () => {
@@ -197,6 +289,8 @@ describe("ActivitySchedule", () => {
     });
     expect(schedule).toHaveTextContent("Activity 1");
     expect(schedule).toHaveTextContent("Activity 4");
+    expect(screen.getByText("Sample day")).toBeInTheDocument();
+    expect(screen.queryByText("Building a day…")).not.toBeInTheDocument();
     expect(screen.getByText("Full day ✓")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /automatic schedule/ }),

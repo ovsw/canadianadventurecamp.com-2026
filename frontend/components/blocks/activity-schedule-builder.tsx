@@ -77,6 +77,29 @@ export default function ActivityScheduleBuilder({
     setSlots(nextSlots);
   }, []);
 
+  useEffect(() => {
+    const activitiesById = new Map(
+      activities.map((activity) => [activity._id, activity]),
+    );
+    let hasChanged = false;
+    const nextSlots = slotsRef.current.map((slot) => {
+      if (!slot) return null;
+
+      const nextActivity = activitiesById.get(slot._id) ?? null;
+      if (
+        nextActivity?._key !== slot._key ||
+        nextActivity?.title !== slot.title ||
+        nextActivity?.titleDataAttribute !== slot.titleDataAttribute
+      ) {
+        hasChanged = true;
+      }
+
+      return nextActivity;
+    });
+
+    if (hasChanged) updateSlots(nextSlots);
+  }, [activities, updateSlots]);
+
   const showAdded = useCallback((activityId: string) => {
     setLastAdded(activityId);
     if (revealTimer.current) clearTimeout(revealTimer.current);
@@ -161,6 +184,7 @@ export default function ActivityScheduleBuilder({
     if (pauseTimer.current) clearTimeout(pauseTimer.current);
     pauseTimer.current = setTimeout(() => {
       pauseAutomation.current = false;
+      pauseTimer.current = null;
     }, 6500);
     fullTicks.current = 0;
     setHasManualSelection(true);
@@ -188,10 +212,24 @@ export default function ActivityScheduleBuilder({
     showAdded(activity._id);
   };
 
+  const toggleAutomation = () => {
+    if (isAutomationPaused) {
+      if (pauseTimer.current) clearTimeout(pauseTimer.current);
+      pauseTimer.current = null;
+      pauseAutomation.current = false;
+    }
+    setIsAutomationPaused(!isAutomationPaused);
+  };
+
   const fullDay = displayedSlots.every(Boolean);
   const camperName = camperNames[camperIndex % camperNames.length];
   const day = scheduleDays[dayIndex];
   const scheduleOwner = hasManualSelection ? "Your" : `${camperName}'s`;
+  const scheduleStatus = prefersReducedMotion
+    ? "Sample day"
+    : isAutomationPaused
+      ? "Day paused"
+      : "Building a day…";
 
   return (
     <div
@@ -246,7 +284,7 @@ export default function ActivityScheduleBuilder({
                 className="size-2 rounded-full bg-campfire-amber"
               />
               <span className="font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-pine-night/55">
-                {isAutomationPaused ? "Day paused" : "Building a day…"}
+                {scheduleStatus}
               </span>
             </div>
             {hasMounted && prefersReducedMotion === false ? (
@@ -254,7 +292,7 @@ export default function ActivityScheduleBuilder({
                 aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
                 aria-pressed={isAutomationPaused}
                 className="focus-ring rounded-pill border border-pine-night/20 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-[0.12em] text-pine-night/65 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
-                onClick={() => setIsAutomationPaused((paused) => !paused)}
+                onClick={toggleAutomation}
                 type="button"
               >
                 {isAutomationPaused ? "Play" : "Pause"}

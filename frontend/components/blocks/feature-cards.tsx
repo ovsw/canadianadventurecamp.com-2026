@@ -33,6 +33,12 @@ function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
 }
 
+export function getFeatureCardImageUrl(
+  image: Parameters<typeof urlFor>[0],
+) {
+  return urlFor(image).width(1600).height(900).fit("crop").url();
+}
+
 export function getFeatureCardColumnCount(
   cardCount: number,
   singleRowUpToFour = true,
@@ -52,12 +58,44 @@ export default function FeatureCards({
   if (!title?.length || !groups?.length) return null;
 
   const headingId = `feature-cards-${stegaClean(_key)}`;
-  const numberedGroups = groups.map((group, groupIndex) => ({
-    group,
-    startNumber: groups
-      .slice(0, groupIndex)
-      .reduce((total, precedingGroup) => total + (precedingGroup.cards?.length ?? 0), 0),
-  }));
+  const renderableGroups = groups.flatMap((group) => {
+    if (!hasText(group.heading)) return [];
+
+    const cards = (group.cards ?? []).flatMap((card) => {
+      const href = getSafeLinkHref(card.link?.href);
+      const imageAlt = stegaClean(card.image?.alt)?.trim();
+      const linkText = stegaClean(card.link?.text)?.trim();
+      const title = stegaClean(card.title)?.trim();
+      const text = stegaClean(card.text)?.trim();
+
+      if (
+        !card.image?.asset?._id ||
+        !imageAlt ||
+        !title ||
+        !text ||
+        !href ||
+        !linkText
+      ) {
+        return [];
+      }
+
+      return [{ card, href }];
+    });
+
+    return cards.length >= 2 ? [{ cards, group }] : [];
+  });
+
+  if (!renderableGroups.length) return null;
+
+  const numberedGroups = renderableGroups.map(
+    ({ cards, group }, groupIndex) => ({
+      cards,
+      group,
+      startNumber: renderableGroups
+        .slice(0, groupIndex)
+        .reduce((total, precedingGroup) => total + precedingGroup.cards.length, 0),
+    }),
+  );
 
   return (
     <section
@@ -95,13 +133,11 @@ export default function FeatureCards({
         </header>
 
         <div className="grid gap-16">
-          {numberedGroups.map(({ group, startNumber }) => {
+          {numberedGroups.map(({ cards, group, startNumber }) => {
             const groupPath = `groups[_key=="${group._key}"]`;
 
-            if (!group.cards?.length || !hasText(group.heading)) return null;
-
             const columnCount = getFeatureCardColumnCount(
-              group.cards.length,
+              cards.length,
               stegaClean(group.singleRowUpToFour) !== false,
             );
 
@@ -140,18 +176,12 @@ export default function FeatureCards({
                   )}
                   data-sanity={dataAttribute?.(`${groupPath}.cards`)}
                 >
-                  {group.cards.map((card, cardIndex) => {
+                  {cards.map(({ card, href }, cardIndex) => {
                     const cardPath = `${groupPath}.cards[_key=="${card._key}"]`;
-                    const href = getSafeLinkHref(card.link?.href);
-                    const linkText = stegaClean(card.link?.text)?.trim();
-                    const cardTitle = stegaClean(card.title)?.trim();
-                    const cardText = stegaClean(card.text)?.trim();
                     const number = String(startNumber + cardIndex + 1).padStart(
                       2,
                       "0",
                     );
-
-                    if (!cardTitle || !cardText || !href || !linkText) return null;
 
                     return (
                       <li
@@ -182,7 +212,7 @@ export default function FeatureCards({
                                   ? "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                                   : "(min-width: 768px) 50vw, 100vw"
                               }
-                              src={urlFor(card.image).width(1000).url()}
+                              src={getFeatureCardImageUrl(card.image)}
                             />
                           ) : null}
                           <span

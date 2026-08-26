@@ -34,19 +34,21 @@ export default function ActivitySchedule({
   const cleanCamperNames = (camperNames ?? [])
     .map((name) => stegaClean(name)?.trim())
     .filter((name): name is string => Boolean(name));
-  const activities = (featuredActivities ?? []).flatMap((activity) => {
-    const title = stegaClean(activity.title)?.trim();
-    if (!activity._id || !activity._key || !title) return [];
+  const activities = (featuredActivities ?? [])
+    .flatMap((activity) => {
+      const title = stegaClean(activity.title)?.trim();
+      if (!activity._id || !activity._key || !title) return [];
 
-    return [
-      {
-        _id: activity._id,
-        _key: activity._key,
-        title,
-        titleDataAttribute: activityDataAttribute?.(activity._id, "title"),
-      },
-    ];
-  });
+      return [
+        {
+          _id: activity._id,
+          _key: activity._key,
+          title,
+          titleDataAttribute: activityDataAttribute?.(activity._id, "title"),
+        },
+      ];
+    })
+    .slice(0, 18);
 
   if (
     !cleanHeading ||
