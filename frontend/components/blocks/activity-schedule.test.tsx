@@ -1,9 +1,16 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { ComponentProps } from "react";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ActivitySchedule from "./activity-schedule";
 
-const motion = vi.hoisted(() => ({ inView: false, reduced: false }));
+const motion = vi.hoisted(
+  (): { inView: boolean; reduced: boolean | null } => ({
+    inView: false,
+    reduced: false,
+  }),
+);
 
 vi.mock("motion/react", () => ({
   useInView: () => motion.inView,
@@ -123,6 +130,32 @@ describe("ActivitySchedule", () => {
     );
     act(() => vi.advanceTimersByTime(1000));
     expect(screen.getByRole("list")).toHaveTextContent(/Activity \d+/);
+  });
+
+  it("hydrates safely when the reduced-motion preference resolves in the browser", async () => {
+    motion.reduced = null;
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <ActivitySchedule {...activitySchedule} />,
+    );
+    expect(
+      container.querySelector('[aria-label="Pause automatic schedule"]'),
+    ).toBeNull();
+
+    motion.reduced = false;
+    const recoverableErrors: unknown[] = [];
+    let root: ReturnType<typeof hydrateRoot>;
+    await act(async () => {
+      root = hydrateRoot(container, <ActivitySchedule {...activitySchedule} />, {
+        onRecoverableError: (error) => recoverableErrors.push(error),
+      });
+    });
+
+    expect(recoverableErrors).toEqual([]);
+    expect(
+      container.querySelector('[aria-label="Pause automatic schedule"]'),
+    ).not.toBeNull();
+    act(() => root.unmount());
   });
 
   it("returns ownership to automation when a new camper day begins", () => {

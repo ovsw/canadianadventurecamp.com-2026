@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import styles from "./activity-schedule.module.css";
 
@@ -39,6 +40,9 @@ type ActivityScheduleBuilderProps = {
 
 const emptySchedule = (): Array<Activity | null> =>
   scheduleTimes.map(() => null);
+const subscribeToHydration = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 export default function ActivityScheduleBuilder({
   activities,
@@ -58,6 +62,11 @@ export default function ActivityScheduleBuilder({
   const [dayIndex, setDayIndex] = useState(0);
   const [lastAdded, setLastAdded] = useState<string | null>(null);
   const [isAutomationPaused, setIsAutomationPaused] = useState(false);
+  const hasMounted = useSyncExternalStore(
+    subscribeToHydration,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
   const pauseAutomation = useRef(false);
   const pauseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fullTicks = useRef(0);
@@ -240,7 +249,7 @@ export default function ActivityScheduleBuilder({
                 {isAutomationPaused ? "Day paused" : "Building a day…"}
               </span>
             </div>
-            {prefersReducedMotion === false ? (
+            {hasMounted && prefersReducedMotion === false ? (
               <button
                 aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
                 aria-pressed={isAutomationPaused}
