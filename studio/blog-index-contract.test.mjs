@@ -26,6 +26,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
     "storyFeature",
     "imageCollageFeature",
     "featureCards",
+    "activitySchedule",
     "latestArticles",
     "faqAccordion",
     "teamMembers",
