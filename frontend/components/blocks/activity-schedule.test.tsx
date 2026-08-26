@@ -56,10 +56,19 @@ describe("ActivitySchedule", () => {
 
     const activity = screen.getByRole("button", { name: "Activity 1" });
     expect(activity).toHaveAttribute("aria-pressed", "false");
+    expect(
+      screen.getByRole("list", { name: "Maya's Tuesday schedule" }),
+    ).toBeInTheDocument();
 
     fireEvent.click(activity);
     expect(activity).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("Activity 1", { selector: "ol span" })).toBeInTheDocument();
+    expect(
+      screen.getByText("Activity 1", { selector: "ol span" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Your Tuesday schedule" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Your")).toHaveClass("text-ember-red", "underline");
 
     fireEvent.click(activity);
     expect(activity).toHaveAttribute("aria-pressed", "false");

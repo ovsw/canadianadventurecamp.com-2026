@@ -96,6 +96,7 @@ export default function ActivitySchedule({
                 <Link
                   className="focus-ring w-fit rounded-pill border border-dashed border-birch-bark/35 px-5 py-3 text-sm font-semibold text-birch-bark/65 transition-colors hover:border-campfire-amber hover:text-campfire-amber motion-reduce:transition-none"
                   href="/summer-camp-activities/"
+                  key="activities-link"
                 >
                   {activityLinkText}
                 </Link>
@@ -109,6 +110,7 @@ export default function ActivitySchedule({
                 <p
                   className="max-w-xl text-pretty text-lg/relaxed text-birch-bark/75"
                   data-sanity={dataAttribute?.("description")}
+                  key="description"
                 >
                   {description}
                 </p>

@@ -176,6 +176,7 @@ export default function ActivityScheduleBuilder({
   const fullDay = displayedSlots.every(Boolean);
   const camperName = camperNames[camperIndex % camperNames.length];
   const day = scheduleDays[dayIndex];
+  const scheduleOwner = hasManualSelection ? "Your" : `${camperName}'s`;
 
   return (
     <div
@@ -235,10 +236,17 @@ export default function ActivityScheduleBuilder({
             className="mb-3 font-accent text-4xl font-semibold"
             data-sanity={camperNamesDataAttribute}
           >
-            {camperName}&apos;s {day}
+            {hasManualSelection ? (
+              <span className="text-ember-red underline decoration-2 underline-offset-4">
+                Your
+              </span>
+            ) : (
+              `${camperName}'s`
+            )}{" "}
+            {day}
           </p>
 
-          <ol aria-label={`${camperName}'s ${day} schedule`}>
+          <ol aria-label={`${scheduleOwner} ${day} schedule`}>
             {scheduleTimes.map((time, index) => {
               const activity = displayedSlots[index];
 
