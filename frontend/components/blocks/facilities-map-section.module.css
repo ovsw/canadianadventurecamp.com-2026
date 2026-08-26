@@ -424,12 +424,12 @@
   pointer-events: none;
   text-transform: uppercase;
   white-space: nowrap;
+  transition: opacity 0.2s ease;
 }
 
+/* The walker's large name label supersedes the stop's own pill. */
 .stopActive .stopLabel {
-  border-color: var(--color-campfire-amber);
-  background: var(--color-campfire-amber);
-  color: var(--color-pine-night);
+  opacity: 0;
 }
 
 .labelAbove,
@@ -475,7 +475,7 @@
   transform: translateX(-50%);
   border: 1px solid rgb(232 162 59 / 45%);
   border-radius: 999px;
-  background: rgb(13 18 8 / 82%);
+  background: rgb(13 18 8);
   box-shadow: 0 4px 14px rgb(13 18 8 / 50%);
   color: var(--color-campfire-amber);
   font-family: var(--font-accent), cursive;
