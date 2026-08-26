@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import styles from "./facilities-map-section.module.css";
-import { createFacilitiesMapPath } from "./facilities-map-path";
+import {
+  createFacilitiesMapPath,
+  getFacilitiesMapTrailDasharray,
+} from "./facilities-map-path";
 
 export type PublicFacilityPlacement = {
   description: string;
@@ -32,6 +35,18 @@ export type PublicFacilityPlacement = {
 
 type Point = { x: number; y: number };
 
+type RouteMeasurements = {
+  distances: number[];
+  samples: {
+    distance: number;
+    point: Point;
+    screenDistance: number;
+  }[];
+  screenDistances: number[];
+  screenTotal: number;
+  total: number;
+};
+
 const labelClassNames = {
   above: styles.labelAbove,
   auto: styles.labelAuto,
@@ -40,34 +55,90 @@ const labelClassNames = {
   right: styles.labelRight,
 } satisfies Record<PublicFacilityPlacement["labelPosition"], string>;
 
-function getStopDistances(
+function getRouteMeasurements(
   path: SVGPathElement,
   placements: PublicFacilityPlacement[],
-) {
+): RouteMeasurements {
   const total = path.getTotalLength();
-  if (!total || !placements.length) return { distances: [], total: 0 };
-  const samples = Math.max(800, placements.length * 100);
-  const distances: number[] = [];
-  let minimumDistance = 0;
+  const matrix = path.getScreenCTM();
+  if (!total || !matrix || !placements.length) {
+    return {
+      distances: [],
+      samples: [],
+      screenDistances: [],
+      screenTotal: 0,
+      total: 0,
+    };
+  }
+  const sampleCount = Math.max(800, placements.length * 100);
+  const samples: RouteMeasurements["samples"] = [];
+  let previousScreenPoint: Point | undefined;
+  let screenTotal = 0;
 
-  for (const placement of placements) {
-    let closestDistance = minimumDistance;
-    let closestDelta = Number.POSITIVE_INFINITY;
-    for (let index = 0; index <= samples; index += 1) {
-      const distance = minimumDistance + ((total - minimumDistance) * index) / samples;
-      const point = path.getPointAtLength(distance);
-      const delta = Math.hypot(point.x - placement.x, point.y - placement.y);
-      if (delta < closestDelta) {
-        closestDelta = delta;
-        closestDistance = distance;
-      }
-      if (index > 20 && delta > closestDelta * 5) break;
+  for (let index = 0; index <= sampleCount; index += 1) {
+    const distance = (total * index) / sampleCount;
+    const point = path.getPointAtLength(distance);
+    const screenPoint = {
+      x: matrix.a * point.x + matrix.c * point.y + matrix.e,
+      y: matrix.b * point.x + matrix.d * point.y + matrix.f,
+    };
+    if (previousScreenPoint) {
+      screenTotal += Math.hypot(
+        screenPoint.x - previousScreenPoint.x,
+        screenPoint.y - previousScreenPoint.y,
+      );
     }
-    distances.push(closestDistance);
-    minimumDistance = Math.min(total, closestDistance + total / (samples * 2));
+    samples.push({ distance, point, screenDistance: screenTotal });
+    previousScreenPoint = screenPoint;
   }
 
-  return { distances, total };
+  const distances: number[] = [];
+  const screenDistances: number[] = [];
+  let minimumSampleIndex = 0;
+
+  for (const placement of placements) {
+    let closestSampleIndex = minimumSampleIndex;
+    let closestDelta = Number.POSITIVE_INFINITY;
+    for (let index = minimumSampleIndex; index < samples.length; index += 1) {
+      const sample = samples[index];
+      if (!sample) continue;
+      const delta = Math.hypot(
+        sample.point.x - placement.x,
+        sample.point.y - placement.y,
+      );
+      if (delta < closestDelta) {
+        closestDelta = delta;
+        closestSampleIndex = index;
+      }
+    }
+    const closestSample = samples[closestSampleIndex];
+    distances.push(closestSample?.distance ?? 0);
+    screenDistances.push(closestSample?.screenDistance ?? 0);
+    minimumSampleIndex = Math.min(samples.length - 1, closestSampleIndex + 1);
+  }
+
+  return { distances, samples, screenDistances, screenTotal, total };
+}
+
+function getScreenDistanceAtRouteDistance(
+  measurements: RouteMeasurements,
+  distance: number,
+) {
+  if (!measurements.total || measurements.samples.length < 2) return 0;
+  const samplePosition =
+    (Math.min(Math.max(0, distance), measurements.total) /
+      measurements.total) *
+    (measurements.samples.length - 1);
+  const lowerIndex = Math.floor(samplePosition);
+  const upperIndex = Math.ceil(samplePosition);
+  const lower = measurements.samples[lowerIndex];
+  const upper = measurements.samples[upperIndex];
+  if (!lower || !upper) return 0;
+  const progress = samplePosition - lowerIndex;
+  return (
+    lower.screenDistance +
+    (upper.screenDistance - lower.screenDistance) * progress
+  );
 }
 
 export default function FacilitiesMapInteractive({
@@ -95,6 +166,7 @@ export default function FacilitiesMapInteractive({
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+  const activeIndexRef = useRef(0);
   const animationRef = useRef<number | undefined>(undefined);
   const walkerDistanceRef = useRef(0);
   const previousIndexRef = useRef(0);
@@ -102,20 +174,24 @@ export default function FacilitiesMapInteractive({
   const resumeTimerRef = useRef<number | undefined>(undefined);
   const [activeIndex, setActiveIndex] = useState(0);
   const [coordinate, setCoordinate] = useState("46.9455° N · 80.0585° W");
-  const [distances, setDistances] = useState<number[]>([]);
-  const [pathLength, setPathLength] = useState(0);
+  const [routeMeasurements, setRouteMeasurements] =
+    useState<RouteMeasurements>();
   const [reducedMotion, setReducedMotion] = useState(false);
   const [visible, setVisible] = useState(false);
   const [walkerPoint, setWalkerPoint] = useState<Point>(() => ({
     x: placements[0]?.x ?? 0,
     y: placements[0]?.y ?? 0,
   }));
-  const [trailProgress, setTrailProgress] = useState(0);
+  const [trailDistance, setTrailDistance] = useState(0);
   const pathData = useMemo(
     () => createFacilitiesMapPath(placements),
     [placements],
   );
   const activePlacement = placements[activeIndex] ?? placements[0];
+
+  useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -139,20 +215,30 @@ export default function FacilitiesMapInteractive({
   useLayoutEffect(() => {
     const path = pathRef.current;
     if (!path || !pathData) return;
-    const frame = requestAnimationFrame(() => {
-      const measured = getStopDistances(path, placements);
-      setDistances(measured.distances);
-      setPathLength(measured.total);
-      walkerDistanceRef.current = measured.distances[0] ?? 0;
-      setTrailProgress(
-        measured.total ? ((measured.distances[0] ?? 0) / measured.total) * 100 : 0,
-      );
+    let frame: number | undefined;
+    const measure = () => {
+      const measured = getRouteMeasurements(path, placements);
+      const index = activeIndexRef.current;
+      const distance = measured.distances[index] ?? 0;
+      setRouteMeasurements(measured);
+      walkerDistanceRef.current = distance;
+      setTrailDistance(measured.screenDistances[index] ?? 0);
       setWalkerPoint({
-        x: placements[0]?.x ?? 0,
-        y: placements[0]?.y ?? 0,
+        x: placements[index]?.x ?? 0,
+        y: placements[index]?.y ?? 0,
       });
-    });
-    return () => cancelAnimationFrame(frame);
+    };
+    const queueMeasurement = () => {
+      if (frame !== undefined) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    };
+    const observer = new ResizeObserver(queueMeasurement);
+    if (path.ownerSVGElement) observer.observe(path.ownerSVGElement);
+    queueMeasurement();
+    return () => {
+      observer.disconnect();
+      if (frame !== undefined) cancelAnimationFrame(frame);
+    };
   }, [pathData, placements]);
 
   useEffect(() => {
@@ -173,8 +259,8 @@ export default function FacilitiesMapInteractive({
 
   useEffect(() => {
     const path = pathRef.current;
-    const targetDistance = distances[activeIndex];
-    if (!path || targetDistance === undefined || !pathLength) return;
+    const targetDistance = routeMeasurements?.distances[activeIndex];
+    if (!path || targetDistance === undefined || !routeMeasurements) return;
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
 
     const wrapping =
@@ -184,7 +270,9 @@ export default function FacilitiesMapInteractive({
       walkerDistanceRef.current = targetDistance;
       const point = path.getPointAtLength(targetDistance);
       setWalkerPoint(point);
-      setTrailProgress((targetDistance / pathLength) * 100);
+      setTrailDistance(
+        routeMeasurements.screenDistances[activeIndex] ?? 0,
+      );
       return;
     }
 
@@ -197,14 +285,16 @@ export default function FacilitiesMapInteractive({
       const distance = startDistance + (targetDistance - startDistance) * eased;
       walkerDistanceRef.current = distance;
       setWalkerPoint(path.getPointAtLength(distance));
-      setTrailProgress((distance / pathLength) * 100);
+      setTrailDistance(
+        getScreenDistanceAtRouteDistance(routeMeasurements, distance),
+      );
       if (progress < 1) animationRef.current = requestAnimationFrame(animate);
     };
     animationRef.current = requestAnimationFrame(animate);
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [activeIndex, distances, pathLength, placements.length, reducedMotion]);
+  }, [activeIndex, placements.length, reducedMotion, routeMeasurements]);
 
   const activate = (index: number) => {
     manuallyPausedRef.current = true;
@@ -270,15 +360,19 @@ export default function FacilitiesMapInteractive({
                 <path
                   className={styles.mapPathGlow}
                   d={pathData}
-                  pathLength="100"
-                  strokeDasharray={`${trailProgress} ${100 - trailProgress}`}
+                  strokeDasharray={getFacilitiesMapTrailDasharray(
+                    trailDistance,
+                    routeMeasurements?.screenTotal ?? 0,
+                  )}
                 />
                 <path
                   className={styles.mapPathProgress}
                   d={pathData}
-                  pathLength="100"
                   ref={pathRef}
-                  strokeDasharray={`${trailProgress} ${100 - trailProgress}`}
+                  strokeDasharray={getFacilitiesMapTrailDasharray(
+                    trailDistance,
+                    routeMeasurements?.screenTotal ?? 0,
+                  )}
                 />
               </svg>
             ) : null}

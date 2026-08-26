@@ -19,3 +19,14 @@ export function createFacilitiesMapPath<T extends FacilitiesMapPoint>(
     ) ?? undefined
   );
 }
+
+/** Draw one continuous highlight across the measured SVG route. */
+export function getFacilitiesMapTrailDasharray(
+  distance: number,
+  total: number,
+) {
+  const safeTotal = Math.max(0, total);
+  if (!safeTotal) return "0 1";
+  const safeDistance = Math.min(Math.max(0, distance), safeTotal);
+  return `${safeDistance} ${safeTotal - safeDistance}`;
+}

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { createFacilitiesMapPath } from "./facilities-map-path";
+import {
+  createFacilitiesMapPath,
+  getFacilitiesMapTrailDasharray,
+} from "./facilities-map-path";
 
 describe("createFacilitiesMapPath", () => {
   it("returns no route until two Facilities have positions", () => {
@@ -25,5 +28,15 @@ describe("createFacilitiesMapPath", () => {
     expect(createFacilitiesMapPath(points)).not.toBe(
       createFacilitiesMapPath([points[0], points[2], points[1]]),
     );
+  });
+});
+
+describe("getFacilitiesMapTrailDasharray", () => {
+  it("uses the measured route length so the highlight does not repeat", () => {
+    expect(getFacilitiesMapTrailDasharray(68, 160)).toBe("68 92");
+  });
+
+  it("keeps the route empty before its rendered length is measured", () => {
+    expect(getFacilitiesMapTrailDasharray(0, 0)).toBe("0 1");
   });
 });
