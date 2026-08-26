@@ -13,6 +13,7 @@ import {
   House,
   TrendingUpDown,
   PanelRight,
+  CircleDot,
 } from "lucide-react";
 import type { StructureResolver } from "sanity/structure";
 
@@ -95,6 +96,15 @@ export const structure: StructureResolver = (S) =>
                     .defaultOrdering([{ field: "name", direction: "asc" }])
                 ),
             ])
+        ),
+      S.listItem()
+        .title("Activities")
+        .icon(CircleDot)
+        .schemaType("activity")
+        .child(
+          S.documentTypeList("activity")
+            .title("Activities")
+            .defaultOrdering([{ field: "title", direction: "asc" }])
         ),
       S.listItem()
         .title("FAQs")

@@ -11,6 +11,8 @@ import BenefitCards from "@/components/blocks/benefit-cards";
 import Hero from "@/components/blocks/hero";
 import HomeHero from "@/components/blocks/home-hero";
 import ImageCollageFeature from "@/components/blocks/image-collage-feature";
+import FeatureCards from "@/components/blocks/feature-cards";
+import ActivitySchedule from "@/components/blocks/activity-schedule";
 import { dataset, projectId } from "@/sanity/lib/env";
 
 type Block =
@@ -20,6 +22,10 @@ type Block =
 type BlockEditingProps = {
   dataAttribute?: (path: string) => string | undefined;
   memberDataAttribute?: (
+    documentId: string,
+    path: string,
+  ) => string | undefined;
+  activityDataAttribute?: (
     documentId: string,
     path: string,
   ) => string | undefined;
@@ -35,6 +41,8 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "hero",
   "homeHero",
   "imageCollageFeature",
+  "featureCards",
+  "activitySchedule",
 ]);
 
 const componentMap: Partial<{
@@ -52,6 +60,8 @@ const componentMap: Partial<{
   hero: Hero,
   homeHero: HomeHero,
   imageCollageFeature: ImageCollageFeature,
+  featureCards: FeatureCards,
+  activitySchedule: ActivitySchedule,
 };
 
 export default function Blocks({
@@ -114,7 +124,24 @@ export default function Blocks({
                         }).toString()
                     : undefined,
                 }
-              : serverFieldEditingBlockTypes.has(block._type)
+              : block._type === "activitySchedule"
+                ? {
+                    dataAttribute,
+                    activityDataAttribute: stega
+                      ? (activityId: string, path: string) =>
+                          createDataAttribute({
+                            baseUrl:
+                              process.env.NEXT_PUBLIC_STUDIO_URL ||
+                              "http://localhost:3333",
+                            dataset,
+                            id: activityId,
+                            path,
+                            projectId,
+                            type: "activity",
+                          }).toString()
+                      : undefined,
+                  }
+                : serverFieldEditingBlockTypes.has(block._type)
               ? { dataAttribute }
               : {};
 

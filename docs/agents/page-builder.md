@@ -12,7 +12,7 @@ A top-level section passes through this flow:
 4. Sanity TypeGen turns the schema and query into TypeScript types.
 5. The frontend block dispatcher selects its React renderer.
 
-The section's Sanity `_type` is the shared identifier across every step. Keep it exact and use the existing hyphenated naming convention.
+The section's Sanity `_type` is the shared identifier across every step. Keep it exact and use the existing camelCase naming convention.
 
 ## Add a top-level section
 

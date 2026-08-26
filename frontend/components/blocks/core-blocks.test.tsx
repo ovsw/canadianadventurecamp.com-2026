@@ -4,6 +4,10 @@ import { describe, expect, it } from "vitest";
 import CtaBanner from "./cta-banner";
 import BenefitCards from "./benefit-cards";
 import FaqAccordion from "./faq-accordion";
+import FeatureCards, {
+  getFeatureCardColumnCount,
+  getFeatureCardImageUrl,
+} from "./feature-cards";
 import Hero from "./hero";
 import { getHotspotPosition } from "./image-collage-feature";
 import RichTextBlock from "./rich-text-block";
@@ -20,7 +24,268 @@ const paragraph = (key: string, text: string) => ({
   style: "normal",
 });
 
+const featureCardImage = (alt: string) => ({
+  _type: "image" as const,
+  alt,
+  asset: {
+    _id: "image-33e53adba6e57186d5b20d1f531bdb8f6c6f1472-1600x900-jpg",
+    mimeType: "image/jpeg",
+    metadata: null,
+    url: "https://cdn.sanity.io/images/h6k9z4h5/production/33e53adba6e57186d5b20d1f531bdb8f6c6f1472-1600x900.jpg",
+  },
+});
+
 describe("core Page Builder sections", () => {
+  it("chooses feature-card columns from each row's card count", () => {
+    expect(getFeatureCardColumnCount(2)).toBe(2);
+    expect(getFeatureCardColumnCount(3)).toBe(3);
+    expect(getFeatureCardColumnCount(4)).toBe(4);
+    expect(getFeatureCardColumnCount(4, false)).toBe(2);
+    expect(getFeatureCardColumnCount(5)).toBe(3);
+    expect(getFeatureCardColumnCount(6)).toBe(3);
+  });
+
+  it("continues feature-card numbering across rows", () => {
+    const card = (key: string, title: string) => ({
+      _key: key,
+      _type: "featureCardItem" as const,
+      image: featureCardImage(title),
+      link: {
+        href: `/${key}`,
+        openInNewTab: false,
+        text: `Explore ${title}`,
+      },
+      text: `${title} details`,
+      title,
+    });
+    const featureCards = {
+      _key: "programs",
+      _type: "featureCards",
+      description: "Choose the program that fits.",
+      eyebrow: "02 · Programs",
+      groups: [
+        {
+          _key: "specialty",
+          _type: "featureCardGroup",
+          cards: [
+            card("gymnastics", "Gymnastics"),
+            card("trampoline", "Trampoline"),
+          ],
+          description: null,
+          heading: "Specialty Programs",
+        },
+        {
+          _key: "general",
+          _type: "featureCardGroup",
+          cards: [
+            card("general-program", "General Program"),
+            card("leadership", "Youth Leadership"),
+          ],
+          description: null,
+          heading: "General & Leadership",
+        },
+      ],
+      title: [paragraph("program-title", "Choose their adventure.")],
+    } as unknown as ComponentProps<typeof FeatureCards>;
+
+    render(<FeatureCards {...featureCards} />);
+
+    for (const number of ["01", "02", "03", "04"]) {
+      expect(screen.getByText(number)).toBeInTheDocument();
+    }
+    expect(
+      screen.getByRole("heading", { name: "General & Leadership" }),
+    ).toBeInTheDocument();
+  });
+
+  it("lays out and numbers only complete feature cards", () => {
+    const completeCard = (key: string, title: string) => ({
+      _key: key,
+      _type: "featureCardItem" as const,
+      image: featureCardImage(title),
+      link: {
+        href: `/${key}`,
+        openInNewTab: false,
+        text: `Explore ${title}`,
+      },
+      text: `${title} details`,
+      title,
+    });
+    const incompleteLinkCard = {
+      ...completeCard("unfinished", "Unfinished"),
+      link: null,
+    };
+    const missingImageCard = {
+      ...completeCard("missing-image", "Missing image"),
+      image: null,
+    };
+    const missingAltCard = {
+      ...completeCard("missing-alt", "Missing alt"),
+      image: featureCardImage("   "),
+    };
+    const featureCards = {
+      _key: "draft-programs",
+      _type: "featureCards",
+      description: null,
+      eyebrow: null,
+      groups: [
+        {
+          _key: "draft-group",
+          _type: "featureCardGroup",
+          cards: [
+            completeCard("first", "First"),
+            incompleteLinkCard,
+            missingImageCard,
+            missingAltCard,
+            completeCard("second", "Second"),
+          ],
+          description: null,
+          heading: "Draft group",
+          singleRowUpToFour: true,
+        },
+        {
+          _key: "next-group",
+          _type: "featureCardGroup",
+          cards: [
+            completeCard("third", "Third"),
+            completeCard("fourth", "Fourth"),
+          ],
+          description: null,
+          heading: "Next group",
+          singleRowUpToFour: true,
+        },
+      ],
+      title: [paragraph("draft-programs-title", "Draft programs")],
+      dataAttribute: (path: string) => `feature-cards:${path}`,
+    } as unknown as ComponentProps<typeof FeatureCards>;
+
+    render(<FeatureCards {...featureCards} />);
+
+    expect(screen.queryByText("Unfinished")).not.toBeInTheDocument();
+    expect(screen.queryByText("Missing image")).not.toBeInTheDocument();
+    expect(screen.queryByText("Missing alt")).not.toBeInTheDocument();
+    expect(screen.queryByText("05")).not.toBeInTheDocument();
+    for (const number of ["01", "02", "03", "04"]) {
+      expect(screen.getByText(number)).toBeInTheDocument();
+    }
+    expect(screen.getAllByRole("list")[0]).not.toHaveClass("lg:grid-cols-3");
+    expect(screen.getByRole("heading", { name: "Second" })).toHaveAttribute(
+      "data-sanity",
+      'feature-cards:groups[_key=="draft-group"].cards[_key=="second"].title',
+    );
+  });
+
+  it("skips groups reduced to fewer than two complete cards", () => {
+    const card = (key: string, title: string) => ({
+      _key: key,
+      _type: "featureCardItem" as const,
+      image: featureCardImage(title),
+      link: {
+        href: `/${key}`,
+        openInNewTab: false,
+        text: `Explore ${title}`,
+      },
+      text: `${title} details`,
+      title,
+    });
+    const featureCards = {
+      _key: "minimum-cards",
+      _type: "featureCards",
+      description: null,
+      eyebrow: null,
+      groups: [
+        {
+          _key: "too-small",
+          _type: "featureCardGroup",
+          cards: [
+            card("only", "Only"),
+            { ...card("draft", "Draft"), image: null },
+          ],
+          description: null,
+          heading: "Too small",
+          singleRowUpToFour: true,
+        },
+        {
+          _key: "complete",
+          _type: "featureCardGroup",
+          cards: [
+            card("first-valid", "First valid"),
+            card("second-valid", "Second valid"),
+          ],
+          description: null,
+          heading: "Complete group",
+          singleRowUpToFour: true,
+        },
+      ],
+      title: [paragraph("minimum-cards-title", "Minimum cards")],
+    } as unknown as ComponentProps<typeof FeatureCards>;
+
+    render(<FeatureCards {...featureCards} />);
+
+    expect(
+      screen.queryByRole("heading", { name: "Too small" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Complete group" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("01")).toBeInTheDocument();
+    expect(screen.getByText("02")).toBeInTheDocument();
+    expect(screen.queryByText("03")).not.toBeInTheDocument();
+  });
+
+  it("renders nothing when no group has two complete cards", () => {
+    const featureCards = {
+      _key: "empty-feature-cards",
+      _type: "featureCards",
+      description: "This chrome should not render.",
+      eyebrow: "Programs",
+      groups: [
+        {
+          _key: "incomplete-group",
+          _type: "featureCardGroup",
+          cards: [
+            {
+              _key: "only-card",
+              _type: "featureCardItem",
+              image: featureCardImage("Only card"),
+              link: {
+                href: "/only-card",
+                openInNewTab: false,
+                text: "Explore Only card",
+              },
+              text: "Only card details",
+              title: "Only card",
+            },
+          ],
+          description: null,
+          heading: "Incomplete group",
+          singleRowUpToFour: true,
+        },
+      ],
+      title: [paragraph("empty-feature-cards-title", "Empty feature cards")],
+    } as unknown as ComponentProps<typeof FeatureCards>;
+
+    const { container } = render(<FeatureCards {...featureCards} />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("requests a 16:9 crop for feature-card images", () => {
+    const imageUrl = new URL(
+      getFeatureCardImageUrl({
+        _type: "image",
+        asset: {
+          _ref: "image-33e53adba6e57186d5b20d1f531bdb8f6c6f1472-1600x900-jpg",
+          _type: "reference",
+        },
+      }),
+    );
+
+    expect(imageUrl.searchParams.get("w")).toBe("1600");
+    expect(imageUrl.searchParams.get("h")).toBe("900");
+    expect(imageUrl.searchParams.get("fit")).toBe("crop");
+  });
+
   it("positions collage images around their hotspot after applying the editor crop", () => {
     expect(
       getHotspotPosition({

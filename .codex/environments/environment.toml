@@ -3,7 +3,7 @@ version = 1
 name = "canadianadventurecamp.com-2026"
 
 [setup]
-script = "pnpm install"
+script = "pnpm install --frozen-lockfile"
 
 [[actions]]
 name = "pnpm dev"

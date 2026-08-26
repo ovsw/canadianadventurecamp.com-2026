@@ -153,6 +153,8 @@ The on-island camp store. A $150 deposit is added per camper; unused funds are r
 Site copy describes the island and camp through supervision, accreditation, and history, never through isolation. Prefer: supervised, community-based, accredited, family legacy, structured program, staff-to-camper ratio, OCA and CCA accredited, operating since 1975.
 _Avoid_: private, secluded, hideaway, exclusive, escape the world, in the middle of nowhere
 
+“Private water” is valid safety language when it explains that outside boat traffic cannot endanger campers learning watersports. The restriction on “private” applies to descriptions of Adventure Island or the camp as an exclusive or isolated place.
+
 ## Ownership rules
 
 - Code owns layout, rendering rules, validation, and safe fallbacks.

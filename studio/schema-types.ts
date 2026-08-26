@@ -17,6 +17,7 @@ import blogPostSettings from "./schemas/documents/blog-post-settings";
 import homePage from "./schemas/documents/home-page";
 import footer, { footerSchemaTypes } from "./schemas/documents/footer";
 import redirect from "./schemas/documents/redirect";
+import activity from "./schemas/documents/activity";
 
 // Schema UI shared objects
 import blockContent from "./schemas/blocks/shared/block-content";
@@ -47,6 +48,8 @@ import ctaBanner from "./schemas/blocks/cta-banner";
 import benefitCards from "./schemas/blocks/benefit-cards";
 import homeHero from "./schemas/blocks/home-hero";
 import imageCollageFeature from "./schemas/blocks/image-collage-feature";
+import featureCards from "./schemas/blocks/feature-cards";
+import activitySchedule from "./schemas/blocks/activity-schedule";
 
 export const schemaTypes = [
   // documents
@@ -66,6 +69,7 @@ export const schemaTypes = [
   homePage,
   footer,
   redirect,
+  activity,
   ...footerSchemaTypes,
   // shared objects
   blockContent,
@@ -94,4 +98,6 @@ export const schemaTypes = [
   benefitCards,
   homeHero,
   imageCollageFeature,
+  featureCards,
+  activitySchedule,
 ];
