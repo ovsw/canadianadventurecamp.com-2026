@@ -1,13 +1,13 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { ComponentProps } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ActivitySchedule from "./activity-schedule";
 
-const motionPreference = vi.hoisted(() => ({ reduced: false }));
+const motion = vi.hoisted(() => ({ inView: false, reduced: false }));
 
 vi.mock("motion/react", () => ({
-  useInView: () => false,
-  useReducedMotion: () => motionPreference.reduced,
+  useInView: () => motion.inView,
+  useReducedMotion: () => motion.reduced,
 }));
 
 const featuredActivities = Array.from({ length: 18 }, (_, index) => ({
@@ -31,7 +31,13 @@ const activitySchedule: ComponentProps<typeof ActivitySchedule> = {
 
 describe("ActivitySchedule", () => {
   beforeEach(() => {
-    motionPreference.reduced = false;
+    motion.inView = false;
+    motion.reduced = false;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it("shows the automatic total, 18 featured Activities, and the remainder link", () => {
@@ -42,7 +48,9 @@ describe("ActivitySchedule", () => {
         name: "activities. Their pick, every day.",
       }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("button")).toHaveLength(18);
+    expect(
+      screen.getAllByRole("button", { name: /^Activity \d+$/ }),
+    ).toHaveLength(18);
     expect(
       screen.getByLabelText("19 activities. Their pick, every day."),
     ).toBeInTheDocument();
@@ -74,6 +82,66 @@ describe("ActivitySchedule", () => {
     expect(activity).toHaveAttribute("aria-pressed", "false");
   });
 
+  it("tracks same-title Activities independently by document identity", () => {
+    render(
+      <ActivitySchedule
+        {...activitySchedule}
+        featuredActivities={[
+          { _id: "climbing-a", _key: "climbing-a", title: "Climbing" },
+          { _id: "climbing-b", _key: "climbing-b", title: "Climbing" },
+          ...featuredActivities.slice(2),
+        ]}
+      />,
+    );
+
+    const [firstClimbing, secondClimbing] = screen.getAllByRole("button", {
+      name: "Climbing",
+    });
+    fireEvent.click(firstClimbing);
+
+    expect(firstClimbing).toHaveAttribute("aria-pressed", "true");
+    expect(secondClimbing).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("pauses and resumes automatic schedule updates", () => {
+    vi.useFakeTimers();
+    motion.inView = true;
+    render(<ActivitySchedule {...activitySchedule} />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Pause automatic schedule" }),
+    );
+    expect(
+      screen.getByRole("button", { name: "Resume automatic schedule" }),
+    ).toHaveAttribute("aria-pressed", "true");
+
+    act(() => vi.advanceTimersByTime(3000));
+    expect(screen.getByRole("list")).not.toHaveTextContent("Activity 1");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Resume automatic schedule" }),
+    );
+    act(() => vi.advanceTimersByTime(1000));
+    expect(screen.getByRole("list")).toHaveTextContent(/Activity \d+/);
+  });
+
+  it("returns ownership to automation when a new camper day begins", () => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    motion.inView = true;
+    render(<ActivitySchedule {...activitySchedule} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Activity 1" }));
+    expect(screen.getByRole("list")).toHaveAccessibleName(
+      "Your Tuesday schedule",
+    );
+
+    act(() => vi.advanceTimersByTime(12_000));
+    expect(screen.getByRole("list")).toHaveAccessibleName(
+      "Leo's Wednesday schedule",
+    );
+  });
+
   it("keeps Activity buttons stationary on hover and leaves blank lines empty", () => {
     render(<ActivitySchedule {...activitySchedule} />);
 
@@ -87,7 +155,7 @@ describe("ActivitySchedule", () => {
   });
 
   it("shows a complete static schedule when reduced motion is preferred", () => {
-    motionPreference.reduced = true;
+    motion.reduced = true;
 
     render(<ActivitySchedule {...activitySchedule} />);
 
@@ -97,6 +165,9 @@ describe("ActivitySchedule", () => {
     expect(schedule).toHaveTextContent("Activity 1");
     expect(schedule).toHaveTextContent("Activity 4");
     expect(screen.getByText("Full day ✓")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /automatic schedule/ }),
+    ).not.toBeInTheDocument();
   });
 
   it("links section fields and Activity titles back to Studio", () => {

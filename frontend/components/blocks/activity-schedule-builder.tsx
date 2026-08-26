@@ -37,7 +37,7 @@ type ActivityScheduleBuilderProps = {
   activitiesLink: ReactNode;
 };
 
-const emptySchedule = (): Array<string | null> =>
+const emptySchedule = (): Array<Activity | null> =>
   scheduleTimes.map(() => null);
 
 export default function ActivityScheduleBuilder({
@@ -51,28 +51,25 @@ export default function ActivityScheduleBuilder({
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { amount: 0.25 });
   const prefersReducedMotion = useReducedMotion();
-  const activityTitles = useMemo(
-    () => activities.map(({ title }) => title),
-    [activities],
-  );
-  const [slots, setSlots] = useState<Array<string | null>>(emptySchedule);
+  const [slots, setSlots] = useState<Array<Activity | null>>(emptySchedule);
   const slotsRef = useRef(slots);
   const [hasManualSelection, setHasManualSelection] = useState(false);
   const [camperIndex, setCamperIndex] = useState(0);
   const [dayIndex, setDayIndex] = useState(0);
   const [lastAdded, setLastAdded] = useState<string | null>(null);
+  const [isAutomationPaused, setIsAutomationPaused] = useState(false);
   const pauseAutomation = useRef(false);
   const pauseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fullTicks = useRef(0);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const updateSlots = useCallback((nextSlots: Array<string | null>) => {
+  const updateSlots = useCallback((nextSlots: Array<Activity | null>) => {
     slotsRef.current = nextSlots;
     setSlots(nextSlots);
   }, []);
 
-  const showAdded = useCallback((title: string) => {
-    setLastAdded(title);
+  const showAdded = useCallback((activityId: string) => {
+    setLastAdded(activityId);
     if (revealTimer.current) clearTimeout(revealTimer.current);
     revealTimer.current = setTimeout(() => setLastAdded(null), 220);
   }, []);
@@ -87,18 +84,23 @@ export default function ActivityScheduleBuilder({
 
   const reducedMotionSlots = useMemo(
     () => [
-      ...activityTitles.slice(0, scheduleTimes.length),
-      ...Array(Math.max(0, scheduleTimes.length - activityTitles.length)).fill(
+      ...activities.slice(0, scheduleTimes.length),
+      ...Array(Math.max(0, scheduleTimes.length - activities.length)).fill(
         null,
       ),
     ],
-    [activityTitles],
+    [activities],
   );
   const displayedSlots =
     prefersReducedMotion && !hasManualSelection ? reducedMotionSlots : slots;
 
   useEffect(() => {
-    if (!isInView || prefersReducedMotion !== false || !activityTitles.length) {
+    if (
+      !isInView ||
+      prefersReducedMotion !== false ||
+      isAutomationPaused ||
+      !activities.length
+    ) {
       return;
     }
 
@@ -114,34 +116,38 @@ export default function ActivityScheduleBuilder({
 
         fullTicks.current = 0;
         updateSlots(emptySchedule());
+        setHasManualSelection(false);
         setCamperIndex((index) => (index + 1) % camperNames.length);
         setDayIndex((index) => (index + 1) % scheduleDays.length);
         return;
       }
 
-      const available = activityTitles.filter(
-        (title) => !currentSlots.includes(title),
+      const available = activities.filter(
+        (activity) =>
+          !currentSlots.some((slot) => slot?._id === activity._id),
       );
-      const nextTitle = available[Math.floor(Math.random() * available.length)];
-      if (!nextTitle) return;
+      const nextActivity =
+        available[Math.floor(Math.random() * available.length)];
+      if (!nextActivity) return;
 
       const nextSlots = [...currentSlots];
-      nextSlots[emptyIndex] = nextTitle;
+      nextSlots[emptyIndex] = nextActivity;
       updateSlots(nextSlots);
-      showAdded(nextTitle);
+      showAdded(nextActivity._id);
     }, 1000);
 
     return () => window.clearInterval(interval);
   }, [
-    activityTitles,
+    activities,
     camperNames.length,
+    isAutomationPaused,
     isInView,
     prefersReducedMotion,
     showAdded,
     updateSlots,
   ]);
 
-  const pickActivity = (title: string) => {
+  const pickActivity = (activity: Activity) => {
     pauseAutomation.current = true;
     if (pauseTimer.current) clearTimeout(pauseTimer.current);
     pauseTimer.current = setTimeout(() => {
@@ -151,9 +157,9 @@ export default function ActivityScheduleBuilder({
     setHasManualSelection(true);
 
     const currentSlots = displayedSlots;
-    if (currentSlots.includes(title)) {
+    if (currentSlots.some((slot) => slot?._id === activity._id)) {
       const remaining = currentSlots.filter(
-        (slot): slot is string => Boolean(slot && slot !== title),
+        (slot): slot is Activity => Boolean(slot && slot._id !== activity._id),
       );
       updateSlots([
         ...remaining,
@@ -165,12 +171,12 @@ export default function ActivityScheduleBuilder({
     const emptyIndex = currentSlots.findIndex((slot) => slot === null);
     const nextSlots =
       emptyIndex === -1
-        ? [...currentSlots.slice(1), title]
+        ? [...currentSlots.slice(1), activity]
         : currentSlots.map((slot, index) =>
-            index === emptyIndex ? title : slot,
+            index === emptyIndex ? activity : slot,
           );
     updateSlots(nextSlots);
-    showAdded(title);
+    showAdded(activity._id);
   };
 
   const fullDay = displayedSlots.every(Boolean);
@@ -189,7 +195,9 @@ export default function ActivityScheduleBuilder({
 
         <div className="flex flex-wrap gap-3" role="group" aria-label="Build a sample day">
           {activities.map((activity) => {
-            const selected = displayedSlots.includes(activity.title);
+            const selected = displayedSlots.some(
+              (slot) => slot?._id === activity._id,
+            );
 
             return (
               <button
@@ -198,7 +206,7 @@ export default function ActivityScheduleBuilder({
                 data-sanity={activity.titleDataAttribute}
                 data-selected={selected}
                 key={activity._key}
-                onClick={() => pickActivity(activity.title)}
+                onClick={() => pickActivity(activity)}
                 type="button"
               >
                 {activity.title}
@@ -222,14 +230,27 @@ export default function ActivityScheduleBuilder({
             </span>
           ) : null}
 
-          <div className="mb-1 flex items-center gap-2">
-            <span
-              aria-hidden="true"
-              className="size-2 rounded-full bg-campfire-amber"
-            />
-            <span className="font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-pine-night/55">
-              Building a day…
-            </span>
+          <div className="mb-1 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden="true"
+                className="size-2 rounded-full bg-campfire-amber"
+              />
+              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-pine-night/55">
+                {isAutomationPaused ? "Day paused" : "Building a day…"}
+              </span>
+            </div>
+            {prefersReducedMotion === false ? (
+              <button
+                aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
+                aria-pressed={isAutomationPaused}
+                className="focus-ring rounded-pill border border-pine-night/20 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-[0.12em] text-pine-night/65 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
+                onClick={() => setIsAutomationPaused((paused) => !paused)}
+                type="button"
+              >
+                {isAutomationPaused ? "Play" : "Pause"}
+              </button>
+            ) : null}
           </div>
 
           <p
@@ -259,9 +280,9 @@ export default function ActivityScheduleBuilder({
                     {time}
                   </span>
                   <span
-                    className={`font-accent text-3xl leading-none text-forest-floor ${lastAdded === activity ? styles.activityReveal : ""}`}
+                    className={`font-accent text-3xl leading-none text-forest-floor ${lastAdded === activity?._id ? styles.activityReveal : ""}`}
                   >
-                    {activity || ""}
+                    {activity?.title || ""}
                   </span>
                 </li>
               );

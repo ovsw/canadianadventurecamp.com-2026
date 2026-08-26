@@ -48,7 +48,6 @@ export default defineType({
         defineArrayMember({
           type: "reference",
           to: [{ type: "activity" }],
-          weak: true,
         }),
       ],
       validation: (rule) => rule.required().min(10).max(18).unique(),
