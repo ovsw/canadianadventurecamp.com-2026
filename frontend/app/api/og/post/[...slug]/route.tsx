@@ -62,25 +62,25 @@ export async function GET(
     return notFound();
   }
 
-  const { data: post } = (await sanityFetchMetadata({
-    query: POST_OG_IMAGE_QUERY,
-    params: { slug },
-    perspective: "published",
-  })) as { data: POST_OG_IMAGE_QUERY_RESULT };
-
-  const title = post?.title?.trim();
-  const date = post?.publishedAt && formatPostOgDate(post.publishedAt);
-  if (
-    !title ||
-    !post?.publishedAt ||
-    !date ||
-    createPostOgImageRevision({ publishedAt: post.publishedAt, title }) !==
-      revision
-  ) {
-    return notFound();
-  }
-
   try {
+    const { data: post } = (await sanityFetchMetadata({
+      query: POST_OG_IMAGE_QUERY,
+      params: { slug },
+      perspective: "published",
+    })) as { data: POST_OG_IMAGE_QUERY_RESULT };
+
+    const title = post?.title?.trim();
+    const date = post?.publishedAt && formatPostOgDate(post.publishedAt);
+    if (
+      !title ||
+      !post?.publishedAt ||
+      !date ||
+      createPostOgImageRevision({ publishedAt: post.publishedAt, title }) !==
+        revision
+    ) {
+      return notFound();
+    }
+
     return await createOgImageResponse({ eyebrow: date, title });
   } catch (error) {
     return ogImageFallbackResponse(error, "Post");

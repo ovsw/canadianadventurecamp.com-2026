@@ -48,7 +48,12 @@ export default defineType({
       name: "internal",
       title: "Internal Page",
       type: "reference",
-      to: [{ type: "homePage" }, { type: "page" }, { type: "post" }],
+      to: [
+        { type: "homePage" },
+        { type: "blogIndex" },
+        { type: "page" },
+        { type: "post" },
+      ],
       hidden: ({ parent }) => parent?.type !== "internal",
       validation: (rule) =>
         rule.custom((value, context) => {

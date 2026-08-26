@@ -110,10 +110,10 @@ export async function GET(
     return notFound();
   }
 
-  const title = await fetchTitle(target);
-  if (!title || createPageOgImageRevision(title) !== revision) return notFound();
-
   try {
+    const title = await fetchTitle(target);
+    if (!title || createPageOgImageRevision(title) !== revision) return notFound();
+
     return await createOgImageResponse({
       eyebrow: siteName.toUpperCase(),
       title,

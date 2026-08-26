@@ -106,4 +106,17 @@ describe("post OG image route", () => {
     );
     consoleError.mockRestore();
   });
+
+  it("redirects Sanity fetch failures to the prebuilt local fallback", async () => {
+    sanityFetchMetadata.mockRejectedValueOnce(new Error("Sanity unavailable"));
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const response = await get(signedUrl());
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe(
+      "https://example.test/images/og-post-fallback.png",
+    );
+    consoleError.mockRestore();
+  });
 });

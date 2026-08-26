@@ -6,7 +6,10 @@ The Website and Studio are separate applications.
 
 1. Import the GitHub repository into Vercel.
 2. Set the project root directory to `frontend`.
-3. Add the variables from `frontend/.env.local.example`.
+3. Add the variables from `frontend/.env.local.example`. Set
+   `NEXT_PUBLIC_SITE_ENV=production` in Vercel's Production environment so the
+   deployed site is indexable. Keep `development` locally and for Preview
+   deployments so unfinished revisions remain `noindex`.
 4. Use `main` as the production branch.
 5. Require the GitHub `Release gate` check before pull requests can merge into `main`.
 

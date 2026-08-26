@@ -48,6 +48,7 @@ export default function CtaBanner({
             {buttons.slice(0, 2).map((button) => {
               const href = getSafeLinkHref(button.href);
               if (!href) return null;
+              const label = stegaClean(button.text)?.trim() || "Learn more";
               return (
                 <Link
                   href={href}
@@ -55,7 +56,7 @@ export default function CtaBanner({
                   rel={button.openInNewTab ? "noopener noreferrer" : undefined}
                   target={button.openInNewTab ? "_blank" : undefined}
                 >
-                  {button.text}
+                  {label}
                 </Link>
               );
             })}

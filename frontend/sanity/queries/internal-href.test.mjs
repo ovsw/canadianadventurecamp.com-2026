@@ -24,3 +24,10 @@ test("internal href resolvers use canonical post and category namespaces", () =>
   assert.match(footerSource, /string::split\(internal->slug\.current, "\/"\)/);
   assert.doesNotMatch(footerSource, /slug\.current \+ "\/"/);
 });
+
+test("shared button URLs resolve the Blog index singleton", () => {
+  assert.match(
+    source,
+    /url\.internal->_id == "blogIndex" \|\| url\.internal->_type == "blogIndex" => "\/blog"/,
+  );
+});

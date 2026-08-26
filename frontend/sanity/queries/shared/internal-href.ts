@@ -9,6 +9,7 @@ export const customLinkInternalHref = groq`select(
 
 export const urlInternalHref = groq`select(
   url.internal->_id == "homePage" || url.internal->_type == "homePage" => "/",
+  url.internal->_id == "blogIndex" || url.internal->_type == "blogIndex" => "/blog",
   url.internal->_type == "post" && defined(url.internal->slug.current) => "/blog/" + array::join(string::split(url.internal->slug.current, "/")[@ != ""], "/"),
   url.internal->_type == "category" && defined(url.internal->slug.current) => "/blog/category/" + array::join(string::split(url.internal->slug.current, "/")[@ != ""], "/"),
   defined(url.internal->slug.current) => "/" + array::join(string::split(url.internal->slug.current, "/")[@ != ""], "/")

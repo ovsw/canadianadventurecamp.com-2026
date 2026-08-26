@@ -85,6 +85,75 @@ describe("RootContentView", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders the root header image populated by the legacy migration", () => {
+    const pageWithHeaderImage = {
+      ...page,
+      headerImage: {
+        _type: "image",
+        alt: "Camp island from the lake",
+        asset: {
+          _id: "image-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-1200x800-jpg",
+          metadata: { dimensions: { height: 800, width: 1200 } },
+        },
+      },
+    } as unknown as NonNullable<PAGE_QUERY_RESULT>;
+
+    render(
+      <RootContentView
+        content={pageWithHeaderImage}
+        perspective="published"
+        stega={false}
+      />,
+    );
+
+    expect(
+      screen.getByRole("img", { name: "Camp island from the lake" }),
+    ).toBeInTheDocument();
+  });
+
+  it("uses the migrated root image when the first Hero has no image", () => {
+    const pageWithHero = {
+      ...page,
+      blocks: [
+        {
+          _key: "hero",
+          _type: "hero",
+          body: [],
+          buttons: [],
+          eyebrow: null,
+          image: null,
+          title: [
+            {
+              _key: "title",
+              _type: "block",
+              children: [
+                { _key: "span", _type: "span", marks: [], text: "Camp life" },
+              ],
+              markDefs: [],
+              style: "normal",
+            },
+          ],
+        },
+      ],
+      headerImage: {
+        _type: "image",
+        alt: "Camp island from the lake",
+        asset: {
+          _id: "image-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-1200x800-jpg",
+          metadata: { dimensions: { height: 800, width: 1200 } },
+        },
+      },
+    } as unknown as NonNullable<PAGE_QUERY_RESULT>;
+
+    render(
+      <RootContentView content={pageWithHero} perspective="published" stega={false} />,
+    );
+
+    expect(
+      screen.getByRole("img", { name: "Camp island from the lake" }),
+    ).toBeInTheDocument();
+  });
+
   it("gates the post sidebar to post root content", () => {
     const { rerender } = render(
       <RootContentView content={page} perspective="published" stega={false} />,

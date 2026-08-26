@@ -1,6 +1,7 @@
 import { groq } from "next-sanity";
 import { ROOT_SLUG_FILTER } from "../../../shared/root-slug-filter";
 import { metaQuery } from "./shared/meta";
+import { imageQuery } from "./shared/image";
 import { pageBuilderQuery } from "./page-builder";
 
 export const PAGE_QUERY = groq`
@@ -9,6 +10,9 @@ export const PAGE_QUERY = groq`
     _type,
     title,
     description,
+    headerImage{
+      ${imageQuery}
+    },
     "slug": slug.current,
     ${pageBuilderQuery},
     ${metaQuery},

@@ -152,6 +152,23 @@ describe("core Page Builder sections", () => {
     ).toHaveAttribute("href", "/contact");
   });
 
+  it("gives an incomplete legacy CTA button a safe accessible name", () => {
+    const cta = {
+      _key: "cta",
+      _type: "ctaBanner",
+      buttons: [{ _key: "contact", href: "/contact", text: null }],
+      description: null,
+      title: "Ready for camp?",
+    } as unknown as ComponentProps<typeof CtaBanner>;
+
+    render(<CtaBanner {...cta} />);
+
+    expect(screen.getByRole("link", { name: "Learn more" })).toHaveAttribute(
+      "href",
+      "/contact",
+    );
+  });
+
   it("renders reusable marketing sections with semantic content", () => {
     const featureGrid = {
       _key: "features",
