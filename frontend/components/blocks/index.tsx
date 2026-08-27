@@ -14,6 +14,7 @@ import ImageCollageFeature from "@/components/blocks/image-collage-feature";
 import FeatureCards from "@/components/blocks/feature-cards";
 import ActivitySchedule from "@/components/blocks/activity-schedule";
 import FacilitiesMapSection from "@/components/blocks/facilities-map-section";
+import DatesRatesSection from "@/components/blocks/dates-rates-section";
 import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
@@ -38,6 +39,10 @@ type BlockEditingProps = {
     path: string,
   ) => string | undefined;
   mapDataAttribute?: (path: string) => string | undefined;
+  seasonDataAttribute?: (
+    documentId: string,
+    path: string,
+  ) => string | undefined;
 };
 
 const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
@@ -53,6 +58,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "featureCards",
   "activitySchedule",
   "facilitiesMapSection",
+  "datesRatesSection",
   "stackedFeatureRows",
   // page-builder-generator:editing-types
   "internationalCampersSection",
@@ -76,6 +82,7 @@ const componentMap: Partial<{
   featureCards: FeatureCards,
   activitySchedule: ActivitySchedule,
   facilitiesMapSection: FacilitiesMapSection,
+  datesRatesSection: DatesRatesSection,
   stackedFeatureRows: StackedFeatureRows,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
@@ -185,6 +192,23 @@ export default function Blocks({
                               path,
                               projectId,
                               type: "facilitiesMap",
+                            }).toString()
+                        : undefined,
+                    }
+                : block._type === "datesRatesSection"
+                  ? {
+                      dataAttribute,
+                      seasonDataAttribute: stega
+                        ? (seasonId: string, path: string) =>
+                            createDataAttribute({
+                              baseUrl:
+                                process.env.NEXT_PUBLIC_STUDIO_URL ||
+                                "http://localhost:3333",
+                              dataset,
+                              id: seasonId,
+                              path,
+                              projectId,
+                              type: "season",
                             }).toString()
                         : undefined,
                     }

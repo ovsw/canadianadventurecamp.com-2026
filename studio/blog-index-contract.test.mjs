@@ -29,6 +29,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
     "featureCards",
     "activitySchedule",
     "facilitiesMapSection",
+    "datesRatesSection",
     "stackedFeatureRows",
     "internationalCampersSection",
     "latestArticles",
@@ -79,6 +80,7 @@ test("blogIndex uses the singleton configuration", () => {
   assert.equal(contentPageBuilderBlockTypes.includes("hero"), false);
   assert.equal(singletonDocumentTypes.has("blogIndex"), true);
   assert.equal(singletonDocumentTypes.has("facilitiesMap"), true);
+  assert.equal(singletonDocumentTypes.has("seasonsConfig"), true);
   assert.equal(singletonDocumentActions.has("duplicate"), false);
   assert.equal(singletonDocumentActions.has("delete"), false);
 });

@@ -20,6 +20,8 @@ import redirect from "./schemas/documents/redirect";
 import activity from "./schemas/documents/activity";
 import facility from "./schemas/documents/facility";
 import facilitiesMap from "./schemas/documents/facilities-map";
+import season from "./schemas/documents/season";
+import seasonsConfig from "./schemas/documents/seasons-config";
 
 // Schema UI shared objects
 import blockContent from "./schemas/blocks/shared/block-content";
@@ -53,10 +55,12 @@ import imageCollageFeature from "./schemas/blocks/image-collage-feature";
 import featureCards from "./schemas/blocks/feature-cards";
 import activitySchedule from "./schemas/blocks/activity-schedule";
 import facilitiesMapSection from "./schemas/blocks/facilities-map-section";
+import datesRatesSection from "./schemas/blocks/dates-rates-section";
 import stackedFeatureRows from "./schemas/blocks/stacked-feature-rows";
 // page-builder-generator:block-imports
 import { internationalCampersSection } from "./schemas/blocks/international-campers-section";
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
+import seasonSession from "./schemas/objects/season-session";
 
 export const schemaTypes = [
   // documents
@@ -79,6 +83,8 @@ export const schemaTypes = [
   activity,
   facility,
   facilitiesMap,
+  season,
+  seasonsConfig,
   ...footerSchemaTypes,
   // shared objects
   blockContent,
@@ -96,6 +102,7 @@ export const schemaTypes = [
   blogPostSidebarAction,
   blogPostSidebar,
   facilityMapPlacement,
+  seasonSession,
   // blocks
   hero,
   hero1,
@@ -111,6 +118,7 @@ export const schemaTypes = [
   featureCards,
   activitySchedule,
   facilitiesMapSection,
+  datesRatesSection,
   stackedFeatureRows,
   // page-builder-generator:block-types
   internationalCampersSection,
