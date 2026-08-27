@@ -86,7 +86,7 @@ describe("StackedFeatureRows", () => {
       screen.getByRole("heading", {
         name: "Built for kids. Trusted by parents.",
       }),
-    ).toBeInTheDocument();
+    ).toHaveClass("text-display-page");
     expect(screen.getByText("Trusted by parents.")).toHaveClass("text-cedar");
     expect(screen.getByText("Accredited & inspected")).toHaveAttribute(
       "data-sanity",

@@ -95,7 +95,7 @@ export default function StackedFeatureRows({
           )}
 
           <h2
-            className="max-w-4xl text-balance font-display text-headline"
+            className="max-w-4xl text-balance font-display text-display-page"
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
