@@ -1,5 +1,15 @@
 import { createImageUrlBuilder, type SanityImageSource } from "@sanity/image-url";
-import { Box, Button, Card, Dialog, Flex, Stack, Text } from "@sanity/ui";
+import {
+  Box,
+  Button,
+  Card,
+  Dialog,
+  Flex,
+  PortalProvider,
+  Stack,
+  Text,
+  usePortal,
+} from "@sanity/ui";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   PatchEvent,
@@ -54,9 +64,15 @@ export default function FacilityMapPlacementsInput(
   const dialogId = useId();
   const dialogContentRef = useRef<HTMLDivElement>(null);
   const expandButtonRef = useRef<HTMLButtonElement>(null);
+  const parentPortal = usePortal();
   const mapImage = useFormValue(["mapImage"]) as MapImageValue | undefined;
   const [dialogContentHeight, setDialogContentHeight] = useState<number>();
   const [expanded, setExpanded] = useState(false);
+  // Portal target inside the fullscreen dialog card. Placement edit dialogs
+  // render into it while the map is expanded, so they always stack above the
+  // map and their clicks register as inside the fullscreen dialog.
+  const [expandedPortalElement, setExpandedPortalElement] =
+    useState<HTMLElement | null>(null);
   const [facilityNames, setFacilityNames] = useState<Record<string, string>>({});
   const placements = props.value ?? [];
   const inlinePreview = useMapPreview(placements.length);
@@ -165,9 +181,14 @@ export default function FacilityMapPlacementsInput(
     return width > 0 && height > 0 ? width / height : FALLBACK_ASPECT_RATIO;
   }, [mapImage]);
   const openPlacement = (key: string) => {
-    const itemPath = [{ _key: key }];
-    props.onItemOpen(itemPath);
-    props.onPathFocus([...itemPath, "facility"]);
+    // onItemOpen needs the absolute path (from the document root); a relative
+    // path silently opens nothing. The focus call is load-bearing: the array
+    // list virtualizes rows, and the edit dialog is rendered by its row. The
+    // virtualizer only keeps an offscreen row mounted while the focus path
+    // points into it, so without this the dialog unmounts as soon as the row
+    // is recycled.
+    props.onItemOpen([...props.path, { _key: key }]);
+    props.onPathFocus([{ _key: key }, "facility"]);
   };
 
   const updatePlacement = (key: string, x: number, y: number) => {
@@ -245,57 +266,83 @@ export default function FacilityMapPlacementsInput(
         </Stack>
       </Card>
 
-      {props.renderDefault(props)}
+      <PortalProvider
+        __unstable_elements={parentPortal.elements}
+        boundaryElement={parentPortal.boundaryElement}
+        element={
+          expanded && expandedPortalElement
+            ? expandedPortalElement
+            : parentPortal.element
+        }
+      >
+        {props.renderDefault(props)}
+      </PortalProvider>
 
       {expanded && mapUrl ? (
         <Dialog
+          __unstable_hideCloseButton
           cardRadius={[0, 2]}
           contentRef={dialogContentRef}
-          header={
-            <Flex align="center" gap={3}>
-              <Text as="span" size={1} weight="semibold">
-                Facilities Map
-              </Text>
-              <Button
-                disabled={placements.length < 2}
-                mode="ghost"
-                onClick={() =>
-                  fullscreenPreview.setRunning((running) => !running)
-                }
-                text={
-                  fullscreenPreview.running ? "Pause preview" : "Play preview"
-                }
-                type="button"
-              />
-            </Flex>
-          }
           id={dialogId}
-          onClickOutside={closeExpandedMap}
           onClose={closeExpandedMap}
           padding={[0, 3]}
           width="auto"
         >
-          <Box
-            padding={[2, 3]}
+          {/* The header slot is intentionally unused: it paints above the
+              dialog content, where the placement edit dialogs render. */}
+          <Flex
+            direction="column"
             style={{
               boxSizing: "border-box",
               height: dialogContentHeight ?? "100dvh",
               minHeight: 0,
             }}
           >
-            <FacilityMapCanvas
-              facilityNames={facilityNames}
-              fillAvailable
-              mapAspectRatio={mapAspectRatio}
-              mapUrl={mapUrl}
-              onPlacementChange={updatePlacement}
-              onPlacementOpen={openPlacement}
-              onPreviewStop={() => fullscreenPreview.setRunning(false)}
-              placements={placements}
-              previewIndex={fullscreenPreview.index}
-              previewRunning={fullscreenPreview.running}
-            />
-          </Box>
+            <Flex align="center" gap={3} justify="space-between" padding={3}>
+              <Flex align="center" gap={3}>
+                <Text as="span" size={1} weight="semibold">
+                  Facilities Map
+                </Text>
+                <Button
+                  disabled={placements.length < 2}
+                  mode="ghost"
+                  onClick={() =>
+                    fullscreenPreview.setRunning((running) => !running)
+                  }
+                  text={
+                    fullscreenPreview.running ? "Pause preview" : "Play preview"
+                  }
+                  type="button"
+                />
+              </Flex>
+              <Button
+                mode="ghost"
+                onClick={closeExpandedMap}
+                text="Close"
+                type="button"
+              />
+            </Flex>
+            <Box
+              flex={1}
+              paddingBottom={[2, 3]}
+              paddingX={[2, 3]}
+              style={{ minHeight: 0 }}
+            >
+              <FacilityMapCanvas
+                facilityNames={facilityNames}
+                fillAvailable
+                mapAspectRatio={mapAspectRatio}
+                mapUrl={mapUrl}
+                onPlacementChange={updatePlacement}
+                onPlacementOpen={openPlacement}
+                onPreviewStop={() => fullscreenPreview.setRunning(false)}
+                placements={placements}
+                previewIndex={fullscreenPreview.index}
+                previewRunning={fullscreenPreview.running}
+              />
+            </Box>
+          </Flex>
+          <div ref={setExpandedPortalElement} />
         </Dialog>
       ) : null}
     </Stack>
