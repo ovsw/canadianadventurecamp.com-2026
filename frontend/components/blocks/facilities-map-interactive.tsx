@@ -364,7 +364,6 @@ export default function FacilitiesMapInteractive({
               style={{ left: `${walkerPoint.x}%`, top: `${walkerPoint.y}%` }}
             >
               <span className={styles.walkerDot} />
-              <span className={styles.walkerName}>{activePlacement.name}</span>
             </div>
           </div>
 

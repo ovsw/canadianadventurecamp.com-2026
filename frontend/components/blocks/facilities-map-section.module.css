@@ -428,43 +428,84 @@
   text-align: center;
   text-transform: uppercase;
   text-wrap: balance;
-  transition: opacity 0.2s ease;
+  transition:
+    color 0.25s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Highlighter-style fill that hugs each line of text instead of boxing
-   the whole label. */
+/* Multi-line padded text (css-tricks.com/multi-line-padded-text): cloned
+   per-line strips, square corners, line advance matching strip height, so
+   wrapped lines fuse into one continuous shape. */
 .stopLabelText {
   padding: 3px 11px;
-  border-radius: 4px;
   background: rgb(13 18 8 / 74%);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
-/* The walker's large name label supersedes the stop's own pill. */
-.stopActive .stopLabel {
-  opacity: 0;
+/* The active stop's own label becomes the headline: amber text, amber
+   outline, scaled up. The outline is a stack of offset drop-shadows, which
+   trace the silhouette of the fused strips as one shape - a border or
+   box-shadow would ring each line separately. Needs an opaque strip
+   background so the shadow copies don't show through. */
+.stopActive {
+  z-index: 4;
 }
 
+.stopActive .stopLabel {
+  color: var(--color-campfire-amber);
+  filter: drop-shadow(1.5px 0 0 var(--color-campfire-amber))
+    drop-shadow(-1.5px 0 0 var(--color-campfire-amber))
+    drop-shadow(0 1.5px 0 var(--color-campfire-amber))
+    drop-shadow(0 -1.5px 0 var(--color-campfire-amber));
+}
+
+.stopActive .stopLabelText {
+  background: rgb(13 18 8);
+}
+
+/* transform-origin sits on the marker-facing edge so the label grows away
+   from the marker and the gap between them stays put. */
 .labelAbove,
 .labelAuto {
   transform: translate(-50%, calc(-100% - 15px));
+  transform-origin: 50% 100%;
 }
 
 .labelBelow {
   transform: translate(-50%, 15px);
+  transform-origin: 50% 0%;
 }
 
 /* Side placements: align text toward the marker so the box's spare width
    (from the wrap cap) hangs outward instead of pushing the text away. */
 .labelLeft {
   transform: translate(calc(-100% - 15px), -50%);
+  transform-origin: 100% 50%;
   text-align: right;
 }
 
 .labelRight {
   transform: translate(15px, -50%);
+  transform-origin: 0% 50%;
   text-align: left;
+}
+
+.stopActive .labelAbove,
+.stopActive .labelAuto {
+  transform: translate(-50%, calc(-100% - 15px)) scale(1.25);
+}
+
+.stopActive .labelBelow {
+  transform: translate(-50%, 15px) scale(1.25);
+}
+
+.stopActive .labelLeft {
+  transform: translate(calc(-100% - 15px), -50%) scale(1.25);
+}
+
+.stopActive .labelRight {
+  transform: translate(15px, -50%) scale(1.25);
 }
 
 .walker {
@@ -484,23 +525,6 @@
   border-radius: 50%;
   background: var(--color-campfire-amber);
   box-shadow: 0 0 0 8px rgb(232 162 59 / 25%), 0 0 34px rgb(232 162 59 / 65%);
-}
-
-.walkerName {
-  position: absolute;
-  bottom: 28px;
-  padding: 9px 25px 12px;
-  transform: translateX(-50%);
-  border: 1px solid rgb(232 162 59 / 45%);
-  border-radius: 999px;
-  background: rgb(13 18 8);
-  box-shadow: 0 6px 22px rgb(13 18 8 / 50%);
-  color: var(--color-campfire-amber);
-  font-family: var(--font-accent), cursive;
-  font-size: 45px;
-  font-weight: 600;
-  line-height: 1;
-  white-space: nowrap;
 }
 
 .mapTopBar {
@@ -675,7 +699,8 @@
   .mapScroller { margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
   .mapViewport { width: 800px; }
   .stop { width: 44px; height: 44px; }
-  .stopLabel { display: none; }
+  /* Small screens: only the active stop announces its name on the map. */
+  .stop:not(.stopActive) .stopLabel { display: none; }
   .facilityCard { width: 100%; padding: 18px 20px; }
   .facilityName { font-size: 30px; }
   .mapTopBar { top: 14px; left: 14px; }
@@ -688,5 +713,6 @@
 @media (prefers-reduced-motion: reduce) {
   .carouselSlide,
   .carouselDot,
+  .stopLabel,
   .facilityPhoto { transition: none; }
 }
