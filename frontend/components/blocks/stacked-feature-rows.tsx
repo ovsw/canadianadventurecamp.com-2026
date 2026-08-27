@@ -95,7 +95,7 @@ export default function StackedFeatureRows({
           )}
 
           <h2
-            className="max-w-4xl text-balance font-display text-display-page"
+            className="max-w-4xl text-balance font-display text-display-page font-extrabold"
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
@@ -117,11 +117,11 @@ export default function StackedFeatureRows({
                 className={`relative grid min-h-52 overflow-hidden border-b border-pine-night/15 px-5 py-10 last:border-b-0 md:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
                 key={row._key}
               >
-                <div className="relative z-10 flex items-start gap-4">
+                <div className="relative z-10 flex items-center gap-4">
                   {iconName && iconSvg ? (
                     <span
                       aria-hidden="true"
-                      className="mt-1.5 flex size-10 shrink-0 items-center justify-center text-cedar [&_svg]:size-10"
+                      className="flex size-10 shrink-0 items-center justify-center text-cedar [&_svg]:size-10"
                       data-sanity={dataAttribute?.(`${rowPath}.icon`)}
                     >
                       <NavigationIcon icon={{ name: iconName, svg: iconSvg }} />
@@ -137,7 +137,7 @@ export default function StackedFeatureRows({
 
                 <div className="relative z-10 mt-8 lg:mt-0">
                   <ul
-                    className="grid list-none gap-3 p-0"
+                    className="grid list-none gap-3 p-0 md:grid-cols-2 lg:grid-cols-1"
                     data-sanity={dataAttribute?.(`${rowPath}.items`)}
                   >
                     {items.map((item) => {

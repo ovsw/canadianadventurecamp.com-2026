@@ -86,12 +86,14 @@ describe("StackedFeatureRows", () => {
       screen.getByRole("heading", {
         name: "Built for kids. Trusted by parents.",
       }),
-    ).toHaveClass("text-display-page");
+    ).toHaveClass("text-display-page", "font-extrabold");
     expect(screen.getByText("Trusted by parents.")).toHaveClass("text-cedar");
-    expect(screen.getByText("Accredited & inspected")).toHaveAttribute(
+    const rowHeading = screen.getByText("Accredited & inspected");
+    expect(rowHeading).toHaveAttribute(
       "data-sanity",
       'section:rows[_key=="accredited"].title',
     );
+    expect(rowHeading.parentElement).toHaveClass("items-center");
     expect(
       screen.getByText("OCA accredited").closest("[data-sanity]"),
     ).toHaveAttribute(
@@ -108,6 +110,9 @@ describe("StackedFeatureRows", () => {
       "text-cedar",
     );
     expect(document.querySelector(".lucide-check")).toHaveClass("text-cedar");
+    expect(
+      document.querySelector('[data-sanity$=".items"]'),
+    ).toHaveClass("md:grid-cols-2", "lg:grid-cols-1");
     expect(screen.getByRole("link", { name: "Our accreditations" })).toHaveAttribute(
       "href",
       "/accreditations",
