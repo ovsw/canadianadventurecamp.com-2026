@@ -13,7 +13,8 @@
     "test:presentation": "node --test presentation/presentation.test.mjs",
     "typegen": "rm -f schema.json && sanity schema extract; test -f schema.json && sanity typegen generate",
     "typecheck": "tsc --noEmit",
-    "bootstrap:facilities-map": "node --env-file=.env.local scripts/bootstrap-facilities-map.mjs"
+    "bootstrap:facilities-map": "node --env-file=.env.local scripts/bootstrap-facilities-map.mjs",
+    "migrate:activity-schedule-headings": "node --env-file=.env.local scripts/migrate-activity-schedule-headings.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",
