@@ -1,4 +1,5 @@
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import ActivityScheduleBuilder from "./activity-schedule-builder";
@@ -19,6 +20,33 @@ type ActivityScheduleProps = Extract<
   ) => string | undefined;
 };
 
+/** Heading rich text: italic drops to its own handwritten amber line. */
+const headingComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <>{children}</>,
+  },
+  marks: {
+    strong: ({ children }) => <strong>{children}</strong>,
+    em: ({ children }) => (
+      <em className="mt-2 block font-accent text-[clamp(2.125rem,3vw,3.4rem)] font-semibold not-italic leading-none text-campfire-amber">
+        {children}
+      </em>
+    ),
+  },
+};
+
+/** Flatten the rich-text heading for the activity count's accessible label. */
+const headingToPlainText = (
+  heading: ActivityScheduleProps["heading"],
+): string =>
+  stegaClean(
+    (heading ?? [])
+      .map((block) =>
+        (block.children ?? []).map((child) => child.text ?? "").join(""),
+      )
+      .join(" "),
+  ).trim();
+
 export default function ActivitySchedule({
   _key,
   activityCount,
@@ -29,7 +57,7 @@ export default function ActivitySchedule({
   featuredActivities,
   heading,
 }: ActivityScheduleProps) {
-  const cleanHeading = stegaClean(heading)?.trim();
+  const plainHeading = headingToPlainText(heading);
   const cleanDescription = stegaClean(description)?.trim();
   const cleanCamperNames = (camperNames ?? [])
     .map((name) => stegaClean(name)?.trim())
@@ -51,7 +79,7 @@ export default function ActivitySchedule({
     .slice(0, 18);
 
   if (
-    !cleanHeading ||
+    !plainHeading ||
     !cleanDescription ||
     !cleanCamperNames.length ||
     activities.length < 4
@@ -75,50 +103,51 @@ export default function ActivitySchedule({
     >
       <div className="container-content">
         <div className="border-t border-birch-bark/15 pt-section">
-          <div className="grid items-start gap-12 md:grid-cols-2 2xl:grid-cols-12">
-            <header className={`md:col-span-2 2xl:col-span-4 ${styles.reveal}`}>
+          {/* Header band: count + heading left, description right */}
+          <div
+            className={`grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-14 ${styles.reveal}`}
+          >
+            <header className="flex flex-col gap-6 md:flex-row md:items-center md:gap-10 lg:col-span-8">
               <p
-                aria-label={`${total} ${cleanHeading}`}
+                aria-label={`${total} ${plainHeading}`}
                 className={styles.activityCount}
               >
                 {total}
               </p>
               <h2
-                className="mt-4 max-w-xl font-accent text-4xl font-medium text-birch-bark md:text-5xl"
+                className="text-balance font-display text-display-page font-extrabold text-birch-bark"
                 data-sanity={dataAttribute?.("heading")}
                 id={headingId}
               >
-                {heading}
+                <PortableText components={headingComponents} value={heading} />
               </h2>
             </header>
 
-            <ActivityScheduleBuilder
-              activities={activities}
-              activitiesLink={
-                <Link
-                  className="focus-ring w-fit rounded-pill border border-dashed border-birch-bark/35 px-5 py-3 text-sm font-semibold text-birch-bark/65 transition-colors hover:border-campfire-amber hover:text-campfire-amber motion-reduce:transition-none"
-                  href="/summer-camp-activities"
-                  key="activities-link"
-                >
-                  {activityLinkText}
-                </Link>
-              }
-              camperNames={cleanCamperNames}
-              camperNamesDataAttribute={dataAttribute?.("camperNames")}
-              featuredActivitiesDataAttribute={dataAttribute?.(
-                "featuredActivities",
-              )}
-              description={
-                <p
-                  className="max-w-xl text-pretty text-lg/relaxed text-birch-bark/75"
-                  data-sanity={dataAttribute?.("description")}
-                  key="description"
-                >
-                  {description}
-                </p>
-              }
-            />
+            <p
+              className="max-w-xl text-pretty text-lg/relaxed text-birch-bark/75 lg:col-span-4 lg:pb-2"
+              data-sanity={dataAttribute?.("description")}
+            >
+              {description}
+            </p>
           </div>
+
+          <ActivityScheduleBuilder
+            activities={activities}
+            activitiesLink={
+              <Link
+                className="focus-ring w-fit rounded-pill border border-dashed border-birch-bark/35 px-5 py-3 text-sm font-semibold text-birch-bark/65 transition-colors hover:border-campfire-amber hover:text-campfire-amber motion-reduce:transition-none"
+                href="/summer-camp-activities"
+                key="activities-link"
+              >
+                {activityLinkText}
+              </Link>
+            }
+            camperNames={cleanCamperNames}
+            camperNamesDataAttribute={dataAttribute?.("camperNames")}
+            featuredActivitiesDataAttribute={dataAttribute?.(
+              "featuredActivities",
+            )}
+          />
         </div>
       </div>
     </section>

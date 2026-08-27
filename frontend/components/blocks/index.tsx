@@ -13,6 +13,7 @@ import HomeHero from "@/components/blocks/home-hero";
 import ImageCollageFeature from "@/components/blocks/image-collage-feature";
 import FeatureCards from "@/components/blocks/feature-cards";
 import ActivitySchedule from "@/components/blocks/activity-schedule";
+import FacilitiesMapSection from "@/components/blocks/facilities-map-section";
 import { dataset, projectId } from "@/sanity/lib/env";
 
 type Block =
@@ -29,6 +30,11 @@ type BlockEditingProps = {
     documentId: string,
     path: string,
   ) => string | undefined;
+  facilityDataAttribute?: (
+    documentId: string,
+    path: string,
+  ) => string | undefined;
+  mapDataAttribute?: (path: string) => string | undefined;
 };
 
 const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
@@ -43,6 +49,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "imageCollageFeature",
   "featureCards",
   "activitySchedule",
+  "facilitiesMapSection",
 ]);
 
 const componentMap: Partial<{
@@ -62,6 +69,7 @@ const componentMap: Partial<{
   imageCollageFeature: ImageCollageFeature,
   featureCards: FeatureCards,
   activitySchedule: ActivitySchedule,
+  facilitiesMapSection: FacilitiesMapSection,
 };
 
 export default function Blocks({
@@ -141,6 +149,36 @@ export default function Blocks({
                           }).toString()
                       : undefined,
                   }
+                : block._type === "facilitiesMapSection"
+                  ? {
+                      dataAttribute,
+                      facilityDataAttribute: stega
+                        ? (facilityId: string, path: string) =>
+                            createDataAttribute({
+                              baseUrl:
+                                process.env.NEXT_PUBLIC_STUDIO_URL ||
+                                "http://localhost:3333",
+                              dataset,
+                              id: facilityId,
+                              path,
+                              projectId,
+                              type: "facility",
+                            }).toString()
+                        : undefined,
+                      mapDataAttribute: stega
+                        ? (path: string) =>
+                            createDataAttribute({
+                              baseUrl:
+                                process.env.NEXT_PUBLIC_STUDIO_URL ||
+                                "http://localhost:3333",
+                              dataset,
+                              id: "facilitiesMap",
+                              path,
+                              projectId,
+                              type: "facilitiesMap",
+                            }).toString()
+                        : undefined,
+                    }
                 : serverFieldEditingBlockTypes.has(block._type)
               ? { dataAttribute }
               : {};

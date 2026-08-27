@@ -5,6 +5,7 @@ export const singletonDocumentTypes = new Set([
   "blogIndex",
   "blogPostSettings",
   "homePage",
+  "facilitiesMap",
 ]);
 
 export const singletonDocumentActions = new Set([

@@ -77,13 +77,6 @@ export default defineType({
           type: "string",
           title: "Alt Text",
           description: "The text that describes the image for screen readers and search engines",
-          validation: (rule) =>
-            rule.custom((value, context) => {
-              const parent = context.parent as { asset?: unknown };
-              return parent?.asset && !value?.trim()
-                ? "Alt text is required when an image is set"
-                : true;
-            }),
         }),
       ],
       validation: (rule) => rule.required(),

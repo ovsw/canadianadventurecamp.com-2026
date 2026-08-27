@@ -11,6 +11,7 @@ type PostMeta = NonNullable<BlogPostingJsonLdPost["meta"]>;
 function image(url: string | null): PostImage {
   return {
     _type: "image",
+    alt: "",
     asset: {
       _id: "image-1",
       url,

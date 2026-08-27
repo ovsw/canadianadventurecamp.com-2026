@@ -14,6 +14,8 @@ import {
   TrendingUpDown,
   PanelRight,
   CircleDot,
+  MapPinned,
+  MapPin,
 } from "lucide-react";
 import type { StructureResolver } from "sanity/structure";
 
@@ -93,6 +95,33 @@ export const structure: StructureResolver = (S) =>
                 .child(
                   S.documentTypeList("author")
                     .title("Authors")
+                    .defaultOrdering([{ field: "name", direction: "asc" }])
+                ),
+            ])
+        ),
+      S.listItem()
+        .title("Facilities")
+        .icon(MapPinned)
+        .child(
+          S.list()
+            .title("Facilities")
+            .items([
+              S.listItem()
+                .title("Facilities Map")
+                .icon(MapPinned)
+                .child(
+                  S.editor()
+                    .id("facilitiesMap")
+                    .schemaType("facilitiesMap")
+                    .documentId("facilitiesMap")
+                ),
+              S.listItem()
+                .title("Facilities")
+                .icon(MapPin)
+                .schemaType("facility")
+                .child(
+                  S.documentTypeList("facility")
+                    .title("Facilities")
                     .defaultOrdering([{ field: "name", direction: "asc" }])
                 ),
             ])

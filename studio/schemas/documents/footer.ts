@@ -114,7 +114,6 @@ const footerLogo = defineType({
       title: "Alternative text",
       type: "string",
       description: "Name the organization represented by the logo.",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "destination",

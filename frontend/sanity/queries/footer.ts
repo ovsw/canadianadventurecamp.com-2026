@@ -1,4 +1,5 @@
 import { defineQuery } from "next-sanity";
+import { imageQuery } from "./shared/image";
 
 const destinationProjection = `{
   openInNewTab,
@@ -31,13 +32,7 @@ export const FOOTER_QUERY = defineQuery(`
       _key,
       alt,
       image{
-        ...,
-        asset->{
-          _id,
-          url,
-          mimeType,
-          metadata { lqip, dimensions { width, height } }
-        }
+        ${imageQuery}
       },
       destination${destinationProjection}
     },
