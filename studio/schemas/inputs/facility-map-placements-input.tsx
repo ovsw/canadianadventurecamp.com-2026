@@ -1,6 +1,5 @@
 import { createImageUrlBuilder, type SanityImageSource } from "@sanity/image-url";
 import { Box, Button, Card, Flex, Stack, Text } from "@sanity/ui";
-import { curveCatmullRom, curveLinear, line } from "d3-shape";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   PatchEvent,
@@ -9,6 +8,7 @@ import {
   useClient,
   useFormValue,
 } from "sanity";
+import { createFacilitiesMapPath } from "../../../shared/facilities-map-path.ts";
 
 type FacilityReference = {
   _ref?: string;
@@ -60,20 +60,10 @@ function labelTransform(position: PlacementValue["labelPosition"]) {
   }
 }
 
-function createPath(placements: PlacementValue[]) {
-  const points = placements.filter(
+function positionedPlacements(placements: PlacementValue[]) {
+  return placements.filter(
     (placement): placement is PlacementValue & { x: number; y: number } =>
       typeof placement.x === "number" && typeof placement.y === "number",
-  );
-  if (points.length < 2) return undefined;
-
-  return (
-    line<(typeof points)[number]>()
-      .x(({ x }) => x)
-      .y(({ y }) => y)
-      .curve(
-        points.length < 3 ? curveLinear : curveCatmullRom.alpha(0.5),
-      )(points) ?? undefined
   );
 }
 
@@ -185,7 +175,9 @@ export default function FacilityMapPlacementsInput(
       ? { ...placement, x: dragState.x, y: dragState.y }
       : placement,
   );
-  const pathData = createPath(displayedPlacements);
+  const pathData = createFacilitiesMapPath(
+    positionedPlacements(displayedPlacements),
+  );
   const openPlacement = (key: string) => {
     const itemPath = [{ _key: key }];
     props.onItemOpen(itemPath);

@@ -1,29 +1,14 @@
-import { curveCatmullRom, curveLinear, line } from "d3-shape";
+import type { FacilitiesMapPoint } from "../../../shared/facilities-map-path";
 
-export type FacilitiesMapPoint = {
-  x: number;
-  y: number;
-};
+export {
+  createFacilitiesMapPath,
+  type FacilitiesMapPoint,
+} from "../../../shared/facilities-map-path";
 
 export type FacilitiesMapRouteSample = {
   distance: number;
   point: FacilitiesMapPoint;
 };
-
-/** Build the open tour route through every point in editor order. */
-export function createFacilitiesMapPath<T extends FacilitiesMapPoint>(
-  points: T[],
-) {
-  if (points.length < 2) return undefined;
-  return (
-    line<T>()
-      .x(({ x }) => x)
-      .y(({ y }) => y)
-      .curve(points.length < 3 ? curveLinear : curveCatmullRom.alpha(0.5))(
-      points,
-    ) ?? undefined
-  );
-}
 
 const formatCoordinate = (value: number) => String(Number(value.toFixed(2)));
 
