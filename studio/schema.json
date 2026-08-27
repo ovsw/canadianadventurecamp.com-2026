@@ -346,6 +346,29 @@
   },
   {
     "type": "type",
+    "name": "stackedFeatureRow.icon",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "name": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "svg": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
     "name": "stackedFeatureRow.link",
     "value": {
       "type": "object",
@@ -403,6 +426,14 @@
             "of": {
               "type": "object",
               "attributes": {
+                "icon": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "inline",
+                    "name": "stackedFeatureRow.icon"
+                  },
+                  "optional": true
+                },
                 "title": {
                   "type": "objectAttribute",
                   "value": {
@@ -421,6 +452,14 @@
                           "type": "objectAttribute",
                           "value": {
                             "type": "string"
+                          },
+                          "optional": true
+                        },
+                        "body": {
+                          "type": "objectAttribute",
+                          "value": {
+                            "type": "inline",
+                            "name": "simpleRichText"
                           },
                           "optional": true
                         },

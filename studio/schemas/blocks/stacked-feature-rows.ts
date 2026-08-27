@@ -1,5 +1,21 @@
 import { Rows3 } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import NavigationIconInput, {
+  createNavigationIconPreview,
+} from "../inputs/navigation-icon-input";
+import { isNavigationIconName } from "../inputs/lucide-icon-catalog";
+
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
+    .join(" ")
+    .trim();
+};
 
 const rowItem = defineArrayMember({
   name: "stackedFeatureRowItem",
@@ -8,14 +24,30 @@ const rowItem = defineArrayMember({
   fields: [
     defineField({
       name: "label",
-      title: "Text",
+      title: "Legacy Text",
       type: "string",
-      validation: (rule) => rule.required(),
+      hidden: true,
+    }),
+    defineField({
+      name: "body",
+      title: "Text",
+      type: "simpleRichText",
+      description: "One short point. Supports bold, italic, and links.",
+      validation: (rule) =>
+        rule.max(1).custom((value, context) => {
+          const legacyLabel = (context.parent as { label?: string } | undefined)
+            ?.label;
+          return (Array.isArray(value) && value.length > 0) || legacyLabel?.trim()
+            ? true
+            : "Add item text";
+        }),
     }),
   ],
   preview: {
-    select: { title: "label" },
-    prepare: ({ title }) => ({ title: title || "Untitled Item" }),
+    select: { body: "body", legacyLabel: "label" },
+    prepare: ({ body, legacyLabel }) => ({
+      title: richTextToPlainText(body) || legacyLabel || "Untitled Item",
+    }),
   },
 });
 
@@ -24,6 +56,36 @@ const row = defineArrayMember({
   title: "Row",
   type: "object",
   fields: [
+    defineField({
+      name: "icon",
+      title: "Icon",
+      type: "object",
+      description: "Choose an icon shown beside this row heading.",
+      components: {
+        input: NavigationIconInput,
+      },
+      fields: [
+        defineField({ name: "name", title: "Name", type: "string" }),
+        defineField({
+          name: "svg",
+          title: "SVG markup",
+          type: "string",
+          hidden: true,
+        }),
+      ],
+      validation: (rule) =>
+        rule.custom((value) => {
+          const icon = value as { name?: string; svg?: string } | undefined;
+          if (!icon?.name) return "Choose an icon";
+          if (!isNavigationIconName(icon.name)) {
+            return "Choose an icon from the icon picker";
+          }
+          if (!icon.svg) {
+            return "Re-pick this icon so its artwork is stored with the document";
+          }
+          return true;
+        }),
+    }),
     defineField({
       name: "title",
       type: "string",
@@ -60,12 +122,13 @@ const row = defineArrayMember({
     }),
   ],
   preview: {
-    select: { items: "items", title: "title" },
-    prepare: ({ items, title }) => {
+    select: { icon: "icon.name", items: "items", title: "title" },
+    prepare: ({ icon, items, title }) => {
       const count = Array.isArray(items) ? items.length : 0;
       return {
         title: title || "Untitled Row",
         subtitle: `${count} ${count === 1 ? "item" : "items"}`,
+        media: icon ? createNavigationIconPreview(icon) : undefined,
       };
     },
   },

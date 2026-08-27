@@ -1,3 +1,5 @@
+import { NavigationIcon } from "@/components/header/navigation-icon";
+import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
@@ -44,7 +46,9 @@ export default function StackedFeatureRows({
 
   const renderableRows = rows.flatMap((row) => {
     const href = getSafeLinkHref(row.link?.href);
-    const items = (row.items ?? []).filter((item) => hasText(item.label));
+    const items = (row.items ?? []).filter(
+      (item) => item.body?.length || hasText(item.legacyLabel),
+    );
 
     if (
       !hasText(row.title) ||
@@ -96,18 +100,31 @@ export default function StackedFeatureRows({
         >
           {renderableRows.map(({ href, items, row }) => {
             const rowPath = `rows[_key=="${row._key}"]`;
+            const iconName = stegaClean(row.icon?.name)?.trim();
+            const iconSvg = stegaClean(row.icon?.svg)?.trim() || null;
 
             return (
               <li
                 className={`relative grid min-h-52 overflow-hidden border-b border-pine-night/15 px-5 py-10 last:border-b-0 md:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
                 key={row._key}
               >
-                <h3
-                  className="relative z-10 font-display text-headline"
-                  data-sanity={dataAttribute?.(`${rowPath}.title`)}
-                >
-                  {row.title}
-                </h3>
+                <div className="relative z-10 flex items-start gap-4">
+                  {iconName && iconSvg ? (
+                    <span
+                      aria-hidden="true"
+                      className="mt-1.5 flex size-10 shrink-0 items-center justify-center text-cedar [&_svg]:size-10"
+                      data-sanity={dataAttribute?.(`${rowPath}.icon`)}
+                    >
+                      <NavigationIcon icon={{ name: iconName, svg: iconSvg }} />
+                    </span>
+                  ) : null}
+                  <h3
+                    className="font-display text-headline"
+                    data-sanity={dataAttribute?.(`${rowPath}.title`)}
+                  >
+                    {row.title}
+                  </h3>
+                </div>
 
                 <div className="relative z-10 mt-8 lg:mt-0">
                   <ul
@@ -121,13 +138,21 @@ export default function StackedFeatureRows({
                         <li className="flex items-center gap-3" key={item._key}>
                           <Milestone
                             aria-hidden="true"
-                            className="size-5 shrink-0 text-moss"
+                            className="mt-0.5 size-5 shrink-0 text-cedar"
                           />
-                          <span
-                            data-sanity={dataAttribute?.(`${itemPath}.label`)}
+                          <div
+                            className="grid min-w-0 gap-2"
+                            data-sanity={dataAttribute?.(`${itemPath}.body`)}
                           >
-                            {item.label}
-                          </span>
+                            {item.body?.length ? (
+                              <PortableText
+                                components={simpleRichTextComponents}
+                                value={item.body}
+                              />
+                            ) : (
+                              <p>{item.legacyLabel}</p>
+                            )}
+                          </div>
                         </li>
                       );
                     })}

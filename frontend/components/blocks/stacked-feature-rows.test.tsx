@@ -3,6 +3,9 @@ import type { ComponentProps } from "react";
 import { describe, expect, it } from "vitest";
 import StackedFeatureRows from "./stacked-feature-rows";
 
+const iconSvg =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/></svg>';
+
 const block: ComponentProps<typeof StackedFeatureRows> = {
   _key: "parent-details",
   _type: "stackedFeatureRows",
@@ -32,11 +35,38 @@ const block: ComponentProps<typeof StackedFeatureRows> = {
   rows: [
     {
       _key: "accredited",
+      icon: {
+        name: "badge-check",
+        svg: iconSvg,
+      },
       title: "Accredited & inspected",
       items: [
         {
           _key: "oca",
-          label: "OCA accredited",
+          body: [
+            {
+              _key: "oca-body",
+              _type: "block",
+              style: "normal",
+              markDefs: [
+                {
+                  _key: "oca-link",
+                  _type: "customLink",
+                  href: "https://ontariocampsassociation.ca/",
+                  openInNewTab: true,
+                },
+              ],
+              children: [
+                {
+                  _key: "oca-text",
+                  _type: "span",
+                  marks: ["oca-link"],
+                  text: "OCA accredited",
+                },
+              ],
+            },
+          ],
+          legacyLabel: null,
         },
       ],
       link: {
@@ -62,10 +92,20 @@ describe("StackedFeatureRows", () => {
       "data-sanity",
       'section:rows[_key=="accredited"].title',
     );
-    expect(screen.getByText("OCA accredited")).toHaveAttribute(
+    expect(
+      screen.getByText("OCA accredited").closest("[data-sanity]"),
+    ).toHaveAttribute(
       "data-sanity",
-      'section:rows[_key=="accredited"].items[_key=="oca"].label',
+      'section:rows[_key=="accredited"].items[_key=="oca"].body',
     );
+    expect(screen.getByRole("link", { name: "OCA accredited" })).toHaveAttribute(
+      "href",
+      "https://ontariocampsassociation.ca/",
+    );
+    expect(document.querySelector('[data-sanity$=".icon"]')).toHaveClass(
+      "text-cedar",
+    );
+    expect(document.querySelector(".lucide-milestone")).toHaveClass("text-cedar");
     expect(screen.getByRole("link", { name: "Our accreditations" })).toHaveAttribute(
       "href",
       "/accreditations",
@@ -80,11 +120,13 @@ describe("StackedFeatureRows", () => {
           ...(block.rows ?? []),
           {
             _key: "missing-link",
+            icon: null,
             title: "Missing link",
             items: [
               {
                 _key: "detail",
-                label: "Detail",
+                body: null,
+                legacyLabel: "Detail",
               },
             ],
             link: null,
@@ -94,5 +136,27 @@ describe("StackedFeatureRows", () => {
     );
 
     expect(screen.queryByText("Missing link")).not.toBeInTheDocument();
+  });
+
+  it("keeps legacy item strings visible until the draft is migrated", () => {
+    render(
+      <StackedFeatureRows
+        {...block}
+        rows={[
+          {
+            ...(block.rows ?? [])[0],
+            items: [
+              {
+                _key: "legacy-item",
+                body: null,
+                legacyLabel: "Legacy supporting point",
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Legacy supporting point")).toBeInTheDocument();
   });
 });
