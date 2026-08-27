@@ -12,6 +12,7 @@ import { featureCardsQuery } from "./feature-cards";
 import { activityScheduleQuery } from "./activity-schedule";
 import { facilitiesMapSectionQuery } from "./facilities-map-section";
 import { stackedFeatureRowsQuery } from "./stacked-feature-rows";
+// page-builder-generator:query-imports
 
 export const pageBuilderQuery = `
   blocks[]{
@@ -30,6 +31,7 @@ export const pageBuilderQuery = `
     ${featureCardsQuery},
     ${activityScheduleQuery},
     ${facilitiesMapSectionQuery},
-    ${stackedFeatureRowsQuery}
+    ${stackedFeatureRowsQuery},
+    ${"" /* page-builder-generator:query-spreads */}
   }
 `;

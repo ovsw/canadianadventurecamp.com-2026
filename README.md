@@ -40,6 +40,7 @@ Before using Presentation, confirm the Website and Studio origins are present in
 pnpm dev
 pnpm dev:frontend
 pnpm dev:studio
+pnpm page-builder:new <name>
 pnpm verify
 pnpm lint
 pnpm typecheck
@@ -49,6 +50,10 @@ pnpm typegen
 ```
 
 Run `pnpm verify` before opening a pull request. It checks generated Sanity types, TypeScript, lint, focused tests, and both production builds.
+
+`pnpm page-builder:new <name>` creates and registers a typed Studio schema,
+GROQ projection, and React renderer. Use `--scope content|general|home`,
+`--title "Studio title"`, `--preview ./preview.jpg`, or `--dry-run` as needed.
 
 Use plain pnpm commands from the repository root. Add workspace dependencies with `pnpm --dir frontend add <package>` or `pnpm --dir studio add <package>`.
 

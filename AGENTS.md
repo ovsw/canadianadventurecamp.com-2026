@@ -38,23 +38,54 @@ This matters most before destructive or delegated work: unverified claims about
 environment state (which dataset is configured, which env file is loaded) are
 exactly what makes handing off write access dangerous.
 
-## Testing
-- Prefer focused functional/accessibility checks;
-- DO NOT create or maintain screenshot baselines unless explicitly requested.
+## Sanity dataset writes
 
-## Visual checks are the user's job
+Ovi gives standing permission for Sanity dataset mutations required by the
+current task.
 
-**Never perform visual checks yourself.** Do not drive a browser, take
-screenshots, or otherwise inspect the rendered UI to confirm how something
-looks. When a change needs visual confirmation, finish the code work, then ask
-Ovi to look and report back.
+- Before the first write, name the project and dataset, create a timestamped
+  backup, and verify the archive with `gzip -t`. If backup or verification
+  fails, stop before writing.
+- For document-only work, use
+  `sanity datasets export <dataset> <backup>.tar.gz --raw`. This avoids
+  downloading asset files while preserving their references for same-dataset
+  restoration.
+- If the work changes asset documents or references, or uploads, replaces, or
+  deletes assets, create a full export including assets instead.
+- Dataset deletion, project settings, access controls, and unrelated cleanup
+  still require explicit approval.
 
-**Why:** agent-driven browser capture is unreliable here and burns time
-producing blank or misleading frames, which is worse than no check at all.
+## Fast verification
 
-**How to apply:** do the automated checks that are dependable (typecheck, lint,
-tests, DOM/query assertions), then state plainly what still needs a human's
-eyes and ask Ovi to confirm.
+Ovi is the primary tester. Finish the implementation, then give him the exact
+URL, viewport, state, and actions to check. Use his report as the visual verdict.
+Use a browser or screenshots only when he explicitly asks.
+
+During implementation, run only the smallest cheap check needed to catch a
+syntax, type, or generated-code failure. Do not add tests merely because code
+changed, and do not run broad test suites by default.
+
+Add or run focused tests only when Ovi asks, or when the change involves:
+
+- destructive data work;
+- security or authorization;
+- subtle pure logic that is hard to verify manually; or
+- a regression that is expensive to reproduce.
+
+`pnpm verify` is a release and pull-request gate. Run it only when Ovi asks for
+that gate, not during implementation.
+
+## Review agents
+
+Review agents are explicit opt-in. Do not invoke review subagents, review
+skills, CodeRabbit, or an adversarial review loop unless Ovi requests that
+review in the current task.
+
+## Repository scanning
+
+Use `rg` or `git ls-files` for discovery. Exclude `.claude/worktrees/`,
+`node_modules/`, `.next/`, `.sanity/`, `dist/`, `build/`, and `backups/` from
+broad scans. If `find` is necessary, prune those paths explicitly.
 
 ## Commits
 

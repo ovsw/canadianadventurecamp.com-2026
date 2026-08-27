@@ -16,7 +16,31 @@ The section's Sanity `_type` is the shared identifier across every step. Keep it
 
 ## Add a top-level section
 
-Start with the closest existing section and preserve the mirrored folder structure in Studio, queries, and renderers.
+Create the vertical slice with the generator, then shape its three files together:
+
+```bash
+pnpm page-builder:new <name> --title "Studio title"
+```
+
+The default `content` scope makes the section available on regular and home
+pages. Use `--scope general` or `--scope home` for a page-specific section.
+Pass `--preview ./image.jpg` when the Studio grid preview is ready. Use
+`--dry-run` to inspect the planned paths without writing.
+
+The generator:
+
+- creates the Studio schema in `studio/schemas/blocks/`;
+- registers the schema and Page Builder scope;
+- creates and registers the GROQ projection;
+- creates and registers a typed React renderer with click-to-edit attributes;
+- copies and registers an optional Studio preview image.
+
+After generation, replace the starter `title` and `description` fields with the
+chosen section's real content model. Keep the schema, query, and renderer in
+sync. Run TypeGen once after those shapes settle.
+
+For a manual addition, preserve the mirrored folder structure in Studio,
+queries, and renderers.
 
 1. Define the Studio schema in `studio/schemas/blocks/`.
 2. Register the schema and any supporting object schemas in `studio/schema-types.ts`.
@@ -25,7 +49,8 @@ Start with the closest existing section and preserve the mirrored folder structu
 5. Add its preview image at `studio/static/images/preview/<type>.jpg`. The Page schema resolves this path by `_type`.
 6. Create its GROQ projection in `frontend/sanity/queries/` and interpolate it into `frontend/sanity/queries/page.ts`.
 7. Create its React renderer in `frontend/components/blocks/` and register it in the `componentMap` in `frontend/components/blocks/index.tsx`.
-8. Run TypeGen. Do not edit `studio/schema.json` or `frontend/sanity.types.ts` by hand.
+8. Run TypeGen once after the schema and query settle. Do not edit
+   `studio/schema.json` or `frontend/sanity.types.ts` by hand.
 
 ## Add a nested block
 
@@ -55,8 +80,9 @@ For visual changes, treat the existing design system as the default:
 - The GROQ projection returns every field the renderer uses.
 - The Studio preview and frontend renderer work with realistic content.
 - Generated files are current and are not manually edited.
-- Repository verification passes:
+- Ovi has the exact URL, viewport, state, and actions needed to test the section.
+- Add automated tests only for destructive data work, security or authorization,
+  subtle pure logic that is hard to verify manually, or an expensive regression.
 
-  ```bash
-  pnpm verify
-  ```
+`pnpm verify` is reserved for an explicitly requested pull-request or release
+gate. Do not run it during Page Builder iteration.

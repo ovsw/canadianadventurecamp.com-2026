@@ -8,6 +8,7 @@
     "dev": "pnpm --parallel -r run dev",
     "dev:frontend": "pnpm --dir frontend dev",
     "dev:studio": "pnpm --dir studio dev",
+    "page-builder:new": "node scripts/create-page-builder-block.mjs",
     "build": "pnpm --dir frontend build && pnpm --dir studio build",
     "typegen": "pnpm --dir studio typegen",
     "verify:typegen": "pnpm typegen && git diff --exit-code -- studio/schema.json frontend/sanity.types.ts",

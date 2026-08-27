@@ -54,6 +54,7 @@ import featureCards from "./schemas/blocks/feature-cards";
 import activitySchedule from "./schemas/blocks/activity-schedule";
 import facilitiesMapSection from "./schemas/blocks/facilities-map-section";
 import stackedFeatureRows from "./schemas/blocks/stacked-feature-rows";
+// page-builder-generator:block-imports
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
 
 export const schemaTypes = [
@@ -110,4 +111,5 @@ export const schemaTypes = [
   activitySchedule,
   facilitiesMapSection,
   stackedFeatureRows,
+  // page-builder-generator:block-types
 ];

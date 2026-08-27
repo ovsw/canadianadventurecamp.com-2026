@@ -1,21 +1,5 @@
 import { defineField } from "sanity";
 
-export const generalPageBuilderBlockTypes = [
-  "hero",
-  "richTextBlock",
-  "benefitCards",
-  "storyFeature",
-  "imageCollageFeature",
-  "featureCards",
-  "activitySchedule",
-  "facilitiesMapSection",
-  "stackedFeatureRows",
-  "latestArticles",
-  "faqAccordion",
-  "teamMembers",
-  "ctaBanner",
-] as const;
-
 export const contentPageBuilderBlockTypes = [
   "richTextBlock",
   "benefitCards",
@@ -29,20 +13,51 @@ export const contentPageBuilderBlockTypes = [
   "faqAccordion",
   "teamMembers",
   "ctaBanner",
+  // page-builder-generator:content-types
+] as const;
+
+const generalOnlyPageBuilderBlockTypes = [
+  // page-builder-generator:general-types
+] as const;
+
+const homeOnlyPageBuilderBlockTypes = [
+  "homeHero",
+  // page-builder-generator:home-types
+] as const;
+
+export const generalPageBuilderBlockTypes = [
+  "hero",
+  ...generalOnlyPageBuilderBlockTypes,
+  ...contentPageBuilderBlockTypes,
 ] as const;
 
 export const pageBuilderBlockTypes = generalPageBuilderBlockTypes;
 export const homePagePageBuilderBlockTypes = [
   "hero",
-  "homeHero",
+  ...homeOnlyPageBuilderBlockTypes,
   ...contentPageBuilderBlockTypes,
 ] as const;
 
-type PageBuilderBlockType = (typeof homePagePageBuilderBlockTypes)[number];
+type PageBuilderBlockType =
+  | (typeof generalPageBuilderBlockTypes)[number]
+  | (typeof homePagePageBuilderBlockTypes)[number];
 
-const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>(
-  homePagePageBuilderBlockTypes.filter((type) => type !== "hero"),
-);
+const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
+  "homeHero",
+  "richTextBlock",
+  "benefitCards",
+  "storyFeature",
+  "imageCollageFeature",
+  "featureCards",
+  "activitySchedule",
+  "facilitiesMapSection",
+  "stackedFeatureRows",
+  "latestArticles",
+  "faqAccordion",
+  "teamMembers",
+  "ctaBanner",
+  // page-builder-generator:preview-types
+]);
 
 export function getPageBuilderPreviewImageUrl(schemaTypeName: string) {
   return pageBuilderPreviewBlockTypes.has(schemaTypeName as PageBuilderBlockType)

@@ -15,6 +15,7 @@ import FeatureCards from "@/components/blocks/feature-cards";
 import ActivitySchedule from "@/components/blocks/activity-schedule";
 import FacilitiesMapSection from "@/components/blocks/facilities-map-section";
 import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
+// page-builder-generator:component-imports
 import { dataset, projectId } from "@/sanity/lib/env";
 
 type Block =
@@ -52,6 +53,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "activitySchedule",
   "facilitiesMapSection",
   "stackedFeatureRows",
+  // page-builder-generator:editing-types
 ]);
 
 const componentMap: Partial<{
@@ -73,6 +75,7 @@ const componentMap: Partial<{
   activitySchedule: ActivitySchedule,
   facilitiesMapSection: FacilitiesMapSection,
   stackedFeatureRows: StackedFeatureRows,
+  // page-builder-generator:component-map
 };
 
 export default function Blocks({
