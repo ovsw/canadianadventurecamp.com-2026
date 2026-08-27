@@ -1,6 +1,12 @@
 import { MapPinned } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+const isBigTopHidden = (parent: unknown) =>
+  typeof parent === "object" &&
+  parent !== null &&
+  "showBigTop" in parent &&
+  parent.showBigTop === false;
+
 const defaultHeading = [
   {
     _key: "facilities-heading",
@@ -171,35 +177,61 @@ export default defineType({
       title: "Big Top Heading",
       type: "string",
       hidden: ({ parent }) => parent?.showBigTop === false,
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.custom((value, { parent }) =>
+          isBigTopHidden(parent) || value?.trim()
+            ? true
+            : "Required when the Big Top feature is shown",
+        ),
     }),
     defineField({
       name: "bigTopArea",
       title: "Big Top Area",
       type: "number",
       hidden: ({ parent }) => parent?.showBigTop === false,
-      validation: (rule) => rule.required().positive().integer(),
+      validation: (rule) =>
+        rule.custom((value, { parent }) =>
+          isBigTopHidden(parent) ||
+          (typeof value === "number" && value > 0 && Number.isInteger(value))
+            ? true
+            : "Enter a positive whole number when the Big Top feature is shown",
+        ),
     }),
     defineField({
       name: "bigTopUnit",
       title: "Big Top Area Unit",
       type: "string",
       hidden: ({ parent }) => parent?.showBigTop === false,
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.custom((value, { parent }) =>
+          isBigTopHidden(parent) || value?.trim()
+            ? true
+            : "Required when the Big Top feature is shown",
+        ),
     }),
     defineField({
       name: "bigTopTagline",
       title: "Big Top Area Tagline",
       type: "string",
       hidden: ({ parent }) => parent?.showBigTop === false,
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.custom((value, { parent }) =>
+          isBigTopHidden(parent) || value?.trim()
+            ? true
+            : "Required when the Big Top feature is shown",
+        ),
     }),
     defineField({
       name: "bigTopBody",
       title: "Big Top Description",
       type: "simpleRichText",
       hidden: ({ parent }) => parent?.showBigTop === false,
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule.custom((value, { parent }) =>
+          isBigTopHidden(parent) || (Array.isArray(value) && value.length > 0)
+            ? true
+            : "Required when the Big Top feature is shown",
+        ),
     }),
     defineField({
       name: "bigTopGallery",

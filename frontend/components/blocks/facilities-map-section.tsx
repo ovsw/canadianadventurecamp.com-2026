@@ -79,8 +79,8 @@ export default function FacilitiesMapSection({
 
   const slides: BigTopSlide[] = (bigTopGallery ?? []).flatMap((image) => {
     const caption = stegaClean(image.caption)?.trim();
-    const alt = stegaClean(image.alt)?.trim();
-    if (!image._key || !image.asset?._id || !caption || !alt) return [];
+    const alt = stegaClean(image.alt)?.trim() ?? "";
+    if (!image._key || !image.asset?._id || !caption) return [];
     return [
       {
         alt,
