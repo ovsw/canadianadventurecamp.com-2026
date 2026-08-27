@@ -83,6 +83,8 @@ export default function InternationalCampersGlobe({
   const reducedMotion = useReducedMotion();
 
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
+  /** Click-locked city persists until Escape or re-click; hover is transient. */
+  const lockedRef = useRef<number | null>(null);
   const [globeFailed, setGlobeFailed] = useState(false);
 
   // Mutable refs for the render loop
@@ -430,36 +432,56 @@ export default function InternationalCampersGlobe({
     };
   }, [routes, destination, stopLoop, setGlobeRunning]);
 
-  /** Handle city selection from the route list buttons. */
-  const handleRouteClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const button = (e.target as HTMLElement).closest<HTMLButtonElement>(
+  /** Resolve a route button from a DOM event target. */
+  const resolveRoute = useCallback(
+    (target: EventTarget | null) => {
+      const button = (target as HTMLElement | null)?.closest?.<HTMLButtonElement>(
         "button[data-route]",
       );
-      if (!button) return;
+      if (!button) return -1;
       const code = button.dataset.route;
-      const idx = routes.findIndex((r) => r.code === code);
-      if (idx === -1) return;
-
-      setFocusIndex((prev) => {
-        if (prev === idx) {
-          // Re-selecting the active city restarts its route animation
-          const s = stateRef.current;
-          if (s.routeMeta) {
-            s.routeMeta[idx].t0 = performance.now() / 1000;
-          }
-          return idx;
-        }
-        return idx;
-      });
+      return routes.findIndex((r) => r.code === code);
     },
     [routes],
   );
+
+  /** Click locks focus on a city (or toggles it off). */
+  const handleRouteClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const idx = resolveRoute(e.target);
+      if (idx === -1) return;
+
+      lockedRef.current = lockedRef.current === idx ? null : idx;
+      setFocusIndex(lockedRef.current);
+
+      // Restart the route animation on re-select
+      const s = stateRef.current;
+      if (s.routeMeta && lockedRef.current === idx) {
+        s.routeMeta[idx].t0 = performance.now() / 1000;
+      }
+    },
+    [resolveRoute],
+  );
+
+  /** Hover shows the route temporarily (desktop only). */
+  const handleRouteEnter = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const idx = resolveRoute(e.target);
+      if (idx !== -1) setFocusIndex(idx);
+    },
+    [resolveRoute],
+  );
+
+  /** Leaving a route row reverts to the click-locked city (or none). */
+  const handleRouteLeave = useCallback(() => {
+    setFocusIndex(lockedRef.current);
+  }, []);
 
   /** Handle keyboard navigation. */
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "Escape") {
+        lockedRef.current = null;
         setFocusIndex(null);
       }
     },
@@ -480,6 +502,8 @@ export default function InternationalCampersGlobe({
     <div
       ref={sectionRef}
       onClick={handleRouteClick}
+      onMouseOver={handleRouteEnter}
+      onMouseOut={handleRouteLeave}
       onKeyDown={handleKeyDown}
     >
       {/* Globe visual area */}
