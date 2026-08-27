@@ -83,7 +83,7 @@ export default function FacilitiesMapBigTopCarousel({
     >
       {slides.map((slide, index) => (
         <div
-          aria-hidden={index !== activeIndex}
+          aria-hidden={index === activeIndex ? undefined : true}
           className={`${styles.carouselSlide} ${
             index === activeIndex ? styles.carouselSlideActive : ""
           }`}
