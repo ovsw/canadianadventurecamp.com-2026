@@ -3,6 +3,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
 import DatesRatesBrowser from "./dates-rates-browser";
 import {
+  type ActiveSeason,
   formatShortDate,
   prepareLengths,
   seasonLabel,
@@ -50,9 +51,10 @@ export default function DatesRatesSection({
 }: DatesRatesSectionProps) {
   if (!activeSeason?._id || !activeSeason.startDate) return null;
 
-  const seasonStart = stegaClean(activeSeason.startDate);
+  const cleanSeason = activeSeason as ActiveSeason;
+  const seasonStart = stegaClean(cleanSeason.startDate);
   const lengths = prepareLengths({
-    season: activeSeason,
+    season: cleanSeason,
     seasonDataAttribute,
   });
   if (lengths.length === 0) return null;
@@ -99,7 +101,7 @@ export default function DatesRatesSection({
 
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <p className="text-label text-pine-night/55">
-            {seasonLabel(activeSeason.name, cleanSeasonStart)}
+            {seasonLabel(cleanSeason.name, cleanSeasonStart)}
           </p>
           <p className="text-label text-pine-night/35">
             {formatShortDate(cleanSeasonStart)} to{" "}

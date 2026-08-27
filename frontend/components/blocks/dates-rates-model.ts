@@ -1,19 +1,28 @@
-import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
-
 export type LengthKey = "twoWeek" | "fourWeek" | "sixWeek" | "eightWeek";
 export type AvailabilityStatus = "open" | "limited" | "full";
 
-type PageBlock =
-  | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
-  | NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number];
+export type SeasonSession = {
+  _key: string;
+  availabilityNote?: string | null;
+  availabilityStatus?: string | null;
+  startDate?: string | null;
+};
 
-// Response shapes come from Sanity TypeGen, so schema or query changes
-// surface here as type errors instead of drifting silently.
-export type ActiveSeason = NonNullable<
-  Extract<PageBlock, { _type: "datesRatesSection" }>["activeSeason"]
->;
-export type SeasonLengthConfig = NonNullable<ActiveSeason["twoWeek"]>;
-export type SeasonSession = NonNullable<SeasonLengthConfig["sessions"]>[number];
+export type SeasonLengthConfig = {
+  description?: string | null;
+  rate?: number | null;
+  sessions?: SeasonSession[] | null;
+};
+
+export type ActiveSeason = {
+  _id: string;
+  name?: string | null;
+  startDate?: string | null;
+  twoWeek?: SeasonLengthConfig | null;
+  fourWeek?: SeasonLengthConfig | null;
+  sixWeek?: SeasonLengthConfig | null;
+  eightWeek?: SeasonLengthConfig | null;
+};
 
 export type LengthOption = {
   key: LengthKey;
