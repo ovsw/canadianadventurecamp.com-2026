@@ -18,10 +18,15 @@ test("the map editor keeps native array editing and opens markers by key", async
     ),
     "utf8",
   );
+  const canvasSource = await readFile(
+    new URL("./schemas/inputs/facility-map-canvas.tsx", import.meta.url),
+    "utf8",
+  );
 
   assert.match(source, /props\.renderDefault\(props\)/);
   assert.match(source, /props\.onItemOpen\(itemPath\)/);
   assert.match(source, /props\.onPathFocus\(\[\.\.\.itemPath, "facility"\]\)/);
-  assert.match(source, /set\(current\.x, \[\{ _key: current\.key \}, "x"\]\)/);
-  assert.match(source, /set\(current\.y, \[\{ _key: current\.key \}, "y"\]\)/);
+  assert.match(source, /set\(x, \[\{ _key: key \}, "x"\]\)/);
+  assert.match(source, /set\(y, \[\{ _key: key \}, "y"\]\)/);
+  assert.match(canvasSource, /onPlacementChange\(current\.key, current\.x, current\.y\)/);
 });

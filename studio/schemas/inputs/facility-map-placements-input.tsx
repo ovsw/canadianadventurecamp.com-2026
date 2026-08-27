@@ -1,6 +1,6 @@
 import { createImageUrlBuilder, type SanityImageSource } from "@sanity/image-url";
-import { Box, Button, Card, Flex, Stack, Text } from "@sanity/ui";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Box, Button, Card, Dialog, Flex, Stack, Text } from "@sanity/ui";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   PatchEvent,
   set,
@@ -8,78 +8,59 @@ import {
   useClient,
   useFormValue,
 } from "sanity";
-import { createFacilitiesMapPath } from "../../../shared/facilities-map-path.ts";
-
-type FacilityReference = {
-  _ref?: string;
-  _type?: "reference";
-};
-
-type PlacementValue = {
-  _key: string;
-  _type?: "facilityMapPlacement";
-  facility?: FacilityReference;
-  labelPosition?: "above" | "auto" | "below" | "left" | "right";
-  prominent?: boolean;
-  x?: number;
-  y?: number;
-};
+import {
+  FacilityMapCanvas,
+  type FacilityMapPlacementValue,
+} from "./facility-map-canvas.tsx";
 
 type MapImageValue = {
   asset?: { _ref?: string; _type?: "reference" };
   crop?: { bottom?: number; left?: number; right?: number; top?: number };
 };
 
-type DragState = {
-  key: string;
-  moved: boolean;
-  pointerId: number;
-  startX: number;
-  startY: number;
-  x: number;
-  y: number;
-};
+const FALLBACK_ASPECT_RATIO = 1320 / 766;
 
-const clampPercentage = (value: number) =>
-  Math.min(100, Math.max(0, Number(value.toFixed(2))));
+function useMapPreview(itemCount: number) {
+  const [running, setRunning] = useState(false);
+  const [index, setIndex] = useState(0);
 
-const FALLBACK_ASPECT_RATIO = "1320 / 766";
+  useEffect(() => {
+    if (!running || itemCount < 2) return;
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % itemCount);
+    }, 2400);
+    return () => window.clearInterval(timer);
+  }, [itemCount, running]);
 
-function labelTransform(position: PlacementValue["labelPosition"]) {
-  switch (position) {
-    case "below":
-      return "translate(-50%, 16px)";
-    case "left":
-      return "translate(calc(-100% - 16px), -50%)";
-    case "right":
-      return "translate(16px, -50%)";
-    case "above":
-    case "auto":
-    default:
-      return "translate(-50%, calc(-100% - 16px))";
-  }
-}
+  useEffect(() => {
+    setIndex((current) => (itemCount ? Math.min(current, itemCount - 1) : 0));
+  }, [itemCount]);
 
-function positionedPlacements(placements: PlacementValue[]) {
-  return placements.filter(
-    (placement): placement is PlacementValue & { x: number; y: number } =>
-      typeof placement.x === "number" && typeof placement.y === "number",
-  );
+  return {
+    index,
+    reset: () => {
+      setRunning(false);
+      setIndex(0);
+    },
+    running,
+    setRunning,
+  };
 }
 
 export default function FacilityMapPlacementsInput(
-  props: ArrayOfObjectsInputProps<PlacementValue>,
+  props: ArrayOfObjectsInputProps<FacilityMapPlacementValue>,
 ) {
   const client = useClient({ apiVersion: "2026-03-23" });
+  const dialogId = useId();
+  const dialogContentRef = useRef<HTMLDivElement>(null);
+  const expandButtonRef = useRef<HTMLButtonElement>(null);
   const mapImage = useFormValue(["mapImage"]) as MapImageValue | undefined;
-  const mapRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<DragState | undefined>(undefined);
-  const draggedRef = useRef(false);
-  const [dragState, setDragState] = useState<DragState>();
+  const [dialogContentHeight, setDialogContentHeight] = useState<number>();
+  const [expanded, setExpanded] = useState(false);
   const [facilityNames, setFacilityNames] = useState<Record<string, string>>({});
-  const [previewRunning, setPreviewRunning] = useState(false);
-  const [previewIndex, setPreviewIndex] = useState(0);
   const placements = props.value ?? [];
+  const inlinePreview = useMapPreview(placements.length);
+  const fullscreenPreview = useMapPreview(placements.length);
   const referenceIds = useMemo(
     () =>
       Array.from(
@@ -135,18 +116,33 @@ export default function FacilityMapPlacementsInput(
   }, [client, referenceIdsKey]);
 
   useEffect(() => {
-    if (!previewRunning || placements.length < 2) return;
-    const timer = window.setInterval(() => {
-      setPreviewIndex((current) => (current + 1) % placements.length);
-    }, 2400);
-    return () => window.clearInterval(timer);
-  }, [placements.length, previewRunning]);
+    if (!expanded) return;
+    const content = dialogContentRef.current;
+    if (!content) return;
 
-  useEffect(() => {
-    setPreviewIndex((current) =>
-      placements.length ? Math.min(current, placements.length - 1) : 0,
-    );
-  }, [placements.length]);
+    const matchContentHeight = () => {
+      setDialogContentHeight((current) =>
+        current === content.clientHeight ? current : content.clientHeight,
+      );
+    };
+    let resizeFrame: number | undefined;
+    const refitContentHeight = () => {
+      setDialogContentHeight(undefined);
+      if (resizeFrame) window.cancelAnimationFrame(resizeFrame);
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = window.requestAnimationFrame(matchContentHeight);
+      });
+    };
+    matchContentHeight();
+    const observer = new ResizeObserver(matchContentHeight);
+    observer.observe(content);
+    window.addEventListener("resize", refitContentHeight);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", refitContentHeight);
+      if (resizeFrame) window.cancelAnimationFrame(resizeFrame);
+    };
+  }, [expanded]);
 
   const mapUrl = useMemo(() => {
     if (!mapImage?.asset?._ref) return undefined;
@@ -166,71 +162,31 @@ export default function FacilityMapPlacementsInput(
       Number(match[1]) * (1 - (crop?.left ?? 0) - (crop?.right ?? 0));
     const height =
       Number(match[2]) * (1 - (crop?.top ?? 0) - (crop?.bottom ?? 0));
-    return width > 0 && height > 0
-      ? `${width} / ${height}`
-      : FALLBACK_ASPECT_RATIO;
+    return width > 0 && height > 0 ? width / height : FALLBACK_ASPECT_RATIO;
   }, [mapImage]);
-  const displayedPlacements = placements.map((placement) =>
-    dragState?.key === placement._key
-      ? { ...placement, x: dragState.x, y: dragState.y }
-      : placement,
-  );
-  const pathData = createFacilitiesMapPath(
-    positionedPlacements(displayedPlacements),
-  );
   const openPlacement = (key: string) => {
     const itemPath = [{ _key: key }];
     props.onItemOpen(itemPath);
     props.onPathFocus([...itemPath, "facility"]);
   };
 
-  const updateDrag = (event: React.PointerEvent<HTMLButtonElement>) => {
-    const current = dragRef.current;
-    const mapBounds = mapRef.current?.getBoundingClientRect();
-    if (!current || !mapBounds || event.pointerId !== current.pointerId) return;
-
-    const moved =
-      current.moved ||
-      Math.hypot(event.clientX - current.startX, event.clientY - current.startY) >
-        3;
-    const outerX = ((event.clientX - mapBounds.left) / mapBounds.width) * 100;
-    const outerY = ((event.clientY - mapBounds.top) / mapBounds.height) * 100;
-    const next = {
-      ...current,
-      moved,
-      x: clampPercentage(outerX),
-      y: clampPercentage(outerY),
-    };
-    dragRef.current = next;
-    setDragState(next);
-    if (moved) setPreviewRunning(false);
+  const updatePlacement = (key: string, x: number, y: number) => {
+    props.onChange(
+      PatchEvent.from([
+        set(x, [{ _key: key }, "x"]),
+        set(y, [{ _key: key }, "y"]),
+      ]),
+    );
   };
-
-  const finishDrag = (event: React.PointerEvent<HTMLButtonElement>) => {
-    const current = dragRef.current;
-    if (!current || event.pointerId !== current.pointerId) return;
-    event.currentTarget.releasePointerCapture(event.pointerId);
-    dragRef.current = undefined;
-    setDragState(undefined);
-    draggedRef.current = true;
-
-    if (current.moved) {
-      props.onChange(
-        PatchEvent.from([
-          set(current.x, [{ _key: current.key }, "x"]),
-          set(current.y, [{ _key: current.key }, "y"]),
-        ]),
-      );
-    } else {
-      openPlacement(current.key);
-    }
+  const openExpandedMap = () => {
+    inlinePreview.setRunning(false);
+    fullscreenPreview.reset();
+    setDialogContentHeight(undefined);
+    setExpanded(true);
   };
-
-  const cancelDrag = (event: React.PointerEvent<HTMLButtonElement>) => {
-    if (dragRef.current?.pointerId !== event.pointerId) return;
-    dragRef.current = undefined;
-    draggedRef.current = false;
-    setDragState(undefined);
+  const closeExpandedMap = () => {
+    setExpanded(false);
+    window.requestAnimationFrame(() => expandButtonRef.current?.focus());
   };
 
   return (
@@ -246,138 +202,41 @@ export default function FacilityMapPlacementsInput(
                 Drag markers to position them. Click a marker to edit it.
               </Text>
             </Stack>
-            <Button
-              disabled={placements.length < 2}
-              mode="ghost"
-              onClick={() => setPreviewRunning((running) => !running)}
-              text={previewRunning ? "Pause preview" : "Play preview"}
-              type="button"
-            />
+            <Flex gap={2} wrap="wrap">
+              <Button
+                disabled={placements.length < 2}
+                mode="ghost"
+                onClick={() =>
+                  inlinePreview.setRunning((running) => !running)
+                }
+                text={
+                  inlinePreview.running ? "Pause preview" : "Play preview"
+                }
+                type="button"
+              />
+              <Button
+                disabled={!mapUrl}
+                mode="ghost"
+                onClick={openExpandedMap}
+                ref={expandButtonRef}
+                text="Expand map"
+                type="button"
+              />
+            </Flex>
           </Flex>
 
           {mapUrl ? (
-            <Box
-              ref={mapRef}
-              style={{
-                background: "#16200f",
-                borderRadius: 3,
-                aspectRatio: mapAspectRatio,
-                overflow: "hidden",
-                position: "relative",
-                touchAction: "none",
-              }}
-            >
-              <img
-                alt="Facilities Map editor preview"
-                draggable={false}
-                src={mapUrl}
-                style={{ height: "100%", objectFit: "cover", position: "absolute", width: "100%" }}
-              />
-
-              {pathData ? (
-                <svg
-                  aria-hidden="true"
-                  preserveAspectRatio="none"
-                  style={{ height: "100%", inset: 0, position: "absolute", width: "100%" }}
-                  viewBox="0 0 100 100"
-                >
-                  <path
-                    d={pathData}
-                    fill="none"
-                    stroke="#e5a934"
-                    strokeDasharray="4 4"
-                    strokeLinecap="round"
-                    strokeWidth="2"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                </svg>
-              ) : null}
-
-              {displayedPlacements.map((placement, index) => {
-                if (typeof placement.x !== "number" || typeof placement.y !== "number") {
-                  return null;
-                }
-                const editorX = placement.x;
-                const editorY = placement.y;
-                const referenceId = placement.facility?._ref;
-                const name = referenceId
-                  ? facilityNames[referenceId] || "Facility"
-                  : "Choose a Facility";
-                const active = previewRunning && index === previewIndex;
-
-                return (
-                  <div
-                    key={placement._key}
-                    style={{
-                      left: `${editorX}%`,
-                      pointerEvents: "none",
-                      position: "absolute",
-                      top: `${editorY}%`,
-                    }}
-                  >
-                    <span
-                      style={{
-                        background: "rgba(0,0,0,.86)",
-                        color: "white",
-                        fontSize: 10,
-                        fontWeight: 700,
-                        letterSpacing: ".06em",
-                        padding: "3px 5px",
-                        position: "absolute",
-                        textTransform: "uppercase",
-                        transform: labelTransform(placement.labelPosition),
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {name}
-                    </span>
-                    <button
-                      aria-label={`Position ${name}`}
-                      onClick={() => {
-                        if (draggedRef.current) {
-                          draggedRef.current = false;
-                          return;
-                        }
-                        openPlacement(placement._key);
-                      }}
-                      onPointerCancel={cancelDrag}
-                      onPointerDown={(event) => {
-                        event.currentTarget.setPointerCapture(event.pointerId);
-                        draggedRef.current = false;
-                        const next = {
-                          key: placement._key,
-                          moved: false,
-                          pointerId: event.pointerId,
-                          startX: event.clientX,
-                          startY: event.clientY,
-                          x: editorX,
-                          y: editorY,
-                        };
-                        dragRef.current = next;
-                        setDragState(next);
-                      }}
-                      onPointerMove={updateDrag}
-                      onPointerUp={finishDrag}
-                      style={{
-                        background: active ? "#e5a934" : "#111",
-                        border: active ? "3px solid white" : "2px solid white",
-                        boxShadow: active ? "0 0 0 2px #111" : "none",
-                        cursor: dragState?.key === placement._key ? "grabbing" : "grab",
-                        height: placement.prominent ? 22 : 18,
-                        left: 0,
-                        padding: 0,
-                        pointerEvents: "auto",
-                        position: "absolute",
-                        top: 0,
-                        transform: "translate(-50%, -50%) rotate(45deg)",
-                        width: placement.prominent ? 22 : 18,
-                      }}
-                      type="button"
-                    />
-                  </div>
-                );
-              })}
-            </Box>
+            <FacilityMapCanvas
+              facilityNames={facilityNames}
+              mapAspectRatio={mapAspectRatio}
+              mapUrl={mapUrl}
+              onPlacementChange={updatePlacement}
+              onPlacementOpen={openPlacement}
+              onPreviewStop={() => inlinePreview.setRunning(false)}
+              placements={placements}
+              previewIndex={inlinePreview.index}
+              previewRunning={inlinePreview.running}
+            />
           ) : (
             <Card border padding={4} radius={2} tone="caution">
               <Text size={1}>Add the map image to position Facilities.</Text>
@@ -387,6 +246,58 @@ export default function FacilityMapPlacementsInput(
       </Card>
 
       {props.renderDefault(props)}
+
+      {expanded && mapUrl ? (
+        <Dialog
+          cardRadius={[0, 2]}
+          contentRef={dialogContentRef}
+          header={
+            <Flex align="center" gap={3}>
+              <Text as="span" size={1} weight="semibold">
+                Facilities Map
+              </Text>
+              <Button
+                disabled={placements.length < 2}
+                mode="ghost"
+                onClick={() =>
+                  fullscreenPreview.setRunning((running) => !running)
+                }
+                text={
+                  fullscreenPreview.running ? "Pause preview" : "Play preview"
+                }
+                type="button"
+              />
+            </Flex>
+          }
+          id={dialogId}
+          onClickOutside={closeExpandedMap}
+          onClose={closeExpandedMap}
+          padding={[0, 3]}
+          width="auto"
+        >
+          <Box
+            padding={[2, 3]}
+            style={{
+              boxSizing: "border-box",
+              height: dialogContentHeight ?? "100dvh",
+              minHeight: 0,
+            }}
+          >
+            <FacilityMapCanvas
+              facilityNames={facilityNames}
+              fillAvailable
+              mapAspectRatio={mapAspectRatio}
+              mapUrl={mapUrl}
+              onPlacementChange={updatePlacement}
+              onPlacementOpen={openPlacement}
+              onPreviewStop={() => fullscreenPreview.setRunning(false)}
+              placements={placements}
+              previewIndex={fullscreenPreview.index}
+              previewRunning={fullscreenPreview.running}
+            />
+          </Box>
+        </Dialog>
+      ) : null}
     </Stack>
   );
 }

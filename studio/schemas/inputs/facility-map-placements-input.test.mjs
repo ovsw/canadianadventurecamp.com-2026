@@ -3,15 +3,15 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { createFacilitiesMapPath } from "../../../shared/facilities-map-path.ts";
 
-const inputSource = await readFile(
-  new URL("./facility-map-placements-input.tsx", import.meta.url),
+const canvasSource = await readFile(
+  new URL("./facility-map-canvas.tsx", import.meta.url),
   "utf8",
 );
 
 test("uses the shared Facilities Map route generator", () => {
-  assert.match(inputSource, /shared\/facilities-map-path\.ts/);
-  assert.doesNotMatch(inputSource, /from "d3-shape"/);
-  assert.doesNotMatch(inputSource, /function createPath/);
+  assert.match(canvasSource, /shared\/facilities-map-path\.ts/);
+  assert.doesNotMatch(canvasSource, /from "d3-shape"/);
+  assert.doesNotMatch(canvasSource, /function createPath/);
 });
 
 test("preserves two-stop and multi-stop routes", () => {
