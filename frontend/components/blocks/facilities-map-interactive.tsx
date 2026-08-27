@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Pause, Play } from "lucide-react";
 import {
   useEffect,
   useLayoutEffect,
@@ -136,6 +137,7 @@ export default function FacilitiesMapInteractive({
   const [routeMeasurements, setRouteMeasurements] =
     useState<RouteMeasurements>();
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [tourPaused, setTourPaused] = useState(false);
   const [visible, setVisible] = useState(false);
   const [walkerPoint, setWalkerPoint] = useState<Point>(() => ({
     x: placements[0]?.x ?? 0,
@@ -210,6 +212,7 @@ export default function FacilitiesMapInteractive({
   useEffect(() => {
     if (
       !websiteAutoplay ||
+      tourPaused ||
       reducedMotion ||
       !visible ||
       placements.length < 2
@@ -221,7 +224,7 @@ export default function FacilitiesMapInteractive({
       setActiveIndex((current) => (current + 1) % placements.length);
     }, 4200);
     return () => window.clearInterval(timer);
-  }, [placements.length, reducedMotion, visible, websiteAutoplay]);
+  }, [placements.length, reducedMotion, tourPaused, visible, websiteAutoplay]);
 
   useEffect(() => {
     const path = pathRef.current;
@@ -267,6 +270,17 @@ export default function FacilitiesMapInteractive({
       manuallyPausedRef.current = false;
     }, 12_000);
     setActiveIndex(index);
+  };
+
+  const toggleTour = () => {
+    if (tourPaused) {
+      manuallyPausedRef.current = false;
+      if (resumeTimerRef.current !== undefined) {
+        window.clearTimeout(resumeTimerRef.current);
+        resumeTimerRef.current = undefined;
+      }
+    }
+    setTourPaused((paused) => !paused);
   };
 
   useEffect(
@@ -384,13 +398,27 @@ export default function FacilitiesMapInteractive({
         </div>
       </div>
 
-      <div className={styles.facilityCard} aria-live="polite">
+      <div className={styles.facilityCard}>
         <div className={styles.facilityCardMeta}>
           <span data-sanity={stopLabelDataAttribute}>{stopLabel}</span>
           <span className={styles.facilityNumber}>
             {String(activeIndex + 1).padStart(2, "0")} / {placements.length}
           </span>
           <span className={styles.facilityRule} />
+          {websiteAutoplay && !reducedMotion ? (
+            <button
+              className={styles.tourControl}
+              onClick={toggleTour}
+              type="button"
+            >
+              {tourPaused ? (
+                <Play aria-hidden="true" size={15} strokeWidth={2.25} />
+              ) : (
+                <Pause aria-hidden="true" size={15} strokeWidth={2.25} />
+              )}
+              <span>{tourPaused ? "Resume tour" : "Pause tour"}</span>
+            </button>
+          ) : null}
         </div>
         <div
           className={styles.facilityName}

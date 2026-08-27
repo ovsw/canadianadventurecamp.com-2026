@@ -23,11 +23,16 @@ const placements = [
 const getTotalLength = vi.fn(() => 200);
 
 describe("FacilitiesMapInteractive", () => {
+  let intersectionCallback: IntersectionObserverCallback;
+
   beforeEach(() => {
     getTotalLength.mockClear();
     vi.stubGlobal(
       "IntersectionObserver",
       class {
+        constructor(callback: IntersectionObserverCallback) {
+          intersectionCallback = callback;
+        }
         disconnect() {}
         observe() {}
         takeRecords() {
@@ -89,5 +94,79 @@ describe("FacilitiesMapInteractive", () => {
       expect(trail?.startsWith("M0,50")).toBe(true);
       expect(trail?.endsWith("L50,50")).toBe(true);
     });
+  });
+
+  it("stays paused until the visitor resumes the tour", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => ({
+        addEventListener: vi.fn(),
+        matches: false,
+        media: "(prefers-reduced-motion: reduce)",
+        onchange: null,
+        removeEventListener: vi.fn(),
+      })),
+    );
+
+    render(
+      <FacilitiesMapInteractive
+        mapAlt="Map"
+        mapLocationLabel="Adventure Island"
+        mapUrl="/map.jpg"
+        placements={placements}
+        stopLabel="Stop"
+        websiteAutoplay
+      />,
+    );
+
+    intersectionCallback(
+      [{ isIntersecting: true } as IntersectionObserverEntry],
+      {} as IntersectionObserver,
+    );
+    await vi.advanceTimersByTimeAsync(4_200);
+    expect(screen.getByText("Middle")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Pause tour" }));
+    await vi.advanceTimersByTimeAsync(12_600);
+    expect(screen.getByText("Middle")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Resume tour" }));
+    await vi.advanceTimersByTimeAsync(4_200);
+    expect(screen.getByText("Finish")).toBeInTheDocument();
+
+    vi.useRealTimers();
+  });
+
+  it("does not expose automatic stop changes as live announcements", () => {
+    const { container } = render(
+      <FacilitiesMapInteractive
+        mapAlt="Map"
+        mapLocationLabel="Adventure Island"
+        mapUrl="/map.jpg"
+        placements={placements}
+        stopLabel="Stop"
+        websiteAutoplay
+      />,
+    );
+
+    expect(container.querySelector("[aria-live]")).toBeNull();
+  });
+
+  it("does not offer autoplay controls when motion is reduced", () => {
+    render(
+      <FacilitiesMapInteractive
+        mapAlt="Map"
+        mapLocationLabel="Adventure Island"
+        mapUrl="/map.jpg"
+        placements={placements}
+        stopLabel="Stop"
+        websiteAutoplay
+      />,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "Pause tour" }),
+    ).not.toBeInTheDocument();
   });
 });

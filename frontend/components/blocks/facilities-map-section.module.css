@@ -610,6 +610,48 @@
   background: rgb(243 239 226 / 18%);
 }
 
+.tourControl {
+  position: absolute;
+  bottom: 0;
+  left: calc(100% + 14px);
+  display: inline-flex;
+  min-width: max-content;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 17px;
+  border: 1px solid rgb(243 239 226 / 28%);
+  border-radius: 999px;
+  background: rgb(13 18 8 / 82%);
+  color: var(--color-birch-bark);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.tourControl:hover {
+  border-color: var(--color-campfire-amber);
+  color: var(--color-campfire-amber);
+}
+
+.tourControl:active {
+  background: rgb(13 18 8 / 95%);
+}
+
+.tourControl:focus-visible {
+  outline: 2px solid var(--color-campfire-amber);
+  outline-offset: 3px;
+}
+
 .facilityName {
   color: var(--color-campfire-amber);
   font-family: var(--font-accent), cursive;
@@ -677,6 +719,10 @@
     margin: 0;
     border-top: 0;
     border-radius: 0 0 20px 20px;
+  }
+  .tourControl {
+    position: static;
+    margin-left: auto;
   }
   .facilityPhoto { position: relative; margin: 28px 0 0 auto; }
 }

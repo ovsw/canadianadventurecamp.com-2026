@@ -238,14 +238,14 @@ export default function FacilityMapPlacementsInput(
       <Card border padding={3} radius={2}>
         <Stack space={3}>
           <Flex align="center" justify="space-between" gap={3}>
-            <Box>
-              <Text size={1} weight="semibold">
+            <Stack space={2}>
+              <Text as="div" size={1} weight="semibold">
                 Map editor
               </Text>
-              <Text muted size={1}>
+              <Text as="div" muted size={1}>
                 Drag markers to position them. Click a marker to edit it.
               </Text>
-            </Box>
+            </Stack>
             <Button
               disabled={placements.length < 2}
               mode="ghost"
