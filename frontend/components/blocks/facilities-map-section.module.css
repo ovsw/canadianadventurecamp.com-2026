@@ -426,7 +426,6 @@
   line-height: 1.55;
   pointer-events: none;
   text-align: center;
-  text-transform: uppercase;
   text-wrap: balance;
   transition:
     color 0.25s ease,
@@ -554,8 +553,8 @@
 .compass {
   position: absolute;
   z-index: 5;
-  top: 20px;
   right: 22px;
+  bottom: 22px;
   display: grid;
   width: 46px;
   height: 46px;
@@ -629,8 +628,6 @@
 .facilityPhoto {
   position: absolute;
   z-index: 6;
-  top: -100px;
-  right: 100px;
   width: 264px;
   margin: 0;
   padding: 10px 10px 0;
@@ -681,7 +678,7 @@
     border-top: 0;
     border-radius: 0 0 20px 20px;
   }
-  .facilityPhoto { position: relative; top: auto; right: auto; margin: 28px 0 0 auto; }
+  .facilityPhoto { position: relative; margin: 28px 0 0 auto; }
 }
 
 @media (max-width: 639px) {
@@ -705,7 +702,7 @@
   .facilityName { font-size: 30px; }
   .mapTopBar { top: 14px; left: 14px; }
   .coordinateChip { display: none; }
-  .compass { top: 14px; right: 14px; }
+  .compass { right: 14px; bottom: 14px; }
   .facilityPhoto { width: 244px; }
   .facilityPhotoImage { width: 224px; height: 170px; }
 }

@@ -407,7 +407,7 @@ export default function FacilitiesMapInteractive({
       </div>
 
       {activePlacement.featuredImage ? (
-        <figure className={styles.facilityPhoto}>
+        <figure className={`top-0 right-0 ${styles.facilityPhoto}`}>
           <div className={styles.facilityPhotoImage}>
             <Image
               alt={activePlacement.featuredImage.alt}
