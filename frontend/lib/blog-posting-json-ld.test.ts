@@ -16,7 +16,6 @@ function image(url: string | null): PostImage {
       _id: "image-1",
       url,
       mimeType: "image/jpeg",
-      altText: null,
       metadata: null,
     },
   };

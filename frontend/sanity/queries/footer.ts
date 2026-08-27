@@ -30,7 +30,7 @@ export const FOOTER_QUERY = defineQuery(`
     actions[]${linkProjection},
     logos[]{
       _key,
-      "alt": coalesce(alt, image.asset->altText, ""),
+      alt,
       image{
         ${imageQuery}
       },
