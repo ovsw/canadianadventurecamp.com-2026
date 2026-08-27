@@ -1,4 +1,5 @@
 import { defineQuery } from "next-sanity";
+import { imageQuery } from "./shared/image";
 
 export const SETTINGS_QUERY = defineQuery(`
   *[_type == "settings" && _id == "settings"][0]{
@@ -7,22 +8,10 @@ export const SETTINGS_QUERY = defineQuery(`
     siteName,
     logo{
       light{
-        ...,
-        asset->{
-          _id,
-          url,
-          mimeType,
-          metadata { lqip, dimensions { width, height } }
-        }
+        ${imageQuery}
       },
       dark{
-        ...,
-        asset->{
-          _id,
-          url,
-          mimeType,
-          metadata { lqip, dimensions { width, height } }
-        }
+        ${imageQuery}
       }
     },
     contact{

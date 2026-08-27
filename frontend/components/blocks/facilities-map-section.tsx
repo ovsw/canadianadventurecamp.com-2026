@@ -121,9 +121,9 @@ export default function FacilitiesMapSection({
             "description",
           ),
           featuredImage:
-            featuredImage?.asset?._id && featuredImageAlt
+            featuredImage?.asset?._id
               ? {
-                  alt: featuredImageAlt,
+                  alt: featuredImageAlt ?? "",
                   lqip: featuredImage.asset.metadata?.lqip || undefined,
                   url: urlFor(featuredImage)
                     .width(720)
@@ -156,7 +156,7 @@ export default function FacilitiesMapSection({
       ];
     },
   );
-  const mapAlt = stegaClean(map.mapImage?.alt)?.trim();
+  const mapAlt = stegaClean(map.mapImage?.alt)?.trim() ?? "";
   const mapUrl = map.mapImage?.asset?._id
     ? urlFor(map.mapImage).width(2000).fit("max").url()
     : undefined;
@@ -247,7 +247,7 @@ export default function FacilitiesMapSection({
           </div>
         ) : null}
 
-        {mapHeading?.length && mapUrl && mapAlt && placements.length >= 2 ? (
+        {mapHeading?.length && mapUrl && placements.length >= 2 ? (
           <div className={styles.mapSection}>
             <h3
               className={styles.mapHeading}

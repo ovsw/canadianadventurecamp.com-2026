@@ -16,6 +16,7 @@ export const richTextContentQuery = groq`
   },
   _type == "image" => {
     ...,
+    "alt": coalesce(alt, asset->altText, ""),
     "resolvedAsset": asset->{
       _id,
       url,

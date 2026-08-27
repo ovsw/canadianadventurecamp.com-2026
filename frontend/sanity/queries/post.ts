@@ -24,20 +24,7 @@ const POST_PROJECTION = groq`{
       _type,
       name,
       image {
-        ...,
-        asset->{
-          _id,
-          url,
-          mimeType,
-          metadata {
-            lqip,
-            dimensions {
-              width,
-              height
-            }
-          }
-        },
-        alt
+        ${imageQuery}
       }
     },
     category->{

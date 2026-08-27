@@ -290,6 +290,7 @@ describe("core Page Builder sections", () => {
     expect(
       getHotspotPosition({
         _type: "image",
+        alt: "",
         asset: null,
         crop: {
           _type: "sanity.imageCrop",

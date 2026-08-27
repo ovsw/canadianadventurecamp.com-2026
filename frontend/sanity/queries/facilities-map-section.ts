@@ -16,7 +16,6 @@ export const facilitiesMapSectionQuery = groq`
     bigTopGalleryAutoplay,
     bigTopGallery[]{
       _key,
-      alt,
       caption,
       ${imageQuery}
     },
@@ -28,7 +27,6 @@ export const facilitiesMapSectionQuery = groq`
       title,
       websiteAutoplay,
       mapImage{
-        alt,
         ${imageQuery}
       },
       placements[]{
@@ -42,7 +40,6 @@ export const facilitiesMapSectionQuery = groq`
           name,
           description,
           featuredImage{
-            alt,
             ${imageQuery}
           }
         }

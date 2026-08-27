@@ -39,8 +39,22 @@ environment state (which dataset is configured, which env file is loaded) are
 exactly what makes handing off write access dangerous.
 
 ## Testing
-- Prefer focused functional/accessibility checks and one-time visual inspection;
+- Prefer focused functional/accessibility checks;
 - DO NOT create or maintain screenshot baselines unless explicitly requested.
+
+## Visual checks are the user's job
+
+**Never perform visual checks yourself.** Do not drive a browser, take
+screenshots, or otherwise inspect the rendered UI to confirm how something
+looks. When a change needs visual confirmation, finish the code work, then ask
+Ovi to look and report back.
+
+**Why:** agent-driven browser capture is unreliable here and burns time
+producing blank or misleading frames, which is worse than no check at all.
+
+**How to apply:** do the automated checks that are dependable (typecheck, lint,
+tests, DOM/query assertions), then state plainly what still needs a human's
+eyes and ask Ovi to confirm.
 
 ## Commits
 
