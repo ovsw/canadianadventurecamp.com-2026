@@ -15,7 +15,6 @@ export const stackedFeatureRowsQuery = groq`
       title,
       "items": array::compact(items[]{
         _key,
-        "legacyLabel": label,
         body[]{
           ${simpleRichTextQuery}
         }

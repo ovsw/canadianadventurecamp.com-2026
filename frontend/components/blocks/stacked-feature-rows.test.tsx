@@ -66,7 +66,6 @@ const block: ComponentProps<typeof StackedFeatureRows> = {
               ],
             },
           ],
-          legacyLabel: null,
         },
       ],
       link: {
@@ -88,6 +87,7 @@ describe("StackedFeatureRows", () => {
         name: "Built for kids. Trusted by parents.",
       }),
     ).toBeInTheDocument();
+    expect(screen.getByText("Trusted by parents.")).toHaveClass("text-cedar");
     expect(screen.getByText("Accredited & inspected")).toHaveAttribute(
       "data-sanity",
       'section:rows[_key=="accredited"].title',
@@ -98,14 +98,16 @@ describe("StackedFeatureRows", () => {
       "data-sanity",
       'section:rows[_key=="accredited"].items[_key=="oca"].body',
     );
-    expect(screen.getByRole("link", { name: "OCA accredited" })).toHaveAttribute(
+    const ocaLink = screen.getByRole("link", { name: "OCA accredited" });
+    expect(ocaLink).toHaveAttribute(
       "href",
       "https://ontariocampsassociation.ca/",
     );
+    expect(ocaLink).toHaveClass("text-cedar", "hover:text-cedar-deep");
     expect(document.querySelector('[data-sanity$=".icon"]')).toHaveClass(
       "text-cedar",
     );
-    expect(document.querySelector(".lucide-milestone")).toHaveClass("text-cedar");
+    expect(document.querySelector(".lucide-check")).toHaveClass("text-cedar");
     expect(screen.getByRole("link", { name: "Our accreditations" })).toHaveAttribute(
       "href",
       "/accreditations",
@@ -126,7 +128,6 @@ describe("StackedFeatureRows", () => {
               {
                 _key: "detail",
                 body: null,
-                legacyLabel: "Detail",
               },
             ],
             link: null,
@@ -136,27 +137,5 @@ describe("StackedFeatureRows", () => {
     );
 
     expect(screen.queryByText("Missing link")).not.toBeInTheDocument();
-  });
-
-  it("keeps legacy item strings visible until the draft is migrated", () => {
-    render(
-      <StackedFeatureRows
-        {...block}
-        rows={[
-          {
-            ...(block.rows ?? [])[0],
-            items: [
-              {
-                _key: "legacy-item",
-                body: null,
-                legacyLabel: "Legacy supporting point",
-              },
-            ],
-          },
-        ]}
-      />,
-    );
-
-    expect(screen.getByText("Legacy supporting point")).toBeInTheDocument();
   });
 });

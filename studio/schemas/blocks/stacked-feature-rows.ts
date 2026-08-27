@@ -23,30 +23,17 @@ const rowItem = defineArrayMember({
   type: "object",
   fields: [
     defineField({
-      name: "label",
-      title: "Legacy Text",
-      type: "string",
-      hidden: true,
-    }),
-    defineField({
       name: "body",
       title: "Text",
       type: "simpleRichText",
       description: "One short point. Supports bold, italic, and links.",
-      validation: (rule) =>
-        rule.max(1).custom((value, context) => {
-          const legacyLabel = (context.parent as { label?: string } | undefined)
-            ?.label;
-          return (Array.isArray(value) && value.length > 0) || legacyLabel?.trim()
-            ? true
-            : "Add item text";
-        }),
+      validation: (rule) => rule.required().max(1),
     }),
   ],
   preview: {
-    select: { body: "body", legacyLabel: "label" },
-    prepare: ({ body, legacyLabel }) => ({
-      title: richTextToPlainText(body) || legacyLabel || "Untitled Item",
+    select: { body: "body" },
+    prepare: ({ body }) => ({
+      title: richTextToPlainText(body) || "Untitled Item",
     }),
   },
 });

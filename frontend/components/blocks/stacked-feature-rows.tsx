@@ -1,9 +1,10 @@
 import { NavigationIcon } from "@/components/header/navigation-icon";
+import { createCustomLinkMarkRenderer } from "@/components/portable-text/custom-link-mark";
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import { ArrowUpRight, Milestone } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import styles from "./stacked-feature-rows.module.css";
@@ -24,9 +25,19 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">
+      <em className="font-accent text-cedar not-italic">
         {children}
       </em>
+    ),
+  },
+};
+
+const rowItemComponents: PortableTextComponents = {
+  ...simpleRichTextComponents,
+  marks: {
+    ...simpleRichTextComponents?.marks,
+    customLink: createCustomLinkMarkRenderer(
+      "font-medium text-cedar underline decoration-cedar/30 underline-offset-4 hover:text-cedar-deep hover:decoration-cedar-deep",
     ),
   },
 };
@@ -46,9 +57,7 @@ export default function StackedFeatureRows({
 
   const renderableRows = rows.flatMap((row) => {
     const href = getSafeLinkHref(row.link?.href);
-    const items = (row.items ?? []).filter(
-      (item) => item.body?.length || hasText(item.legacyLabel),
-    );
+    const items = (row.items ?? []).filter((item) => item.body?.length);
 
     if (
       !hasText(row.title) ||
@@ -136,7 +145,7 @@ export default function StackedFeatureRows({
 
                       return (
                         <li className="flex items-center gap-3" key={item._key}>
-                          <Milestone
+                          <Check
                             aria-hidden="true"
                             className="mt-0.5 size-5 shrink-0 text-cedar"
                           />
@@ -144,14 +153,10 @@ export default function StackedFeatureRows({
                             className="grid min-w-0 gap-2"
                             data-sanity={dataAttribute?.(`${itemPath}.body`)}
                           >
-                            {item.body?.length ? (
-                              <PortableText
-                                components={simpleRichTextComponents}
-                                value={item.body}
-                              />
-                            ) : (
-                              <p>{item.legacyLabel}</p>
-                            )}
+                            <PortableText
+                              components={rowItemComponents}
+                              value={item.body}
+                            />
                           </div>
                         </li>
                       );

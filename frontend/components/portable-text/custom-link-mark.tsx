@@ -9,24 +9,31 @@ type CustomLinkMark = {
   openInNewTab?: boolean | null;
 };
 
-/** Shared rendering and safety rules for every inline Portable Text link. */
-export const CustomLinkMarkRenderer: PortableTextMarkComponent<CustomLinkMark> = ({
-  children,
-  value,
-}) => {
-  const href = getSafeLinkHref(value?.href);
-  if (!href) return <span>{children}</span>;
+const defaultLinkClassName =
+  "font-medium text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary";
 
-  const openInNewTab = stegaClean(value?.openInNewTab) === true;
+/** Builds an inline link renderer with shared safety rules and surface-specific color. */
+export function createCustomLinkMarkRenderer(
+  className = defaultLinkClassName,
+): PortableTextMarkComponent<CustomLinkMark> {
+  return function CustomLinkMark({ children, value }) {
+    const href = getSafeLinkHref(value?.href);
+    if (!href) return <span>{children}</span>;
 
-  return (
-    <Link
-      className="font-medium text-primary underline decoration-primary/30 underline-offset-4 hover:decoration-primary"
-      href={href}
-      rel={openInNewTab ? "noopener noreferrer" : undefined}
-      target={openInNewTab ? "_blank" : undefined}
-    >
-      {children}
-    </Link>
-  );
-};
+    const openInNewTab = stegaClean(value?.openInNewTab) === true;
+
+    return (
+      <Link
+        className={className}
+        href={href}
+        rel={openInNewTab ? "noopener noreferrer" : undefined}
+        target={openInNewTab ? "_blank" : undefined}
+      >
+        {children}
+      </Link>
+    );
+  };
+}
+
+/** Shared default rendering for inline Portable Text links. */
+export const CustomLinkMarkRenderer = createCustomLinkMarkRenderer();
