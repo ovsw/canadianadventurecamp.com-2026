@@ -103,7 +103,7 @@ export default function StackedFeatureRows({
                 key={row._key}
               >
                 <h3
-                  className="relative z-10 font-display text-display-page"
+                  className="relative z-10 font-display text-display-page font-extrabold"
                   data-sanity={dataAttribute?.(`${rowPath}.title`)}
                 >
                   {row.title}
