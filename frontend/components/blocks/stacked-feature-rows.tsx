@@ -3,7 +3,11 @@ import { createCustomLinkMarkRenderer } from "@/components/portable-text/custom-
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
-import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import {
+  PortableText,
+  toPlainText,
+  type PortableTextComponents,
+} from "@portabletext/react";
 import { ArrowUpRight, Check } from "lucide-react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
@@ -57,7 +61,9 @@ export default function StackedFeatureRows({
 
   const renderableRows = rows.flatMap((row) => {
     const href = getSafeLinkHref(row.link?.href);
-    const items = (row.items ?? []).filter((item) => item.body?.length);
+    const items = (row.items ?? []).filter(
+      (item) => item.body?.length && hasText(toPlainText(item.body)),
+    );
 
     if (
       !hasText(row.title) ||

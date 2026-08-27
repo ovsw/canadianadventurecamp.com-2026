@@ -152,4 +152,41 @@ describe("StackedFeatureRows", () => {
 
     expect(screen.queryByText("Missing link")).not.toBeInTheDocument();
   });
+
+  it("omits supporting points with blank rich text", () => {
+    render(
+      <StackedFeatureRows
+        {...block}
+        rows={[
+          {
+            ...(block.rows ?? [])[0],
+            items: [
+              ...((block.rows ?? [])[0]?.items ?? []),
+              {
+                _key: "blank",
+                body: [
+                  {
+                    _key: "blank-body",
+                    _type: "block",
+                    style: "normal",
+                    markDefs: [],
+                    children: [
+                      {
+                        _key: "blank-text",
+                        _type: "span",
+                        marks: [],
+                        text: "   ",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    expect(document.querySelectorAll(".lucide-check")).toHaveLength(1);
+  });
 });
