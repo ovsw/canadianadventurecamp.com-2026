@@ -363,11 +363,13 @@
   stroke-width: 6;
 }
 
+/* Overlay sizes were originally authored inside a 1.5385x-zoomed map;
+   the zoom is gone, so these values carry that factor themselves now. */
 .stop {
   position: absolute;
   z-index: 3;
-  width: 22px;
-  height: 22px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   transform: translate(-50%, -50%);
   border: 0;
@@ -379,17 +381,17 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   transform: translate(-50%, -50%) rotate(45deg);
-  border: 1.5px solid rgb(13 18 8 / 60%);
-  border-radius: 3px;
+  border: 2px solid rgb(13 18 8 / 60%);
+  border-radius: 4px;
   background: var(--color-birch-bark);
 }
 
 .stopProminent .stopDot {
-  width: 13px;
-  height: 13px;
+  width: 20px;
+  height: 20px;
 }
 
 .stopActive .stopDot {
@@ -413,10 +415,10 @@
   width: max-content;
   /* The 0.13em tracking makes each character ~1.2ch wide, so the cap
      budgets 15ch of glyphs plus padding; long single words stay inside. */
-  max-width: calc(15ch + 16px);
+  max-width: calc(15ch + 24px);
   color: var(--color-birch-bark);
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 14.5px;
   font-weight: 700;
   letter-spacing: 0.13em;
   /* Line advance tuned so the cloned per-line strips meet edge to edge:
@@ -432,8 +434,8 @@
 /* Highlighter-style fill that hugs each line of text instead of boxing
    the whole label. */
 .stopLabelText {
-  padding: 2px 7px;
-  border-radius: 3px;
+  padding: 3px 11px;
+  border-radius: 4px;
   background: rgb(13 18 8 / 74%);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
@@ -446,22 +448,22 @@
 
 .labelAbove,
 .labelAuto {
-  transform: translate(-50%, calc(-100% - 10px));
+  transform: translate(-50%, calc(-100% - 15px));
 }
 
 .labelBelow {
-  transform: translate(-50%, 10px);
+  transform: translate(-50%, 15px);
 }
 
 /* Side placements: align text toward the marker so the box's spare width
    (from the wrap cap) hangs outward instead of pushing the text away. */
 .labelLeft {
-  transform: translate(calc(-100% - 10px), -50%);
+  transform: translate(calc(-100% - 15px), -50%);
   text-align: right;
 }
 
 .labelRight {
-  transform: translate(10px, -50%);
+  transform: translate(15px, -50%);
   text-align: left;
 }
 
@@ -475,27 +477,27 @@
 
 .walkerDot {
   position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 22px;
   transform: translate(-50%, -50%);
-  border: 2px solid var(--color-pine-night);
+  border: 3px solid var(--color-pine-night);
   border-radius: 50%;
   background: var(--color-campfire-amber);
-  box-shadow: 0 0 0 5px rgb(232 162 59 / 25%), 0 0 22px rgb(232 162 59 / 65%);
+  box-shadow: 0 0 0 8px rgb(232 162 59 / 25%), 0 0 34px rgb(232 162 59 / 65%);
 }
 
 .walkerName {
   position: absolute;
-  bottom: 18px;
-  padding: 6px 16px 8px;
+  bottom: 28px;
+  padding: 9px 25px 12px;
   transform: translateX(-50%);
   border: 1px solid rgb(232 162 59 / 45%);
   border-radius: 999px;
   background: rgb(13 18 8);
-  box-shadow: 0 4px 14px rgb(13 18 8 / 50%);
+  box-shadow: 0 6px 22px rgb(13 18 8 / 50%);
   color: var(--color-campfire-amber);
   font-family: var(--font-accent), cursive;
-  font-size: 29px;
+  font-size: 45px;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;

@@ -3,7 +3,9 @@ import { groq } from "next-sanity";
 // @sanity-typegen-ignore
 export const activityScheduleQuery = groq`
   _type == "activitySchedule" => {
-    heading,
+    heading[]{
+      ...
+    },
     description,
     camperNames,
     "activityCount": count(*[_type == "activity"]),

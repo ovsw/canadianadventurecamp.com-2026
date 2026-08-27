@@ -34,7 +34,6 @@ type ActivityScheduleBuilderProps = {
   camperNames: string[];
   camperNamesDataAttribute?: string;
   featuredActivitiesDataAttribute?: string;
-  description: ReactNode;
   activitiesLink: ReactNode;
 };
 
@@ -49,7 +48,6 @@ export default function ActivityScheduleBuilder({
   activitiesLink,
   camperNames,
   camperNamesDataAttribute,
-  description,
   featuredActivitiesDataAttribute,
 }: ActivityScheduleBuilderProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -233,13 +231,11 @@ export default function ActivityScheduleBuilder({
 
   return (
     <div
-      className={`grid gap-12 md:col-span-2 md:grid-cols-2 2xl:col-span-8 2xl:grid-cols-8 ${styles.reveal}`}
+      className={`mt-12 grid gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-14 ${styles.reveal}`}
       data-sanity={featuredActivitiesDataAttribute}
       ref={sectionRef}
     >
-      <div className="flex flex-col gap-7 2xl:col-span-5">
-        {description}
-
+      <div className="flex flex-col gap-7 lg:col-span-7">
         <div className="flex flex-wrap gap-3" role="group" aria-label="Build a sample day">
           {activities.map((activity) => {
             const selected = displayedSlots.some(
@@ -269,7 +265,7 @@ export default function ActivityScheduleBuilder({
         {activitiesLink}
       </div>
 
-      <div className="relative self-center 2xl:col-span-3">
+      <div className="relative self-center lg:col-span-5">
         <div className="relative -rotate-1 rounded-2xl bg-birch-bark-bright p-7 text-pine-night shadow-2xl motion-reduce:rotate-0">
           {fullDay ? (
             <span className="absolute -right-2 -top-4 rounded-pill bg-campfire-amber px-4 py-2 font-mono text-[0.6875rem] font-bold tracking-[0.14em] text-pine-night shadow-lg">

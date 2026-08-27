@@ -3,6 +3,19 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 
 const defaultCamperNames = ["Maya", "Leo", "Sadie", "Finn", "Ava", "Theo"];
 
+/** Flatten a minimalRichText value into plain text for the Studio preview. */
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
+    .join(" ")
+    .trim();
+};
+
 export default defineType({
   name: "activitySchedule",
   title: "Activity Schedule",
@@ -11,7 +24,17 @@ export default defineType({
   description:
     "An interactive sample day built from selected Activity documents.",
   initialValue: {
-    heading: "activities. Their pick, every day.",
+    heading: [
+      {
+        _type: "block",
+        style: "normal",
+        markDefs: [],
+        children: [
+          { _type: "span", text: "activities. ", marks: [] },
+          { _type: "span", text: "Their pick, every day.", marks: ["em"] },
+        ],
+      },
+    ],
     description:
       "No fixed timetable. Each day, campers choose their own adventure from the activity menu, so a shy first-timer and a returning thrill-seeker both get exactly the summer they want.",
     camperNames: defaultCamperNames,
@@ -20,8 +43,10 @@ export default defineType({
     defineField({
       name: "heading",
       title: "Heading",
-      type: "string",
-      validation: (rule) => rule.required(),
+      type: "minimalRichText",
+      description:
+        "Sits beside the big activity count. Use italic for the phrase that gets the handwritten style; it drops to its own line.",
+      validation: (rule) => rule.required().max(1),
     }),
     defineField({
       name: "description",
@@ -58,7 +83,7 @@ export default defineType({
     prepare: ({ activities, heading }) => {
       const count = Array.isArray(activities) ? activities.length : 0;
       return {
-        title: heading || "Activity Schedule",
+        title: richTextToPlainText(heading) || "Activity Schedule",
         subtitle: `${count} featured ${count === 1 ? "Activity" : "Activities"}`,
       };
     },

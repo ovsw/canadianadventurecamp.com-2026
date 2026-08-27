@@ -30,7 +30,28 @@ const activitySchedule: ComponentProps<typeof ActivitySchedule> = {
   camperNames: ["Maya", "Leo"],
   description: "Choose a different day every morning.",
   featuredActivities,
-  heading: "activities. Their pick, every day.",
+  heading: [
+    {
+      _key: "heading-block",
+      _type: "block",
+      style: "normal",
+      markDefs: null,
+      children: [
+        {
+          _key: "heading-display",
+          _type: "span",
+          text: "activities. ",
+          marks: [],
+        },
+        {
+          _key: "heading-hand",
+          _type: "span",
+          text: "Their pick, every day.",
+          marks: ["em"],
+        },
+      ],
+    },
+  ],
   dataAttribute: (path) => `section:${path}`,
   activityDataAttribute: (documentId, path) =>
     `activity:${documentId}:${path}`,
