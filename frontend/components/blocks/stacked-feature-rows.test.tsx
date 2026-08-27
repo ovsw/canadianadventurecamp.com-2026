@@ -111,8 +111,11 @@ describe("StackedFeatureRows", () => {
     );
     expect(document.querySelector(".lucide-check")).toHaveClass("text-cedar");
     expect(
-      document.querySelector('[data-sanity$=".items"]'),
+      document.querySelector('[data-sanity="section:rows"]'),
     ).toHaveClass("md:grid-cols-2", "lg:grid-cols-1");
+    expect(
+      document.querySelector('[data-sanity$=".items"]'),
+    ).not.toHaveClass("md:grid-cols-2");
     expect(screen.getByRole("link", { name: "Our accreditations" })).toHaveAttribute(
       "href",
       "/accreditations",

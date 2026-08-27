@@ -104,7 +104,7 @@ export default function StackedFeatureRows({
         </header>
 
         <ol
-          className="mt-16 list-none p-0"
+          className="mt-16 grid list-none gap-px bg-pine-night/15 p-0 md:grid-cols-2 lg:grid-cols-1"
           data-sanity={dataAttribute?.("rows")}
         >
           {renderableRows.map(({ href, items, row }) => {
@@ -114,7 +114,7 @@ export default function StackedFeatureRows({
 
             return (
               <li
-                className={`relative grid min-h-52 overflow-hidden border-b border-pine-night/15 px-5 py-10 last:border-b-0 md:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
+                className={`relative grid min-h-52 overflow-hidden bg-birch-bark px-5 py-10 md:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
                 key={row._key}
               >
                 <div className="relative z-10 flex items-center gap-4">
@@ -137,7 +137,7 @@ export default function StackedFeatureRows({
 
                 <div className="relative z-10 mt-8 lg:mt-0">
                   <ul
-                    className="grid list-none gap-3 p-0 md:grid-cols-2 lg:grid-cols-1"
+                    className="grid list-none gap-3 p-0"
                     data-sanity={dataAttribute?.(`${rowPath}.items`)}
                   >
                     {items.map((item) => {
