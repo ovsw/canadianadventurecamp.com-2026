@@ -1,0 +1,26 @@
+.hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 0.125rem,
+    color-mix(in oklab, var(--color-pine-night) 7%, transparent) 0.125rem,
+    color-mix(in oklab, var(--color-pine-night) 7%, transparent) 0.25rem
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: stacked-feature-row-rise 1ms both;
+      animation-range: entry 0% entry 40%;
+      animation-timeline: view();
+    }
+  }
+}
+
+@keyframes stacked-feature-row-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+}

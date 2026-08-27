@@ -14,6 +14,7 @@ import ImageCollageFeature from "@/components/blocks/image-collage-feature";
 import FeatureCards from "@/components/blocks/feature-cards";
 import ActivitySchedule from "@/components/blocks/activity-schedule";
 import FacilitiesMapSection from "@/components/blocks/facilities-map-section";
+import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
 import { dataset, projectId } from "@/sanity/lib/env";
 
 type Block =
@@ -50,6 +51,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "featureCards",
   "activitySchedule",
   "facilitiesMapSection",
+  "stackedFeatureRows",
 ]);
 
 const componentMap: Partial<{
@@ -70,6 +72,7 @@ const componentMap: Partial<{
   featureCards: FeatureCards,
   activitySchedule: ActivitySchedule,
   facilitiesMapSection: FacilitiesMapSection,
+  stackedFeatureRows: StackedFeatureRows,
 };
 
 export default function Blocks({

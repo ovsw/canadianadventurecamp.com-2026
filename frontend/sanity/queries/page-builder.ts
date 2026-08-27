@@ -11,6 +11,7 @@ import { imageCollageFeatureQuery } from "./image-collage-feature";
 import { featureCardsQuery } from "./feature-cards";
 import { activityScheduleQuery } from "./activity-schedule";
 import { facilitiesMapSectionQuery } from "./facilities-map-section";
+import { stackedFeatureRowsQuery } from "./stacked-feature-rows";
 
 export const pageBuilderQuery = `
   blocks[]{
@@ -28,6 +29,7 @@ export const pageBuilderQuery = `
     ${imageCollageFeatureQuery},
     ${featureCardsQuery},
     ${activityScheduleQuery},
-    ${facilitiesMapSectionQuery}
+    ${facilitiesMapSectionQuery},
+    ${stackedFeatureRowsQuery}
   }
 `;

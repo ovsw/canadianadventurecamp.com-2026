@@ -29,6 +29,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
     "featureCards",
     "activitySchedule",
     "facilitiesMapSection",
+    "stackedFeatureRows",
     "latestArticles",
     "faqAccordion",
     "teamMembers",
@@ -59,6 +60,10 @@ test("the blocks insert menu offers list and grid views with known previews", ()
   assert.equal(
     getPageBuilderPreviewImageUrl("activitySchedule"),
     "/static/images/preview/activitySchedule.jpg",
+  );
+  assert.equal(
+    getPageBuilderPreviewImageUrl("stackedFeatureRows"),
+    "/static/images/preview/stackedFeatureRows.jpg",
   );
   assert.equal(getPageBuilderPreviewImageUrl("hero"), undefined);
 });
