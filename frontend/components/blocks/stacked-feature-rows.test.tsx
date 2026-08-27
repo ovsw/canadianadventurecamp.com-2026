@@ -94,6 +94,10 @@ describe("StackedFeatureRows", () => {
       'section:rows[_key=="accredited"].title',
     );
     expect(rowHeading.parentElement).toHaveClass("items-center");
+    expect(rowHeading.closest("li")).toHaveClass(
+      "md:last:odd:col-span-2",
+      "lg:col-span-1",
+    );
     expect(
       screen.getByText("OCA accredited").closest("[data-sanity]"),
     ).toHaveAttribute(
@@ -116,10 +120,12 @@ describe("StackedFeatureRows", () => {
     expect(
       document.querySelector('[data-sanity$=".items"]'),
     ).not.toHaveClass("md:grid-cols-2");
-    expect(screen.getByRole("link", { name: "Our accreditations" })).toHaveAttribute(
+    const rowLink = screen.getByRole("link", { name: "Our accreditations" });
+    expect(rowLink).toHaveAttribute(
       "href",
       "/accreditations",
     );
+    expect(rowLink).toHaveClass("text-cedar", "hover:text-cedar-deep");
   });
 
   it("omits incomplete rows", () => {

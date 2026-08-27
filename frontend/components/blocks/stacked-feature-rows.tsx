@@ -114,7 +114,7 @@ export default function StackedFeatureRows({
 
             return (
               <li
-                className={`relative grid min-h-52 overflow-hidden bg-birch-bark px-5 py-10 md:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
+                className={`relative grid min-h-52 overflow-hidden bg-birch-bark px-5 py-10 md:last:odd:col-span-2 md:px-8 lg:col-span-1 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
                 key={row._key}
               >
                 <div className="relative z-10 flex items-center gap-4">
@@ -164,7 +164,7 @@ export default function StackedFeatureRows({
                   </ul>
 
                   <Link
-                    className="focus-ring mt-6 inline-flex w-fit items-center gap-2 font-semibold text-ember-red hover:text-campfire-amber-deep"
+                    className="focus-ring mt-6 inline-flex w-fit items-center gap-2 font-semibold text-cedar hover:text-cedar-deep"
                     data-sanity={dataAttribute?.(`${rowPath}.link`)}
                     href={href}
                     rel={
