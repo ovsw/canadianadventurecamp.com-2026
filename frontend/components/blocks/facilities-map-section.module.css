@@ -703,8 +703,8 @@
   .mapTopBar { top: 14px; left: 14px; }
   .coordinateChip { display: none; }
   .compass { right: 14px; bottom: 14px; }
-  .facilityPhoto { width: 244px; }
-  .facilityPhotoImage { width: 224px; height: 170px; }
+  /* No room for the stop photo alongside the card on small screens. */
+  .facilityPhoto { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
