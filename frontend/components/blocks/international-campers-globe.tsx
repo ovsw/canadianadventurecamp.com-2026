@@ -1,0 +1,532 @@
+"use client";
+
+import { useInView, useReducedMotion } from "motion/react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import styles from "./international-campers-section.module.css";
+
+type Route = {
+  readonly code: string;
+  readonly city: string;
+  readonly country: string;
+  readonly lat: number;
+  readonly lng: number;
+  readonly km: number;
+  readonly pickup?: boolean;
+};
+
+type Destination = {
+  readonly lat: number;
+  readonly lng: number;
+};
+
+type Props = {
+  routes: readonly Route[];
+  destination: Destination;
+  children: ReactNode;
+};
+
+const DEG = Math.PI / 180;
+const TAU = Math.PI * 2;
+
+
+/** Build arc points between a city and the destination on a great circle. */
+function buildArcPoints(
+  cityLat: number,
+  cityLng: number,
+  destLat: number,
+  destLng: number,
+) {
+  const toVec = (lat: number, lng: number) => {
+    const la = lat * DEG;
+    const lo = lng * DEG;
+    return [Math.cos(la) * Math.cos(lo), Math.sin(la), Math.cos(la) * Math.sin(lo)] as const;
+  };
+  const av = toVec(cityLat, cityLng);
+  const dv = toVec(destLat, destLng);
+  const dot = Math.max(-1, Math.min(1, av[0] * dv[0] + av[1] * dv[1] + av[2] * dv[2]));
+  const ang = Math.acos(dot);
+  const h = 0.05 + 0.3 * (ang / Math.PI);
+  const N = 64;
+  const pts: [number, number, number][] = [];
+  for (let k = 0; k <= N; k++) {
+    const tt = k / N;
+    const sA = Math.sin((1 - tt) * ang) / Math.sin(ang);
+    const sB = Math.sin(tt * ang) / Math.sin(ang);
+    const px = sA * av[0] + sB * dv[0];
+    const py = sA * av[1] + sB * dv[1];
+    const pz = sA * av[2] + sB * dv[2];
+    pts.push([
+      Math.asin(Math.max(-1, Math.min(1, py))),
+      Math.atan2(pz, px),
+      h * Math.sin(Math.PI * tt),
+    ]);
+  }
+  return pts;
+}
+
+export default function InternationalCampersGlobe({
+  routes,
+  destination,
+  children,
+}: Props) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const arcsCanvasRef = useRef<HTMLCanvasElement>(null);
+  const tagRef = useRef<HTMLDivElement>(null);
+  const isVisible = useInView(sectionRef, { amount: 0.02 });
+  const reducedMotion = useReducedMotion();
+
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
+  const [globeFailed, setGlobeFailed] = useState(false);
+
+  // Mutable refs for the render loop
+  const stateRef = useRef({
+    phiCur: 5.7,
+    thetaCur: 0.3,
+    vel: 0,
+    dragging: false,
+    dragX: 0,
+    focusIdx: null as number | null,
+    routes: null as ReturnType<typeof buildArcPoints>[] | null,
+    routeMeta: null as { per: number; t0: number; mid: [number, number, number] }[] | null,
+    globe: null as { destroy: () => void; toggle?: (shouldRender: boolean) => void } | null,
+    globePaused: false,
+    wRaf: null as number | null,
+    gcx: 620,
+    gcy: 620,
+    gR: 496,
+    isVisible: false,
+    reducedMotion: false,
+  });
+
+  // Build arc data once
+  useEffect(() => {
+    const arcPts = routes.map((r) =>
+      buildArcPoints(r.lat, r.lng, destination.lat, destination.lng),
+    );
+    const meta = routes.map((_, i) => ({
+      per: 6.5 + (i % 4) * 0.9,
+      t0: -(i * 1.7),
+      mid: arcPts[i][32] as [number, number, number],
+    }));
+    stateRef.current.routes = arcPts;
+    stateRef.current.routeMeta = meta;
+  }, [routes, destination]);
+
+  // Sync focus index
+  useEffect(() => {
+    stateRef.current.focusIdx = focusIndex;
+  }, [focusIndex]);
+
+  // Sync visibility and reduced motion
+  useEffect(() => {
+    stateRef.current.isVisible = isVisible;
+  }, [isVisible]);
+
+  useEffect(() => {
+    stateRef.current.reducedMotion = reducedMotion ?? false;
+  }, [reducedMotion]);
+
+  /** Orthographic projection matching cobe's camera model. */
+  const project = useCallback(
+    (la: number, lo: number, alt: number) => {
+      const s = stateRef.current;
+      const d = lo + s.phiCur - 4.712389;
+      const sc = 1 + alt;
+      const x = Math.cos(la) * Math.sin(d) * sc;
+      const y = Math.sin(la) * sc;
+      const z = Math.cos(la) * Math.cos(d) * sc;
+      const y2 = y * Math.cos(s.thetaCur) - z * Math.sin(s.thetaCur);
+      const z2 = y * Math.sin(s.thetaCur) + z * Math.cos(s.thetaCur);
+      return { x: s.gcx + s.gR * x, y: s.gcy - s.gR * y2, z: z2 };
+    },
+    [],
+  );
+
+  /** Draw arc trails and markers on the overlay canvas. */
+  const drawArcs = useCallback(
+    (now: number) => {
+      const ctx = arcsCanvasRef.current?.getContext("2d");
+      const s = stateRef.current;
+      if (!ctx || !s.routes || !s.routeMeta) return;
+      ctx.clearRect(0, 0, 1240, 1240);
+
+      const F = s.focusIdx;
+      const amber = (a: number) => `rgba(232,162,59,${a})`;
+      const cream = (a: number) => `rgba(243,239,226,${a})`;
+      const depth = (z: number) => Math.max(0, Math.min(1, (z + 0.02) / 0.2));
+      ctx.lineCap = "round";
+
+      s.routes.forEach((pts, i) => {
+        const meta = s.routeMeta![i];
+        const dim = F != null && F !== i;
+        const hot = F === i;
+        const base = dim ? 0.07 : hot ? 0.75 : 0.3;
+        const P = pts.map((p) => project(p[0], p[1], p[2]));
+
+        // Static arc
+        for (let k = 0; k < P.length - 1; k++) {
+          const a = depth(Math.min(P[k].z, P[k + 1].z)) * base;
+          if (a < 0.01) continue;
+          ctx.strokeStyle = amber(a);
+          ctx.lineWidth = hot ? 4.5 : 2.6;
+          ctx.beginPath();
+          ctx.moveTo(P[k].x, P[k].y);
+          ctx.lineTo(P[k + 1].x, P[k + 1].y);
+          ctx.stroke();
+        }
+
+        // Animated head (skip if reduced motion and no explicit focus)
+        if (!s.reducedMotion || hot) {
+          const tt = (((now - meta.t0) / meta.per) % 1 + 1) % 1;
+          const head = Math.floor(tt * (P.length - 1));
+          const tail = Math.max(0, head - 9);
+          for (let k = tail; k < head; k++) {
+            const f = (k - tail) / Math.max(1, head - tail);
+            const a = depth(P[k + 1].z) * (dim ? 0.16 : 1) * f;
+            if (a < 0.02) continue;
+            ctx.strokeStyle = amber(a);
+            ctx.lineWidth = (hot ? 6.5 : 4.8) * (0.5 + 0.5 * f);
+            ctx.beginPath();
+            ctx.moveTo(P[k].x, P[k].y);
+            ctx.lineTo(P[k + 1].x, P[k + 1].y);
+            ctx.stroke();
+          }
+          // Head glow
+          const hp = P[head];
+          const ha = depth(hp.z) * (dim ? 0.15 : 1);
+          if (ha > 0.02) {
+            ctx.fillStyle = `rgba(255,236,200,${ha})`;
+            ctx.beginPath();
+            ctx.arc(hp.x, hp.y, hot ? 5 : 3.5, 0, TAU);
+            ctx.fill();
+          }
+        }
+
+        // Origin dot
+        const o = P[0];
+        const oa = depth(o.z);
+        if (oa > 0.02) {
+          ctx.fillStyle = cream(0.8 * oa * (dim ? 0.3 : 1));
+          ctx.beginPath();
+          ctx.arc(o.x, o.y, 3, 0, TAU);
+          ctx.fill();
+          if (!s.reducedMotion) {
+            const tt = (((now - meta.t0) / meta.per) % 1 + 1) % 1;
+            if (tt < 0.12 && !dim) {
+              const pr = tt / 0.12;
+              ctx.strokeStyle = cream((1 - pr) * 0.55 * oa);
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.arc(o.x, o.y, 4 + pr * 24, 0, TAU);
+              ctx.stroke();
+            }
+          }
+        }
+      });
+
+      // Destination marker
+      const dp = project(destination.lat * DEG, destination.lng * DEG, 0.004);
+      const da = depth(dp.z);
+      if (da > 0.02) {
+        ctx.fillStyle = amber(da);
+        ctx.beginPath();
+        ctx.arc(dp.x, dp.y, 5, 0, TAU);
+        ctx.fill();
+        if (!s.reducedMotion) {
+          for (let j = 0; j < 2; j++) {
+            const pr = ((now / 2.2 + j * 0.5) % 1 + 1) % 1;
+            ctx.strokeStyle = amber((1 - pr) * 0.5 * da);
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(dp.x, dp.y, 7 + pr * 36, 0, TAU);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Tag label
+      const tag = tagRef.current;
+      if (tag) {
+        tag.style.transform = `translate(${(dp.x / 2).toFixed(1)}px,${(dp.y / 2 - 8).toFixed(1)}px)`;
+        tag.style.opacity = Math.max(0, Math.min(1, (dp.z - 0.05) * 9)).toFixed(2);
+      }
+    },
+    [project, destination],
+  );
+
+  /** Step the globe camera and draw arcs. */
+  const stepWorld = useCallback(
+    () => {
+      const now = performance.now() / 1000;
+      const s = stateRef.current;
+      if (!s.dragging) {
+        if (s.focusIdx != null && s.routeMeta) {
+          const m = s.routeMeta[s.focusIdx].mid;
+          const dph =
+            (((4.712389 - m[1] - s.phiCur) % TAU) + TAU * 1.5) % TAU -
+            Math.PI;
+          s.phiCur += dph * 0.06;
+          s.thetaCur +=
+            (Math.max(0.08, Math.min(0.8, m[0])) - s.thetaCur) * 0.06;
+        } else {
+          s.vel *= 0.94;
+          // Auto-rotate only with no reduced-motion preference
+          s.phiCur += (s.reducedMotion ? 0 : 0.0032) + s.vel;
+          s.thetaCur += (0.3 - s.thetaCur) * 0.04;
+        }
+      }
+      if (s.isVisible) drawArcs(now);
+    },
+    [drawArcs],
+  );
+
+  // Render loop management
+  const startLoop = useCallback(() => {
+    const s = stateRef.current;
+    if (s.wRaf != null) return;
+    const loop = () => {
+      stepWorld();
+      s.wRaf = requestAnimationFrame(loop);
+    };
+    loop();
+  }, [stepWorld]);
+
+  const stopLoop = useCallback(() => {
+    const s = stateRef.current;
+    if (s.wRaf != null) {
+      cancelAnimationFrame(s.wRaf);
+      s.wRaf = null;
+    }
+  }, []);
+
+  // Pause/resume cobe's internal rAF
+  const setGlobeRunning = useCallback((run: boolean) => {
+    const s = stateRef.current;
+    const g = s.globe;
+    if (!g || typeof g.toggle !== "function") return;
+    if (run && s.globePaused) {
+      try { g.toggle(true); } catch {}
+      s.globePaused = false;
+    } else if (!run && !s.globePaused) {
+      try { g.toggle(false); } catch {}
+      s.globePaused = true;
+    }
+  }, []);
+
+  // Visibility-driven start/stop
+  useEffect(() => {
+    if (isVisible) {
+      startLoop();
+      setGlobeRunning(true);
+    } else {
+      stopLoop();
+      setGlobeRunning(false);
+    }
+    return stopLoop;
+  }, [isVisible, startLoop, stopLoop, setGlobeRunning]);
+
+  // Initialize cobe globe
+  useEffect(() => {
+    const cv = canvasRef.current;
+    if (!cv) return;
+
+    const s = stateRef.current;
+
+    // Pointer drag handlers
+    const onDown = (e: PointerEvent) => {
+      s.dragging = true;
+      s.dragX = e.clientX;
+      s.vel = 0;
+      cv.setPointerCapture(e.pointerId);
+      cv.style.cursor = "grabbing";
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!s.dragging) return;
+      const dx = e.clientX - s.dragX;
+      s.dragX = e.clientX;
+      s.phiCur += dx * 0.005;
+      s.vel = dx * 0.002;
+    };
+    const onUp = () => {
+      s.dragging = false;
+      cv.style.cursor = "grab";
+    };
+
+    cv.addEventListener("pointerdown", onDown);
+    cv.addEventListener("pointermove", onMove);
+    cv.addEventListener("pointerup", onUp);
+    cv.addEventListener("pointercancel", onUp);
+
+    const markers = [
+      ...routes.map((c) => ({
+        location: [c.lat, c.lng] as [number, number],
+        size: 0.05,
+      })),
+      {
+        location: [destination.lat, destination.lng] as [number, number],
+        size: 0.1,
+      },
+    ];
+
+    import("cobe").then((m) => {
+      if (canvasRef.current !== cv) return;
+      try {
+        s.globe = m.default(cv, {
+          devicePixelRatio: 2,
+          width: 1240,
+          height: 1240,
+          phi: s.phiCur,
+          theta: s.thetaCur,
+          dark: 1,
+          diffuse: 1.2,
+          mapSamples: 22000,
+          mapBrightness: 7.5,
+          baseColor: [0.43, 0.52, 0.31],
+          markerColor: [0.95, 0.67, 0.26],
+          glowColor: [0.1, 0.13, 0.07],
+          opacity: 0.92,
+          markers,
+          onRender: (state: Record<string, number>) => {
+            state.phi = s.phiCur;
+            state.theta = s.thetaCur;
+          },
+        });
+        if (!s.isVisible) setGlobeRunning(false);
+      } catch {
+        setGlobeFailed(true);
+      }
+    }).catch(() => {
+      // Offline fallback: draw a simple sphere
+      const g = cv.getContext("2d");
+      if (g) {
+        g.clearRect(0, 0, 1240, 1240);
+        const grad = g.createRadialGradient(500, 460, 90, 620, 620, 540);
+        grad.addColorStop(0, "#3A4E24");
+        grad.addColorStop(1, "#1B2611");
+        g.fillStyle = grad;
+        g.beginPath();
+        g.arc(620, 620, 496, 0, TAU);
+        g.fill();
+      }
+    });
+
+    return () => {
+      cv.removeEventListener("pointerdown", onDown);
+      cv.removeEventListener("pointermove", onMove);
+      cv.removeEventListener("pointerup", onUp);
+      cv.removeEventListener("pointercancel", onUp);
+      stopLoop();
+      if (s.globe) {
+        try { s.globe.destroy(); } catch {}
+        s.globe = null;
+      }
+    };
+  }, [routes, destination, stopLoop, setGlobeRunning]);
+
+  /** Handle city selection from the route list buttons. */
+  const handleRouteClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const button = (e.target as HTMLElement).closest<HTMLButtonElement>(
+        "button[data-route]",
+      );
+      if (!button) return;
+      const code = button.dataset.route;
+      const idx = routes.findIndex((r) => r.code === code);
+      if (idx === -1) return;
+
+      setFocusIndex((prev) => {
+        if (prev === idx) {
+          // Re-selecting the active city restarts its route animation
+          const s = stateRef.current;
+          if (s.routeMeta) {
+            s.routeMeta[idx].t0 = performance.now() / 1000;
+          }
+          return idx;
+        }
+        return idx;
+      });
+    },
+    [routes],
+  );
+
+  /** Handle keyboard navigation. */
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "Escape") {
+        setFocusIndex(null);
+      }
+    },
+    [],
+  );
+
+  // Set aria-pressed on route buttons
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const buttons = section.querySelectorAll<HTMLButtonElement>("button[data-route]");
+    buttons.forEach((btn, i) => {
+      btn.setAttribute("aria-pressed", String(focusIndex === i));
+    });
+  }, [focusIndex]);
+
+  return (
+    <div
+      ref={sectionRef}
+      onClick={handleRouteClick}
+      onKeyDown={handleKeyDown}
+    >
+      {/* Globe visual area */}
+      {!globeFailed && (
+        <div className={`max-lg:order-first max-lg:mx-auto max-lg:mb-10 lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 ${styles.globeContainer}`}>
+          <div className="relative w-[620px] h-[620px] max-w-full" style={{ aspectRatio: "1" }}>
+            <canvas
+              ref={canvasRef}
+              width={1240}
+              height={1240}
+              className="block h-full w-full cursor-grab"
+              style={{ contain: "layout paint size" }}
+            />
+            <canvas
+              ref={arcsCanvasRef}
+              width={1240}
+              height={1240}
+              className="pointer-events-none absolute inset-0 h-full w-full"
+            />
+            {/* Destination tag */}
+            <div
+              ref={tagRef}
+              className="pointer-events-none absolute left-0 top-0 opacity-0"
+              style={{ willChange: "transform, opacity" }}
+            >
+              <div className="flex flex-col items-center">
+                <span className="whitespace-nowrap rounded-full bg-campfire-amber px-[11px] py-1.5 font-mono text-[10.5px] font-bold tracking-[.12em] text-pine-night shadow-[0_8px_22px_rgba(0,0,0,.45)]">
+                  ADVENTURE ISLAND · LAKE TEMAGAMI
+                </span>
+                <span className="h-[13px] w-[1.5px] bg-campfire-amber/75" />
+              </div>
+            </div>
+          </div>
+          {/* Globe instructions */}
+          <p className="mt-4 text-center font-mono text-[11px] tracking-[.18em] text-birch-bark/[.42]">
+            DRAG TO SPIN · SELECT A CITY TO FLY ITS ROUTE
+          </p>
+          <noscript>
+            <p className="mt-2 text-center font-mono text-[11px] tracking-[.14em] text-birch-bark/40">
+              Enable JavaScript to interact with the globe.
+            </p>
+          </noscript>
+        </div>
+      )}
+
+      {/* Route list and copy (children from server component) */}
+      {children}
+    </div>
+  );
+}

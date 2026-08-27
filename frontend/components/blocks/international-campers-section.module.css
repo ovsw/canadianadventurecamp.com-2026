@@ -1,0 +1,78 @@
+/* Globe container: positioned beside the copy on desktop, stacked on mobile. */
+.globeContainer {
+  --gw: min(620px, calc(100vw - 2 * var(--gutter, 24px)));
+}
+
+/* Scroll-driven entrance on desktop */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: international-campers-rise 1ms both;
+      animation-range: entry 0% entry 42%;
+      animation-timeline: view();
+    }
+  }
+}
+
+@keyframes international-campers-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+}
+
+/* Route row: EN ROUTE label only visible on hover/focus by default,
+   always visible when the row is the active selection. */
+.routeRow[aria-pressed="true"] {
+  background: rgba(243, 239, 226, 0.06);
+}
+
+.routeRow[aria-pressed="true"] .enRouteLabel {
+  opacity: 1;
+}
+
+.routeRow[aria-pressed="true"] span:first-child {
+  border-color: rgba(232, 162, 59, 0.6);
+  background: rgba(232, 162, 59, 0.15);
+  color: #e8a23b;
+}
+
+/* Mobile: hide EN ROUTE label (hover isn't available). */
+@media (max-width: 639px) {
+  .enRouteLabel {
+    display: none;
+  }
+
+  .routeRow {
+    padding: 10px 12px !important;
+    margin: 0 -12px !important;
+    gap: 12px !important;
+  }
+}
+
+/* Tablet/mobile: globe scales to viewport width. */
+@media (max-width: 1023px) {
+  .globeContainer {
+    width: var(--gw);
+    justify-self: center;
+  }
+
+  .globeContainer > div:first-child {
+    transform: scale(calc(var(--gw) / 620px));
+    transform-origin: 0 0;
+    margin-right: calc(var(--gw) - 620px);
+    margin-bottom: calc(var(--gw) - 620px);
+  }
+
+  .globeContainer canvas {
+    touch-action: pan-y;
+  }
+}
+
+/* Phone: globe bleeds into gutters for a larger visual. */
+@media (max-width: 639px) {
+  .globeContainer {
+    --gw: min(620px, 100vw);
+    margin: 0 calc(-1 * var(--gutter, 24px));
+  }
+}
