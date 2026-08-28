@@ -63,7 +63,10 @@ function getRouteMeasurements(
       total: 0,
     };
   }
-  const sampleCount = Math.max(800, placements.length * 100);
+  // 300 samples across a 100x100 viewBox is ~0.3-unit resolution, plenty for
+  // both stop snapping and a smooth trail. Each sample is a getPointAtLength
+  // call, and this survey blocks the main thread at mount.
+  const sampleCount = Math.max(300, placements.length * 40);
   const samples: RouteMeasurements["samples"] = [];
 
   for (let index = 0; index <= sampleCount; index += 1) {
@@ -196,20 +199,12 @@ export default function FacilitiesMapInteractive({
         y: placements[index]?.y ?? 0,
       });
     };
-    // Measuring walks the path ~800 times, so during a live window resize we
-    // wait for the size to settle instead of re-surveying on every tick.
-    let debounce: number | undefined;
-    const queueMeasurement = () => {
-      if (debounce !== undefined) window.clearTimeout(debounce);
-      debounce = window.setTimeout(measure, 1000);
-    };
-    const observer = new ResizeObserver(queueMeasurement);
-    if (path.ownerSVGElement) observer.observe(path.ownerSVGElement);
+    // The path lives in a fixed 0-100 viewBox, so its measured geometry never
+    // changes when the element resizes. Survey once per path; no resize
+    // handling needed (re-measuring on resize used to block for ~350ms).
     frame = requestAnimationFrame(measure);
     return () => {
-      observer.disconnect();
       if (frame !== undefined) cancelAnimationFrame(frame);
-      if (debounce !== undefined) window.clearTimeout(debounce);
     };
   }, [pathData, placements]);
 
