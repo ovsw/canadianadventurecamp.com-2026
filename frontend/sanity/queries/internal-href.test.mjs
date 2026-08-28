@@ -9,14 +9,15 @@ test("internal href resolvers use canonical post and category namespaces", () =>
   for (const resolver of [
     "customLink.internal",
     "url.internal",
+    "link.internal",
     "internal->_type",
     "@.internalLink",
   ]) {
     assert.match(source, new RegExp(`${resolver.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}.*category`));
   }
-  assert.equal((source.match(/_type == "post"/g) || []).length, 4);
-  assert.equal((source.match(/"\/blog\/" \+/g) || []).length, 4);
-  assert.equal((source.match(/\/blog\/category\//g) || []).length, 4);
+  assert.equal((source.match(/_type == "post"/g) || []).length, 5);
+  assert.equal((source.match(/"\/blog\/" \+/g) || []).length, 5);
+  assert.equal((source.match(/\/blog\/category\//g) || []).length, 5);
   assert.doesNotMatch(source, /slug\.current \+ "\/"/);
   assert.match(footerSource, /internal->_type == "post"/);
   assert.match(footerSource, /internal->_type == "category"/);
