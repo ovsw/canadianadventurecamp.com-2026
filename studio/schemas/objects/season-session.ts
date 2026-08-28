@@ -1,9 +1,11 @@
+import { CalendarDays } from "lucide-react";
 import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "seasonSession",
   title: "Session",
   type: "object",
+  icon: CalendarDays,
   fields: [
     defineField({
       name: "startDate",

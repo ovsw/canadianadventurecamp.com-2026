@@ -3,7 +3,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
 import DatesRatesBrowser from "./dates-rates-browser";
 import styles from "./dates-rates-section.module.css";
-import { type ActiveSeason, prepareLengths } from "./dates-rates-model";
+import { prepareLengths } from "./dates-rates-model";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -60,10 +60,9 @@ export default function DatesRatesSection({
 }: DatesRatesSectionProps) {
   if (!activeSeason?._id || !activeSeason.startDate) return null;
 
-  const cleanSeason = activeSeason as ActiveSeason;
-  const seasonStart = stegaClean(cleanSeason.startDate);
+  const seasonStart = stegaClean(activeSeason.startDate);
   const lengths = prepareLengths({
-    season: cleanSeason,
+    season: activeSeason,
     seasonDataAttribute,
   });
   if (lengths.length === 0) return null;
