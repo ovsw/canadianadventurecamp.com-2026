@@ -494,16 +494,17 @@ export default function InternationalCampersGlobe({
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    const focusCode = focusIndex != null ? routes[focusIndex]?.code : null;
     const buttons = section.querySelectorAll<HTMLButtonElement>("button[data-route]");
-    buttons.forEach((btn, i) => {
-      btn.setAttribute("aria-pressed", String(focusIndex === i));
+    buttons.forEach((btn) => {
+      btn.setAttribute("aria-pressed", String(btn.dataset.route === focusCode));
     });
-  }, [focusIndex]);
+  }, [focusIndex, routes]);
 
   return (
     <div
       ref={sectionRef}
-      className="grid items-start gap-10 lg:grid-cols-[1fr_620px] lg:gap-10 xl:gap-[70px]"
+      className="grid items-start gap-2 lg:grid-cols-[1fr_620px] lg:gap-10 xl:gap-[70px]"
       onClick={handleRouteClick}
       onMouseOver={handleRouteEnter}
       onMouseOut={handleRouteLeave}
@@ -515,6 +516,7 @@ export default function InternationalCampersGlobe({
           <div className="relative w-[620px] h-[620px] max-w-full" style={{ aspectRatio: "1" }}>
             <canvas
               ref={canvasRef}
+              aria-hidden="true"
               width={1240}
               height={1240}
               className="block h-full w-full cursor-grab"
@@ -522,6 +524,7 @@ export default function InternationalCampersGlobe({
             />
             <canvas
               ref={arcsCanvasRef}
+              aria-hidden="true"
               width={1240}
               height={1240}
               className="pointer-events-none absolute inset-0 h-full w-full"
@@ -551,10 +554,6 @@ export default function InternationalCampersGlobe({
               </div>
             </div>
           </div>
-          {/* Globe instructions */}
-          <p className="mt-4 text-center font-mono text-[11px] tracking-[.18em] text-birch-bark/[.42]">
-            DRAG TO SPIN
-          </p>
           <noscript>
             <p className="mt-2 text-center font-mono text-[11px] tracking-[.14em] text-birch-bark/40">
               Enable JavaScript to interact with the globe.

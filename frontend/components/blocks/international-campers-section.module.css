@@ -83,6 +83,7 @@
 @media (max-width: 639px) {
   .globeContainer {
     --gw: min(620px, 100vw);
+
     margin: 0 calc(-1 * var(--gutter, 24px));
   }
 

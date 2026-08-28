@@ -14,7 +14,7 @@ const richTextToPlainText = (value: unknown): string => {
     .trim();
 };
 
-export default defineType({
+export const internationalCampersSection = defineType({
   name: "internationalCampersSection",
   title: "International Campers",
   type: "object",
@@ -52,7 +52,6 @@ export default defineType({
     }),
     defineField({
       name: "heading",
-      title: "Heading",
       type: "minimalRichText",
       description:
         "Use italic for the phrase that gets the handwritten accent style.",
@@ -66,7 +65,6 @@ export default defineType({
     }),
     defineField({
       name: "linkLabel",
-      title: "Link Label",
       type: "string",
       description: "Text shown on the onward link.",
       validation: (rule) => rule.required(),

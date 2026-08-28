@@ -78,7 +78,7 @@ describe("InternationalCampersSection", () => {
     ];
     for (const city of cities) {
       expect(
-        screen.getByRole("listitem", { name: new RegExp(city) }),
+        screen.getByRole("button", { name: new RegExp(city) }),
       ).toBeInTheDocument();
     }
   });
@@ -95,7 +95,7 @@ describe("InternationalCampersSection", () => {
   it("identifies Toronto Pearson as the pickup hub", () => {
     render(<InternationalCampersSection {...section} />);
 
-    const torontoButton = screen.getByRole("listitem", {
+    const torontoButton = screen.getByRole("button", {
       name: /Toronto.*pickup hub/,
     });
     expect(torontoButton).toBeInTheDocument();
@@ -156,9 +156,10 @@ describe("InternationalCampersSection", () => {
   it("uses real buttons for city interactions", () => {
     render(<InternationalCampersSection {...section} />);
 
-    const items = screen.getAllByRole("listitem");
-    for (const item of items) {
-      expect(item.tagName).toBe("BUTTON");
+    const buttons = screen.getAllByRole("button", { name: /,/ });
+    expect(buttons).toHaveLength(9);
+    for (const btn of buttons) {
+      expect(btn.tagName).toBe("BUTTON");
     }
   });
 
@@ -217,7 +218,7 @@ describe("InternationalCampersSection", () => {
   it("sets aria-pressed on city buttons when selected", () => {
     render(<InternationalCampersSection {...section} />);
 
-    const torontoButton = screen.getByRole("listitem", {
+    const torontoButton = screen.getByRole("button", {
       name: /Toronto/,
     });
 
@@ -230,7 +231,7 @@ describe("InternationalCampersSection", () => {
     expect(torontoButton).toHaveAttribute("aria-pressed", "true");
 
     // Other cities should not be pressed
-    const londonButton = screen.getByRole("listitem", {
+    const londonButton = screen.getByRole("button", {
       name: /London/,
     });
     expect(londonButton).toHaveAttribute("aria-pressed", "false");
@@ -239,7 +240,7 @@ describe("InternationalCampersSection", () => {
   it("clears focus on Escape key", () => {
     render(<InternationalCampersSection {...section} />);
 
-    const torontoButton = screen.getByRole("listitem", {
+    const torontoButton = screen.getByRole("button", {
       name: /Toronto/,
     });
     fireEvent.click(torontoButton);

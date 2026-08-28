@@ -132,12 +132,11 @@ export default function InternationalCampersSection({
               {/* City rows */}
               <div role="list" aria-label="Camper origin cities">
                 {routes.map((route) => (
+                  <div key={route.code} role="listitem">
                   <button
-                    key={route.code}
                     type="button"
                     data-route={route.code}
                     className={`group flex w-full items-center gap-4 border-b border-dashed border-birch-bark/[.13] px-3.5 py-3 -mx-3.5 transition-colors hover:bg-birch-bark/[.06] focus-visible:outline-2 focus-visible:outline-campfire-amber focus-visible:outline-offset-[-2px] ${styles.routeRow}`}
-                    role="listitem"
                     aria-label={`${route.city}, ${route.country}${route.pickup ? " - pickup hub" : ""}`}
                   >
                     {/* Airport code badge */}
@@ -164,6 +163,7 @@ export default function InternationalCampersSection({
                       EN ROUTE ✦
                     </span>
                   </button>
+                  </div>
                 ))}
               </div>
             </div>
