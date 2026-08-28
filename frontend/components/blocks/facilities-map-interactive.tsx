@@ -469,7 +469,7 @@ export default function FacilitiesMapInteractive({
         <figure className={`top-0 right-0 ${styles.facilityPhoto}`}>
           <div className={styles.facilityPhotoImage}>
             <Image
-              alt={activePlacement.featuredImage.alt}
+              alt={activePlacement.featuredImage.alt || ""}
               blurDataURL={activePlacement.featuredImage.lqip}
               className={styles.facilityImage}
               fill

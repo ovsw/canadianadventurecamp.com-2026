@@ -30,13 +30,6 @@ export default defineType({
           name: "alt",
           title: "Alternative Text",
           type: "string",
-          validation: (rule) =>
-            rule.custom((value, context) => {
-              const parent = context.parent as { asset?: unknown } | undefined;
-              return parent?.asset && !value
-                ? "Describe the image for visitors who cannot see it"
-                : true;
-            }),
         }),
       ],
     }),
