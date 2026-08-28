@@ -195,10 +195,20 @@ export default function InternationalCampersGlobe({
           ctx.stroke();
         }
 
-        // Animated head (skip if reduced motion and no explicit focus)
+        // Animated head (skip if reduced motion and no explicit focus).
+        // The head position interpolates between segment joints so it glides
+        // instead of clicking forward one joint at a time.
         if (!s.reducedMotion || hot) {
           const tt = (((now - meta.t0) / meta.per) % 1 + 1) % 1;
-          const head = Math.floor(tt * (P.length - 1));
+          const headF = tt * (P.length - 1);
+          const head = Math.floor(headF);
+          const frac = headF - head;
+          const next = P[Math.min(head + 1, P.length - 1)];
+          const hp = {
+            x: P[head].x + (next.x - P[head].x) * frac,
+            y: P[head].y + (next.y - P[head].y) * frac,
+            z: P[head].z + (next.z - P[head].z) * frac,
+          };
           const tail = Math.max(0, head - 5);
           for (let k = tail; k < head; k++) {
             const f = (k - tail) / Math.max(1, head - tail);
@@ -211,8 +221,17 @@ export default function InternationalCampersGlobe({
             ctx.lineTo(P[k + 1].x, P[k + 1].y);
             ctx.stroke();
           }
+          // Partial segment from the last joint to the interpolated head
+          const pa = depth(hp.z) * (dim ? 0.16 : 1);
+          if (pa >= 0.02 && frac > 0) {
+            ctx.strokeStyle = amber(pa);
+            ctx.lineWidth = hot ? 3.25 : 2.4;
+            ctx.beginPath();
+            ctx.moveTo(P[head].x, P[head].y);
+            ctx.lineTo(hp.x, hp.y);
+            ctx.stroke();
+          }
           // Head glow
-          const hp = P[head];
           const ha = depth(hp.z) * (dim ? 0.15 : 1);
           if (ha > 0.02) {
             ctx.fillStyle = `rgba(255,236,200,${ha})`;
