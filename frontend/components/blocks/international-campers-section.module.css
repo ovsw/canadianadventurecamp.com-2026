@@ -37,12 +37,15 @@
   color: #e8a23b;
 }
 
-/* Mobile: hide EN ROUTE label (hover isn't available). */
-@media (max-width: 639px) {
+/* Hide EN ROUTE label when list column is narrow (below xl). */
+@media (max-width: 1279px) {
   .enRouteLabel {
     display: none;
   }
+}
 
+/* Mobile: tighter row spacing. */
+@media (max-width: 639px) {
   .routeRow {
     padding: 10px 12px !important;
     margin: 0 -12px !important;

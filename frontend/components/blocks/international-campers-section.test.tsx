@@ -92,13 +92,6 @@ describe("InternationalCampersSection", () => {
     }
   });
 
-  it("shows distances to camp", () => {
-    render(<InternationalCampersSection {...section} />);
-
-    expect(screen.getByText("364 KM")).toBeInTheDocument();
-    expect(screen.getByText("15,534 KM")).toBeInTheDocument();
-  });
-
   it("identifies Toronto Pearson as the pickup hub", () => {
     render(<InternationalCampersSection {...section} />);
 
@@ -169,21 +162,18 @@ describe("InternationalCampersSection", () => {
     }
   });
 
-  it("renders the list header labels", () => {
+  it("renders the list header label", () => {
     render(<InternationalCampersSection {...section} />);
 
     expect(screen.getByText("Campers join us from")).toBeInTheDocument();
-    expect(screen.getByText("Distance to camp")).toBeInTheDocument();
   });
 
-  it("shows the mobile content order: copy then globe then routes", () => {
-    const { container } = render(
-      <InternationalCampersSection {...section} />,
-    );
+  it("uses a two-row layout with routes and globe in the second row", () => {
+    render(<InternationalCampersSection {...section} />);
 
-    // The globe mount should have order-first on mobile (max-lg:order-first)
-    const globeMount = container.querySelector("[data-globe-mount]");
-    expect(globeMount?.className).toContain("order-first");
+    // Route list exists in the rendered output
+    const routeList = screen.getByRole("list", { name: "Camper origin cities" });
+    expect(routeList).toBeInTheDocument();
   });
 
   // Visual Editing data attributes

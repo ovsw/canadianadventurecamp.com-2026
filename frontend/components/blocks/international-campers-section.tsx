@@ -48,11 +48,6 @@ const headingComponents: PortableTextComponents = {
   },
 };
 
-/** Format km with locale-appropriate thousands separator. */
-function formatKm(km: number): string {
-  return km.toLocaleString("en-CA");
-}
-
 export default function InternationalCampersSection({
   _key,
   dataAttribute,
@@ -81,8 +76,8 @@ export default function InternationalCampersSection({
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(720px_circle_at_72%_52%,rgba(82,112,51,.28),transparent_70%)]" />
 
       <div className="container-content relative py-section">
-        <div className="grid items-center gap-12 lg:grid-cols-[1fr_620px] lg:gap-[70px]">
-          {/* Copy column */}
+        {/* Row 1: Eyebrow + Heading | Description + Link */}
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-[70px]">
           <div>
             <p
               className={`text-eyebrow mb-5 text-campfire-amber ${styles.reveal}`}
@@ -92,93 +87,25 @@ export default function InternationalCampersSection({
             </p>
 
             <h2
-              className={`mb-5 font-display text-display-page font-extrabold leading-[1.02] tracking-tight text-birch-bark ${styles.reveal}`}
+              className={`font-display text-display-page font-extrabold leading-[1.02] tracking-tight text-birch-bark ${styles.reveal}`}
               data-sanity={dataAttribute?.("heading")}
               id={headingId}
             >
               <PortableText components={headingComponents} value={heading} />
             </h2>
+          </div>
 
+          <div className="lg:flex lg:flex-col lg:justify-end">
             <p
-              className={`mb-10 max-w-[500px] text-[17px] leading-relaxed text-birch-bark/75 ${styles.reveal}`}
+              className={`max-w-[500px] text-[17px] leading-relaxed text-birch-bark/75 ${styles.reveal}`}
               data-sanity={dataAttribute?.("description")}
             >
               {description}
             </p>
 
-            {/* Route list */}
-            <InternationalCampersGlobe routes={routes} destination={destination}>
-              <div className={styles.reveal}>
-                {/* List header */}
-                <div className="flex items-center gap-[9px] border-b border-birch-bark/[.22] pb-3">
-                  <span className="h-[7px] w-[7px] rounded-full bg-campfire-amber" />
-                  <span className="font-mono text-[11px] uppercase tracking-[.2em] text-birch-bark/55">
-                    Campers join us from
-                  </span>
-                  <span className="ml-auto font-mono text-[11px] uppercase tracking-[.2em] text-birch-bark/40">
-                    Distance to camp
-                  </span>
-                </div>
-
-                {/* City rows */}
-                <div role="list" aria-label="Camper origin cities">
-                  {routes.map((route) => (
-                    <button
-                      key={route.code}
-                      type="button"
-                      data-route={route.code}
-                      className={`group flex w-full items-center gap-4 border-b border-dashed border-birch-bark/[.13] rounded-xl px-3.5 py-3 -mx-3.5 transition-colors hover:bg-birch-bark/[.06] focus-visible:outline-2 focus-visible:outline-campfire-amber focus-visible:outline-offset-[-2px] ${styles.routeRow}`}
-                      role="listitem"
-                      aria-label={`${route.city}, ${route.country}${route.pickup ? " - pickup hub" : ""} - ${formatKm(route.km)} km to camp`}
-                    >
-                      {/* Airport code badge */}
-                      <span className={`shrink-0 rounded-lg border px-0 py-1.5 text-center font-mono text-[11.5px] font-bold tracking-[.1em] w-[58px] transition-colors ${
-                        route.pickup
-                          ? "border-campfire-amber/60 bg-campfire-amber/15 text-campfire-amber"
-                          : "border-birch-bark/20 bg-birch-bark/[.06] text-birch-bark/70 group-hover:border-campfire-amber/40 group-hover:text-campfire-amber"
-                      }`}>
-                        {route.code}
-                      </span>
-
-                      {/* City + country */}
-                      <span className="flex min-w-0 items-baseline gap-2.5">
-                        <span className="font-display text-[18.5px] font-bold text-birch-bark whitespace-nowrap">
-                          {route.city}
-                        </span>
-                        <span className="text-[13px] text-birch-bark/50 whitespace-nowrap">
-                          {route.country}
-                        </span>
-                      </span>
-
-                      {/* Distance */}
-                      <span className="ml-auto flex items-center gap-3.5">
-                        <span className={`font-mono text-[10.5px] tracking-[.14em] text-campfire-amber opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${styles.enRouteLabel}`}>
-                          EN ROUTE ✦
-                        </span>
-                        <span className="font-mono text-[12.5px] tracking-[.06em] text-birch-bark/65 tabular-nums">
-                          {formatKm(route.km)} KM
-                        </span>
-                      </span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Footer note */}
-                <p className="pt-4 font-mono text-[10.5px] uppercase tracking-[.16em] text-birch-bark/35">
-                  + every summer, a few flags we have never flown before
-                </p>
-
-                {/* Pickup hub note */}
-                <p className="mt-3 font-mono text-[10px] uppercase tracking-[.14em] text-birch-bark/30">
-                  ✦ Toronto Pearson is the supervised pickup hub
-                </p>
-              </div>
-            </InternationalCampersGlobe>
-
-            {/* Onward link */}
             {href && cleanLinkLabel && (
               <Link
-                className={`mt-10 inline-flex items-center gap-2 rounded-pill border border-dashed border-birch-bark/35 px-5 py-3 text-sm font-semibold text-birch-bark/65 transition-colors hover:border-campfire-amber hover:text-campfire-amber focus-ring motion-reduce:transition-none ${styles.reveal}`}
+                className={`mt-6 inline-flex w-auto self-start items-center gap-2 rounded-pill border border-dashed border-birch-bark/35 px-5 py-3 text-sm font-semibold text-birch-bark/65 transition-colors hover:border-campfire-amber hover:text-campfire-amber focus-ring motion-reduce:transition-none ${styles.reveal}`}
                 data-sanity={dataAttribute?.("linkLabel")}
                 href={href}
                 {...(stegaClean(link?.openInNewTab) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -188,9 +115,59 @@ export default function InternationalCampersSection({
               </Link>
             )}
           </div>
+        </div>
 
-          {/* Globe column - rendered by the client component via portal */}
-          <div data-globe-mount className="justify-self-end max-lg:order-first max-lg:justify-self-center" />
+        {/* Row 2: Route List | Globe */}
+        <div className="mt-12 lg:mt-16">
+          <InternationalCampersGlobe routes={routes} destination={destination}>
+            <div className={styles.reveal}>
+              {/* List header */}
+              <div className="-mx-3.5 flex items-center gap-[9px] border-b border-birch-bark/[.22] px-3.5 pb-3">
+                <span className="h-[7px] w-[7px] rounded-full bg-campfire-amber" />
+                <span className="font-mono text-[11px] uppercase tracking-[.2em] text-birch-bark/55">
+                  Campers join us from
+                </span>
+              </div>
+
+              {/* City rows */}
+              <div role="list" aria-label="Camper origin cities">
+                {routes.map((route) => (
+                  <button
+                    key={route.code}
+                    type="button"
+                    data-route={route.code}
+                    className={`group flex w-full items-center gap-4 border-b border-dashed border-birch-bark/[.13] px-3.5 py-3 -mx-3.5 transition-colors hover:bg-birch-bark/[.06] focus-visible:outline-2 focus-visible:outline-campfire-amber focus-visible:outline-offset-[-2px] ${styles.routeRow}`}
+                    role="listitem"
+                    aria-label={`${route.city}, ${route.country}${route.pickup ? " - pickup hub" : ""}`}
+                  >
+                    {/* Airport code badge */}
+                    <span className={`shrink-0 rounded-lg border px-0 py-1.5 text-center font-mono text-[11.5px] font-bold tracking-[.1em] w-[58px] transition-colors ${
+                      route.pickup
+                        ? "border-campfire-amber/60 bg-campfire-amber/15 text-campfire-amber"
+                        : "border-birch-bark/20 bg-birch-bark/[.06] text-birch-bark/70 group-hover:border-birch-bark/40"
+                    }`}>
+                      {route.code}
+                    </span>
+
+                    {/* City + country */}
+                    <span className="flex min-w-0 items-baseline gap-2.5 flex-wrap">
+                      <span className="font-display text-[18.5px] font-bold text-birch-bark">
+                        {route.city}
+                      </span>
+                      <span className="text-[13px] text-birch-bark/50">
+                        {route.country}
+                      </span>
+                    </span>
+
+                    {/* EN ROUTE indicator - hidden when list is narrow */}
+                    <span className={`ml-auto font-mono text-[10.5px] tracking-[.14em] text-campfire-amber opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${styles.enRouteLabel}`}>
+                      EN ROUTE ✦
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </InternationalCampersGlobe>
         </div>
       </div>
     </section>

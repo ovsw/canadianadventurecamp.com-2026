@@ -256,7 +256,7 @@ export default function InternationalCampersGlobe({
       // Tag label
       const tag = tagRef.current;
       if (tag) {
-        tag.style.transform = `translate(${(dp.x / 2).toFixed(1)}px,${(dp.y / 2 - 8).toFixed(1)}px)`;
+        tag.style.transform = `translate(calc(${(dp.x / 2).toFixed(1)}px - 50%),${(dp.y / 2 - 8).toFixed(1)}px)`;
         tag.style.opacity = Math.max(0, Math.min(1, (dp.z - 0.05) * 9)).toFixed(2);
       }
     },
@@ -501,14 +501,15 @@ export default function InternationalCampersGlobe({
   return (
     <div
       ref={sectionRef}
+      className="grid items-start gap-10 lg:grid-cols-[1fr_620px] lg:gap-10 xl:gap-[70px]"
       onClick={handleRouteClick}
       onMouseOver={handleRouteEnter}
       onMouseOut={handleRouteLeave}
       onKeyDown={handleKeyDown}
     >
-      {/* Globe visual area */}
+      {/* Globe visual */}
       {!globeFailed && (
-        <div className={`max-lg:order-first max-lg:mx-auto max-lg:mb-10 lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2 ${styles.globeContainer}`}>
+        <div className={`max-lg:order-first max-lg:mx-auto lg:order-last lg:justify-self-end ${styles.globeContainer}`}>
           <div className="relative w-[620px] h-[620px] max-w-full" style={{ aspectRatio: "1" }}>
             <canvas
               ref={canvasRef}
@@ -530,8 +531,8 @@ export default function InternationalCampersGlobe({
               style={{ willChange: "transform, opacity" }}
             >
               <div className="flex flex-col items-center">
-                <span className="whitespace-nowrap rounded-full bg-campfire-amber px-[11px] py-1.5 font-mono text-[10.5px] font-bold tracking-[.12em] text-pine-night shadow-[0_8px_22px_rgba(0,0,0,.45)]">
-                  ADVENTURE ISLAND · LAKE TEMAGAMI
+                <span className="rounded-full bg-campfire-amber px-[11px] py-1.5 text-center font-mono text-[10.5px] font-bold leading-[1.6] tracking-[.12em] text-pine-night shadow-[0_8px_22px_rgba(0,0,0,.45)]">
+                  ADVENTURE ISLAND<br />LAKE TEMAGAMI
                 </span>
                 <span className="h-[13px] w-[1.5px] bg-campfire-amber/75" />
               </div>
@@ -539,7 +540,7 @@ export default function InternationalCampersGlobe({
           </div>
           {/* Globe instructions */}
           <p className="mt-4 text-center font-mono text-[11px] tracking-[.18em] text-birch-bark/[.42]">
-            DRAG TO SPIN · SELECT A CITY TO FLY ITS ROUTE
+            DRAG TO SPIN
           </p>
           <noscript>
             <p className="mt-2 text-center font-mono text-[11px] tracking-[.14em] text-birch-bark/40">
@@ -549,7 +550,7 @@ export default function InternationalCampersGlobe({
         </div>
       )}
 
-      {/* Route list and copy (children from server component) */}
+      {/* Route list (children from server component) */}
       {children}
     </div>
   );
