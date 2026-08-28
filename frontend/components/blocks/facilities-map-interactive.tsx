@@ -196,16 +196,20 @@ export default function FacilitiesMapInteractive({
         y: placements[index]?.y ?? 0,
       });
     };
+    // Measuring walks the path ~800 times, so during a live window resize we
+    // wait for the size to settle instead of re-surveying on every tick.
+    let debounce: number | undefined;
     const queueMeasurement = () => {
-      if (frame !== undefined) cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(measure);
+      if (debounce !== undefined) window.clearTimeout(debounce);
+      debounce = window.setTimeout(measure, 150);
     };
     const observer = new ResizeObserver(queueMeasurement);
     if (path.ownerSVGElement) observer.observe(path.ownerSVGElement);
-    queueMeasurement();
+    frame = requestAnimationFrame(measure);
     return () => {
       observer.disconnect();
       if (frame !== undefined) cancelAnimationFrame(frame);
+      if (debounce !== undefined) window.clearTimeout(debounce);
     };
   }, [pathData, placements]);
 

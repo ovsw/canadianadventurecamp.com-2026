@@ -113,7 +113,7 @@ export default function HomeHero({
         {/* Badge */}
         {stegaClean(badge)?.trim() ? (
           <p
-            className="mb-6 inline-flex w-fit items-center gap-2.5 rounded-full border border-white/35 px-5 py-2 font-mono text-xs tracking-[0.18em] text-white/90 backdrop-blur-sm"
+            className="mb-6 inline-flex w-fit items-center gap-2.5 rounded-full border border-white/35 px-5 py-2 font-mono text-xs tracking-[0.18em] text-white/90"
             data-sanity={dataAttribute?.("badge")}
           >
             <span

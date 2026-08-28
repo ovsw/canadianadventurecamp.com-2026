@@ -54,10 +54,10 @@ export function SiteHeaderShell({
   return (
     <header
       className={cn(
-        "sticky top-0 z-60 w-full border-b backdrop-blur-md transition-transform duration-300 ease-reveal motion-reduce:transition-none",
+        "sticky top-0 z-60 w-full border-b transition-transform duration-300 ease-reveal motion-reduce:transition-none",
         theme === "dark"
-          ? "border-birch-bark/15 bg-pine-night/95 text-birch-bark"
-          : "border-pine-night/15 bg-birch-bark/95 text-pine-night",
+          ? "border-birch-bark/15 bg-pine-night text-birch-bark"
+          : "border-pine-night/15 bg-birch-bark text-pine-night",
         visible ? "translate-y-0" : "-translate-y-full",
       )}
       data-theme={theme}
