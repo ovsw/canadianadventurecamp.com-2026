@@ -43,6 +43,15 @@ exactly what makes handing off write access dangerous.
 Ovi gives standing permission for Sanity dataset mutations required by the
 current task.
 
+- This permission includes creating draft content, inserting Page Builder
+  sections, and migrating affected documents into changed schema shapes.
+- Sanity-backed work is complete only when required content exists in the
+  dataset in the shape the code expects. Use supplied or reference content;
+  when none exists, write practical draft content and identify it in the
+  handoff. Do not leave content entry or reshaping to Ovi.
+- For feature work, write to drafts. When a migration must update existing
+  stored shapes, preserve each document's draft or published state. Never
+  publish a draft unless Ovi asks.
 - Before the first write, name the project and dataset, create a timestamped
   backup, and verify the archive with `gzip -t`. If backup or verification
   fails, stop before writing.
@@ -111,7 +120,8 @@ This repository uses a single-context domain-doc layout. See `docs/agents/domain
 
 ### Page Builder work
 
-Before adding or changing a Page Builder section, read `docs/agents/page-builder.md`.
+Before adding or changing a Page Builder section, its fields, or its stored
+content shape, read `docs/agents/page-builder.md`.
 
 ### Development workflow
 
