@@ -34,6 +34,15 @@ type Props = {
 const DEG = Math.PI / 180;
 const TAU = Math.PI * 2;
 
+/** Canvas backing-store size. Matches the 620px CSS box at 1x; we accept the
+    slight softness on retina in exchange for 1/4 the pixels per frame. */
+const SIZE = 620;
+const CENTER = SIZE / 2;
+const RADIUS = 248;
+/** Segments per arc. Each segment is a separate stroke (its alpha depends on
+    globe depth), so this number is the per-arc draw-call count per frame. */
+const ARC_SEGMENTS = 32;
+
 
 /** Build arc points between a city and the destination on a great circle. */
 function buildArcPoints(
@@ -52,7 +61,7 @@ function buildArcPoints(
   const dot = Math.max(-1, Math.min(1, av[0] * dv[0] + av[1] * dv[1] + av[2] * dv[2]));
   const ang = Math.acos(dot);
   const h = 0.05 + 0.3 * (ang / Math.PI);
-  const N = 64;
+  const N = ARC_SEGMENTS;
   const pts: [number, number, number][] = [];
   for (let k = 0; k <= N; k++) {
     const tt = k / N;
@@ -79,7 +88,9 @@ export default function InternationalCampersGlobe({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const arcsCanvasRef = useRef<HTMLCanvasElement>(null);
   const tagRef = useRef<HTMLDivElement>(null);
-  const isVisible = useInView(sectionRef, { amount: 0.02 });
+  // Wake only once a meaningful slice of the section is on screen; at the old
+  // 2% threshold the globe burned GPU while barely peeking into the viewport.
+  const isVisible = useInView(sectionRef, { amount: 0.15 });
   const reducedMotion = useReducedMotion();
 
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
@@ -100,9 +111,9 @@ export default function InternationalCampersGlobe({
     globe: null as { destroy: () => void; toggle?: (shouldRender: boolean) => void } | null,
     globePaused: false,
     wRaf: null as number | null,
-    gcx: 620,
-    gcy: 620,
-    gR: 496,
+    gcx: CENTER,
+    gcy: CENTER,
+    gR: RADIUS,
     isVisible: false,
     reducedMotion: false,
   });
@@ -115,7 +126,7 @@ export default function InternationalCampersGlobe({
     const meta = routes.map((_, i) => ({
       per: 6.5 + (i % 4) * 0.9,
       t0: -(i * 1.7),
-      mid: arcPts[i][32] as [number, number, number],
+      mid: arcPts[i][ARC_SEGMENTS / 2] as [number, number, number],
     }));
     stateRef.current.routes = arcPts;
     stateRef.current.routeMeta = meta;
@@ -157,7 +168,7 @@ export default function InternationalCampersGlobe({
       const ctx = arcsCanvasRef.current?.getContext("2d");
       const s = stateRef.current;
       if (!ctx || !s.routes || !s.routeMeta) return;
-      ctx.clearRect(0, 0, 1240, 1240);
+      ctx.clearRect(0, 0, SIZE, SIZE);
 
       const F = s.focusIdx;
       const amber = (a: number) => `rgba(232,162,59,${a})`;
@@ -177,36 +188,55 @@ export default function InternationalCampersGlobe({
           const a = depth(Math.min(P[k].z, P[k + 1].z)) * base;
           if (a < 0.01) continue;
           ctx.strokeStyle = amber(a);
-          ctx.lineWidth = hot ? 4.5 : 2.6;
+          ctx.lineWidth = hot ? 2.25 : 1.3;
           ctx.beginPath();
           ctx.moveTo(P[k].x, P[k].y);
           ctx.lineTo(P[k + 1].x, P[k + 1].y);
           ctx.stroke();
         }
 
-        // Animated head (skip if reduced motion and no explicit focus)
+        // Animated head (skip if reduced motion and no explicit focus).
+        // The head position interpolates between segment joints so it glides
+        // instead of clicking forward one joint at a time.
         if (!s.reducedMotion || hot) {
           const tt = (((now - meta.t0) / meta.per) % 1 + 1) % 1;
-          const head = Math.floor(tt * (P.length - 1));
-          const tail = Math.max(0, head - 9);
+          const headF = tt * (P.length - 1);
+          const head = Math.floor(headF);
+          const frac = headF - head;
+          const next = P[Math.min(head + 1, P.length - 1)];
+          const hp = {
+            x: P[head].x + (next.x - P[head].x) * frac,
+            y: P[head].y + (next.y - P[head].y) * frac,
+            z: P[head].z + (next.z - P[head].z) * frac,
+          };
+          const tail = Math.max(0, head - 5);
           for (let k = tail; k < head; k++) {
             const f = (k - tail) / Math.max(1, head - tail);
             const a = depth(P[k + 1].z) * (dim ? 0.16 : 1) * f;
             if (a < 0.02) continue;
             ctx.strokeStyle = amber(a);
-            ctx.lineWidth = (hot ? 6.5 : 4.8) * (0.5 + 0.5 * f);
+            ctx.lineWidth = (hot ? 3.25 : 2.4) * (0.5 + 0.5 * f);
             ctx.beginPath();
             ctx.moveTo(P[k].x, P[k].y);
             ctx.lineTo(P[k + 1].x, P[k + 1].y);
             ctx.stroke();
           }
+          // Partial segment from the last joint to the interpolated head
+          const pa = depth(hp.z) * (dim ? 0.16 : 1);
+          if (pa >= 0.02 && frac > 0) {
+            ctx.strokeStyle = amber(pa);
+            ctx.lineWidth = hot ? 3.25 : 2.4;
+            ctx.beginPath();
+            ctx.moveTo(P[head].x, P[head].y);
+            ctx.lineTo(hp.x, hp.y);
+            ctx.stroke();
+          }
           // Head glow
-          const hp = P[head];
           const ha = depth(hp.z) * (dim ? 0.15 : 1);
           if (ha > 0.02) {
             ctx.fillStyle = `rgba(255,236,200,${ha})`;
             ctx.beginPath();
-            ctx.arc(hp.x, hp.y, hot ? 5 : 3.5, 0, TAU);
+            ctx.arc(hp.x, hp.y, hot ? 2.5 : 1.75, 0, TAU);
             ctx.fill();
           }
         }
@@ -217,16 +247,16 @@ export default function InternationalCampersGlobe({
         if (oa > 0.02) {
           ctx.fillStyle = cream(0.8 * oa * (dim ? 0.3 : 1));
           ctx.beginPath();
-          ctx.arc(o.x, o.y, 3, 0, TAU);
+          ctx.arc(o.x, o.y, 1.5, 0, TAU);
           ctx.fill();
           if (!s.reducedMotion) {
             const tt = (((now - meta.t0) / meta.per) % 1 + 1) % 1;
             if (tt < 0.12 && !dim) {
               const pr = tt / 0.12;
               ctx.strokeStyle = cream((1 - pr) * 0.55 * oa);
-              ctx.lineWidth = 2;
+              ctx.lineWidth = 1;
               ctx.beginPath();
-              ctx.arc(o.x, o.y, 4 + pr * 24, 0, TAU);
+              ctx.arc(o.x, o.y, 2 + pr * 12, 0, TAU);
               ctx.stroke();
             }
           }
@@ -239,15 +269,15 @@ export default function InternationalCampersGlobe({
       if (da > 0.02) {
         ctx.fillStyle = amber(da);
         ctx.beginPath();
-        ctx.arc(dp.x, dp.y, 5, 0, TAU);
+        ctx.arc(dp.x, dp.y, 2.5, 0, TAU);
         ctx.fill();
         if (!s.reducedMotion) {
           for (let j = 0; j < 2; j++) {
             const pr = ((now / 2.2 + j * 0.5) % 1 + 1) % 1;
             ctx.strokeStyle = amber((1 - pr) * 0.5 * da);
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 1.25;
             ctx.beginPath();
-            ctx.arc(dp.x, dp.y, 7 + pr * 36, 0, TAU);
+            ctx.arc(dp.x, dp.y, 3.5 + pr * 18, 0, TAU);
             ctx.stroke();
           }
         }
@@ -258,16 +288,19 @@ export default function InternationalCampersGlobe({
       if (tag) {
         // The anchor point is the stem tip, so translate to the projected
         // point exactly; the tag's own wrapper offsets it up and left.
-        tag.style.transform = `translate(${(dp.x / 2).toFixed(1)}px,${(dp.y / 2).toFixed(1)}px)`;
+        // The 620px box shrinks below 620px via max-w-full, so map canvas
+        // coordinates to displayed CSS pixels before positioning.
+        const scale = (canvasRef.current?.clientWidth ?? SIZE) / SIZE;
+        tag.style.transform = `translate(${(dp.x * scale).toFixed(1)}px,${(dp.y * scale).toFixed(1)}px)`;
         tag.style.opacity = Math.max(0, Math.min(1, (dp.z - 0.05) * 9)).toFixed(2);
       }
     },
     [project, destination],
   );
 
-  /** Step the globe camera and draw arcs. */
+  /** Step the globe camera and (on draw ticks) redraw arcs. */
   const stepWorld = useCallback(
-    () => {
+    (draw: boolean) => {
       const now = performance.now() / 1000;
       const s = stateRef.current;
       if (!s.dragging) {
@@ -286,17 +319,21 @@ export default function InternationalCampersGlobe({
           s.thetaCur += (0.3 - s.thetaCur) * 0.04;
         }
       }
-      if (s.isVisible) drawArcs(now);
+      if (draw && s.isVisible) drawArcs(now);
     },
     [drawArcs],
   );
 
-  // Render loop management
+  // Render loop management. The camera steps every frame (cheap math, keeps
+  // rotation speed constant) but the arcs canvas redraws only every other
+  // frame - 30fps is indistinguishable on these slow-moving trails.
   const startLoop = useCallback(() => {
     const s = stateRef.current;
     if (s.wRaf != null) return;
+    let drawTick = false;
     const loop = () => {
-      stepWorld();
+      drawTick = !drawTick;
+      stepWorld(drawTick);
       s.wRaf = requestAnimationFrame(loop);
     };
     loop();
@@ -383,9 +420,9 @@ export default function InternationalCampersGlobe({
       if (canvasRef.current !== cv) return;
       try {
         s.globe = m.default(cv, {
-          devicePixelRatio: 2,
-          width: 1240,
-          height: 1240,
+          devicePixelRatio: 1,
+          width: SIZE,
+          height: SIZE,
           phi: s.phiCur,
           theta: s.thetaCur,
           dark: 1,
@@ -410,13 +447,13 @@ export default function InternationalCampersGlobe({
       // Offline fallback: draw a simple sphere
       const g = cv.getContext("2d");
       if (g) {
-        g.clearRect(0, 0, 1240, 1240);
-        const grad = g.createRadialGradient(500, 460, 90, 620, 620, 540);
+        g.clearRect(0, 0, SIZE, SIZE);
+        const grad = g.createRadialGradient(250, 230, 45, CENTER, CENTER, 270);
         grad.addColorStop(0, "#3A4E24");
         grad.addColorStop(1, "#1B2611");
         g.fillStyle = grad;
         g.beginPath();
-        g.arc(620, 620, 496, 0, TAU);
+        g.arc(CENTER, CENTER, RADIUS, 0, TAU);
         g.fill();
       }
     });
@@ -517,16 +554,16 @@ export default function InternationalCampersGlobe({
             <canvas
               ref={canvasRef}
               aria-hidden="true"
-              width={1240}
-              height={1240}
+              width={SIZE}
+              height={SIZE}
               className="block h-full w-full cursor-grab"
               style={{ contain: "layout paint size" }}
             />
             <canvas
               ref={arcsCanvasRef}
               aria-hidden="true"
-              width={1240}
-              height={1240}
+              width={SIZE}
+              height={SIZE}
               className="pointer-events-none absolute inset-0 h-full w-full"
             />
             {/* Destination tag */}

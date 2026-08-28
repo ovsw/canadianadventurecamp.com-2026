@@ -16,6 +16,8 @@ import {
   CircleDot,
   MapPinned,
   MapPin,
+  CalendarRange,
+  CalendarCog,
 } from "lucide-react";
 import type { StructureResolver } from "sanity/structure";
 
@@ -123,6 +125,35 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList("facility")
                     .title("Facilities")
                     .defaultOrdering([{ field: "name", direction: "asc" }])
+                ),
+            ])
+        ),
+      S.listItem()
+        .title("Seasons")
+        .icon(CalendarRange)
+        .child(
+          S.list()
+            .title("Seasons")
+            .items([
+              S.listItem()
+                .title("Seasons Config")
+                .icon(CalendarCog)
+                .child(
+                  S.editor()
+                    .id("seasonsConfig")
+                    .schemaType("seasonsConfig")
+                    .documentId("seasonsConfig")
+                ),
+              S.listItem()
+                .title("Seasons List")
+                .icon(CalendarRange)
+                .schemaType("season")
+                .child(
+                  S.documentTypeList("season")
+                    .title("Seasons List")
+                    .defaultOrdering([
+                      { field: "startDate", direction: "asc" },
+                    ])
                 ),
             ])
         ),

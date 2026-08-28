@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Pause, Play } from "lucide-react";
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -63,7 +64,10 @@ function getRouteMeasurements(
       total: 0,
     };
   }
-  const sampleCount = Math.max(800, placements.length * 100);
+  // 300 samples across a 100x100 viewBox is ~0.3-unit resolution, plenty for
+  // both stop snapping and a smooth trail. Each sample is a getPointAtLength
+  // call, and this survey blocks the main thread at mount.
+  const sampleCount = Math.max(300, placements.length * 40);
   const samples: RouteMeasurements["samples"] = [];
 
   for (let index = 0; index <= sampleCount; index += 1) {
@@ -126,6 +130,9 @@ export default function FacilitiesMapInteractive({
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
+  const trailGlowRef = useRef<SVGPathElement>(null);
+  const trailProgressRef = useRef<SVGPathElement>(null);
+  const walkerRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef(0);
   const animationRef = useRef<number | undefined>(undefined);
   const walkerDistanceRef = useRef(0);
@@ -157,6 +164,27 @@ export default function FacilitiesMapInteractive({
   );
   const activePlacement = placements[activeIndex] ?? placements[0];
 
+  /** Write one in-flight animation frame straight to the DOM. Routing 60fps
+      updates through React re-rendered the whole map every frame; state is
+      synced once per hop instead, when the walker settles. */
+  const applyTrailFrame = useCallback(
+    (
+      measured: RouteMeasurements,
+      point: Point,
+      distance: number,
+    ) => {
+      const d = createFacilitiesMapTrailPath(measured.samples, distance) ?? "";
+      trailGlowRef.current?.setAttribute("d", d);
+      trailProgressRef.current?.setAttribute("d", d);
+      const walker = walkerRef.current;
+      if (walker) {
+        walker.style.left = `${point.x}%`;
+        walker.style.top = `${point.y}%`;
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
@@ -183,7 +211,6 @@ export default function FacilitiesMapInteractive({
   useLayoutEffect(() => {
     const path = pathRef.current;
     if (!path || !pathData) return;
-    let frame: number | undefined;
     const measure = () => {
       const measured = getRouteMeasurements(path, placements);
       const index = activeIndexRef.current;
@@ -196,17 +223,11 @@ export default function FacilitiesMapInteractive({
         y: placements[index]?.y ?? 0,
       });
     };
-    const queueMeasurement = () => {
-      if (frame !== undefined) cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(measure);
-    };
-    const observer = new ResizeObserver(queueMeasurement);
-    if (path.ownerSVGElement) observer.observe(path.ownerSVGElement);
-    queueMeasurement();
-    return () => {
-      observer.disconnect();
-      if (frame !== undefined) cancelAnimationFrame(frame);
-    };
+    // The path lives in a fixed 0-100 viewBox, so its measured geometry never
+    // changes when the element resizes. Survey once per path; no resize
+    // handling needed (re-measuring on resize used to block for ~350ms).
+    const frame = requestAnimationFrame(measure);
+    return () => cancelAnimationFrame(frame);
   }, [pathData, placements]);
 
   useEffect(() => {
@@ -251,15 +272,20 @@ export default function FacilitiesMapInteractive({
       const eased = 1 - Math.pow(1 - progress, 3);
       const distance = startDistance + (targetDistance - startDistance) * eased;
       walkerDistanceRef.current = distance;
-      setWalkerPoint(path.getPointAtLength(distance));
-      setTrailDistance(distance);
-      if (progress < 1) animationRef.current = requestAnimationFrame(animate);
+      const point = path.getPointAtLength(distance);
+      if (progress < 1) {
+        applyTrailFrame(routeMeasurements, point, distance);
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        setWalkerPoint(point);
+        setTrailDistance(distance);
+      }
     };
     animationRef.current = requestAnimationFrame(animate);
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [activeIndex, placements.length, reducedMotion, routeMeasurements]);
+  }, [activeIndex, applyTrailFrame, placements.length, reducedMotion, routeMeasurements]);
 
   const activate = (index: number) => {
     manuallyPausedRef.current = true;
@@ -338,12 +364,16 @@ export default function FacilitiesMapInteractive({
                   ref={pathRef}
                 />
                 <path className={styles.mapPathDashed} d={pathData} />
-                {trailPath ? (
-                  <>
-                    <path className={styles.mapPathGlow} d={trailPath} />
-                    <path className={styles.mapPathProgress} d={trailPath} />
-                  </>
-                ) : null}
+                <path
+                  className={styles.mapPathGlow}
+                  d={trailPath ?? ""}
+                  ref={trailGlowRef}
+                />
+                <path
+                  className={styles.mapPathProgress}
+                  d={trailPath ?? ""}
+                  ref={trailProgressRef}
+                />
               </svg>
             ) : null}
 
@@ -375,6 +405,7 @@ export default function FacilitiesMapInteractive({
 
             <div
               className={styles.walker}
+              ref={walkerRef}
               style={{ left: `${walkerPoint.x}%`, top: `${walkerPoint.y}%` }}
             >
               <span className={styles.walkerDot} />
@@ -438,7 +469,7 @@ export default function FacilitiesMapInteractive({
         <figure className={`top-0 right-0 ${styles.facilityPhoto}`}>
           <div className={styles.facilityPhotoImage}>
             <Image
-              alt={activePlacement.featuredImage.alt}
+              alt={activePlacement.featuredImage.alt || ""}
               blurDataURL={activePlacement.featuredImage.lqip}
               className={styles.facilityImage}
               fill

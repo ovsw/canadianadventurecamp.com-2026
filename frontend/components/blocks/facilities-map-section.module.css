@@ -142,7 +142,9 @@
   border-radius: 999px;
   padding: 8px 14px;
   letter-spacing: 0.14em;
-  backdrop-filter: blur(8px);
+  /* No backdrop blur (it repaints constantly over moving slides); the
+     near-opaque background keeps the text readable instead. */
+  background: rgb(13 18 8 / 85%);
 }
 
 .carouselButton {
@@ -157,12 +159,11 @@
   transform: translateY(-50%);
   border: 1px solid rgb(243 239 226 / 28%);
   border-radius: 50%;
-  background: rgb(13 18 8 / 42%);
+  background: rgb(13 18 8 / 70%);
   color: var(--color-birch-bark);
   cursor: pointer;
   font-size: 22px;
   line-height: 1;
-  backdrop-filter: blur(8px);
 }
 
 .carouselButton:hover,

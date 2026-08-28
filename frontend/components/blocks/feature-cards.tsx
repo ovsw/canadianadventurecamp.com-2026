@@ -217,7 +217,7 @@ export default function FeatureCards({
                           ) : null}
                           <span
                             aria-hidden="true"
-                            className="absolute left-5 top-5 rounded-pill bg-pine-night/55 px-3 py-1.5 font-mono text-xs tracking-[0.2em] text-birch-bark backdrop-blur-sm transition-colors duration-300 group-hover/card:text-campfire-amber"
+                            className="absolute left-5 top-5 rounded-pill bg-pine-night/80 px-3 py-1.5 font-mono text-xs tracking-[0.2em] text-birch-bark transition-colors duration-300 group-hover/card:text-campfire-amber"
                           >
                             {number}
                           </span>
