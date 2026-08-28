@@ -288,8 +288,10 @@ export default function InternationalCampersGlobe({
       if (tag) {
         // The anchor point is the stem tip, so translate to the projected
         // point exactly; the tag's own wrapper offsets it up and left.
-        // Canvas is 1x, so canvas coordinates equal CSS pixels.
-        tag.style.transform = `translate(${dp.x.toFixed(1)}px,${dp.y.toFixed(1)}px)`;
+        // The 620px box shrinks below 620px via max-w-full, so map canvas
+        // coordinates to displayed CSS pixels before positioning.
+        const scale = (canvasRef.current?.clientWidth ?? SIZE) / SIZE;
+        tag.style.transform = `translate(${(dp.x * scale).toFixed(1)}px,${(dp.y * scale).toFixed(1)}px)`;
         tag.style.opacity = Math.max(0, Math.min(1, (dp.z - 0.05) * 9)).toFixed(2);
       }
     },
