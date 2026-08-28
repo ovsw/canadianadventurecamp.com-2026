@@ -1,8 +1,23 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ComponentProps } from "react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import DatesRatesSection from "./dates-rates-section";
 import { getSessionEndDate } from "./dates-rates-model";
+
+// The rate count-up animates via requestAnimationFrame; force reduced motion
+// so switching lengths jumps straight to the new value in these tests.
+beforeEach(() => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn(() => ({
+      addEventListener: vi.fn(),
+      matches: true,
+      media: "(prefers-reduced-motion: reduce)",
+      onchange: null,
+      removeEventListener: vi.fn(),
+    })),
+  );
+});
 
 const heading = [
   {
@@ -20,6 +35,23 @@ const heading = [
         _type: "span" as const,
         marks: ["em"],
         text: "at a glance.",
+      },
+    ],
+    markDefs: null,
+    style: "normal" as const,
+  },
+];
+
+const introduction = [
+  {
+    _key: "intro",
+    _type: "block" as const,
+    children: [
+      {
+        _key: "intro-main",
+        _type: "span" as const,
+        marks: [],
+        text: "Every session is all-inclusive.",
       },
     ],
     markDefs: null,
@@ -78,55 +110,148 @@ const section = {
       ],
     },
   },
+  conditions: [
+    {
+      _key: "condition-deposits",
+      _type: "block" as const,
+      style: "normal" as const,
+      markDefs: null,
+      children: [
+        {
+          _key: "condition-deposits-1",
+          _type: "span" as const,
+          text: "Deposits ",
+          marks: [],
+        },
+        {
+          _key: "condition-deposits-2",
+          _type: "span" as const,
+          text: "fully refundable",
+          marks: ["strong"],
+        },
+        {
+          _key: "condition-deposits-3",
+          _type: "span" as const,
+          text: " until March 31, 2026.",
+          marks: [],
+        },
+      ],
+    },
+    {
+      _key: "condition-siblings",
+      _type: "block" as const,
+      style: "normal" as const,
+      markDefs: null,
+      children: [
+        {
+          _key: "condition-siblings-1",
+          _type: "span" as const,
+          text: "Siblings save automatically.",
+          marks: [],
+        },
+      ],
+    },
+  ],
   dataAttribute: (path) => `section:${path}`,
   detailsLinkText: "Full dates & rates",
+  eyebrow: "07 · DATES & RATES",
   heading,
-  introduction: "Every session is all-inclusive.",
+  introduction,
   seasonDataAttribute: (documentId, path) => `season:${documentId}:${path}`,
+  sessionIncludes: [
+    {
+      _key: "include-cabin",
+      _type: "includeItem" as const,
+      label: "Cabin on the island",
+    },
+    {
+      _key: "include-meals",
+      _type: "includeItem" as const,
+      label: "All meals & snacks",
+    },
+  ],
 } satisfies ComponentProps<typeof DatesRatesSection>;
 
 describe("DatesRatesSection", () => {
-  it("shows the Active Season, calculated dates, Rate, description, and availability", () => {
+  it("shows the eyebrow, heading, introduction, Rate, description, and availability", () => {
     render(<DatesRatesSection {...section} />);
 
+    expect(screen.getByText("07 · DATES & RATES")).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "Dates & rates, at a glance." }),
     ).toBeInTheDocument();
-    expect(screen.getByText("2027 SEASON")).toBeInTheDocument();
+    expect(
+      screen.getByText("Every session is all-inclusive."),
+    ).toBeInTheDocument();
     expect(screen.getByText("$3,900")).toBeInTheDocument();
     expect(
       screen.getByText("The shortest Adventure Island stay."),
     ).toBeInTheDocument();
     expect(screen.getByText("Jun 28-Jul 11")).toBeInTheDocument();
     expect(screen.getByText("Under 5 spots")).toBeInTheDocument();
-    expect(screen.getByText("Full")).toBeInTheDocument();
+    expect(screen.getAllByText("Full").length).toBeGreaterThan(0);
     expect(
       screen.getByRole("link", { name: "Full dates & rates" }),
     ).toHaveAttribute("href", "/dates-and-rates/");
   });
 
-  it("switches Session lengths", () => {
+  it("does not render the season label / date range line", () => {
     render(<DatesRatesSection {...section} />);
+
+    expect(screen.queryByText("2027 SEASON")).toBeNull();
+  });
+
+  it("renders session includes and conditions", () => {
+    render(<DatesRatesSection {...section} />);
+
+    expect(screen.getByText("Cabin on the island")).toBeInTheDocument();
+    expect(screen.getByText("All meals & snacks")).toBeInTheDocument();
+    expect(screen.getByText("fully refundable")).toBeInTheDocument();
+    expect(screen.getByText("fully refundable").tagName).toBe("STRONG");
+  });
+
+  it("switches Session lengths", () => {
+    const { container } = render(<DatesRatesSection {...section} />);
 
     fireEvent.click(screen.getByRole("tab", { name: "4 weeks" }));
 
     expect(screen.getByText("$7,200")).toBeInTheDocument();
     expect(screen.getByText("A full month at camp.")).toBeInTheDocument();
-    expect(screen.getByText("Jun 28-Jul 25")).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-sanity*="session-3"]'),
+    ).toHaveTextContent("Jun 28-Jul 25");
+  });
+
+  it("renders four stable session slots regardless of active length row count", () => {
+    const { container } = render(<DatesRatesSection {...section} />);
+
+    // Always 4 slots: 2 weeks has 2 sessions, so 2 slots collapse but stay
+    // rendered (last-known content, aria-hidden) rather than unmounting.
+    fireEvent.click(screen.getByRole("tab", { name: "4 weeks" }));
+
+    // 4 weeks has 1 session; its slot is visible, 3 collapse.
+    expect(container.querySelectorAll('[data-open]')).toHaveLength(4);
+    expect(
+      container.querySelectorAll('[data-open="true"]'),
+    ).toHaveLength(1);
   });
 
   it("does not link Full Sessions to enrollment", () => {
-    render(<DatesRatesSection {...section} />);
+    const { container } = render(<DatesRatesSection {...section} />);
 
-    expect(screen.getAllByRole("link", { name: /Enroll/ })).toHaveLength(2);
-    expect(screen.getByText("Jul 12-Jul 25").closest("a")).toBeNull();
+    const fullRow = container.querySelector('[data-sanity*="session-2"]');
+    expect(fullRow?.closest("a")).toHaveAttribute("aria-disabled", "true");
+    expect(fullRow?.closest("a")).toHaveAttribute("tabindex", "-1");
   });
 
   it("links section and Season fields back to Studio", () => {
     const { container } = render(<DatesRatesSection {...section} />);
 
+    expect(container.querySelector('[data-sanity="section:eyebrow"]')).not.toBeNull();
     expect(container.querySelector('[data-sanity="section:heading"]')).not.toBeNull();
     expect(container.querySelector('[data-sanity="section:introduction"]')).not.toBeNull();
+    expect(container.querySelector('[data-sanity="section:sessionIncludes"]')).not.toBeNull();
+    expect(container.querySelector('[data-sanity="section:conditions"]')).not.toBeNull();
     expect(
       container.querySelector('[data-sanity="season:season-2027:twoWeek.rate"]'),
     ).not.toBeNull();

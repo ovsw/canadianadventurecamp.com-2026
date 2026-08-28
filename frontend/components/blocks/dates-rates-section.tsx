@@ -2,12 +2,8 @@ import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
 import DatesRatesBrowser from "./dates-rates-browser";
-import {
-  type ActiveSeason,
-  formatShortDate,
-  prepareLengths,
-  seasonLabel,
-} from "./dates-rates-model";
+import styles from "./dates-rates-section.module.css";
+import { type ActiveSeason, prepareLengths } from "./dates-rates-model";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -33,21 +29,34 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="block font-accent text-[clamp(2.75rem,5vw,4.5rem)] font-semibold not-italic leading-none text-cedar">
+      <em className="font-accent text-[clamp(2.75rem,5vw,4.5rem)] font-semibold not-italic leading-none text-cedar">
         {children}
       </em>
     ),
   },
 };
 
+const introductionComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <p>{children}</p>,
+  },
+  marks: {
+    strong: ({ children }) => <strong>{children}</strong>,
+    em: ({ children }) => <em>{children}</em>,
+  },
+};
+
 export default function DatesRatesSection({
   _key,
   activeSeason,
+  conditions,
   dataAttribute,
   detailsLinkText,
+  eyebrow,
   heading,
   introduction,
   seasonDataAttribute,
+  sessionIncludes,
 }: DatesRatesSectionProps) {
   if (!activeSeason?._id || !activeSeason.startDate) return null;
 
@@ -58,65 +67,72 @@ export default function DatesRatesSection({
     seasonDataAttribute,
   });
   if (lengths.length === 0) return null;
+  if (!seasonStart) return null;
+  if (!sessionIncludes || sessionIncludes.length === 0) return null;
+  if (!conditions || conditions.length === 0) return null;
 
   const sectionId = `dates-rates-${stegaClean(_key)}`;
-  const cleanSeasonStart = seasonStart ?? "";
-  const seasonYear = new Date(`${cleanSeasonStart}T00:00:00.000Z`).getUTCFullYear();
+  const seasonYear = new Date(`${seasonStart}T00:00:00.000Z`).getUTCFullYear();
 
   return (
     <section
       aria-labelledby={sectionId}
-      className="bg-birch-bark px-content-x py-section text-pine-night"
+      className="relative z-0 -mt-11 rounded-t-[2.75rem] bg-birch-bark px-content-x py-section text-pine-night"
       id={`dates-rates-${stegaClean(_key)}`}
     >
       <div className="mx-auto max-w-[1320px]">
         <div className="mb-12 grid gap-8 lg:grid-cols-[1fr_400px] lg:items-end">
           <header>
-            <p className="mb-5 text-eyebrow text-cedar">Dates & rates</p>
+            <p
+              className={`mb-5 text-eyebrow text-cedar ${styles.reveal}`}
+              data-sanity={dataAttribute?.("eyebrow")}
+            >
+              {eyebrow}
+            </p>
             <h2
-              className="text-balance font-display text-headline font-extrabold"
+              className={`text-balance font-display text-headline font-extrabold ${styles.reveal}`}
               data-sanity={dataAttribute?.("heading")}
               id={sectionId}
             >
               <PortableText components={headingComponents} value={heading} />
             </h2>
           </header>
-          <div className="max-w-xl">
-            <p
-              className="text-pretty text-base/relaxed text-pine-night/72"
+          <div className={`max-w-xl ${styles.reveal}`}>
+            <div
+              className="text-pretty text-base/relaxed text-pine-night/72 [&_p]:m-0"
               data-sanity={dataAttribute?.("introduction")}
             >
-              {introduction}
-            </p>
+              <PortableText
+                components={introductionComponents}
+                value={introduction}
+              />
+            </div>
             <a
-              className="focus-ring mt-4 inline-flex w-fit items-center gap-2 border-b-2 border-campfire-amber pb-1 font-semibold text-cedar transition-colors hover:text-cedar-deep motion-reduce:transition-none"
+              className={`focus-ring mt-4 inline-flex w-fit items-center gap-[9px] border-b-2 border-campfire-amber pb-1 font-semibold text-cedar transition-colors hover:text-cedar-deep motion-reduce:transition-none ${styles.detailsLink}`}
               data-sanity={dataAttribute?.("detailsLinkText")}
               href={detailsHref}
             >
               {detailsLinkText}
-              <span aria-hidden="true">-&gt;</span>
+              <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </div>
 
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <p className="text-label text-pine-night/55">
-            {seasonLabel(cleanSeason.name, cleanSeasonStart)}
-          </p>
-          <p className="text-label text-pine-night/35">
-            {formatShortDate(cleanSeasonStart)} to{" "}
-            {formatShortDate(
-              new Date(
-                Date.parse(`${cleanSeasonStart}T00:00:00.000Z`) +
-                  55 * 24 * 60 * 60 * 1000,
-              )
-                .toISOString()
-                .slice(0, 10),
-            )}
-          </p>
-        </div>
-
-        <DatesRatesBrowser lengths={lengths} seasonYear={seasonYear} />
+        <DatesRatesBrowser
+          conditions={conditions}
+          conditionsDataAttribute={dataAttribute?.("conditions")}
+          lengths={lengths}
+          seasonStart={seasonStart}
+          seasonYear={seasonYear}
+          sessionIncludes={sessionIncludes.map((item) => ({
+            _key: item._key,
+            label: item.label,
+            dataSanity: dataAttribute?.(
+              `sessionIncludes[_key=="${item._key}"]`,
+            ),
+          }))}
+          sessionIncludesDataAttribute={dataAttribute?.("sessionIncludes")}
+        />
       </div>
     </section>
   );

@@ -14,9 +14,12 @@ const seasonConfigFields = `
 // @sanity-typegen-ignore
 export const datesRatesSectionQuery = groq`
   _type == "datesRatesSection" => {
+    eyebrow,
     heading,
     introduction,
     detailsLinkText,
+    sessionIncludes,
+    conditions,
     "activeSeason": *[_id == "seasonsConfig" && _type == "seasonsConfig"][0].activeSeason->{
       _id,
       name,

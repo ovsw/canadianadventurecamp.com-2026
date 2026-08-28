@@ -49,11 +49,23 @@ export type PreparedLength = LengthOption & {
   descriptionAttribute?: string;
   rate: string;
   rateAttribute?: string;
+  rateValue: number;
   rows: PreparedSessionRow[];
+};
+
+export type SeasonTick = {
+  date: string;
+  label: string;
 };
 
 export const enrollmentHref =
   "https://canadianadventurecamp.campbrainregistration.com/";
+
+/** Maximum sessions any length option can have; drives the stable slot count. */
+export const maxSessionRows = 4;
+
+/** Season length in days, used for calendar bar positioning and tick dates. */
+export const seasonLengthDays = 55;
 
 export const lengthOptions = [
   { key: "twoWeek", label: "2 weeks", weeks: 2 },
@@ -90,13 +102,14 @@ export function formatShortDate(value: string) {
   }).format(new Date(time));
 }
 
-function formatRate(rate: number | null | undefined) {
-  if (typeof rate !== "number") return "";
-  return new Intl.NumberFormat("en-CA", {
-    currency: "CAD",
-    maximumFractionDigits: 0,
-    style: "currency",
-  }).format(rate);
+const rateFormatter = new Intl.NumberFormat("en-CA", {
+  currency: "CAD",
+  maximumFractionDigits: 0,
+  style: "currency",
+});
+
+export function formatRate(rate: number) {
+  return rateFormatter.format(rate);
 }
 
 function dayOffset(startDate: string, value: string) {
@@ -116,13 +129,18 @@ export function normalizeStatus(status: string | null | undefined): Availability
   return status === "limited" || status === "full" ? status : "open";
 }
 
-export function seasonLabel(name: string | null | undefined, startDate: string) {
-  if (name?.trim()) return name.trim().toUpperCase();
-  return `${new Date(`${startDate}T00:00:00.000Z`).getUTCFullYear()} SEASON`;
-}
-
 export function getSeasonConfig(season: ActiveSeason, key: LengthKey) {
   return season[key];
+}
+
+/** Month tick labels across the calendar track: season start + 0/14/28/42 days, plus the season end. */
+export function getSeasonTicks(seasonStart: string): SeasonTick[] {
+  const offsets = [0, 14, 28, 42, seasonLengthDays];
+  return offsets.flatMap((offset) => {
+    const date = addDays(seasonStart, offset);
+    if (!date) return [];
+    return [{ date, label: formatShortDate(date).toUpperCase() }];
+  });
 }
 
 export function prepareLengths({
@@ -137,10 +155,12 @@ export function prepareLengths({
 
   return lengthOptions.flatMap((option) => {
     const config = getSeasonConfig(season, option.key);
-    const rate = formatRate(config?.rate);
+    const rateValue = config?.rate;
+    if (typeof rateValue !== "number") return [];
+    const rate = formatRate(rateValue);
     const description = config?.description?.trim();
     const sessions = config?.sessions ?? [];
-    if (!rate || !description || sessions.length === 0) return [];
+    if (!description || sessions.length === 0) return [];
 
     const rows = sessions.flatMap((session) => {
       const startDate = session.startDate;
@@ -163,22 +183,17 @@ export function prepareLengths({
             season._id,
             `${path}.availabilityStatus`,
           ),
-          barClass:
-            status === "full"
-              ? "bg-ember-red/70"
-              : status === "limited"
-                ? "bg-campfire-amber"
-                : "bg-cedar",
+          barClass: status === "full" ? "stripedFull" : "bg-cedar",
           dates: `${formatShortDate(startDate)}-${formatShortDate(endDate)}`,
           isFull: status === "full",
           label,
-          left: (dayOffset(seasonStart, startDate) / 56) * 100,
+          left: (dayOffset(seasonStart, startDate) / seasonLengthDays) * 100,
           startDateAttribute: seasonDataAttribute?.(
             season._id,
             `${path}.startDate`,
           ),
           status,
-          width: (option.weeks * 7 / 56) * 100,
+          width: ((option.weeks * 7) / seasonLengthDays) * 100,
         },
       ];
     });
@@ -195,6 +210,7 @@ export function prepareLengths({
         ),
         rate,
         rateAttribute: seasonDataAttribute?.(season._id, `${option.key}.rate`),
+        rateValue,
         rows,
       },
     ];
