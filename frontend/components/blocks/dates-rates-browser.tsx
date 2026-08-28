@@ -34,12 +34,12 @@ function renderConditionBlock(block: ConditionBlock) {
 
 function availabilityClass(status: string) {
   if (status === "full") {
-    return "border-pine-night bg-pine-night text-birch-bark/92";
+    return "text-ember-red";
   }
   if (status === "limited") {
-    return "border-campfire-amber bg-campfire-amber text-pine-night";
+    return "text-campfire-amber-deep";
   }
-  return "border-pine-night/28 bg-transparent text-pine-night/70";
+  return "text-pine-night/60";
 }
 
 /** Animates the displayed rate from its previous value to the active length's rate over ~620ms. */
@@ -123,7 +123,7 @@ export default function DatesRatesBrowser({
   });
 
   return (
-    <div className="rounded-[1.75rem] border border-pine-night/10 bg-birch-bark-bright p-5 shadow-[0_30px_70px_rgba(22,32,15,0.12)] md:p-8">
+    <div className="md:rounded-[1.75rem] md:border md:border-pine-night/10 md:bg-birch-bark-bright md:p-8 md:shadow-[0_30px_70px_rgba(22,32,15,0.12)]">
       <div className="flex flex-col lg:block">
       <div className="max-lg:contents lg:mb-9 lg:flex lg:flex-wrap lg:items-center lg:gap-3">
         <div
@@ -187,8 +187,8 @@ export default function DatesRatesBrowser({
         </aside>
 
         <div className="order-3 mt-6 flex flex-col lg:order-none lg:mt-0">
-          <div className="mb-3 grid grid-cols-[1fr_auto] gap-3 md:grid-cols-[7.5rem_1fr_8rem] md:gap-3.5">
-            <span className="text-label self-end text-pine-night/45">
+          <div className="mb-3 hidden gap-3 md:grid md:grid-cols-[7.5rem_1fr_8rem] md:gap-3.5">
+            <span className="text-label hidden self-end text-pine-night/45 md:block">
               Session dates
             </span>
             <span className="relative hidden h-[15px] md:block">
@@ -211,7 +211,7 @@ export default function DatesRatesBrowser({
                 </span>
               ))}
             </span>
-            <span className="text-label justify-self-end self-end text-pine-night/45">
+            <span className="text-label hidden justify-self-end self-end text-pine-night/45 md:block">
               Availability
             </span>
           </div>
@@ -222,7 +222,8 @@ export default function DatesRatesBrowser({
               className="pointer-events-none absolute inset-0 hidden md:grid md:grid-cols-[7.5rem_1fr_8rem] md:gap-3.5"
             >
               <span />
-              <span className="relative block">
+              {/* Inset matches the bar track padding so dividers align with bar edges. */}
+              <span className="relative mx-[5px] block">
                 <span className="absolute inset-y-0 left-1/4 border-l border-dashed border-pine-night/14" />
                 <span className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14" />
                 <span className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14" />
@@ -241,7 +242,7 @@ export default function DatesRatesBrowser({
                   <a
                     aria-disabled={!interactive}
                     aria-hidden={!isOpenSlot}
-                    className={`${styles.row} grid h-full grid-cols-[1fr_auto] gap-3 py-[9px] no-underline md:grid-cols-[7.5rem_1fr_8rem] md:items-center md:gap-3.5 ${interactive ? "" : "pointer-events-none"}`}
+                    className={`${styles.row} grid h-full grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2 pb-1.5 pt-4 no-underline md:grid-cols-[7.5rem_1fr_8rem] md:gap-3.5 md:py-[9px] ${interactive ? "" : "pointer-events-none"}`}
                     data-open={interactive}
                     href={enrollmentHref}
                     rel="noreferrer"
@@ -254,12 +255,19 @@ export default function DatesRatesBrowser({
                     >
                       {row.dates}
                     </span>
-                    <span className="relative order-3 block h-10 rounded-pill bg-pine-night/5 md:order-none">
-                      <span
-                        className={`${styles.bar} ${isFull ? styles.barFull : ""}`}
-                        data-sanity={row.availabilityStatusAttribute}
-                        style={{ left: `${row.left}%`, width: `${row.width}%` }}
-                      />
+                    <span className="relative order-3 col-span-2 block h-10 overflow-hidden rounded-pill bg-pine-night/5 md:order-none md:col-span-1">
+                      {/* Padded coordinate system: bars at 0%/100% keep a 5px gap from the track ends. */}
+                      <span className="absolute inset-y-0 left-[5px] right-[5px] block">
+                        {/* Mobile dividers: the desktop overlay grid is hidden below md. */}
+                        <span aria-hidden="true" className="absolute inset-y-0 left-1/4 border-l border-dashed border-pine-night/14 md:hidden" />
+                        <span aria-hidden="true" className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14 md:hidden" />
+                        <span aria-hidden="true" className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14 md:hidden" />
+                        <span
+                          className={`${styles.bar} ${isFull ? styles.barFull : ""} ${row.status === "limited" ? styles.barLimited : ""}`}
+                          data-sanity={row.availabilityStatusAttribute}
+                          style={{ left: `${row.left}%`, width: `${row.width}%` }}
+                        />
+                      </span>
                       {interactive ? (
                         <span
                           className={`${styles.enrollHint} absolute inset-y-0 right-4 hidden items-center font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-cedar md:inline-flex`}
@@ -269,7 +277,7 @@ export default function DatesRatesBrowser({
                       ) : null}
                     </span>
                     <span
-                      className={`inline-flex items-center gap-[7px] justify-self-end whitespace-nowrap rounded-pill border px-3 py-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] transition-colors ${availabilityClass(row.status)}`}
+                      className={`order-2 inline-flex items-center gap-[7px] justify-self-start whitespace-nowrap font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] md:order-none md:justify-self-end ${availabilityClass(row.status)}`}
                       data-sanity={row.availabilityNoteAttribute}
                     >
                       {row.status === "limited" ? (

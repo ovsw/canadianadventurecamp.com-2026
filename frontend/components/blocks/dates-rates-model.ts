@@ -1,4 +1,5 @@
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
+import { stegaClean } from "next-sanity";
 
 export type LengthKey = "twoWeek" | "fourWeek" | "sixWeek" | "eightWeek";
 export type AvailabilityStatus = "open" | "limited" | "full";
@@ -55,8 +56,8 @@ export const enrollmentHref =
 /** Maximum sessions any length option can have; drives the stable slot count. */
 export const maxSessionRows = 4;
 
-/** Season length in days, used for calendar bar positioning and tick dates. */
-export const seasonLengthDays = 55;
+/** Season length in days (four back-to-back 2-week sessions), used for calendar bar positioning and tick dates. */
+export const seasonLengthDays = 56;
 
 export const lengthOptions = [
   { key: "twoWeek", label: "2 weeks", weeks: 2 },
@@ -124,9 +125,9 @@ export function getSeasonConfig(season: ActiveSeason, key: LengthKey) {
   return season[key];
 }
 
-/** Month tick labels across the calendar track: season start + 0/14/28/42 days, plus the season end. */
+/** Month tick labels across the calendar track: session start days, plus the season's last day at the right edge. */
 export function getSeasonTicks(seasonStart: string): SeasonTick[] {
-  const offsets = [0, 14, 28, 42, seasonLengthDays];
+  const offsets = [0, 14, 28, 42, seasonLengthDays - 1];
   return offsets.flatMap((offset) => {
     const date = addDays(seasonStart, offset);
     if (!date) return [];
@@ -159,7 +160,9 @@ export function prepareLengths({
       const endDate = getSessionEndDate(startDate, option.weeks);
       if (!endDate) return [];
 
-      const status = normalizeStatus(session.availabilityStatus);
+      // availabilityStatus carries invisible stega characters in preview,
+      // so clean it before comparing literals.
+      const status = normalizeStatus(stegaClean(session.availabilityStatus));
       const label = session.availabilityNote?.trim() || availabilityLabel(status);
       const path = `${option.key}.sessions[_key=="${session._key}"]`;
 
@@ -178,7 +181,10 @@ export function prepareLengths({
           dates: `${formatShortDate(startDate)}-${formatShortDate(endDate)}`,
           isFull: status === "full",
           label,
-          left: (dayOffset(seasonStart, startDate) / seasonLengthDays) * 100,
+          left: Math.min(
+            (dayOffset(seasonStart, startDate) / seasonLengthDays) * 100,
+            100 - ((option.weeks * 7) / seasonLengthDays) * 100,
+          ),
           startDateAttribute: seasonDataAttribute?.(
             season._id,
             `${path}.startDate`,

@@ -87,6 +87,10 @@
   }
 }
 
+.barLimited {
+  background: var(--color-campfire-amber);
+}
+
 .barFull {
   background: repeating-linear-gradient(
     135deg,
@@ -121,6 +125,11 @@
 .row[data-open="true"]:hover .bar,
 .row[data-open="true"]:focus-visible .bar {
   background: var(--color-campfire-amber);
+}
+
+.row[data-open="true"]:hover .barLimited,
+.row[data-open="true"]:focus-visible .barLimited {
+  background: var(--color-campfire-amber-deep);
 }
 
 .row[data-open="true"]:hover .enrollHint,
