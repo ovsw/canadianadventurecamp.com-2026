@@ -88,7 +88,9 @@ export default function InternationalCampersGlobe({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const arcsCanvasRef = useRef<HTMLCanvasElement>(null);
   const tagRef = useRef<HTMLDivElement>(null);
-  const isVisible = useInView(sectionRef, { amount: 0.02 });
+  // Wake only once a meaningful slice of the section is on screen; at the old
+  // 2% threshold the globe burned GPU while barely peeking into the viewport.
+  const isVisible = useInView(sectionRef, { amount: 0.15 });
   const reducedMotion = useReducedMotion();
 
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
@@ -275,9 +277,9 @@ export default function InternationalCampersGlobe({
     [project, destination],
   );
 
-  /** Step the globe camera and draw arcs. */
+  /** Step the globe camera and (on draw ticks) redraw arcs. */
   const stepWorld = useCallback(
-    () => {
+    (draw: boolean) => {
       const now = performance.now() / 1000;
       const s = stateRef.current;
       if (!s.dragging) {
@@ -296,17 +298,21 @@ export default function InternationalCampersGlobe({
           s.thetaCur += (0.3 - s.thetaCur) * 0.04;
         }
       }
-      if (s.isVisible) drawArcs(now);
+      if (draw && s.isVisible) drawArcs(now);
     },
     [drawArcs],
   );
 
-  // Render loop management
+  // Render loop management. The camera steps every frame (cheap math, keeps
+  // rotation speed constant) but the arcs canvas redraws only every other
+  // frame - 30fps is indistinguishable on these slow-moving trails.
   const startLoop = useCallback(() => {
     const s = stateRef.current;
     if (s.wRaf != null) return;
+    let drawTick = false;
     const loop = () => {
-      stepWorld();
+      drawTick = !drawTick;
+      stepWorld(drawTick);
       s.wRaf = requestAnimationFrame(loop);
     };
     loop();
