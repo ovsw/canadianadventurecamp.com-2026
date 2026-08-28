@@ -256,7 +256,9 @@ export default function InternationalCampersGlobe({
       // Tag label
       const tag = tagRef.current;
       if (tag) {
-        tag.style.transform = `translate(calc(${(dp.x / 2).toFixed(1)}px - 50%),${(dp.y / 2 - 8).toFixed(1)}px)`;
+        // The anchor point is the stem tip, so translate to the projected
+        // point exactly; the tag's own wrapper offsets it up and left.
+        tag.style.transform = `translate(${(dp.x / 2).toFixed(1)}px,${(dp.y / 2).toFixed(1)}px)`;
         tag.style.opacity = Math.max(0, Math.min(1, (dp.z - 0.05) * 9)).toFixed(2);
       }
     },
@@ -530,11 +532,22 @@ export default function InternationalCampersGlobe({
               className="pointer-events-none absolute left-0 top-0 opacity-0"
               style={{ willChange: "transform, opacity" }}
             >
-              <div className="flex flex-col items-center">
-                <span className="rounded-full bg-campfire-amber px-[11px] py-1.5 text-center font-mono text-[10.5px] font-bold leading-[1.6] tracking-[.12em] text-pine-night shadow-[0_8px_22px_rgba(0,0,0,.45)]">
-                  ADVENTURE ISLAND<br />LAKE TEMAGAMI
-                </span>
-                <span className="h-[13px] w-[1.5px] bg-campfire-amber/75" />
+              <div className="-translate-x-1/2 -translate-y-full">
+                {/* Counter-scaled on mobile from bottom center, so the stem tip
+                    stays pinned to the island while the globe box shrinks. */}
+                <div
+                  className={`flex flex-col items-center ${styles.islandTagScale}`}
+                >
+                  {/* Cloned per-line strips, matching the camp map markers: the
+                      outer span is the block holder, the inner one repeats its
+                      background on each line. */}
+                  <span className="block text-center font-mono text-[10px] font-bold leading-[1.5] tracking-[.12em] [filter:drop-shadow(0_6px_18px_rgba(0,0,0,.4))]">
+                    <span className="bg-campfire-amber px-[11px] py-1 text-pine-night [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
+                      ADVENTURE ISLAND<br />LAKE TEMAGAMI
+                    </span>
+                  </span>
+                  <span className="h-[13px] w-[1.5px] bg-campfire-amber/75" />
+                </div>
               </div>
             </div>
           </div>

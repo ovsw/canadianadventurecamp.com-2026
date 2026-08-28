@@ -1,22 +1,5 @@
 import { defineField } from "sanity";
 
-export const generalPageBuilderBlockTypes = [
-  "hero",
-  "richTextBlock",
-  "benefitCards",
-  "storyFeature",
-  "imageCollageFeature",
-  "featureCards",
-  "activitySchedule",
-  "facilitiesMapSection",
-  "stackedFeatureRows",
-  "internationalCampersSection",
-  "latestArticles",
-  "faqAccordion",
-  "teamMembers",
-  "ctaBanner",
-] as const;
-
 export const contentPageBuilderBlockTypes = [
   "richTextBlock",
   "benefitCards",
