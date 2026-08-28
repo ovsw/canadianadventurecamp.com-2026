@@ -201,7 +201,7 @@ export default function FacilitiesMapInteractive({
     let debounce: number | undefined;
     const queueMeasurement = () => {
       if (debounce !== undefined) window.clearTimeout(debounce);
-      debounce = window.setTimeout(measure, 150);
+      debounce = window.setTimeout(measure, 1000);
     };
     const observer = new ResizeObserver(queueMeasurement);
     if (path.ownerSVGElement) observer.observe(path.ownerSVGElement);
