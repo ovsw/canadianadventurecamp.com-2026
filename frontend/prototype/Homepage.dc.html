@@ -1127,9 +1127,14 @@
           <canvas ref="{{ globeRef }}" width="1240" height="1240" style="width: 620px; height: 620px; display: block; cursor: grab; contain: layout paint size;"></canvas>
           <canvas ref="{{ arcsRef }}" width="1240" height="1240" style="position: absolute; inset: 0; width: 620px; height: 620px; pointer-events: none;"></canvas>
           <div ref="{{ tagRef }}" style="position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none; will-change: transform, opacity;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 0; transform: translate(-50%, -100%);">
-              <span style="font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; color: #16200F; background: #E8A23B; padding: 6px 11px; border-radius: 999px; box-shadow: 0 8px 22px rgba(0,0,0,.45); white-space: nowrap;">ADVENTURE ISLAND · LAKE TEMAGAMI</span>
-              <span style="width: 1.5px; height: 13px; background: rgba(232,162,59,.75);"></span>
+            <div style="transform: translate(-50%, -100%);">
+              <!-- Scaled (mobile counter-scale) from bottom center so the stem tip stays pinned to the island point. -->
+              <div data-tagscale="" style="display: flex; flex-direction: column; align-items: center; gap: 0; transform-origin: 50% 100%;">
+                <!-- Map-marker label technique: cloned per-line strips, square corners, tight padding.
+                     Outer span is the block holder; the inline span clones its background per line. -->
+                <span style="display: block; font-family: ui-monospace, Menlo, monospace; font-size: 10px; font-weight: 700; letter-spacing: .12em; line-height: 1.5; text-align: center; white-space: nowrap; filter: drop-shadow(0 6px 18px rgba(0,0,0,.4));"><span style="color: #16200F; background: #E8A23B; padding: 4px 11px; box-decoration-break: clone; -webkit-box-decoration-break: clone;">ADVENTURE ISLAND<br>LAKE TEMAGAMI</span></span>
+                <span style="width: 1.5px; height: 13px; background: rgba(232,162,59,.75);"></span>
+              </div>
             </div>
           </div>
         </div>
@@ -1831,7 +1836,7 @@ class Component extends DCLogic {
     }
     const tag = this._tagRef.current;
     if (tag) {
-      tag.style.transform = "translate(" + (dp.x / 2).toFixed(1) + "px," + (dp.y / 2 - 8).toFixed(1) + "px)";
+      tag.style.transform = "translate(" + (dp.x / 2).toFixed(1) + "px," + (dp.y / 2).toFixed(1) + "px)";
       tag.style.opacity = Math.max(0, Math.min(1, (dp.z - 0.05) * 9)).toFixed(2);
     }
   }

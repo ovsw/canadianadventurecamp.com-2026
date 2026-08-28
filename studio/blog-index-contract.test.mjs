@@ -30,6 +30,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
     "activitySchedule",
     "facilitiesMapSection",
     "stackedFeatureRows",
+    "internationalCampersSection",
     "latestArticles",
     "faqAccordion",
     "teamMembers",

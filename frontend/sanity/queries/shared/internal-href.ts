@@ -22,6 +22,14 @@ export const internalReferenceHref = groq`select(
   defined(internal->slug.current) => "/" + array::join(string::split(internal->slug.current, "/")[@ != ""], "/")
 )`;
 
+export const linkInternalHref = groq`select(
+  link.internal->_id == "homePage" || link.internal->_type == "homePage" => "/",
+  link.internal->_id == "blogIndex" || link.internal->_type == "blogIndex" => "/blog",
+  link.internal->_type == "post" && defined(link.internal->slug.current) => "/blog/" + array::join(string::split(link.internal->slug.current, "/")[@ != ""], "/"),
+  link.internal->_type == "category" && defined(link.internal->slug.current) => "/blog/category/" + array::join(string::split(link.internal->slug.current, "/")[@ != ""], "/"),
+  defined(link.internal->slug.current) => "/" + array::join(string::split(link.internal->slug.current, "/")[@ != ""], "/")
+)`;
+
 export const legacyInternalLinkHref = groq`select(
   @.internalLink->_id == "homePage" || @.internalLink->_type == "homePage" => "/",
   @.internalLink->_type == "post" && defined(@.internalLink->slug.current) => "/blog/" + array::join(string::split(@.internalLink->slug.current, "/")[@ != ""], "/"),

@@ -9,6 +9,7 @@ export const contentPageBuilderBlockTypes = [
   "activitySchedule",
   "facilitiesMapSection",
   "stackedFeatureRows",
+  "internationalCampersSection",
   "latestArticles",
   "faqAccordion",
   "teamMembers",

@@ -96,8 +96,10 @@
     margin-bottom: calc(var(--gw) - 620px);
   }
   #world [data-r="globe"] canvas { touch-action: pan-y; }
-  /* The island tag rides inside the scaled box; counter-scale it so the label stays legible */
-  #world [data-r="globe"] > div:first-child > div > div { scale: calc(620 / var(--gwn)); transform-origin: 0 0; }
+  /* The island tag rides inside the scaled box; counter-scale it so the label stays legible.
+     Scale the inner wrapper only, from its bottom center, so the stem tip stays pinned
+     to the island point while the anchoring translate on its parent is untouched. */
+  #world [data-r="globe"] [data-tagscale] { scale: calc(620 / var(--gwn)); }
 }
 
 @media (max-width: 639px) {
@@ -118,6 +120,7 @@
   #world { --gw: min(620px, 100vw); }
   #world [data-r="globe"] { margin: 0 calc(-1 * var(--gutter)); }
   #world [data-r="globe"] > div:last-child { margin-top: 0 !important; padding: 0 var(--gutter); font-size: 11px !important; letter-spacing: .14em !important; line-height: 1.6; }
-  /* Island tag wraps to two lines so it stays inside the narrow box */
-  #world [data-r="globe"] > div:first-child > div > div > span:first-child { white-space: normal !important; max-width: 150px; text-align: center; line-height: 1.45; border-radius: 12px !important; }
+  /* The label's line breaks are hard-coded, so it cannot reflow on its own.
+     Let it wrap as a last resort if the copy ever outgrows the narrow globe box. */
+  #world [data-r="globe"] [data-tagscale] > span:first-child { white-space: normal !important; max-width: 150px; }
 }
