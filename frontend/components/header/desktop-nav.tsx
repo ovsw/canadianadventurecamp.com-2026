@@ -27,6 +27,7 @@ const SINGLE_COLUMN_PANEL_WIDTH = 380;
 const TWO_COLUMN_PANEL_WIDTH = 740;
 const TWO_COLUMN_MIN_LINKS = 6;
 const FIRST_COLUMN_LINKS = 5;
+const VIEWPORT_EDGE_GAP = 16;
 const CLOSE_DELAY_MS = 120;
 
 type PanelPlacement = {
@@ -194,9 +195,13 @@ export function DesktopNav({
       const navBox = nav.getBoundingClientRect();
       const triggerBox = trigger.getBoundingClientRect();
       const triggerCenter = triggerBox.left - navBox.left + triggerBox.width / 2;
+      const centeredX = triggerCenter - panelWidth / 2;
+      const minX = VIEWPORT_EDGE_GAP - navBox.left;
+      const maxX =
+        window.innerWidth - VIEWPORT_EDGE_GAP - navBox.left - panelWidth;
       const x = Math.min(
-        Math.max(triggerCenter - panelWidth / 2, 0),
-        Math.max(0, navBox.width - panelWidth),
+        Math.max(centeredX, minX),
+        maxX,
       );
       const measuredHeight = contentNode?.offsetHeight ?? 0;
       const height = measuredHeight > 0 ? measuredHeight : null;
