@@ -40,20 +40,37 @@ try {
   // Not "networkidle": dev servers hold hot-reload connections open forever.
   await page.goto(url, { waitUntil: "load", timeout: 30_000 });
   // Real "everything painted" signals instead of guessed sleeps.
-  await page.evaluate(async () => {
+  await page.evaluate(async (fullPage) => {
     await document.fonts.ready;
-    // Only in-viewport images: lazy below-fold ones never load, so waiting on
-    // them hangs forever. 5s cap in case a visible image is genuinely slow.
-    const visible = Array.from(document.images).filter((img) => {
-      const r = img.getBoundingClientRect();
-      return r.bottom > 0 && r.top < innerHeight && r.width > 0;
-    });
-    await Promise.race([
-      Promise.allSettled(visible.map((img) => img.decode())),
-      new Promise((r) => setTimeout(r, 5000)),
-    ]);
+    const decodeVisibleImages = async () => {
+      const visible = Array.from(document.images).filter((img) => {
+        const r = img.getBoundingClientRect();
+        return r.bottom > 0 && r.top < innerHeight && r.width > 0;
+      });
+      await Promise.race([
+        Promise.allSettled(visible.map((img) => img.decode())),
+        new Promise((resolve) => setTimeout(resolve, 5000)),
+      ]);
+    };
+
+    if (fullPage) {
+      const originalScrollY = scrollY;
+      const step = Math.max(Math.floor(innerHeight * 0.8), 1);
+      for (
+        let y = 0, count = 0;
+        y < document.documentElement.scrollHeight && count < 100;
+        y += step, count += 1
+      ) {
+        scrollTo(0, y);
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        await decodeVisibleImages();
+      }
+      scrollTo(0, originalScrollY);
+    }
+
+    await decodeVisibleImages();
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  });
+  }, flags.has("--full"));
   mkdirSync(path.dirname(out), { recursive: true });
   await page.screenshot({ path: out, fullPage: flags.has("--full") });
   console.log(`${out} (${width}x${height}${flags.has("--full") ? ", full page" : ""}) in ${((Date.now() - started) / 1000).toFixed(1)}s`);

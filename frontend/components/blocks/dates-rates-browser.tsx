@@ -7,16 +7,9 @@ import {
   formatRate,
   getSeasonTicks,
   maxSessionRows,
+  type ConditionBlock,
   type PreparedLength,
 } from "./dates-rates-model";
-
-/** One paragraph of the minimal rich text conditions field: bold/italic spans only. */
-export type ConditionBlock = {
-  _key: string;
-  children?:
-    | { _key: string; text?: string | null; marks?: string[] | null }[]
-    | null;
-};
 
 function renderConditionBlock(block: ConditionBlock) {
   return block.children?.map((span) => {
@@ -229,6 +222,7 @@ export default function DatesRatesBrowser({
             {slots.map(({ isOpenSlot, row }, index) => {
               const isFull = isOpenSlot && row.isFull;
               const interactive = isOpenSlot && !isFull;
+              const RowElement = interactive ? "a" : "div";
               // Availability label sits in the empty track beside the bar;
               // when the bar ends near the right edge, flip it to the left side.
               const labelOnLeft = row.left + row.width > 85;
@@ -238,15 +232,17 @@ export default function DatesRatesBrowser({
                   className={`${styles.slot} ${isOpenSlot ? styles.slotOpen : ""}`}
                   key={index}
                 >
-                  <a
-                    aria-disabled={!interactive}
+                  <RowElement
                     aria-hidden={isOpenSlot ? undefined : true}
                     className={`${styles.row} flex h-full flex-col justify-center gap-y-2 pb-1.5 pt-4 no-underline md:grid md:grid-cols-[7.5rem_1fr] md:items-center md:gap-3.5 md:py-[9px] ${interactive ? "" : "pointer-events-none"}`}
                     data-open={interactive}
-                    href={enrollmentHref}
-                    rel="noreferrer"
-                    target="_blank"
-                    tabIndex={interactive ? 0 : -1}
+                    {...(interactive
+                      ? {
+                          href: enrollmentHref,
+                          rel: "noreferrer",
+                          target: "_blank",
+                        }
+                      : {})}
                   >
                     <span className="flex items-baseline gap-x-3 md:flex-col md:items-start md:gap-y-1">
                       <span
@@ -286,7 +282,7 @@ export default function DatesRatesBrowser({
                         </span>
                       </span>
                     </span>
-                  </a>
+                  </RowElement>
                 </div>
               );
             })}

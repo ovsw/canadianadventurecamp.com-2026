@@ -34,7 +34,7 @@ const defaultIntroduction = [
       {
         _key: "dates-rates-intro-main",
         _type: "span",
-        text: "Every session is all-inclusive — cabin, meals, and all 35 activities. Hold a spot with a deposit that's fully refundable until March 31, 2026.",
+        text: "Every session includes the cabin, meals, and all 35 activities. Deposit and balance deadlines are confirmed during enrollment.",
         marks: [],
       },
     ],
@@ -72,19 +72,19 @@ export default defineType({
           {
             _key: "dates-rates-condition-deposits-1",
             _type: "span",
-            text: "Deposits ",
+            text: "Deposit ",
             marks: [],
           },
           {
             _key: "dates-rates-condition-deposits-2",
             _type: "span",
-            text: "fully refundable until March 31, 2026",
+            text: "refund and balance deadlines are confirmed during enrollment",
             marks: ["strong"],
           },
           {
             _key: "dates-rates-condition-deposits-3",
             _type: "span",
-            text: " — balances due April 1.",
+            text: ".",
             marks: [],
           },
         ],

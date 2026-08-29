@@ -8,9 +8,11 @@ const client = getCliClient({ apiVersion: "2025-01-01" });
 async function run() {
   const doc = await client.getDocument("homePage");
   if (!doc) throw new Error("homePage not found");
-  const hero = (doc.blocks as Array<any>).find((b) => b._type === "homeHero");
+  const hero = (doc.blocks as Array<any> | undefined)?.find(
+    (b) => b._type === "homeHero",
+  );
   if (!hero) throw new Error("homeHero block not found");
-  const film = (hero.buttons as Array<any>).find(
+  const film = (hero.buttons as Array<any> | undefined)?.find(
     (b) => b.url?.type === "external" && /youtube|vimeo/.test(b.url.external ?? ""),
   );
   if (!film) {

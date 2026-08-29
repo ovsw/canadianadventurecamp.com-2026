@@ -240,8 +240,8 @@ describe("DatesRatesSection", () => {
     const { container } = render(<DatesRatesSection {...section} />);
 
     const fullRow = container.querySelector('[data-sanity*="session-2"]');
-    expect(fullRow?.closest("a")).toHaveAttribute("aria-disabled", "true");
-    expect(fullRow?.closest("a")).toHaveAttribute("tabindex", "-1");
+    expect(fullRow?.closest("a")).toBeNull();
+    expect(fullRow?.closest("[href]")).toBeNull();
   });
 
   it("links section and Season fields back to Studio", () => {

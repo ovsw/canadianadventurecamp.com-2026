@@ -8,11 +8,14 @@ type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
   | NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number];
 
+type DatesRatesBlock = Extract<PageBlock, { _type: "datesRatesSection" }>;
+
 // Response shapes come from Sanity TypeGen, so schema or query changes
 // surface here as type errors instead of drifting silently.
 export type ActiveSeason = NonNullable<
-  Extract<PageBlock, { _type: "datesRatesSection" }>["activeSeason"]
+  DatesRatesBlock["activeSeason"]
 >;
+export type ConditionBlock = NonNullable<DatesRatesBlock["conditions"]>[number];
 export type SeasonLengthConfig = NonNullable<ActiveSeason["twoWeek"]>;
 export type SeasonSession = NonNullable<SeasonLengthConfig["sessions"]>[number];
 
@@ -70,8 +73,9 @@ export const lengthOptions = [
 const dayMs = 24 * 60 * 60 * 1000;
 
 function parseDate(value: string | null | undefined) {
-  if (!value) return undefined;
-  const time = Date.parse(`${value}T00:00:00.000Z`);
+  const cleanValue = stegaClean(value);
+  if (!cleanValue) return undefined;
+  const time = Date.parse(`${cleanValue}T00:00:00.000Z`);
   return Number.isNaN(time) ? undefined : time;
 }
 
@@ -151,7 +155,7 @@ export function prepareLengths({
   season: ActiveSeason;
   seasonDataAttribute?: (documentId: string, path: string) => string | undefined;
 }) {
-  const seasonStart = season.startDate;
+  const seasonStart = stegaClean(season.startDate);
   if (!seasonStart) return [];
 
   return lengthOptions.flatMap((option) => {
@@ -159,12 +163,12 @@ export function prepareLengths({
     const rateValue = config?.rate;
     if (typeof rateValue !== "number") return [];
     const rate = formatRate(rateValue);
-    const description = config?.description?.trim();
+    const description = stegaClean(config?.description)?.trim();
     const sessions = config?.sessions ?? [];
     if (!description || sessions.length === 0) return [];
 
     const rows = sessions.flatMap((session) => {
-      const startDate = session.startDate;
+      const startDate = stegaClean(session.startDate);
       if (!session._key || !startDate) return [];
       const endDate = getSessionEndDate(startDate, option.weeks);
       if (!endDate) return [];
@@ -172,7 +176,8 @@ export function prepareLengths({
       // availabilityStatus carries invisible stega characters in preview,
       // so clean it before comparing literals.
       const status = normalizeStatus(stegaClean(session.availabilityStatus));
-      const label = session.availabilityNote?.trim() || availabilityLabel(status);
+      const label =
+        stegaClean(session.availabilityNote)?.trim() || availabilityLabel(status);
       const path = `${option.key}.sessions[_key=="${session._key}"]`;
 
       return [
