@@ -69,13 +69,15 @@
   opacity: 1;
 }
 
-/* Track bar: slides between lengths, turns amber on row hover. */
+/* Track bar: slides between lengths, turns amber on row hover.
+   The "Enroll" label inside inherits currentColor. */
 .bar {
   position: absolute;
   top: 5px;
   bottom: 5px;
   border-radius: var(--radius-pill);
   background: var(--color-cedar);
+  color: var(--color-birch-bark);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -83,12 +85,14 @@
     transition:
       left 0.65s cubic-bezier(0.2, 0.7, 0.2, 1),
       width 0.65s cubic-bezier(0.2, 0.7, 0.2, 1),
-      background 0.4s ease;
+      background 0.4s ease,
+      color 0.4s ease;
   }
 }
 
 .barLimited {
   background: var(--color-campfire-amber);
+  color: var(--color-pine-night);
 }
 
 .barFull {
@@ -109,22 +113,10 @@
   }
 }
 
-.enrollHint {
-  opacity: 0;
-  transform: translateX(-8px);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .enrollHint {
-    transition:
-      opacity 0.3s ease,
-      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-}
-
 .row[data-open="true"]:hover .bar,
 .row[data-open="true"]:focus-visible .bar {
   background: var(--color-campfire-amber);
+  color: var(--color-pine-night);
 }
 
 .row[data-open="true"]:hover .barLimited,
@@ -132,22 +124,7 @@
   background: var(--color-campfire-amber-deep);
 }
 
-.row[data-open="true"]:hover .enrollHint,
-.row[data-open="true"]:focus-visible .enrollHint {
-  opacity: 1;
-  transform: none;
-}
-
 .row[data-open="true"]:hover .dates,
 .row[data-open="true"]:focus-visible .dates {
   color: var(--color-pine-night);
-}
-
-/* Static availability dot: no blink, per the repo's no-continuous-animation rule. */
-.availabilityDot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-pine-night);
 }

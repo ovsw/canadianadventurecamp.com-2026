@@ -33,6 +33,7 @@ export type PreparedSessionRow = {
   left: number;
   startDateAttribute?: string;
   status: AvailabilityStatus;
+  weeksLabel: string;
   width: number;
 };
 
@@ -117,6 +118,14 @@ export function availabilityLabel(status: string | null | undefined) {
   return "Open";
 }
 
+/** Which weeks of the season a session covers, e.g. "Weeks 1 & 2" or "Weeks 1-4". */
+export function weeksLabel(startWeek: number, weeks: number) {
+  const endWeek = startWeek + weeks - 1;
+  return weeks === 2
+    ? `Weeks ${startWeek} & ${endWeek}`
+    : `Weeks ${startWeek}-${endWeek}`;
+}
+
 export function normalizeStatus(status: string | null | undefined): AvailabilityStatus {
   return status === "limited" || status === "full" ? status : "open";
 }
@@ -190,6 +199,10 @@ export function prepareLengths({
             `${path}.startDate`,
           ),
           status,
+          weeksLabel: weeksLabel(
+            dayOffset(seasonStart, startDate) / 7 + 1,
+            option.weeks,
+          ),
           width: ((option.weeks * 7) / seasonLengthDays) * 100,
         },
       ];
