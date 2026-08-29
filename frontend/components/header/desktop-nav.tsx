@@ -23,7 +23,10 @@ import type {
 import { NavigationIcon } from "./navigation-icon";
 import type { HeaderTheme } from "./theme";
 
-const PANEL_WIDTH = 380;
+const SINGLE_COLUMN_PANEL_WIDTH = 380;
+const TWO_COLUMN_PANEL_WIDTH = 740;
+const TWO_COLUMN_MIN_LINKS = 6;
+const FIRST_COLUMN_LINKS = 5;
 const CLOSE_DELAY_MS = 120;
 
 type PanelPlacement = {
@@ -46,6 +49,10 @@ function GroupPanelContent({
   theme: HeaderTheme;
 }) {
   const dark = theme === "dark";
+  const columns =
+    links.length >= TWO_COLUMN_MIN_LINKS
+      ? [links.slice(0, FIRST_COLUMN_LINKS), links.slice(FIRST_COLUMN_LINKS)]
+      : [links];
 
   return (
     <div className="p-3">
@@ -57,51 +64,55 @@ function GroupPanelContent({
       >
         {label}
       </p>
-      <div className="grid gap-1">
-        {links.map((child) => (
-          <HeaderLink
-            className={cn(
-              "group/nav-link flex items-start gap-3 rounded-[var(--radius-md)] px-2 py-2.5 transition-colors motion-fast focus-ring",
-              dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
-            )}
-            key={child.key}
-            link={child.link}
-          >
-            {child.icon ? (
-              <span
+      <div className={cn("grid gap-3", columns.length === 2 && "grid-cols-2")}>
+        {columns.map((column, columnIndex) => (
+          <div className="grid content-start gap-1" key={columnIndex}>
+            {column.map((child) => (
+              <HeaderLink
                 className={cn(
-                  "flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] transition-colors motion-fast [&_svg]:size-5",
-                  dark
-                    ? "bg-forest-floor text-campfire-amber group-hover/nav-link:bg-forest-floor/75"
-                    : "bg-cedar/10 text-cedar group-hover/nav-link:bg-cedar/15",
+                  "group/nav-link flex items-start gap-3 rounded-[var(--radius-md)] px-2 py-2.5 transition-colors motion-fast focus-ring",
+                  dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
                 )}
+                key={child.key}
+                link={child.link}
               >
-                <NavigationIcon icon={child.icon} />
-              </span>
-            ) : null}
-            <span className="grid min-w-0 gap-1">
-              <span className="flex items-center gap-0.5 text-sm font-semibold">
-                {child.label}
-                <ChevronRight
-                  aria-hidden="true"
-                  className={cn(
-                    "size-4 shrink-0 opacity-0 transition-all motion-fast group-hover/nav-link:translate-x-0.5 group-hover/nav-link:opacity-100",
-                    dark ? "text-campfire-amber" : "text-cedar",
-                  )}
-                />
-              </span>
-              {child.description ? (
-                <span
-                  className={cn(
-                    "text-[15px] leading-tight",
-                    dark ? "text-birch-bark/65" : "text-pine-night/65",
-                  )}
-                >
-                  {child.description}
+                {child.icon ? (
+                  <span
+                    className={cn(
+                      "flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] transition-colors motion-fast [&_svg]:size-5",
+                      dark
+                        ? "bg-forest-floor text-campfire-amber group-hover/nav-link:bg-forest-floor/75"
+                        : "bg-cedar/10 text-cedar group-hover/nav-link:bg-cedar/15",
+                    )}
+                  >
+                    <NavigationIcon icon={child.icon} />
+                  </span>
+                ) : null}
+                <span className="grid min-w-0 gap-1">
+                  <span className="flex items-center gap-0.5 text-sm font-semibold">
+                    {child.label}
+                    <ChevronRight
+                      aria-hidden="true"
+                      className={cn(
+                        "size-4 shrink-0 opacity-0 transition-all motion-fast group-hover/nav-link:translate-x-0.5 group-hover/nav-link:opacity-100",
+                        dark ? "text-campfire-amber" : "text-cedar",
+                      )}
+                    />
+                  </span>
+                  {child.description ? (
+                    <span
+                      className={cn(
+                        "text-[15px] leading-tight",
+                        dark ? "text-birch-bark/65" : "text-pine-night/65",
+                      )}
+                    >
+                      {child.description}
+                    </span>
+                  ) : null}
                 </span>
-              ) : null}
-            </span>
-          </HeaderLink>
+              </HeaderLink>
+            ))}
+          </div>
         ))}
       </div>
     </div>
@@ -135,6 +146,10 @@ export function DesktopNav({
     [navigation.items],
   );
   const activeItem = groups.find((group) => group.key === active?.key) ?? null;
+  const panelWidth =
+    activeItem && activeItem.links.length >= TWO_COLUMN_MIN_LINKS
+      ? TWO_COLUMN_PANEL_WIDTH
+      : SINGLE_COLUMN_PANEL_WIDTH;
 
   const cancelClose = useCallback(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -180,8 +195,8 @@ export function DesktopNav({
       const triggerBox = trigger.getBoundingClientRect();
       const triggerCenter = triggerBox.left - navBox.left + triggerBox.width / 2;
       const x = Math.min(
-        Math.max(triggerCenter - PANEL_WIDTH / 2, 0),
-        Math.max(0, navBox.width - PANEL_WIDTH),
+        Math.max(triggerCenter - panelWidth / 2, 0),
+        Math.max(0, navBox.width - panelWidth),
       );
       const measuredHeight = contentNode?.offsetHeight ?? 0;
       const height = measuredHeight > 0 ? measuredHeight : null;
@@ -198,7 +213,7 @@ export function DesktopNav({
     observer.observe(nav);
     if (contentNode) observer.observe(contentNode);
     return () => observer.disconnect();
-  }, [active, contentNode]);
+  }, [active, contentNode, panelWidth]);
 
   const onBlur = (event: FocusEvent<HTMLElement>) => {
     if (!event.currentTarget.contains(event.relatedTarget)) closeGroup();
@@ -297,7 +312,7 @@ export function DesktopNav({
             initial={{ opacity: 0, x: placement?.x ?? 0, y: -4 }}
             onMouseEnter={cancelClose}
             onMouseLeave={scheduleClose}
-            style={{ width: PANEL_WIDTH }}
+            style={{ width: panelWidth }}
             transition={{ opacity: fade, x: morph, y: fade }}
           >
             <motion.div
