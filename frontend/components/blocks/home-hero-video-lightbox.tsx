@@ -15,15 +15,20 @@ import {
 
 export default function HomeHeroVideoLightbox({
   buttonKey,
+  glass = false,
   icon,
   label,
   href,
+  size = "hero",
   variant,
 }: {
   buttonKey: string;
+  /** Frosted backdrop for sitting on top of the hero photo. */
+  glass?: boolean;
   icon?: { name?: string | null; svg?: string | null } | null;
   label: string;
   href: string;
+  size?: NonNullable<ComponentProps<typeof Button>["size"]>;
   variant: NonNullable<ComponentProps<typeof Button>["variant"]>;
 }) {
   const [open, setOpen] = useState(false);
@@ -36,10 +41,13 @@ export default function HomeHeroVideoLightbox({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
+          className={
+            glass ? "bg-pine-night/55 backdrop-blur-sm" : undefined
+          }
           key={buttonKey}
           lift={false}
           variant={variant}
-          size="hero"
+          size={size}
           onDark
         >
           {iconName && iconSvg ? (

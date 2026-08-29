@@ -392,6 +392,29 @@
     }
   },
   {
+    "type": "type",
+    "name": "filmButton",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "label": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "url": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "name": "internationalCampersSection",
     "type": "type",
     "value": {
@@ -1351,6 +1374,21 @@
           "type": "objectAttribute",
           "value": {
             "type": "string"
+          },
+          "optional": true
+        },
+        "disableVideo": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        },
+        "filmButton": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "filmButton"
           },
           "optional": true
         },

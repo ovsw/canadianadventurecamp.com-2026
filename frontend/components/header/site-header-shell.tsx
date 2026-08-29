@@ -14,16 +14,19 @@ export function SiteHeaderShell({
   theme: HeaderTheme;
 }) {
   const [visible, setVisible] = useState(true);
+  const [atTop, setAtTop] = useState(true);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
+    setAtTop(window.scrollY <= 24);
 
     const update = () => {
       const current = window.scrollY;
       const delta = current - lastScrollY.current;
 
+      setAtTop(current <= 24);
       if (current <= 8) setVisible(true);
       else if (Math.abs(delta) >= 8) setVisible(delta < 0 || current < 120);
 
@@ -54,12 +57,14 @@ export function SiteHeaderShell({
   return (
     <header
       className={cn(
-        "sticky top-0 z-60 w-full border-b transition-transform duration-300 ease-reveal motion-reduce:transition-none",
+        "sticky top-0 z-60 w-full border-b transition-[transform,background-color,border-color] duration-300 ease-reveal motion-reduce:transition-none",
         theme === "dark"
           ? "border-birch-bark/15 bg-pine-night text-birch-bark"
           : "border-pine-night/15 bg-birch-bark text-pine-night",
         visible ? "translate-y-0" : "-translate-y-full",
       )}
+      data-at-top={atTop}
+      data-site-header
       data-theme={theme}
       data-visible={visible}
       onFocusCapture={() => setVisible(true)}

@@ -12,17 +12,11 @@ const loneVideoButtonHero: ComponentProps<typeof HomeHero> = {
   _type: "homeHero",
   badge: null,
   body: null,
-  buttons: [
-    {
-      _key: "film",
-      _type: "button",
-      href: "https://www.youtube.com/watch?v=bSF5jKJhTvA",
-      icon: { name: "play", svg: playIcon },
-      openInNewTab: false,
-      text: "View Film",
-      variant: "outline",
-    },
-  ],
+  buttons: null,
+  filmButton: {
+    label: "View Film",
+    url: "https://www.youtube.com/watch?v=bSF5jKJhTvA",
+  },
   image: null,
   shortBody: null,
   stats: null,
@@ -38,6 +32,7 @@ const loneVideoButtonHero: ComponentProps<typeof HomeHero> = {
     },
   ],
   videoUrl: null,
+  disableVideo: null,
 };
 
 describe("resolveHomeHeroButtonVariant", () => {
@@ -62,13 +57,21 @@ describe("resolveHomeHeroButtonVariant", () => {
     );
   });
 
-  it("renders one video button with its CMS style and icon", () => {
+  it("renders the film button on the poster (phones) and in the CTA row (desktop)", () => {
     render(<HomeHero {...loneVideoButtonHero} />);
 
-    const button = screen.getByRole("button", { name: "View Film" });
-    expect(button.className).toContain("border-edge-on-dark-strong");
+    const buttons = screen.getAllByRole("button", { name: "View Film" });
+    expect(buttons).toHaveLength(2);
+
+    // Poster copy: glass ghost pill, hidden on desktop.
+    const poster = buttons[0]!;
+    expect(poster.className).toContain("bg-pine-night/55");
+    expect(poster.parentElement?.className).toContain("lg:hidden");
+
+    // CTA-row copy: ghost pill with the play icon, hidden on phones.
+    const button = buttons[1]!;
+    expect(button.closest("div.hidden")?.className).toContain("lg:flex");
     expect(button.className).not.toContain("shadow-teal-action");
-    expect(button.className).not.toContain("hover:shadow-interactive-lift");
     expect(button.className).toContain("hover:shadow-none");
     expect(button.querySelector("svg")).not.toBeNull();
   });
@@ -91,10 +94,12 @@ describe("resolveHomeHeroButtonVariant", () => {
       />,
     );
 
-    expect(screen.getByRole("link", { name: "Learn more" })).toHaveAttribute(
-      "href",
-      "/apply",
-    );
+    // Rendered twice: desktop CTA row and the phone plate row.
+    const links = screen.getAllByRole("link", { name: "Learn more" });
+    expect(links).toHaveLength(2);
+    for (const link of links) {
+      expect(link).toHaveAttribute("href", "/apply");
+    }
   });
 
   it("renders inline links in the supporting copy", () => {

@@ -65,7 +65,7 @@ export default defineType({
       name: "buttons",
       type: "array",
       description:
-        "Up to two call-to-action buttons. Choose each button's style; when unset, the first uses Outline and the second uses Ghost.",
+        "Up to two call-to-action buttons with their chosen styles. On phones they sit side by side above the stats bar. The film button is configured separately below.",
       of: [defineArrayMember({ type: "button" })],
       validation: (rule) => rule.max(2),
     }),
@@ -77,6 +77,36 @@ export default defineType({
         "Direct link to an mp4 video file. Plays muted and looped behind the hero.",
       validation: (rule) =>
         rule.uri({ scheme: ["http", "https"] }),
+    }),
+    defineField({
+      name: "disableVideo",
+      title: "Disable Background Video",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Show the background image instead of the video. Turns the video off without deleting its URL.",
+    }),
+    defineField({
+      name: "filmButton",
+      title: "Film Button",
+      type: "object",
+      description:
+        "Opens the camp film in a lightbox. Sits on the photo on phones and next to the buttons on desktop. Leave the URL empty to hide it.",
+      fields: [
+        defineField({
+          name: "label",
+          title: "Label",
+          type: "string",
+          description: 'Shown next to a play icon, e.g. "Watch the film".',
+        }),
+        defineField({
+          name: "url",
+          title: "Film URL",
+          type: "url",
+          description: "YouTube or Vimeo link to the film.",
+          validation: (rule) => rule.uri({ scheme: ["http", "https"] }),
+        }),
+      ],
     }),
     defineField({
       name: "image",
