@@ -240,7 +240,7 @@ export default function DatesRatesBrowser({
                 >
                   <a
                     aria-disabled={!interactive}
-                    aria-hidden={!isOpenSlot}
+                    aria-hidden={isOpenSlot ? undefined : true}
                     className={`${styles.row} flex h-full flex-col justify-center gap-y-2 pb-1.5 pt-4 no-underline md:grid md:grid-cols-[7.5rem_1fr] md:items-center md:gap-3.5 md:py-[9px] ${interactive ? "" : "pointer-events-none"}`}
                     data-open={interactive}
                     href={enrollmentHref}
