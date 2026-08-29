@@ -69,3 +69,4 @@ src/plugins/impeccable-live.client.ts
 !.env*.example
 
 prototype/videos/*
+shots/
