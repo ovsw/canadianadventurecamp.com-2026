@@ -31,6 +31,11 @@ export const homeHeroQuery = groq`
       )
     }),
     videoUrl,
+    disableVideo,
+    filmButton {
+      label,
+      url
+    },
     image {
       ${imageQuery}
     },

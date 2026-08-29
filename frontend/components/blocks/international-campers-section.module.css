@@ -61,6 +61,9 @@
   }
 
   .globeContainer > div:first-child {
+    /* The scale trick needs the box to stay a true 620px square; without this,
+       Tailwind's max-w-full squeezes it first and the globe distorts/clips. */
+    max-width: none;
     transform: scale(calc(var(--gw) / 620px));
     transform-origin: 0 0;
     margin-right: calc(var(--gw) - 620px);

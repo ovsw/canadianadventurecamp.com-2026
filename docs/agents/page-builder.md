@@ -39,6 +39,10 @@ After generation, replace the starter `title` and `description` fields with the
 chosen section's real content model. Keep the schema, query, and renderer in
 sync. Run TypeGen once after those shapes settle.
 
+Then complete the section in Sanity. Back up the dataset, locate the intended
+draft page, insert the section, and populate every required field with supplied,
+reference, or practical draft content. Generator output alone is not complete.
+
 For a manual addition, preserve the mirrored folder structure in Studio,
 queries, and renderers.
 
@@ -51,6 +55,8 @@ queries, and renderers.
 7. Create its React renderer in `frontend/components/blocks/` and register it in the `componentMap` in `frontend/components/blocks/index.tsx`.
 8. Run TypeGen once after the schema and query settle. Do not edit
    `studio/schema.json` or `frontend/sanity.types.ts` by hand.
+9. Back up the dataset, add the section to the intended draft page, and fill its
+   final content shape.
 
 ## Add a nested block
 
@@ -65,7 +71,10 @@ Trace the whole vertical slice before editing:
 - Generated types: `frontend/sanity.types.ts`
 - React rendering: `frontend/components/blocks/`
 
-When a field is added, renamed, or removed, update the schema and projection together, regenerate types, and consider whether existing Sanity documents need compatibility handling or a migration.
+When a field is added, renamed, removed, or changes type or structure, update
+the schema and projection together, regenerate types, inspect every affected
+Sanity document, and migrate content that no longer matches the stored shape.
+Preserve each document's draft or published state.
 
 For visual changes, treat the existing design system as the default:
 
@@ -78,8 +87,13 @@ For visual changes, treat the existing design system as the default:
 
 - The same `_type` is present at every required top-level registration point.
 - The GROQ projection returns every field the renderer uses.
-- The Studio preview and frontend renderer work with realistic content.
+- The section exists on the intended Sanity draft with complete content in the
+  final schema shape.
+- Every affected existing document has been migrated; Ovi is not left with
+  content entry or reshaping work.
+- The GROQ query returns the updated dataset content used by the renderer.
 - Generated files are current and are not manually edited.
+- The handoff names the backup path and every document created or changed.
 - Ovi has the exact URL, viewport, state, and actions needed to test the section.
 - Add automated tests only for destructive data work, security or authorization,
   subtle pure logic that is hard to verify manually, or an expensive regression.

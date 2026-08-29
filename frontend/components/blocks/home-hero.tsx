@@ -6,7 +6,6 @@ import HomeHeroBackgroundVideo from "@/components/blocks/home-hero-background-vi
 import { Button } from "@/components/ui/button";
 import { NavigationIcon } from "@/components/header/navigation-icon";
 import HomeHeroVideoLightbox from "@/components/blocks/home-hero-video-lightbox";
-import { getHomeHeroVideoEmbedUrl } from "@/components/blocks/home-hero-video";
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
@@ -57,12 +56,20 @@ const headingComponents: PortableTextComponents = {
   },
 };
 
+/** Play glyph for the film button; the icon is fixed, not editor-picked. */
+const playIcon = {
+  name: "play",
+  svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>',
+};
+
 export default function HomeHero({
   _key,
   badge,
   body,
   buttons,
   dataAttribute,
+  disableVideo,
+  filmButton,
   image,
   shortBody,
   stats,
@@ -72,53 +79,90 @@ export default function HomeHero({
   if (!title?.length) return null;
 
   const headingId = `home-hero-${stegaClean(_key)}-title`;
-  const cleanVideoUrl = stegaClean(videoUrl)?.trim();
+  const cleanVideoUrl = disableVideo ? undefined : stegaClean(videoUrl)?.trim();
   const posterUrl =
     image?.asset?._id
       ? urlFor(image).width(1920).height(1080).fit("crop").url()
       : undefined;
 
+  const ctaButtons = buttons?.slice(0, 2) ?? [];
+  const buttonPath = (key: string) => `buttons[_key=="${key}"]`;
+  const filmUrl = stegaClean(filmButton?.url)?.trim();
+  const filmLabel = stegaClean(filmButton?.label)?.trim() || "Watch the film";
+
   return (
     <section
       aria-labelledby={headingId}
-      className="relative min-h-dvh overflow-hidden bg-forest-900"
+      className="relative flex min-h-dvh flex-col overflow-hidden bg-forest-900 lg:block"
+      data-header-overlay
       id={`hero-${stegaClean(_key)}`}
     >
-      {/* Background media */}
-      {image?.asset?._id ? (
-        <Image
-          alt={stegaClean(image.alt) || ""}
-          blurDataURL={image.asset.metadata?.lqip || undefined}
-          className="object-cover"
-          data-sanity={dataAttribute?.("image")}
-          fill
-          placeholder={image.asset.metadata?.lqip ? "blur" : undefined}
-          priority
-          sizes="100vw"
-          src={urlFor(image).width(1920).height(1080).fit("crop").url()}
+      {/* Media — poster block on phones, full-bleed backdrop on desktop */}
+      <div className="relative h-[52dvh] shrink-0 lg:absolute lg:inset-0 lg:h-auto">
+        {image?.asset?._id ? (
+          <Image
+            alt={stegaClean(image.alt) || ""}
+            blurDataURL={image.asset.metadata?.lqip || undefined}
+            className="object-cover"
+            style={
+              image.hotspot?.x != null && image.hotspot.y != null
+                ? {
+                    objectPosition: `${image.hotspot.x * 100}% ${image.hotspot.y * 100}%`,
+                  }
+                : undefined
+            }
+            data-sanity={dataAttribute?.("image")}
+            fill
+            placeholder={image.asset.metadata?.lqip ? "blur" : undefined}
+            priority
+            sizes="100vw"
+            src={urlFor(image).width(1920).height(1080).fit("crop").url()}
+          />
+        ) : null}
+        {cleanVideoUrl ? (
+          <HomeHeroBackgroundVideo poster={posterUrl} src={cleanVideoUrl} />
+        ) : null}
+
+        {/* Gradient overlays: nav-legibility fade on phones, full wash on desktop */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-b from-pine-night/55 to-transparent to-40% lg:hidden"
         />
-      ) : null}
-      {cleanVideoUrl ? (
-        <HomeHeroBackgroundVideo poster={posterUrl} src={cleanVideoUrl} />
-      ) : null}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 hidden bg-gradient-to-b from-black/50 via-black/10 to-black/70 lg:block"
+        />
 
-      {/* Gradient overlay */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/70"
-      />
+        {/* Film button sits on the poster on phones */}
+        {filmUrl ? (
+          <div
+            className="absolute bottom-5 left-5 z-10 lg:hidden"
+            data-sanity={dataAttribute?.("filmButton")}
+          >
+            <HomeHeroVideoLightbox
+              buttonKey="film-button"
+              glass
+              href={filmUrl}
+              icon={playIcon}
+              label={filmLabel}
+              size="default"
+              variant="ghost"
+            />
+          </div>
+        ) : null}
+      </div>
 
-      {/* Hero copy */}
-      <div className="relative z-10 flex min-h-dvh flex-col justify-end px-content-x pb-40 pt-32">
-        {/* Badge */}
+      {/* Copy — solid plate below the poster on phones, overlay on desktop */}
+      <div className="relative z-10 flex flex-1 flex-col px-content-x pb-6 pt-7 lg:min-h-dvh lg:flex-none lg:justify-end lg:pb-40 lg:pt-32">
+        {/* Badge — dropped on phones; the poster + headline carry the opening */}
         {stegaClean(badge)?.trim() ? (
           <p
-            className="mb-6 inline-flex w-fit items-center gap-2.5 rounded-full border border-white/35 bg-pine-night/60 px-5 py-2 font-mono text-xs tracking-[0.18em] text-white/90"
+            className="mb-6 hidden w-fit items-center gap-2.5 rounded-full border border-white/35 bg-pine-night/60 px-5 py-2 font-mono text-xs leading-none tracking-[0.18em] text-white/90 lg:flex"
             data-sanity={dataAttribute?.("badge")}
           >
             <span
               aria-hidden="true"
-              className="size-2 rounded-full bg-accent"
+              className="size-2 shrink-0 rounded-full bg-accent"
             />
             {badge}
           </p>
@@ -126,7 +170,7 @@ export default function HomeHero({
 
         {/* Title */}
         <h1
-          className="mb-6 max-w-[65rem] font-display text-display-hero leading-[0.96] tracking-tight text-cream"
+          className="mb-6 max-w-[65rem] font-display text-display-hero leading-[0.96] tracking-tight text-cream max-lg:text-[2.875rem]"
           data-sanity={dataAttribute?.("title")}
           id={headingId}
         >
@@ -134,7 +178,7 @@ export default function HomeHero({
         </h1>
 
         {/* Body + CTAs row */}
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:gap-12">
+        <div className="flex flex-1 flex-col gap-8 lg:flex-none lg:flex-row lg:items-end lg:gap-12">
           {/* Full body (desktop) */}
           {body?.length ? (
             <div
@@ -159,13 +203,13 @@ export default function HomeHero({
             </div>
           ) : null}
 
-          {/* CTAs */}
-          {buttons?.length ? (
+          {/* CTAs — desktop row: array order and CMS styles, film button last */}
+          {ctaButtons.length || filmUrl ? (
             <div
-              className="flex flex-none gap-4 lg:ml-auto"
+              className="hidden lg:ml-auto lg:flex lg:flex-none lg:items-center lg:gap-4"
               data-sanity={dataAttribute?.("buttons")}
             >
-              {buttons.slice(0, 2).map((button, index) => {
+              {ctaButtons.map((button, index) => {
                 const href = getSafeLinkHref(button.href);
                 const label = stegaClean(button.text) || "Learn more";
                 const variant = resolveHomeHeroButtonVariant(
@@ -175,19 +219,6 @@ export default function HomeHero({
                 const iconName = stegaClean(button.icon?.name)?.trim();
                 const iconSvg = stegaClean(button.icon?.svg)?.trim();
                 if (!href) return null;
-
-                if (getHomeHeroVideoEmbedUrl(href)) {
-                  return (
-                    <HomeHeroVideoLightbox
-                      buttonKey={button._key}
-                      href={href}
-                      icon={button.icon}
-                      key={button._key}
-                      label={label}
-                      variant={variant}
-                    />
-                  );
-                }
 
                 return (
                   <Button
@@ -199,6 +230,71 @@ export default function HomeHero({
                     variant={variant}
                   >
                     <Link
+                      data-sanity={dataAttribute?.(buttonPath(button._key))}
+                      href={href}
+                      rel={
+                        stegaClean(button.openInNewTab)
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      target={
+                        stegaClean(button.openInNewTab) ? "_blank" : undefined
+                      }
+                    >
+                      {iconName && iconSvg ? (
+                        <NavigationIcon
+                          icon={{ name: iconName, svg: iconSvg }}
+                        />
+                      ) : null}
+                      {label}
+                    </Link>
+                  </Button>
+                );
+              })}
+              {filmUrl ? (
+                <div data-sanity={dataAttribute?.("filmButton")}>
+                  <HomeHeroVideoLightbox
+                    buttonKey="film-button"
+                    href={filmUrl}
+                    icon={playIcon}
+                    label={filmLabel}
+                    variant="ghost"
+                  />
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {/* CTAs — phone plate: the buttons side by side above the stats,
+              order and style straight from the Studio array */}
+          {ctaButtons.length ? (
+            <div
+              className="mt-auto flex w-full items-stretch gap-3 lg:hidden"
+              data-sanity={dataAttribute?.("buttons")}
+            >
+              {ctaButtons.map((button, index) => {
+                const href = getSafeLinkHref(button.href);
+                const label = stegaClean(button.text) || "Learn more";
+                const variant = resolveHomeHeroButtonVariant(
+                  button.variant,
+                  index,
+                );
+                const iconName = stegaClean(button.icon?.name)?.trim();
+                const iconSvg = stegaClean(button.icon?.svg)?.trim();
+                if (!href) return null;
+
+                return (
+                  <Button
+                    asChild
+                    className="min-w-0 flex-1 px-4"
+                    key={button._key}
+                    lift={false}
+                    onDark
+                    size="hero"
+                    variant={variant}
+                  >
+                    <Link
+                      data-sanity={dataAttribute?.(buttonPath(button._key))}
                       href={href}
                       rel={
                         stegaClean(button.openInNewTab)
@@ -227,14 +323,14 @@ export default function HomeHero({
       {/* Stats bar */}
       {stats?.length ? (
         <div
-          className="relative z-10 flex gap-0 border-t border-white/20 px-content-x"
+          className="relative z-10 grid grid-cols-2 border-t border-white/20 px-content-x md:flex md:gap-0"
           data-sanity={dataAttribute?.("stats")}
         >
           {stats.map((stat) => {
             const statPath = `stats[_key=="${stat._key}"]`;
             return (
               <div
-                className="flex flex-1 flex-col gap-1 border-l border-white/20 py-5 pl-8 first:border-l-0 first:pl-0"
+                className="flex flex-col gap-1 py-4 pr-4 even:border-l even:border-white/20 even:pl-4 [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-white/20 md:flex-1 md:border-l md:border-white/20 md:py-5 md:pl-8 md:pr-0 md:first:border-l-0 md:first:pl-0 md:[&:nth-child(n+3)]:border-t-0"
                 key={stat._key}
               >
                 <span
