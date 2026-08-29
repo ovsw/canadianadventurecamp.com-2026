@@ -4,9 +4,6 @@ import { describe, expect, it } from "vitest";
 import HomeHero, { resolveHomeHeroButtonVariant } from "./home-hero";
 import { getHomeHeroVideoEmbedUrl } from "./home-hero-video";
 
-const playIcon =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 3 14 9-14 9V3z"></path></svg>';
-
 const loneVideoButtonHero: ComponentProps<typeof HomeHero> = {
   _key: "hero-test",
   _type: "homeHero",

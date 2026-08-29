@@ -20,7 +20,6 @@ export function SiteHeaderShell({
 
   useEffect(() => {
     lastScrollY.current = window.scrollY;
-    setAtTop(window.scrollY <= 24);
 
     const update = () => {
       const current = window.scrollY;
@@ -40,8 +39,12 @@ export function SiteHeaderShell({
       window.requestAnimationFrame(update);
     };
 
+    const initialFrame = window.requestAnimationFrame(update);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.cancelAnimationFrame(initialFrame);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -73,4 +76,3 @@ export function SiteHeaderShell({
     </header>
   );
 }
-

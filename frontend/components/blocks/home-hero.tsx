@@ -6,7 +6,6 @@ import HomeHeroBackgroundVideo from "@/components/blocks/home-hero-background-vi
 import { Button } from "@/components/ui/button";
 import { NavigationIcon } from "@/components/header/navigation-icon";
 import HomeHeroVideoLightbox from "@/components/blocks/home-hero-video-lightbox";
-import { getHomeHeroVideoEmbedUrl } from "@/components/blocks/home-hero-video";
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
