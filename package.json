@@ -8,13 +8,16 @@
     "dev": "pnpm --parallel -r run dev",
     "dev:frontend": "pnpm --dir frontend dev",
     "dev:studio": "pnpm --dir studio dev",
+    "setup:worktree": "node scripts/setup-worktree.mjs",
+    "dev:worktree": "node scripts/dev-worktree.mjs",
+    "setup:sanity-cors": "node --env-file=studio/.env.local scripts/setup-sanity-cors.mjs",
     "page-builder:new": "node scripts/create-page-builder-block.mjs",
     "build": "pnpm --dir frontend build && pnpm --dir studio build",
     "typegen": "pnpm --dir studio typegen",
     "verify:typegen": "pnpm typegen && git diff --exit-code -- studio/schema.json frontend/sanity.types.ts",
     "typecheck": "pnpm --dir frontend typecheck && pnpm --dir studio typecheck",
     "lint": "pnpm --dir frontend lint",
-    "test": "pnpm --dir frontend test && node --test 'frontend/**/*.test.mjs' 'studio/**/*.test.mjs'",
+    "test": "pnpm --dir frontend test && node --test 'scripts/*.test.mjs' 'frontend/**/*.test.mjs' 'studio/**/*.test.mjs'",
     "verify": "pnpm verify:typegen && pnpm typecheck && pnpm lint && pnpm test && pnpm build && PLAYWRIGHT_REUSE_BUILD=1 pnpm --dir frontend test:smoke"
   },
   "engines": {
