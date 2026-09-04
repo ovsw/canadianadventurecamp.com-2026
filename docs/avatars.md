@@ -70,7 +70,7 @@ Tier 1 and 2 pages go through the six-step workflow first.
 | /photos-and-videos | S | S | S | P | | 3 |
 | /places-to-stay-when-visiting |  | S |  |  | | 3 |
 | /privacy-policy |  |  |  |  | | 3 |
-| /private-island-camp-location-ontario | P | S | P | P | | 2 |
+| /adventure-island | P | S | P | P | | 2 |
 | /programs/aerials-specialty-program | S |  | S | P | | 2 |
 | /programs/general-camp-program | P |  | S | P | | 3 |
 | /programs/specialty-gymnastics-program | S |  | S | P | | 2 |
