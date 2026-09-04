@@ -46,6 +46,14 @@ type PackingChecklistListProps = {
 
 const STORAGE_PREFIX = "cac:packing-checklist";
 
+/**
+ * Sanity keeps `_key` unique within one array, not across groups, so a tick
+ * is identified by group and item together.
+ */
+function tickId(group: ChecklistGroup, item: ChecklistItem) {
+  return `${group.key}:${item.key}`;
+}
+
 function storageKeyFor(sectionId: string) {
   const path =
     typeof window === "undefined" ? "" : window.location.pathname || "/";
@@ -161,7 +169,7 @@ export default function PackingChecklistList({
     () =>
       groups
         .filter((group) => group.tone !== "leaveAtHome")
-        .flatMap((group) => group.items.map((item) => item.key)),
+        .flatMap((group) => group.items.map((item) => tickId(group, item))),
     [groups],
   );
   const tickSet = useMemo(() => new Set(ticks), [ticks]);
@@ -232,7 +240,7 @@ export default function PackingChecklistList({
           const leaveAtHome = group.tone === "leaveAtHome";
           const groupPacked = leaveAtHome
             ? 0
-            : group.items.filter((item) => tickSet.has(item.key)).length;
+            : group.items.filter((item) => tickSet.has(tickId(group, item))).length;
           const summaryId = `${sectionId}-${group.key}-title`;
 
           return (
@@ -284,7 +292,8 @@ export default function PackingChecklistList({
                 data-sanity={group.sanity?.items}
               >
                 {group.items.map((item) => {
-                  const inputId = `${sectionId}-${item.key}`;
+                  const id = tickId(group, item);
+                  const inputId = `${sectionId}-${group.key}-${item.key}`;
 
                   if (leaveAtHome) {
                     return (
@@ -311,10 +320,10 @@ export default function PackingChecklistList({
                       key={item.key}
                     >
                       <input
-                        checked={tickSet.has(item.key)}
+                        checked={tickSet.has(id)}
                         className={cn("focus-ring", styles.box)}
                         id={inputId}
-                        onChange={(event) => toggle(item.key, event.target.checked)}
+                        onChange={(event) => toggle(id, event.target.checked)}
                         type="checkbox"
                       />
                       <label

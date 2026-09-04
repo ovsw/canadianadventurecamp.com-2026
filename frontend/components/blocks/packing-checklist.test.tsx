@@ -120,6 +120,25 @@ describe("PackingChecklist", () => {
     ).toHaveLength(0);
   });
 
+  it("keeps items with the same key in different groups independent", async () => {
+    const user = userEvent.setup();
+    render(
+      <PackingChecklist
+        {...block}
+        groups={[
+          group("clothing", "Clothing", [["hat", "Sun hat", null]]),
+          group("must", "Must bring", [["hat", "Warm hat", null]]),
+        ]}
+      />,
+    );
+
+    await user.click(checkbox("Sun hat"));
+    expect(checkbox("Sun hat")).toBeChecked();
+    expect(checkbox("Warm hat")).not.toBeChecked();
+    expect(screen.getByRole("status")).toHaveTextContent("1 of 2 packed");
+    expect(checkbox("Sun hat").id).not.toBe(checkbox("Warm hat").id);
+  });
+
   it("keeps a collapsed group collapsed while ticks change elsewhere", async () => {
     const user = userEvent.setup();
     render(<PackingChecklist {...block} />);
