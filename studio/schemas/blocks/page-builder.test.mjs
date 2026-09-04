@@ -17,3 +17,18 @@ test("rejects multiple Team Members sections", () => {
     "Add no more than one Team Members section",
   );
 });
+
+test("counts the inner hero as a hero: one per page, first position", () => {
+  assert.equal(
+    validateBlocks([{ _type: "innerHero" }, { _type: "richTextBlock" }]),
+    true,
+  );
+  assert.equal(
+    validateBlocks([{ _type: "richTextBlock" }, { _type: "innerHero" }]),
+    "The Hero section must be the first section",
+  );
+  assert.equal(
+    validateBlocks([{ _type: "innerHero" }, { _type: "hero" }]),
+    "Add no more than one Hero section",
+  );
+});

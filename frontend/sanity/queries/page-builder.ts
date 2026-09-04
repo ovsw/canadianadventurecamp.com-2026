@@ -13,6 +13,10 @@ import { activityScheduleQuery } from "./activity-schedule";
 import { facilitiesMapSectionQuery } from "./facilities-map-section";
 import { datesRatesSectionQuery } from "./dates-rates-section";
 import { stackedFeatureRowsQuery } from "./stacked-feature-rows";
+import { innerHeroQuery } from "./inner-hero";
+import { testimonialsQuery } from "./testimonials";
+import { journeyQuery } from "./journey";
+import { stackedTimelineQuery } from "./stacked-timeline";
 // page-builder-generator:query-imports
 import { internationalCampersSectionQuery } from "./international-campers-section";
 
@@ -35,6 +39,10 @@ export const pageBuilderQuery = `
     ${facilitiesMapSectionQuery},
     ${datesRatesSectionQuery},
     ${stackedFeatureRowsQuery},
+    ${innerHeroQuery},
+    ${testimonialsQuery},
+    ${journeyQuery},
+    ${stackedTimelineQuery},
     ${"" /* page-builder-generator:query-spreads */}
     ${internationalCampersSectionQuery}
   }

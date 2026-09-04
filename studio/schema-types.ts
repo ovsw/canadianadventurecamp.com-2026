@@ -57,6 +57,10 @@ import activitySchedule from "./schemas/blocks/activity-schedule";
 import facilitiesMapSection from "./schemas/blocks/facilities-map-section";
 import datesRatesSection from "./schemas/blocks/dates-rates-section";
 import stackedFeatureRows from "./schemas/blocks/stacked-feature-rows";
+import innerHero from "./schemas/blocks/inner-hero";
+import testimonials from "./schemas/blocks/testimonials";
+import journey from "./schemas/blocks/journey";
+import stackedTimeline from "./schemas/blocks/stacked-timeline";
 // page-builder-generator:block-imports
 import { internationalCampersSection } from "./schemas/blocks/international-campers-section";
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
@@ -120,6 +124,10 @@ export const schemaTypes = [
   facilitiesMapSection,
   datesRatesSection,
   stackedFeatureRows,
+  innerHero,
+  testimonials,
+  journey,
+  stackedTimeline,
   // page-builder-generator:block-types
   internationalCampersSection,
 ];

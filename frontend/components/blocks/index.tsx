@@ -16,6 +16,10 @@ import ActivitySchedule from "@/components/blocks/activity-schedule";
 import FacilitiesMapSection from "@/components/blocks/facilities-map-section";
 import DatesRatesSection from "@/components/blocks/dates-rates-section";
 import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
+import InnerHero from "@/components/blocks/inner-hero";
+import Testimonials from "@/components/blocks/testimonials";
+import Journey from "@/components/blocks/journey";
+import StackedTimeline from "@/components/blocks/stacked-timeline";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -43,6 +47,10 @@ type BlockEditingProps = {
     documentId: string,
     path: string,
   ) => string | undefined;
+  testimonialDataAttribute?: (
+    documentId: string,
+    path: string,
+  ) => string | undefined;
 };
 
 const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
@@ -60,6 +68,10 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "facilitiesMapSection",
   "datesRatesSection",
   "stackedFeatureRows",
+  "innerHero",
+  "journey",
+  "testimonials",
+  "stackedTimeline",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -84,6 +96,10 @@ const componentMap: Partial<{
   facilitiesMapSection: FacilitiesMapSection,
   datesRatesSection: DatesRatesSection,
   stackedFeatureRows: StackedFeatureRows,
+  innerHero: InnerHero,
+  testimonials: Testimonials,
+  journey: Journey,
+  stackedTimeline: StackedTimeline,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };
@@ -209,6 +225,23 @@ export default function Blocks({
                               path,
                               projectId,
                               type: "season",
+                            }).toString()
+                        : undefined,
+                    }
+                : block._type === "testimonials"
+                  ? {
+                      dataAttribute,
+                      testimonialDataAttribute: stega
+                        ? (testimonialId: string, path: string) =>
+                            createDataAttribute({
+                              baseUrl:
+                                process.env.NEXT_PUBLIC_STUDIO_URL ||
+                                "http://localhost:3333",
+                              dataset,
+                              id: testimonialId,
+                              path,
+                              projectId,
+                              type: "testimonial",
                             }).toString()
                         : undefined,
                     }
