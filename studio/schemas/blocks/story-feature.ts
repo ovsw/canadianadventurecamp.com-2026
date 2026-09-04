@@ -1,6 +1,18 @@
 import { BookOpenText } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
+    .join(" ")
+    .trim();
+};
+
 const storyRichTextField = defineField({
   name: "richText",
   title: "Narrative",
@@ -50,7 +62,7 @@ export default defineType({
       title: "Use Alternate Background",
       type: "boolean",
       description:
-        "Turn on to separate this section from the surrounding page content.",
+        "Turn on for a cream field instead of the default forest field. Alternate with the sections around it.",
       initialValue: false,
     }),
     defineField({
@@ -60,9 +72,10 @@ export default defineType({
     }),
     defineField({
       name: "title",
-      type: "string",
-      description: "The main heading for this story",
-      validation: (rule) => rule.required(),
+      title: "Heading",
+      type: "minimalRichText",
+      description: "Use italic for the phrase that gets the handwritten style.",
+      validation: (rule) => rule.required().max(1),
     }),
     defineField({
       name: "image",
@@ -120,7 +133,7 @@ export default defineType({
   preview: {
     select: { title: "title", media: "image" },
     prepare: ({ title, media }) => ({
-      title: title || "Untitled Image and Text",
+      title: richTextToPlainText(title) || "Untitled Image and Text",
       subtitle: "Image and Text",
       media,
     }),

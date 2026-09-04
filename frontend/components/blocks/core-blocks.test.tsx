@@ -473,7 +473,7 @@ describe("core Page Builder sections", () => {
         },
       ],
       intro: "Common sections for marketing pages.",
-      title: "Feature grid",
+      title: [paragraph("features-title", "Feature grid")],
     } as unknown as ComponentProps<typeof BenefitCards>;
     const { rerender } = render(<BenefitCards {...featureGrid} />);
 
@@ -494,7 +494,7 @@ describe("core Page Builder sections", () => {
         title: "Details",
       },
       richText: [paragraph("story-copy", "Story context visitors can use.")],
-      title: "Image and text",
+      title: [paragraph("story-title", "Image and text")],
     } as unknown as ComponentProps<typeof StoryFeature>;
     rerender(<StoryFeature {...imageAndText} />);
 

@@ -1,4 +1,5 @@
 import { groq } from "next-sanity";
+import { minimalRichTextQuery } from "./shared/minimal-rich-text";
 import { simpleRichTextQuery } from "./shared/simple-rich-text";
 
 // @sanity-typegen-ignore
@@ -6,7 +7,9 @@ export const benefitCardsQuery = groq`
   _type == "benefitCards" => {
     useCreamBackground,
     eyebrow,
-    title,
+    title[]{
+      ${minimalRichTextQuery}
+    },
     intro,
     "cards": array::compact(cards[]{
       _key,
