@@ -22,6 +22,7 @@ import Journey from "@/components/blocks/journey";
 import StackedTimeline from "@/components/blocks/stacked-timeline";
 import ActivityCatalogue from "@/components/blocks/activity-catalogue";
 import IncludedExtras from "@/components/blocks/included-extras";
+import PackingChecklist from "@/components/blocks/packing-checklist";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -76,6 +77,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "stackedTimeline",
   "activityCatalogue",
   "includedExtras",
+  "packingChecklist",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -106,6 +108,7 @@ const componentMap: Partial<{
   stackedTimeline: StackedTimeline,
   activityCatalogue: ActivityCatalogue,
   includedExtras: IncludedExtras,
+  packingChecklist: PackingChecklist,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };

@@ -19,6 +19,7 @@ import { journeyQuery } from "./journey";
 import { stackedTimelineQuery } from "./stacked-timeline";
 import { activityCatalogueQuery } from "./activity-catalogue";
 import { includedExtrasQuery } from "./included-extras";
+import { packingChecklistQuery } from "./packing-checklist";
 // page-builder-generator:query-imports
 import { internationalCampersSectionQuery } from "./international-campers-section";
 
@@ -47,6 +48,7 @@ export const pageBuilderQuery = `
     ${stackedTimelineQuery},
     ${activityCatalogueQuery},
     ${includedExtrasQuery},
+    ${packingChecklistQuery},
     ${"" /* page-builder-generator:query-spreads */}
     ${internationalCampersSectionQuery}
   }
