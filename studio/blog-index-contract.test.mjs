@@ -37,6 +37,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
     "faqAccordion",
     "teamMembers",
     "ctaBanner",
+    "journey",
     "testimonials",
     "stackedTimeline",
   ]);

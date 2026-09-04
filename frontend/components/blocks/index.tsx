@@ -18,6 +18,7 @@ import DatesRatesSection from "@/components/blocks/dates-rates-section";
 import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
 import InnerHero from "@/components/blocks/inner-hero";
 import Testimonials from "@/components/blocks/testimonials";
+import Journey from "@/components/blocks/journey";
 import StackedTimeline from "@/components/blocks/stacked-timeline";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
@@ -68,6 +69,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "datesRatesSection",
   "stackedFeatureRows",
   "innerHero",
+  "journey",
   "testimonials",
   "stackedTimeline",
   // page-builder-generator:editing-types
@@ -96,6 +98,7 @@ const componentMap: Partial<{
   stackedFeatureRows: StackedFeatureRows,
   innerHero: InnerHero,
   testimonials: Testimonials,
+  journey: Journey,
   stackedTimeline: StackedTimeline,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,

@@ -15,6 +15,7 @@ export const contentPageBuilderBlockTypes = [
   "faqAccordion",
   "teamMembers",
   "ctaBanner",
+  "journey",
   "testimonials",
   "stackedTimeline",
   // page-builder-generator:content-types
@@ -59,6 +60,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "facilitiesMapSection",
   "datesRatesSection",
   "stackedFeatureRows",
+  "journey",
   "latestArticles",
   "faqAccordion",
   "teamMembers",
