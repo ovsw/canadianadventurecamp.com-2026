@@ -158,6 +158,7 @@ const section = {
   heading,
   introduction,
   seasonDataAttribute: (documentId, path) => `season:${documentId}:${path}`,
+  secondaryLink: null,
   sessionIncludes: [
     {
       _key: "include-cabin",
@@ -193,6 +194,60 @@ describe("DatesRatesSection", () => {
     expect(
       screen.getByRole("link", { name: "Full dates & rates" }),
     ).toHaveAttribute("href", "/dates-and-rates/");
+  });
+
+  it("hides the details link when its text is empty", () => {
+    render(<DatesRatesSection {...section} detailsLinkText={null} />);
+
+    expect(screen.queryByRole("link", { name: "Full dates & rates" })).toBeNull();
+    expect(screen.queryByText("Full dates & rates")).toBeNull();
+  });
+
+  it("renders the optional secondary link beside Enroll", () => {
+    const { rerender } = render(<DatesRatesSection {...section} />);
+
+    expect(
+      screen.queryByRole("link", { name: /Returning family/ }),
+    ).toBeNull();
+
+    rerender(
+      <DatesRatesSection
+        {...section}
+        secondaryLink={{
+          href: "https://canadianadventurecamp.campbrainregistration.com/",
+          openInNewTab: true,
+          text: "Returning family? Log in",
+        }}
+      />,
+    );
+
+    const portal = screen.getByRole("link", { name: /Returning family\? Log in/ });
+    expect(portal).toHaveAttribute(
+      "href",
+      "https://canadianadventurecamp.campbrainregistration.com/",
+    );
+    expect(portal).toHaveAttribute("target", "_blank");
+    expect(portal).toHaveAttribute("data-sanity", "section:secondaryLink");
+  });
+
+  it("skips a half-filled secondary link", () => {
+    render(
+      <DatesRatesSection
+        {...section}
+        secondaryLink={{ href: null, openInNewTab: false, text: "Log in" }}
+      />,
+    );
+
+    expect(screen.queryByRole("link", { name: "Log in" })).toBeNull();
+  });
+
+  it("tells visitors that Enroll opens CampBrain", () => {
+    render(<DatesRatesSection {...section} />);
+
+    const note = screen.getByText("Enroll opens CampBrain in a new tab");
+    expect(
+      screen.getByRole("link", { name: /Enroll for 2027/ }),
+    ).toHaveAttribute("aria-describedby", note.id);
   });
 
   it("does not render the season label / date range line", () => {

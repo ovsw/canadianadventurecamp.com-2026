@@ -154,7 +154,27 @@ export default defineType({
       name: "detailsLinkText",
       title: "Details Link Text",
       type: "string",
-      validation: (rule) => rule.required(),
+      description:
+        "Optional. Links to the Dates & Rates page. Leave empty on the Dates & Rates page itself.",
+    }),
+    defineField({
+      name: "secondaryLink",
+      title: "Secondary Link",
+      type: "object",
+      description:
+        'Optional quiet link beside the Enroll button, e.g. "Returning family? Log in" to the parent portal. Shown only when both fields are set.',
+      fields: [
+        defineField({
+          name: "text",
+          title: "Link Text",
+          type: "string",
+        }),
+        defineField({
+          name: "url",
+          title: "Destination",
+          type: "customUrl",
+        }),
+      ],
     }),
     defineField({
       name: "sessionIncludes",

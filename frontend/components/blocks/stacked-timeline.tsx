@@ -191,19 +191,26 @@ export default function StackedTimeline({
                         src={urlFor(item.image).width(1280).height(720).url()}
                       />
                     </figure>
-                  ) : (
-                    <div
-                      aria-hidden="true"
-                      className="flex aspect-video w-full items-center justify-center rounded-lg border border-dashed border-birch-bark/18 bg-pine-night/60"
-                      data-sanity={dataAttribute?.(`${itemPath}.image`)}
-                    >
-                      <span className="font-display text-[4.5rem] font-extrabold leading-none tracking-[-0.03em] text-birch-bark/20">
+                  ) : null}
+
+                  {/* Without a photo the card is a text card: the step number
+                      becomes the visual, set large beside the copy. */}
+                  <div
+                    className={cn(
+                      "p-6 sm:p-7",
+                      !item.image?.asset?._id &&
+                        "grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 sm:gap-x-7",
+                    )}
+                  >
+                    {!item.image?.asset?._id ? (
+                      <span
+                        aria-hidden="true"
+                        className="row-span-3 self-start font-display text-[3.25rem] font-extrabold leading-[0.9] tracking-[-0.03em] text-campfire-amber/80 sm:text-[4rem]"
+                        data-sanity={dataAttribute?.(`${itemPath}.image`)}
+                      >
                         {number}
                       </span>
-                    </div>
-                  )}
-
-                  <div className="p-6 sm:p-7">
+                    ) : null}
                     <p className="flex items-center gap-2 text-label text-birch-bark/60">
                       <span>{number}</span>
                       {meta ? (

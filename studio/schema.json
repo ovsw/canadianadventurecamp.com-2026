@@ -74,6 +74,30 @@
   },
   {
     "type": "type",
+    "name": "secondaryLink",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "text": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "url": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "customUrl"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "type": "type",
     "name": "faqAccordion.link",
     "value": {
       "type": "object",
@@ -1196,6 +1220,14 @@
           "type": "objectAttribute",
           "value": {
             "type": "string"
+          },
+          "optional": true
+        },
+        "secondaryLink": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "secondaryLink"
           },
           "optional": true
         },
@@ -2843,7 +2875,8 @@
         "title": {
           "type": "objectAttribute",
           "value": {
-            "type": "string"
+            "type": "inline",
+            "name": "minimalRichText"
           },
           "optional": true
         },
