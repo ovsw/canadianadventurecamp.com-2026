@@ -29,6 +29,12 @@ async function main() {
     worktreeRoot: repoRoot,
     overrides: parseArgs(process.argv.slice(2)),
   });
+  let reservationReleased = false;
+  async function releaseReservation() {
+    if (reservationReleased) return;
+    reservationReleased = true;
+    await ports.release();
+  }
   const frontendUrl = `http://localhost:${ports.frontendPort}`;
   const studioUrl = `http://localhost:${ports.studioPort}`;
   const childEnvironment = {
@@ -73,20 +79,30 @@ async function main() {
     },
   ];
 
-  const children = commands.map(({ name, args }) => ({
-    name,
-    process: spawn("pnpm", args, {
-      cwd: repoRoot,
-      detached: process.platform !== "win32",
-      env: childEnvironment,
-      stdio: "inherit",
-    }),
-  }));
+  const children = [];
+  try {
+    for (const { name, args } of commands) {
+      children.push({
+        name,
+        process: spawn("pnpm", args, {
+          cwd: repoRoot,
+          detached: process.platform !== "win32",
+          env: childEnvironment,
+          stdio: "inherit",
+        }),
+      });
+    }
+  } catch (error) {
+    await releaseReservation();
+    throw error;
+  }
   let stopping = false;
   let exitCode = 0;
+  const closedChildren = new Set();
 
   function signalChild(child, signal) {
     if (child.exitCode !== null || child.signalCode !== null) return;
+    if (child.pid === undefined) return;
     try {
       if (process.platform === "win32") child.kill(signal);
       else process.kill(-child.pid, signal);
@@ -116,9 +132,17 @@ async function main() {
         exitCode = code ?? 1;
         stopAll();
       }
-      if (children.every(({ process: candidate }) => candidate.exitCode !== null || candidate.signalCode !== null)) {
-        process.exit(exitCode);
+    });
+    child.once("close", async () => {
+      closedChildren.add(child);
+      if (closedChildren.size !== children.length) return;
+      try {
+        await releaseReservation();
+      } catch (error) {
+        console.error(`Failed to release worktree slot: ${error.message}`);
+        exitCode = 1;
       }
+      process.exit(exitCode);
     });
   }
 

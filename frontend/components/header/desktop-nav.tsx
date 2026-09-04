@@ -26,7 +26,6 @@ import type { HeaderTheme } from "./theme";
 const SINGLE_COLUMN_PANEL_WIDTH = 380;
 const TWO_COLUMN_PANEL_WIDTH = 740;
 const TWO_COLUMN_MIN_LINKS = 6;
-const FIRST_COLUMN_LINKS = 5;
 const VIEWPORT_EDGE_GAP = 16;
 const CLOSE_DELAY_MS = 120;
 
@@ -50,9 +49,10 @@ function GroupPanelContent({
   theme: HeaderTheme;
 }) {
   const dark = theme === "dark";
+  const firstColumnLength = Math.ceil(links.length / 2);
   const columns =
     links.length >= TWO_COLUMN_MIN_LINKS
-      ? [links.slice(0, FIRST_COLUMN_LINKS), links.slice(FIRST_COLUMN_LINKS)]
+      ? [links.slice(0, firstColumnLength), links.slice(firstColumnLength)]
       : [links];
 
   return (
@@ -80,7 +80,7 @@ function GroupPanelContent({
                 {child.icon ? (
                   <span
                     className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] transition-colors motion-fast [&_svg]:size-5",
+                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors motion-fast [&_svg]:size-5",
                       dark
                         ? "bg-forest-floor text-campfire-amber group-hover/nav-link:bg-forest-floor/75"
                         : "bg-cedar/10 text-cedar group-hover/nav-link:bg-cedar/15",
@@ -323,7 +323,7 @@ export function DesktopNav({
             <motion.div
               animate={{ height: placement?.height ?? "auto" }}
               className={cn(
-                "relative overflow-hidden rounded-[var(--radius-lg)] border",
+                "relative overflow-hidden rounded-[var(--radius-md)] border",
                 dark
                   ? "border-birch-bark/15 bg-forest-panel text-birch-bark shadow-lift"
                   : "border-pine-night/12 bg-birch-bark-bright text-pine-night shadow-card-rest-cream",

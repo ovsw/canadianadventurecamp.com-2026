@@ -113,4 +113,42 @@ describe("Site Header", () => {
 
     expect(screen.getByRole("banner")).toHaveAttribute("data-theme", "light");
   });
+
+  it("balances long desktop submenus across two columns", async () => {
+    const user = userEvent.setup();
+    const links = Array.from({ length: 8 }, (_, index) => ({
+      key: `planning-${index}`,
+      label: `Planning link ${index + 1}`,
+      description: `Planning description ${index + 1}`,
+      icon: null,
+      link: {
+        href: `/planning-${index}`,
+        label: `Planning link ${index + 1}`,
+        openInNewTab: false,
+      },
+    }));
+    const balancedModel: HeaderModel = {
+      ...model,
+      navigation: {
+        ...model.navigation,
+        items: [
+          {
+            key: "planning",
+            kind: "group",
+            label: "Planning",
+            links,
+          },
+        ],
+      },
+    };
+    const { container } = render(<Header model={balancedModel} />);
+
+    await user.click(screen.getByRole("button", { name: "Planning" }));
+
+    const columns = container.querySelector(".grid-cols-2");
+    expect(columns).not.toBeNull();
+    expect(Array.from(columns?.children ?? []).map((column) => column.children.length)).toEqual([
+      4, 4,
+    ]);
+  });
 });
