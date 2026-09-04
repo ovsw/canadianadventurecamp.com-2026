@@ -1,6 +1,18 @@
 import { Route } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
+    .join(" ")
+    .trim();
+};
+
 const stop = defineArrayMember({
   name: "journeyStop",
   title: "Stop",
@@ -90,11 +102,11 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { eyebrow: "eyebrow", stops: "stops" },
-    prepare: ({ eyebrow, stops }) => {
+    select: { eyebrow: "eyebrow", stops: "stops", title: "title" },
+    prepare: ({ eyebrow, stops, title }) => {
       const count = Array.isArray(stops) ? stops.length : 0;
       return {
-        title: eyebrow || "Journey",
+        title: richTextToPlainText(title) || eyebrow || "Journey",
         subtitle: `${count} ${count === 1 ? "stop" : "stops"}`,
       };
     },
