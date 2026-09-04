@@ -12,9 +12,10 @@ Before starting a development server, inspect the required port. If the exact se
 
 ## Sanity browser checks (Codex)
 
-In Codex, always use the ChatGPT in-app browser for local or remote Sanity
-checks. Never use the Next.js loop browser to open or inspect Sanity Studio or
-any Sanity URL.
+When Ovi asks for a browser check of Sanity in Codex, use the ChatGPT in-app
+browser. Never use the Next.js loop browser to open or inspect Sanity Studio or
+any Sanity URL. Whether to open a browser at all is governed by "Fast
+verification" below.
 
 ## Shell discipline and reporting observations
 
