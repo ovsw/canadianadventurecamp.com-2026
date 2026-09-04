@@ -11,6 +11,7 @@
   --journey-rail: 2rem;
   --journey-dot: 12px;
   --journey-line: rgba(243, 239, 226, 0.18);
+
   display: grid;
   row-gap: var(--journey-gap-y);
 }
