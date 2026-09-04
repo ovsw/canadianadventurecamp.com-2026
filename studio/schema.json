@@ -393,7 +393,7 @@
   },
   {
     "type": "type",
-    "name": "journeyStop.image",
+    "name": "stackedTimelineItem.image",
     "value": {
       "type": "object",
       "attributes": {
@@ -409,7 +409,7 @@
           "type": "objectAttribute",
           "value": {
             "type": "inline",
-            "name": "journeyStop.image.media"
+            "name": "stackedTimelineItem.image.media"
           },
           "optional": true
         },
@@ -523,6 +523,125 @@
     }
   },
   {
+    "name": "stackedTimeline",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "stackedTimeline"
+          }
+        },
+        "eyebrow": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "title": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "minimalRichText"
+          },
+          "optional": true
+        },
+        "intro": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "buttons": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "array",
+            "of": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "rest": {
+                "type": "inline",
+                "name": "button"
+              }
+            }
+          },
+          "optional": true
+        },
+        "items": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "array",
+            "of": {
+              "type": "object",
+              "attributes": {
+                "title": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  },
+                  "optional": true
+                },
+                "meta": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  },
+                  "optional": true
+                },
+                "text": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  },
+                  "optional": true
+                },
+                "image": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "inline",
+                    "name": "stackedTimelineItem.image"
+                  },
+                  "optional": true
+                },
+                "_type": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string",
+                    "value": "stackedTimelineItem"
+                  }
+                }
+              },
+              "rest": {
+                "type": "object",
+                "attributes": {
+                  "_key": {
+                    "type": "objectAttribute",
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "type": "type",
     "name": "testimonial.reference",
     "value": {
@@ -597,103 +716,6 @@
               "rest": {
                 "type": "inline",
                 "name": "testimonial.reference"
-              }
-            }
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
-    "name": "journey",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "journey"
-          }
-        },
-        "eyebrow": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "title": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "minimalRichText"
-          },
-          "optional": true
-        },
-        "intro": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "stops": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "array",
-            "of": {
-              "type": "object",
-              "attributes": {
-                "label": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  },
-                  "optional": true
-                },
-                "time": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  },
-                  "optional": true
-                },
-                "text": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  },
-                  "optional": true
-                },
-                "image": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "inline",
-                    "name": "journeyStop.image"
-                  },
-                  "optional": true
-                },
-                "_type": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string",
-                    "value": "journeyStop"
-                  }
-                }
-              },
-              "rest": {
-                "type": "object",
-                "attributes": {
-                  "_key": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                }
               }
             }
           },
@@ -7137,7 +7159,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "journey"
+                  "name": "testimonials"
                 }
               },
               {
@@ -7152,7 +7174,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "testimonials"
+                  "name": "stackedTimeline"
                 }
               }
             ]
@@ -7478,7 +7500,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "journey"
+                  "name": "testimonials"
                 }
               },
               {
@@ -7493,7 +7515,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "testimonials"
+                  "name": "stackedTimeline"
                 }
               }
             ]
@@ -8635,7 +8657,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "journey"
+                  "name": "testimonials"
                 }
               },
               {
@@ -8650,7 +8672,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "testimonials"
+                  "name": "stackedTimeline"
                 }
               }
             ]

@@ -1,30 +1,29 @@
-import { Route } from "lucide-react";
+import { ListOrdered } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-const stop = defineArrayMember({
-  name: "journeyStop",
-  title: "Stop",
+const item = defineArrayMember({
+  name: "stackedTimelineItem",
+  title: "Card",
   type: "object",
   fields: [
     defineField({
-      name: "label",
-      title: "Stop name",
+      name: "title",
       type: "string",
-      description: "Where this stop is, e.g. Yorkdale.",
+      description: "The name of this step, stop, or milestone, e.g. Yorkdale.",
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "time",
-      title: "Time",
+      name: "meta",
+      title: "Small label",
       type: "string",
-      description: "Optional. Shown as written, e.g. 10:00 am.",
+      description: "Optional. Shown as written beside the number, e.g. 10:00 am or 1975.",
     }),
     defineField({
       name: "text",
       title: "One line",
       type: "string",
       description:
-        "One sentence on what happens here and who is with the camper. Explain any camp jargon.",
+        "One sentence on what happens here. Explain any camp jargon.",
       validation: (rule) => rule.required().max(180),
     }),
     defineField({
@@ -32,7 +31,7 @@ const stop = defineArrayMember({
       title: "Photo",
       type: "image",
       description:
-        "Optional. Leave empty until a real photo of this stop exists.",
+        "Optional. Shown 16:9 above the text. Leave empty until a real photo exists.",
       options: { hotspot: true },
       fields: [
         defineField({
@@ -45,22 +44,22 @@ const stop = defineArrayMember({
     }),
   ],
   preview: {
-    select: { label: "label", time: "time", media: "image" },
-    prepare: ({ label, time, media }) => ({
-      title: label || "Untitled Stop",
-      subtitle: time || undefined,
+    select: { title: "title", meta: "meta", media: "image" },
+    prepare: ({ title, meta, media }) => ({
+      title: title || "Untitled Card",
+      subtitle: meta || undefined,
       media,
     }),
   },
 });
 
 export default defineType({
-  name: "journey",
-  title: "Journey",
+  name: "stackedTimeline",
+  title: "Timeline",
   type: "object",
-  icon: Route,
+  icon: ListOrdered,
   description:
-    "An ordered trip in stops: a horizontal path on desktop, a vertical timeline on phones.",
+    "A sticky intro with up to two actions beside a stack of numbered cards, in order. Everything stacks on phones.",
   fields: [
     defineField({
       name: "eyebrow",
@@ -82,20 +81,29 @@ export default defineType({
       description: "Optional. One or two sentences under the heading.",
     }),
     defineField({
-      name: "stops",
+      name: "buttons",
       type: "array",
-      description: "Stops are shown in the order listed here, first to last.",
-      of: [stop],
+      description:
+        "Optional. Up to two actions under the intro. The first is emphasized; the second renders as an outline.",
+      of: [defineArrayMember({ type: "button" })],
+      validation: (rule) => rule.max(2),
+    }),
+    defineField({
+      name: "items",
+      title: "Cards",
+      type: "array",
+      description: "Cards are shown in the order listed here, first to last.",
+      of: [item],
       validation: (rule) => rule.required().min(2).max(8),
     }),
   ],
   preview: {
-    select: { eyebrow: "eyebrow", stops: "stops" },
-    prepare: ({ eyebrow, stops }) => {
-      const count = Array.isArray(stops) ? stops.length : 0;
+    select: { eyebrow: "eyebrow", items: "items" },
+    prepare: ({ eyebrow, items }) => {
+      const count = Array.isArray(items) ? items.length : 0;
       return {
-        title: eyebrow || "Journey",
-        subtitle: `${count} ${count === 1 ? "stop" : "stops"}`,
+        title: eyebrow || "Timeline",
+        subtitle: `${count} ${count === 1 ? "card" : "cards"}`,
       };
     },
   },
