@@ -7,12 +7,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 ## Dev Server rules
+
 Before starting a development server, inspect the required port. If the exact server you need is already running there, reuse it.
 
-## Sanity browser checks
+## Sanity browser checks (Codex)
 
-Always use the ChatGPT in-app browser for local or remote Sanity checks. Never use the Next.js loop browser to open or inspect Sanity Studio or any Sanity URL.
-
+In Codex, always use the ChatGPT in-app browser for local or remote Sanity
+checks. Never use the Next.js loop browser to open or inspect Sanity Studio or
+any Sanity URL.
 
 ## Shell discipline and reporting observations
 
@@ -106,6 +108,8 @@ Use [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): 
 - Keep explaining *why* in the body. The prefix classifies the change; it does not replace the reasoning.
 - Note that commits predating this rule use plain imperative subjects with no prefix. Follow the convention above, not the older style.
 
+## Agent skills
+
 ### Issue tracker
 
 Issues and PRDs are tracked in this repository's GitHub Issues. See `docs/agents/issue-tracker.md`.
@@ -130,6 +134,10 @@ live in `docs/avatars.md`.
 
 Before adding or changing a Page Builder section, its fields, or its stored
 content shape, read `docs/agents/page-builder.md`.
+
+### Sanity CLI
+
+Always pass `SANITY_AUTH_TOKEN` from `studio/.env.local` when invoking the Sanity CLI. See `docs/agents/sanity-cli.md`.
 
 ### Development workflow
 
