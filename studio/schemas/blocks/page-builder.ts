@@ -20,6 +20,7 @@ export const contentPageBuilderBlockTypes = [
   "stackedTimeline",
   "activityCatalogue",
   "includedExtras",
+  "packingChecklist",
   // page-builder-generator:content-types
 ] as const;
 
@@ -69,6 +70,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "ctaBanner",
   "testimonials",
   "activityCatalogue",
+  "packingChecklist",
   // page-builder-generator:preview-types
 ]);
 
