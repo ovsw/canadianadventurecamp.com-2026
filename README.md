@@ -40,6 +40,7 @@ Before using Presentation, confirm the Website and Studio origins are present in
 pnpm dev
 pnpm dev:frontend
 pnpm dev:studio
+pnpm dev:stop
 pnpm page-builder:new <name>
 pnpm verify
 pnpm lint
@@ -48,6 +49,11 @@ pnpm test
 pnpm build
 pnpm typegen
 ```
+
+`pnpm dev:stop` lists every Next.js and Sanity dev server started from any
+worktree of this repository, with port, memory, uptime, and worktree. Stop them
+with `--all`, `--here` (this worktree), `--orphans` (launcher already gone), or
+`--port <n>`. Stopping one server also stops its sibling and frees the slot.
 
 Run `pnpm verify` before opening a pull request. It checks generated Sanity types, TypeScript, lint, focused tests, and both production builds.
 
