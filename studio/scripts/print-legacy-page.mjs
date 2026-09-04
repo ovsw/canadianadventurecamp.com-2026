@@ -59,8 +59,9 @@ function portableText(blocks) {
 
 function walk(value, out) {
   if (Array.isArray(value)) {
-    if (value[0]?._type === "block") out.push(portableText(value));
-    else value.forEach((v) => walk(v, out));
+    const blocks = value.filter((v) => v?._type === "block");
+    if (blocks.length) out.push(portableText(blocks));
+    value.filter((v) => v?._type !== "block").forEach((v) => walk(v, out));
     return;
   }
   if (!value || typeof value !== "object") return;

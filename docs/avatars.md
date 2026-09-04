@@ -163,19 +163,19 @@ Fit quiz on the first phone visit; she is not ready to commit. Talk to the Direc
 
 | slug | why they visit it | priority |
 |---|---|---|
-| /health-and-safety | doctor, accreditation, certifications | primary | 1 |
-| /dates-and-rates | dates, price, refund, sibling discount | primary | 1 |
-| /staff | counsellor age, training, ratio | primary | 3 |
-| /accommodation-and-facilities | cabin size, who sleeps there | primary | 3 |
-| /programs/general-camp-program | daily schedule, activity choice | primary | 3 |
-| /testimonials | other parents | primary | 1 |
-| /transportation/travel-by-bus | Yorkdale pickup, times, cost | secondary | 3 |
-| /stay-in-touch-with-your-camper | CACmail | secondary | 3 |
-| /food-and-sample-menu | picky eater, allergies | secondary | 3 |
-| /faqs-prospective-families | expects answers, finds none | secondary | 3 |
-| /contact | phone, office hours | secondary | 3 |
-| /programs/specialty-* | only if child asks | none | 3 |
-| /international-campers | not relevant | none | 3 |
+| /health-and-safety | doctor, accreditation, certifications | primary |
+| /dates-and-rates | dates, price, refund, sibling discount | primary |
+| /staff | counsellor age, training, ratio | primary |
+| /accommodation-and-facilities | cabin size, who sleeps there | primary |
+| /programs/general-camp-program | daily schedule, activity choice | primary |
+| /testimonials | other parents | primary |
+| /transportation/travel-by-bus | Yorkdale pickup, times, cost | secondary |
+| /stay-in-touch-with-your-camper | CACmail | secondary |
+| /food-and-sample-menu | picky eater, allergies | secondary |
+| /faqs-prospective-families | expects answers, finds none | secondary |
+| /contact | phone, office hours | secondary |
+| /programs/specialty-* | only if child asks | none |
+| /international-campers | not relevant | none |
 
 ### Evidence and gaps
 
@@ -246,17 +246,17 @@ She must believe: her session is open, price and discount match expectation, the
 
 | slug | why they visit it | priority |
 |---|---|---|
-| /dates-and-rates | dates, prices, discount, deadlines, enroll | primary | 1 |
-| /parent-log-in | re-enroll, forms, balance | primary | ext |
-| /visitor-days | date, boat and lunch cash | primary | 3 |
-| /download-parent-guide | forms, packing, bus, payment schedule | primary | ext |
-| /transportation/travel-by-bus | bus price and times | secondary | 3 |
-| /transportation/airport-service | flight rules (international) | secondary | 3 |
-| /stay-in-touch-with-your-camper | CACmail, postal address | secondary | 3 |
-| /photos-and-videos | SmugMug, YouTube | secondary | 3 |
-| /places-to-stay-when-visiting | hotels for Visitors' Day | secondary | 3 |
-| /contact | office and summer phone | secondary | 3 |
-| /faqs | quick answers | none (empty) | 3 |
+| /dates-and-rates | dates, prices, discount, deadlines, enroll | primary |
+| /parent-log-in | re-enroll, forms, balance | primary |
+| /visitor-days | date, boat and lunch cash | primary |
+| /download-parent-guide | forms, packing, bus, payment schedule | primary |
+| /transportation/travel-by-bus | bus price and times | secondary |
+| /transportation/airport-service | flight rules (international) | secondary |
+| /stay-in-touch-with-your-camper | CACmail, postal address | secondary |
+| /photos-and-videos | SmugMug, YouTube | secondary |
+| /places-to-stay-when-visiting | hotels for Visitors' Day | secondary |
+| /contact | office and summer phone | secondary |
+| /faqs | quick answers | none (empty) |
 
 ### Evidence and gaps
 
@@ -314,13 +314,13 @@ Talk to the Directors, once questions 1 to 4 are answered on the site. She needs
 ### Pages this avatar cares about
 | slug | why they visit it | priority |
 |---|---|---|
-| /transportation/airport-service | package, flight rules, UM status | primary | 3 |
-| /international-campers | proof foreign kids thrive here | primary | 3 |
-| /health-and-safety | doctor, staff age, accreditation, insurance | primary | 1 |
-| /dates-and-rates | dates, inclusions, refund deadline | primary | 1 |
-| /stay-in-touch-with-your-camper | CACmail, postal address | secondary | 3 |
-| /download-parent-guide | forms, medication, summer contact | secondary | ext |
-| /visitor-days | she will not visit | none | 3 |
+| /transportation/airport-service | package, flight rules, UM status | primary |
+| /international-campers | proof foreign kids thrive here | primary |
+| /health-and-safety | doctor, staff age, accreditation, insurance | primary |
+| /dates-and-rates | dates, inclusions, refund deadline | primary |
+| /stay-in-touch-with-your-camper | CACmail, postal address | secondary |
+| /download-parent-guide | forms, medication, summer contact | secondary |
+| /visitor-days | she will not visit | none |
 
 ### Evidence and gaps
 Leaned on: airport package list, flight rules, UM notification, passport collection (/transportation/airport-service); staff 19+, doctor, OCA and CCA, National Insurance Program (/health-and-safety); CACmail; March 31 deadline (/dates-and-rates); PRODUCT.md principle 5.
@@ -463,14 +463,14 @@ Click "Apply Now" to the CampBrain staff portal (https://canadianadventurecamp.c
 ### Pages this avatar cares about
 | slug | why they visit it | priority |
 |---|---|---|
-| /join-our-team | entry, roles, apply link | primary | 3 |
-| /staff/available-positions | role details | primary | 3 |
-| /staff/international-staff | permits, support | primary | 3 |
-| /staff/staff-application | CampBrain handoff | primary | ext |
-| /all-new-youth-leadership-program | Mode B path | primary | 3 |
-| /staff | age, training, certifications | secondary | 3 |
-| /leadership-two-program | Mode B, price | secondary | 3 |
-| /junior-staff | paid role at 18 | secondary | 3 |
+| /join-our-team | entry, roles, apply link | primary |
+| /staff/available-positions | role details | primary |
+| /staff/international-staff | permits, support | primary |
+| /staff/staff-application | CampBrain handoff | primary |
+| /all-new-youth-leadership-program | Mode B path | primary |
+| /staff | age, training, certifications | secondary |
+| /leadership-two-program | Mode B, price | secondary |
+| /junior-staff | paid role at 18 | secondary |
 
 ### Evidence and gaps
 Leaned on: PRODUCT.md (CampBrain staff portal link); `/staff` (19+, average age 22, First Aid, Bronze Cross, National Lifeguard, counsellor lives in cabin); `/staff/international-staff` (camp-specific work permit, qualifications provided); `/staff/available-positions`; YLP pages (three stages, Leadership Two price, Junior Staff paid); counsellor blog posts.

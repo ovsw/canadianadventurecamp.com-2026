@@ -27,8 +27,9 @@ are Ovi's.
 5. Blog posts on the page's topic. Query `post` titles and excerpts in Sanity
    (project and dataset from `studio/.env.local`) and keep the ones that hold
    facts or stories the page could use.
-6. The page's neighbours: pages in the same nav group per the matrix, so the
-   spec can move content between them instead of repeating it.
+6. The page's neighbours: the other pages in its nav group, read from the
+   `navigation` document in Sanity (`items[].label` and each item's links).
+   The spec can move content between neighbours instead of repeating it.
 7. The existing blocks: names and fields in `studio/schemas/blocks/`, and the
    homepage block list from the `homePage` document. Needed for step 4 only.
 
