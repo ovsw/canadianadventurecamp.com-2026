@@ -58,6 +58,7 @@ import facilitiesMapSection from "./schemas/blocks/facilities-map-section";
 import datesRatesSection from "./schemas/blocks/dates-rates-section";
 import stackedFeatureRows from "./schemas/blocks/stacked-feature-rows";
 import innerHero from "./schemas/blocks/inner-hero";
+import journey from "./schemas/blocks/journey";
 // page-builder-generator:block-imports
 import { internationalCampersSection } from "./schemas/blocks/international-campers-section";
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
@@ -122,6 +123,7 @@ export const schemaTypes = [
   datesRatesSection,
   stackedFeatureRows,
   innerHero,
+  journey,
   // page-builder-generator:block-types
   internationalCampersSection,
 ];
