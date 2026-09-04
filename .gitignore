@@ -48,3 +48,6 @@ studio/backups/
 
 # local Codex MCP credentials
 .codex/config.toml
+
+# per-worktree development port assignment
+/.worktree-ports.json
