@@ -54,7 +54,9 @@ async function main() {
   if (!projectId) throw new Error("Missing SANITY_STUDIO_PROJECT_ID in studio/.env.local.");
   const token = process.env.SANITY_AUTH_TOKEN?.trim();
   if (!token) {
-    throw new Error("Missing SANITY_AUTH_TOKEN in studio/.env.local. Run `pnpm --dir studio exec sanity login` or add a project-scoped token.");
+    throw new Error(
+      `Missing SANITY_AUTH_TOKEN in studio/.env.local. Create a project token at https://www.sanity.io/manage/project/${projectId}/api#tokens and add it there.`,
+    );
   }
 
   const desired = desiredSanityOrigins();
