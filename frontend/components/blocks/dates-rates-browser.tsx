@@ -167,14 +167,14 @@ export default function DatesRatesBrowser({
             </a>
           ) : null}
           <a
-              className="focus-ring inline-flex w-fit items-center gap-2 rounded-pill bg-campfire-amber px-7 py-4 font-bold text-pine-night transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-campfire-amber-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-              href={enrollmentHref}
-              rel="noreferrer"
-              target="_blank"
-            >
-              Enroll for {seasonYear}
-              <span aria-hidden="true">&rarr;</span>
-            </a>
+            className="focus-ring inline-flex w-fit items-center gap-2 rounded-pill bg-campfire-amber px-7 py-4 font-bold text-pine-night transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-campfire-amber-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            href={enrollmentHref}
+            rel="noreferrer"
+            target="_blank"
+          >
+            Enroll for {seasonYear}
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
       </div>
 
