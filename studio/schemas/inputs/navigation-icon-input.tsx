@@ -20,6 +20,12 @@ import {
 } from "@sanity/ui";
 import { set, type ObjectInputProps } from "sanity";
 import {
+  campIconLabel,
+  campIconNames,
+  campIconSvg,
+  isCampIconName,
+} from "./camp-icons";
+import {
   canonicalLucideIconNames,
   isCanonicalLucideIconName,
 } from "./lucide-icon-catalog";
@@ -27,6 +33,16 @@ import {
 const PAGE_SIZE = 60;
 
 function IconGlyph({ name, size = 20 }: { name: string; size?: number }) {
+  if (isCampIconName(name)) {
+    // Catalog markup is generated in this repo, not user input.
+    return (
+      <span
+        aria-hidden="true"
+        dangerouslySetInnerHTML={{ __html: campIconSvg(name) }}
+        style={{ display: "inline-flex", height: size, width: size }}
+      />
+    );
+  }
   if (!isCanonicalLucideIconName(name)) return null;
 
   return (
@@ -117,12 +133,16 @@ export default function NavigationIconInput(props: ObjectInputProps) {
   const selectedName = value?.name;
 
   const normalizedQuery = query.trim().toLowerCase().replaceAll(" ", "-");
+  const filteredCampNames = useMemo(() => {
+    if (!normalizedQuery) return campIconNames;
+    return campIconNames.filter((name) => name.includes(normalizedQuery));
+  }, [normalizedQuery]);
   const filteredLucideNames = useMemo(() => {
     if (!normalizedQuery) return canonicalLucideIconNames;
     return canonicalLucideIconNames.filter((name) => name.includes(normalizedQuery));
   }, [normalizedQuery]);
   const visibleLucideNames = filteredLucideNames.slice(0, limit);
-  const matchingCount = filteredLucideNames.length;
+  const matchingCount = filteredCampNames.length + filteredLucideNames.length;
 
   const close = () => setOpen(false);
   const openPicker = () => {
@@ -131,7 +151,9 @@ export default function NavigationIconInput(props: ObjectInputProps) {
     setOpen(true);
   };
   const selectIcon = async (name: string) => {
-    const svg = await renderLucideIconSvg(name);
+    const svg = isCampIconName(name)
+      ? campIconSvg(name)
+      : await renderLucideIconSvg(name);
     if (!svg) {
       // Saving a Lucide icon without its artwork would fail validation and
       // render nothing on the site, so keep the picker open instead.
@@ -185,6 +207,25 @@ export default function NavigationIconInput(props: ObjectInputProps) {
               <Text muted size={1}>
                 {matchingCount} matching icon{matchingCount === 1 ? "" : "s"}
               </Text>
+
+              {filteredCampNames.length ? (
+                <Stack space={3}>
+                  <Text size={1} weight="semibold">
+                    Camp icons (two-tone, from the previous website)
+                  </Text>
+                  <Grid columns={[2, 3, 4, 5]} gap={2}>
+                    {filteredCampNames.map((name) => (
+                      <PickerOption
+                        key={name}
+                        label={campIconLabel(name)}
+                        name={name}
+                        onSelect={selectIcon}
+                        selected={name === selectedName}
+                      />
+                    ))}
+                  </Grid>
+                </Stack>
+              ) : null}
 
               {visibleLucideNames.length ? (
                 <Stack space={3}>

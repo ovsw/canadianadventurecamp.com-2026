@@ -1,7 +1,8 @@
 import { lucideIconNames } from "./lucide-icon-names";
+import { isCampIconName, type CampIconName } from "./camp-icons";
 
 export type CanonicalLucideIconName = (typeof lucideIconNames)[number];
-export type NavigationIconName = CanonicalLucideIconName;
+export type NavigationIconName = CanonicalLucideIconName | CampIconName;
 
 export const canonicalLucideIconNames = lucideIconNames;
 
@@ -14,5 +15,5 @@ export function isCanonicalLucideIconName(
 }
 
 export function isNavigationIconName(value: unknown): value is NavigationIconName {
-  return isCanonicalLucideIconName(value);
+  return isCanonicalLucideIconName(value) || isCampIconName(value);
 }
