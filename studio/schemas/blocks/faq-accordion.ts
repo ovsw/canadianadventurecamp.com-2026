@@ -37,7 +37,6 @@ export default defineType({
     defineField({
       name: "eyebrow",
       type: "string",
-      title: "Eyebrow",
       description: "Optional short label above the heading.",
     }),
     defineField({

@@ -83,6 +83,7 @@ export default function DatesRatesBrowser({
   conditions,
   conditionsDataAttribute,
   lengths,
+  noteId,
   portalLink,
   seasonStart,
   seasonYear,
@@ -92,6 +93,7 @@ export default function DatesRatesBrowser({
   conditions: ConditionBlock[];
   conditionsDataAttribute?: string;
   lengths: PreparedLength[];
+  noteId: string;
   portalLink?: {
     dataSanity?: string;
     href: string;
@@ -112,7 +114,7 @@ export default function DatesRatesBrowser({
     lengths.find((length) => length.key === selectedKey) ?? lengths[0];
   const ticks = useMemo(() => getSeasonTicks(seasonStart), [seasonStart]);
   const animatedRate = useAnimatedRate(activeLength?.rateValue ?? 0);
-  const enrollNoteId = `dates-rates-enroll-note-${seasonYear}`;
+  const enrollNoteId = noteId;
 
   if (!activeLength) return null;
 
@@ -169,7 +171,7 @@ export default function DatesRatesBrowser({
           ) : null}
           <span className="flex flex-col items-start gap-2 sm:items-end">
             <a
-              aria-describedby={`${enrollNoteId}`}
+              aria-describedby={enrollNoteId}
               className="focus-ring inline-flex w-fit items-center gap-2 rounded-pill bg-campfire-amber px-7 py-4 font-bold text-pine-night transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-campfire-amber-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               href={enrollmentHref}
               rel="noreferrer"

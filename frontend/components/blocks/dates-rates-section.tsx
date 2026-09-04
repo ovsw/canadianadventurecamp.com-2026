@@ -141,6 +141,7 @@ export default function DatesRatesSection({
           conditions={conditions}
           conditionsDataAttribute={dataAttribute?.("conditions")}
           lengths={lengths}
+          noteId={`${sectionId}-enroll-note`}
           portalLink={portalLink}
           seasonStart={seasonStart}
           seasonYear={seasonYear}
