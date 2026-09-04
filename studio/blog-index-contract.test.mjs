@@ -22,6 +22,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
   );
   assert.deepEqual([...pageBuilderBlockTypes], [
     "hero",
+    "innerHero",
     "richTextBlock",
     "benefitCards",
     "storyFeature",
@@ -67,6 +68,10 @@ test("the blocks insert menu offers list and grid views with known previews", ()
     getPageBuilderPreviewImageUrl("stackedFeatureRows"),
     "/static/images/preview/stackedFeatureRows.jpg",
   );
+  assert.equal(
+    getPageBuilderPreviewImageUrl("innerHero"),
+    "/static/images/preview/innerHero.jpg",
+  );
   assert.equal(getPageBuilderPreviewImageUrl("hero"), undefined);
 });
 
@@ -78,6 +83,7 @@ test("blogIndex uses the singleton configuration", () => {
     [...contentPageBuilderBlockTypes],
   );
   assert.equal(contentPageBuilderBlockTypes.includes("hero"), false);
+  assert.equal(contentPageBuilderBlockTypes.includes("innerHero"), false);
   assert.equal(singletonDocumentTypes.has("blogIndex"), true);
   assert.equal(singletonDocumentTypes.has("facilitiesMap"), true);
   assert.equal(singletonDocumentTypes.has("seasonsConfig"), true);

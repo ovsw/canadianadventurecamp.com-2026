@@ -29,6 +29,7 @@ const homeOnlyPageBuilderBlockTypes = [
 
 export const generalPageBuilderBlockTypes = [
   "hero",
+  "innerHero",
   ...generalOnlyPageBuilderBlockTypes,
   ...contentPageBuilderBlockTypes,
 ] as const;
@@ -46,6 +47,7 @@ type PageBuilderBlockType =
 
 const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "homeHero",
+  "innerHero",
   "richTextBlock",
   "benefitCards",
   "storyFeature",
@@ -68,10 +70,13 @@ export function getPageBuilderPreviewImageUrl(schemaTypeName: string) {
     : undefined;
 }
 
+/** Every block type that opens a page. One per page, always first. */
+export const heroBlockTypes = new Set(["hero", "homeHero", "innerHero"]);
+
 export function validateBlocks(
   blocks: Array<{ _type?: string }> | undefined,
 ): true | string {
-  const heroTypes = new Set(["hero", "homeHero"]);
+  const heroTypes = heroBlockTypes;
   const heroIndexes = (blocks ?? []).flatMap((block, index) =>
     heroTypes.has(block?._type ?? "") ? [index] : [],
   );
@@ -89,9 +94,8 @@ export function validateBlocks(
 }
 
 function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
-  const heroTypeNames = new Set(["hero", "homeHero"]);
-  const heroTypes = blockTypes.filter((type) => heroTypeNames.has(type));
-  const contentTypes = blockTypes.filter((type) => !heroTypeNames.has(type));
+  const heroTypes = blockTypes.filter((type) => heroBlockTypes.has(type));
+  const contentTypes = blockTypes.filter((type) => !heroBlockTypes.has(type));
 
   return defineField({
     name: "blocks",
