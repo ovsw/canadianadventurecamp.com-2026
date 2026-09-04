@@ -1,0 +1,16 @@
+diff --git a/dist/index.js b/dist/index.js
+index 6539933a4224bcca8fe22c23c9ec2d4c2bb120e5..147ecec524bc8c83e50fc5bded2400723d68f4d3 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -3676,7 +3676,10 @@ const DialogAssetEdit = (props) => {
+ 		})
+ 	});
+ }, useBreakpointIndex = () => {
+-	let mediaQueryLists = studioTheme?.container?.map((width) => window.matchMedia(`(max-width: ${width}px)`)), getBreakpointIndex = () => mediaQueryLists.findIndex((mql) => mql.matches), [value, setValue] = useState(getBreakpointIndex());
++	let mediaQueryLists = studioTheme?.container?.map((width) => window.matchMedia(`(max-width: ${width}px)`)), getBreakpointIndex = () => {
++		let index = mediaQueryLists.findIndex((mql) => mql.matches);
++		return index === -1 ? mediaQueryLists.length : index;
++	}, [value, setValue] = useState(getBreakpointIndex());
+ 	return useEffect(() => {
+ 		let handleBreakpoint = () => {
+ 			setValue(getBreakpointIndex);
