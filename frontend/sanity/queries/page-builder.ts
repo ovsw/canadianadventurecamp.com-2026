@@ -17,6 +17,7 @@ import { innerHeroQuery } from "./inner-hero";
 import { testimonialsQuery } from "./testimonials";
 import { journeyQuery } from "./journey";
 import { stackedTimelineQuery } from "./stacked-timeline";
+import { activityCatalogueQuery } from "./activity-catalogue";
 // page-builder-generator:query-imports
 import { internationalCampersSectionQuery } from "./international-campers-section";
 
@@ -43,6 +44,7 @@ export const pageBuilderQuery = `
     ${testimonialsQuery},
     ${journeyQuery},
     ${stackedTimelineQuery},
+    ${activityCatalogueQuery},
     ${"" /* page-builder-generator:query-spreads */}
     ${internationalCampersSectionQuery}
   }

@@ -55,6 +55,14 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "aside",
+      title: "Parent aside",
+      type: "text",
+      rows: 3,
+      description:
+        "Optional. One or two factual lines for parents, shown quieter under the description. Leave empty to show nothing.",
+    }),
+    defineField({
       name: "camperNames",
       title: "Camper Names",
       type: "array",
