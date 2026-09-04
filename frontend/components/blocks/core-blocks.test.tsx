@@ -473,7 +473,7 @@ describe("core Page Builder sections", () => {
         },
       ],
       intro: "Common sections for marketing pages.",
-      title: "Feature grid",
+      title: [paragraph("features-title", "Feature grid")],
     } as unknown as ComponentProps<typeof BenefitCards>;
     const { rerender } = render(<BenefitCards {...featureGrid} />);
 
