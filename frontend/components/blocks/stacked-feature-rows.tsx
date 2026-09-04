@@ -60,21 +60,18 @@ export default function StackedFeatureRows({
   if (!title?.length || !rows?.length) return null;
 
   const renderableRows = rows.flatMap((row) => {
-    const href = getSafeLinkHref(row.link?.href);
     const items = (row.items ?? []).filter(
       (item) => item.body?.length && hasText(toPlainText(item.body)),
     );
 
-    if (
-      !hasText(row.title) ||
-      !hasText(row.link?.text) ||
-      !href ||
-      !items.length
-    ) {
-      return [];
-    }
+    if (!hasText(row.title) || !items.length) return [];
 
-    return [{ href, items, row }];
+    // The link is optional: a row renders without one, but never with a
+    // half-filled one.
+    const href = getSafeLinkHref(row.link?.href);
+    const link = hasText(row.link?.text) && href ? { ...row.link, href } : null;
+
+    return [{ items, link, row }];
   });
 
   if (!renderableRows.length) return null;
@@ -113,14 +110,14 @@ export default function StackedFeatureRows({
           className="mt-16 grid list-none gap-px bg-pine-night/15 p-0 md:grid-cols-2 lg:grid-cols-1"
           data-sanity={dataAttribute?.("rows")}
         >
-          {renderableRows.map(({ href, items, row }) => {
+          {renderableRows.map(({ items, link, row }) => {
             const rowPath = `rows[_key=="${row._key}"]`;
             const iconName = stegaClean(row.icon?.name)?.trim();
             const iconSvg = stegaClean(row.icon?.svg)?.trim() || null;
 
             return (
               <li
-                className={`relative grid min-h-52 overflow-hidden bg-birch-bark px-5 py-10 md:last:odd:col-span-2 md:px-8 lg:col-span-1 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
+                className={`relative grid min-h-52 overflow-hidden bg-birch-bark px-5 py-10 md:max-lg:last:odd:col-span-2 md:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
                 key={row._key}
               >
                 <div className="relative z-10 flex items-center gap-4">
@@ -150,7 +147,7 @@ export default function StackedFeatureRows({
                       const itemPath = `${rowPath}.items[_key=="${item._key}"]`;
 
                       return (
-                        <li className="flex items-center gap-3" key={item._key}>
+                        <li className="flex items-start gap-3" key={item._key}>
                           <Check
                             aria-hidden="true"
                             className="mt-0.5 size-5 shrink-0 text-cedar"
@@ -169,26 +166,28 @@ export default function StackedFeatureRows({
                     })}
                   </ul>
 
-                  <Link
-                    className="focus-ring mt-6 inline-flex w-fit items-center gap-2 font-semibold text-cedar hover:text-cedar-deep"
-                    data-sanity={dataAttribute?.(`${rowPath}.link`)}
-                    href={href}
-                    rel={
-                      stegaClean(row.link?.openInNewTab)
-                        ? "noopener noreferrer"
-                        : undefined
-                    }
-                    target={
-                      stegaClean(row.link?.openInNewTab) ? "_blank" : undefined
-                    }
-                  >
-                    <span
-                      data-sanity={dataAttribute?.(`${rowPath}.link.text`)}
+                  {link ? (
+                    <Link
+                      className="focus-ring mt-6 inline-flex w-fit items-center gap-2 font-semibold text-cedar hover:text-cedar-deep"
+                      data-sanity={dataAttribute?.(`${rowPath}.link`)}
+                      href={link.href}
+                      rel={
+                        stegaClean(link.openInNewTab)
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      target={
+                        stegaClean(link.openInNewTab) ? "_blank" : undefined
+                      }
                     >
-                      {row.link?.text}
-                    </span>
-                    <ArrowUpRight aria-hidden="true" className="size-4" />
-                  </Link>
+                      <span
+                        data-sanity={dataAttribute?.(`${rowPath}.link.text`)}
+                      >
+                        {link.text}
+                      </span>
+                      <ArrowUpRight aria-hidden="true" className="size-4" />
+                    </Link>
+                  ) : null}
                 </div>
               </li>
             );
