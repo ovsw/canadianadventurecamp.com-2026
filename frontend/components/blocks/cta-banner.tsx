@@ -71,10 +71,14 @@ function CtaButtons({
         label: stegaClean(button.text)?.trim() || "Learn more",
         openInNewTab: Boolean(stegaClean(button.openInNewTab)),
         path: `buttons[_key=="${button._key}"]`,
-        variant: resolveCtaButtonVariant(button.variant, index),
+        storedVariant: button.variant,
       },
     ];
-  }).map((action, index) => ({ ...action, primary: index === 0 }));
+  }).map(({ storedVariant, ...action }, index) => ({
+    ...action,
+    primary: index === 0,
+    variant: resolveCtaButtonVariant(storedVariant, index),
+  }));
 
   if (!actions.length) return null;
 
