@@ -1,7 +1,6 @@
 ---
 name: page-brief
 description: "Rethink one website page with Ovi (avatar, jobs, content, layout) and file the spec as a GitHub issue. Usage: /page-brief <slug>"
-disable-model-invocation: true
 ---
 
 Steps 1 to 4 of the page rethink: **avatar**, **jobs**, **content**,
