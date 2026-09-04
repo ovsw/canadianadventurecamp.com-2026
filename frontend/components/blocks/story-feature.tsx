@@ -38,6 +38,7 @@ const fields = {
   dark: {
     section: "bg-forest-floor text-birch-bark",
     eyebrow: "text-campfire-amber",
+    accent: "text-campfire-amber",
     body: "text-birch-bark/72",
     quote: "text-birch-bark",
     caption: "text-birch-bark/60",
@@ -50,6 +51,7 @@ const fields = {
   cream: {
     section: "bg-birch-bark text-pine-night",
     eyebrow: "text-cedar",
+    accent: "text-cedar",
     body: "text-pine-night/70",
     quote: "text-pine-night",
     caption: "text-pine-night/60",
@@ -62,6 +64,18 @@ const fields = {
 } as const;
 
 type Field = (typeof fields)[keyof typeof fields];
+
+function headingComponents(field: Field): PortableTextComponents {
+  return {
+    block: { normal: ({ children }) => <>{children}</> },
+    marks: {
+      strong: ({ children }) => <strong>{children}</strong>,
+      em: ({ children }) => (
+        <em className={cn("font-accent not-italic", field.accent)}>{children}</em>
+      ),
+    },
+  };
+}
 
 function richTextComponents(field: Field): Partial<PortableTextComponents> {
   return {
@@ -209,8 +223,7 @@ export default function StoryFeature({
   title,
   useCreamBackground,
 }: StoryFeatureProps) {
-  const displayTitle = stegaClean(title)?.trim();
-  if (!displayTitle) return null;
+  if (!title?.length) return null;
 
   const field = stegaClean(useCreamBackground) ? fields.cream : fields.dark;
   const displayEyebrow = stegaClean(eyebrow)?.trim();
@@ -277,7 +290,7 @@ export default function StoryFeature({
                 data-sanity={dataAttribute?.("title")}
                 id={headingId}
               >
-                {displayTitle}
+                <PortableText components={headingComponents(field)} value={title} />
               </h2>
             </header>
 

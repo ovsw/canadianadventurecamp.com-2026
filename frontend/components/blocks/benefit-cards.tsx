@@ -1,19 +1,70 @@
 import { NavigationIcon } from "@/components/header/navigation-icon";
+import { createCustomLinkMarkRenderer } from "@/components/portable-text/custom-link-mark";
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { cn } from "@/lib/utils";
-import type { PAGE_QUERY_RESULT } from "@/sanity.types";
-import { PortableText } from "@portabletext/react";
+import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
+import styles from "./benefit-cards.module.css";
 
-type BenefitCardsProps = Extract<
-  NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number],
-  { _type: "benefitCards" }
-> & {
+type PageBlock =
+  | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
+  | NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number];
+
+type BenefitCardsProps = Extract<PageBlock, { _type: "benefitCards" }> & {
   dataAttribute?: (path: string) => string | undefined;
 };
 
+/*
+ * Feature Grid — hairline-grid tiles (The Hairline Grid).
+ *
+ * 1px gaps over a translucent background draw the grid; tiles have no
+ * radius or border of their own and never lift, they tint on hover. The
+ * icon sits in a pill outline, coloured Moss on the forest field and Cedar
+ * on cream, so amber stays reserved for the page's actions.
+ */
+type Field = { cream: boolean };
+
+function headingComponents({ cream }: Field): PortableTextComponents {
+  return {
+    block: { normal: ({ children }) => <>{children}</> },
+    marks: {
+      strong: ({ children }) => <strong>{children}</strong>,
+      em: ({ children }) => (
+        <em
+          className={cn(
+            "font-accent not-italic",
+            cream ? "text-cedar" : "text-campfire-amber",
+          )}
+        >
+          {children}
+        </em>
+      ),
+    },
+  };
+}
+
+function bodyComponents({ cream }: Field): PortableTextComponents {
+  return {
+    ...simpleRichTextComponents,
+    marks: {
+      ...simpleRichTextComponents?.marks,
+      customLink: createCustomLinkMarkRenderer(
+        cream
+          ? "font-medium text-cedar underline decoration-cedar/30 underline-offset-4 hover:text-cedar-deep hover:decoration-cedar-deep"
+          : "font-medium text-sunlit-moss underline decoration-sunlit-moss/40 underline-offset-4 hover:text-cream hover:decoration-cream",
+      ),
+    },
+  };
+}
+
 function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
+}
+
+export function getBenefitCardColumnCount(cardCount: number) {
+  if (cardCount >= 4 && cardCount !== 5 && cardCount !== 6) return 4;
+  return cardCount >= 3 ? 3 : Math.max(cardCount, 1);
 }
 
 export default function BenefitCards({
@@ -25,43 +76,48 @@ export default function BenefitCards({
   title,
   useCreamBackground,
 }: BenefitCardsProps) {
-  if (!cards?.length) return null;
+  if (!title?.length || !cards?.length) return null;
 
-  const displayTitle = stegaClean(title)?.trim();
-  const headingId = `benefit-cards-${stegaClean(_key)}`;
-  const useThreeColumns = cards.length === 3 || cards.length >= 5;
+  const cream = stegaClean(useCreamBackground) === true;
+  const cleanKey = stegaClean(_key);
+  const headingId = `benefit-cards-${cleanKey}-title`;
+  const columnCount = getBenefitCardColumnCount(cards.length);
 
   return (
     <section
-      aria-labelledby={displayTitle ? headingId : undefined}
+      aria-labelledby={headingId}
       className={cn(
-        "scroll-mt-24 section-pad",
-        stegaClean(useCreamBackground) ? "surface-cream" : "surface-white",
+        "scroll-mt-24 py-section",
+        cream ? "bg-birch-bark text-pine-night" : "bg-forest-floor text-birch-bark",
       )}
-      id={`benefits-${stegaClean(_key)}`}
+      id={`benefits-${cleanKey}`}
     >
-      <div className="container">
-        <header className="max-w-2xl section-header-gap">
+      <div className="container-content">
+        <header className={cn("max-w-3xl", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className="mb-3.5 typo-eyebrow text-primary"
+              className={cn(
+                "mb-5 text-eyebrow",
+                cream ? "text-cedar" : "text-campfire-amber",
+              )}
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
             </p>
           ) : null}
-          {displayTitle ? (
-            <h2
-              className="text-balance typo-section-heading text-foreground"
-              data-sanity={dataAttribute?.("title")}
-              id={headingId}
-            >
-              {title}
-            </h2>
-          ) : null}
+          <h2
+            className="text-balance font-display text-headline"
+            data-sanity={dataAttribute?.("title")}
+            id={headingId}
+          >
+            <PortableText components={headingComponents({ cream })} value={title} />
+          </h2>
           {hasText(intro) ? (
             <p
-              className="mt-5 text-pretty typo-body-editorial text-muted-foreground"
+              className={cn(
+                "mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6]",
+                cream ? "text-pine-night/70" : "text-birch-bark/72",
+              )}
               data-sanity={dataAttribute?.("intro")}
             >
               {intro}
@@ -71,8 +127,12 @@ export default function BenefitCards({
 
         <ol
           className={cn(
-            "grid list-none gap-6 p-0 sm:grid-cols-2",
-            useThreeColumns && "lg:grid-cols-3",
+            "mt-12 grid list-none gap-px overflow-hidden rounded-lg p-0 lg:mt-16",
+            cream ? "bg-pine-night/15" : "bg-birch-bark/15",
+            columnCount >= 2 && "sm:grid-cols-2",
+            columnCount === 3 && "lg:grid-cols-3",
+            columnCount === 4 && "lg:grid-cols-4",
+            styles.reveal,
           )}
           data-sanity={dataAttribute?.("cards")}
         >
@@ -86,28 +146,45 @@ export default function BenefitCards({
 
             return (
               <li
-                className="flex h-full flex-col gap-3.5 rounded-card border border-border bg-card p-(--space-card) text-card-foreground"
+                className={cn(
+                  "flex h-full flex-col gap-5 p-7 transition-colors duration-300 lg:p-8",
+                  cream
+                    ? "bg-birch-bark hover:bg-pine-night/5"
+                    : "bg-forest-floor hover:bg-white/5",
+                )}
                 key={card._key}
               >
                 <div className="flex items-center justify-between">
-                  <div
-                    className="flex size-[46px] items-center justify-center rounded-full bg-secondary text-primary"
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "flex size-11 items-center justify-center rounded-pill border [&_svg]:size-5",
+                      cream
+                        ? "border-pine-night/18 text-cedar"
+                        : "border-birch-bark/22 text-moss",
+                    )}
                     data-sanity={dataAttribute?.(`${cardPath}.icon`)}
                   >
                     {iconName && iconSvg ? (
                       <NavigationIcon icon={{ name: iconName, svg: iconSvg }} />
                     ) : null}
-                  </div>
+                  </span>
                   <span
                     aria-hidden="true"
-                    className="text-sm font-semibold tracking-widest text-border-strong"
+                    className={cn(
+                      "text-label",
+                      cream ? "text-pine-night/45" : "text-birch-bark/45",
+                    )}
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
                 {hasText(card.title) ? (
                   <h3
-                    className="typo-subsection-heading text-foreground"
+                    className={cn(
+                      "font-display text-title",
+                      cream ? "text-pine-night" : "text-cream",
+                    )}
                     data-sanity={dataAttribute?.(`${cardPath}.title`)}
                   >
                     {card.title}
@@ -115,11 +192,14 @@ export default function BenefitCards({
                 ) : null}
                 {card.body?.length ? (
                   <div
-                    className="grid gap-(--space-stack) text-pretty typo-body text-muted-foreground"
+                    className={cn(
+                      "grid gap-3 text-pretty text-[15px] leading-[1.55]",
+                      cream ? "text-pine-night/70" : "text-birch-bark/72",
+                    )}
                     data-sanity={dataAttribute?.(`${cardPath}.body`)}
                   >
                     <PortableText
-                      components={simpleRichTextComponents}
+                      components={bodyComponents({ cream })}
                       value={card.body}
                     />
                   </div>

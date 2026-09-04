@@ -5,6 +5,18 @@ import NavigationIconInput, {
 } from "../inputs/navigation-icon-input";
 import { isNavigationIconName } from "../inputs/lucide-icon-catalog";
 
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
+    .join(" ")
+    .trim();
+};
+
 const benefitCard = defineArrayMember({
   name: "featureGridItem",
   title: "Feature",
@@ -75,7 +87,7 @@ export default defineType({
       title: "Use Alternate Background",
       type: "boolean",
       description:
-        "Turn on to separate this section from the surrounding page content.",
+        "Turn on for a cream field instead of the default forest field. Alternate with the sections around it.",
       initialValue: false,
     }),
     defineField({
@@ -85,9 +97,10 @@ export default defineType({
     }),
     defineField({
       name: "title",
-      type: "string",
-      description: "The main heading for the feature grid.",
-      validation: (rule) => rule.required(),
+      title: "Heading",
+      type: "minimalRichText",
+      description: "Use italic for the phrase that gets the handwritten style.",
+      validation: (rule) => rule.required().max(1),
     }),
     defineField({
       name: "intro",
@@ -110,7 +123,7 @@ export default defineType({
     prepare: ({ title, cards }) => {
       const count = Array.isArray(cards) ? cards.length : 0;
       return {
-        title: title || "Untitled Feature Grid",
+        title: richTextToPlainText(title) || "Untitled Feature Grid",
         subtitle: `Feature Grid - ${count} ${count === 1 ? "feature" : "features"}`,
       };
     },

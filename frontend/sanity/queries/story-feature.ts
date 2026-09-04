@@ -2,13 +2,16 @@ import { groq } from "next-sanity";
 import { imageQuery } from "./shared/image";
 import { customLinkMarkDefsQuery } from "./shared/custom-link";
 import { urlInternalHref } from "./shared/internal-href";
+import { minimalRichTextQuery } from "./shared/minimal-rich-text";
 
 // @sanity-typegen-ignore
 export const storyFeatureQuery = groq`
   _type == "storyFeature" => {
     useCreamBackground,
     eyebrow,
-    title,
+    title[]{
+      ${minimalRichTextQuery}
+    },
     image {
       ${imageQuery}
     },
