@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { CallDirectorsAction } from "./call-directors-action";
 import { HeaderLink } from "./header-link";
 import type { HeaderNavigationModel } from "./model";
-import { NavigationIcon, isTwoToneIcon } from "./navigation-icon";
+import { NavigationIcon } from "./navigation-icon";
 import type { HeaderTheme } from "./theme";
 
 function HamburgerIcon({ open }: { open: boolean }) {
@@ -143,14 +143,10 @@ export function MobileNav({
                           {child.icon ? (
                             <span
                               className={cn(
-                                "flex size-8 shrink-0 items-center justify-center",
-                                dark ? "text-campfire-amber" : "text-cedar",
-                                isTwoToneIcon(child.icon)
-                                  ? "[&_svg]:size-6"
-                                  : cn(
-                                      "rounded-[var(--radius-md)] [&_svg]:size-4",
-                                      dark ? "bg-forest-panel" : "bg-cedar/10",
-                                    ),
+                                "flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] [&_svg]:size-4",
+                                dark
+                                  ? "bg-forest-panel text-campfire-amber"
+                                  : "bg-cedar/10 text-cedar",
                               )}
                             >
                               <NavigationIcon icon={child.icon} />

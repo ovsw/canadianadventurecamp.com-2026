@@ -20,7 +20,7 @@ import type {
   HeaderNavigationItem,
   HeaderNavigationModel,
 } from "./model";
-import { NavigationIcon, isTwoToneIcon } from "./navigation-icon";
+import { NavigationIcon } from "./navigation-icon";
 import type { HeaderTheme } from "./theme";
 
 const SINGLE_COLUMN_PANEL_WIDTH = 380;
@@ -80,16 +80,10 @@ function GroupPanelContent({
                 {child.icon ? (
                   <span
                     className={cn(
-                      "flex size-10 shrink-0 items-center justify-center",
-                      dark ? "text-campfire-amber" : "text-cedar",
-                      isTwoToneIcon(child.icon)
-                        ? "[&_svg]:size-8"
-                        : cn(
-                            "rounded-full transition-colors motion-fast [&_svg]:size-5",
-                            dark
-                              ? "bg-forest-floor group-hover/nav-link:bg-forest-floor/75"
-                              : "bg-cedar/10 group-hover/nav-link:bg-cedar/15",
-                          ),
+                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors motion-fast [&_svg]:size-5",
+                      dark
+                        ? "bg-forest-floor text-campfire-amber group-hover/nav-link:bg-forest-floor/75"
+                        : "bg-cedar/10 text-cedar group-hover/nav-link:bg-cedar/15",
                     )}
                   >
                     <NavigationIcon icon={child.icon} />
