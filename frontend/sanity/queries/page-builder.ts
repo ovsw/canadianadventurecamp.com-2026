@@ -15,6 +15,7 @@ import { datesRatesSectionQuery } from "./dates-rates-section";
 import { stackedFeatureRowsQuery } from "./stacked-feature-rows";
 import { innerHeroQuery } from "./inner-hero";
 import { journeyQuery } from "./journey";
+import { testimonialsQuery } from "./testimonials";
 // page-builder-generator:query-imports
 import { internationalCampersSectionQuery } from "./international-campers-section";
 
@@ -39,6 +40,7 @@ export const pageBuilderQuery = `
     ${stackedFeatureRowsQuery},
     ${innerHeroQuery},
     ${journeyQuery},
+    ${testimonialsQuery},
     ${"" /* page-builder-generator:query-spreads */}
     ${internationalCampersSectionQuery}
   }

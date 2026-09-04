@@ -21,9 +21,16 @@ export default defineType({
     }),
     defineField({
       name: "title",
-      title: "Title",
+      title: "Role or relation",
       type: "string",
-      description: "Optional role, company, or context shown with the quote.",
+      description:
+        "Who this person is to the camp, e.g. \"Parent of a first-year camper\" or \"Camper, age 12\".",
+    }),
+    defineField({
+      name: "origin",
+      title: "Origin",
+      type: "string",
+      description: "Optional city or country shown after the role, e.g. \"Toronto\" or \"Mexico City\".",
     }),
     defineField({
       name: "image",

@@ -18,6 +18,7 @@ import DatesRatesSection from "@/components/blocks/dates-rates-section";
 import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
 import InnerHero from "@/components/blocks/inner-hero";
 import Journey from "@/components/blocks/journey";
+import Testimonials from "@/components/blocks/testimonials";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -45,6 +46,10 @@ type BlockEditingProps = {
     documentId: string,
     path: string,
   ) => string | undefined;
+  testimonialDataAttribute?: (
+    documentId: string,
+    path: string,
+  ) => string | undefined;
 };
 
 const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
@@ -64,6 +69,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "stackedFeatureRows",
   "innerHero",
   "journey",
+  "testimonials",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -90,6 +96,7 @@ const componentMap: Partial<{
   stackedFeatureRows: StackedFeatureRows,
   innerHero: InnerHero,
   journey: Journey,
+  testimonials: Testimonials,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };
@@ -215,6 +222,23 @@ export default function Blocks({
                               path,
                               projectId,
                               type: "season",
+                            }).toString()
+                        : undefined,
+                    }
+                : block._type === "testimonials"
+                  ? {
+                      dataAttribute,
+                      testimonialDataAttribute: stega
+                        ? (testimonialId: string, path: string) =>
+                            createDataAttribute({
+                              baseUrl:
+                                process.env.NEXT_PUBLIC_STUDIO_URL ||
+                                "http://localhost:3333",
+                              dataset,
+                              id: testimonialId,
+                              path,
+                              projectId,
+                              type: "testimonial",
                             }).toString()
                         : undefined,
                     }

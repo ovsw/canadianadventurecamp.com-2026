@@ -16,6 +16,7 @@ export const contentPageBuilderBlockTypes = [
   "teamMembers",
   "ctaBanner",
   "journey",
+  "testimonials",
   // page-builder-generator:content-types
 ] as const;
 
@@ -63,6 +64,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "faqAccordion",
   "teamMembers",
   "ctaBanner",
+  "testimonials",
   // page-builder-generator:preview-types
 ]);
 
