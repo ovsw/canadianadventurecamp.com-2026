@@ -120,6 +120,20 @@ describe("PackingChecklist", () => {
     ).toHaveLength(0);
   });
 
+  it("keeps a collapsed group collapsed while ticks change elsewhere", async () => {
+    const user = userEvent.setup();
+    render(<PackingChecklist {...block} />);
+
+    const bedding = screen.getByText("Bedding").closest("details") as HTMLDetailsElement;
+    expect(bedding.open).toBe(true);
+    await user.click(screen.getByText("Bedding"));
+    expect(bedding.open).toBe(false);
+
+    await user.click(checkbox("Underwear × 14"));
+    await user.click(screen.getByRole("button", { name: "Clear ticks" }));
+    expect(bedding.open).toBe(false);
+  });
+
   it("works from the keyboard: tab to the print button and each box, space toggles", async () => {
     const user = userEvent.setup();
     render(<PackingChecklist {...block} />);

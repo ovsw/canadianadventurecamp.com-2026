@@ -1,3 +1,4 @@
+import { ListChecks } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 const richTextToPlainText = (value: unknown): string => {
@@ -97,6 +98,7 @@ export default defineType({
   name: "packingChecklist",
   title: "Packing Checklist",
   type: "object",
+  icon: ListChecks,
   fields: [
     defineField({
       name: "eyebrow",

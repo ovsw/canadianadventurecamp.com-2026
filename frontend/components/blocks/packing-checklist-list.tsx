@@ -3,7 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Printer, RotateCcw, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import styles from "./packing-checklist.module.css";
 
 /**
@@ -46,10 +52,36 @@ function storageKeyFor(sectionId: string) {
   return `${STORAGE_PREFIX}:${path}:${sectionId}`;
 }
 
-function readTicks(key: string): string[] {
+/*
+ * localStorage as an external store. Components subscribe with
+ * useSyncExternalStore, so the server snapshot is "nothing ticked" and the
+ * first client render agrees with it; the real ticks arrive right after
+ * hydration without a setState-in-effect. When storage is unavailable
+ * (private mode, quota) the fallback map keeps ticks for the page's lifetime.
+ */
+const listeners = new Set<() => void>();
+const fallback = new Map<string, string>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+function readRaw(key: string): string | null {
   try {
-    const raw = window.localStorage.getItem(key);
-    if (!raw) return [];
+    return window.localStorage.getItem(key);
+  } catch {
+    return fallback.get(key) ?? null;
+  }
+}
+
+function parseTicks(raw: string | null): string[] {
+  if (!raw) return [];
+  try {
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed)
       ? parsed.filter((value): value is string => typeof value === "string")
@@ -60,12 +92,15 @@ function readTicks(key: string): string[] {
 }
 
 function writeTicks(key: string, ticks: string[]) {
+  const raw = ticks.length ? JSON.stringify(ticks) : null;
   try {
-    if (ticks.length) window.localStorage.setItem(key, JSON.stringify(ticks));
+    if (raw) window.localStorage.setItem(key, raw);
     else window.localStorage.removeItem(key);
   } catch {
-    // Private mode or a full store: the page still works, ticks just do not persist.
+    if (raw) fallback.set(key, raw);
+    else fallback.delete(key);
   }
+  for (const listener of listeners) listener();
 }
 
 /** Hide every sibling on the path from `target` up to <body>. Returns the undo. */
@@ -103,21 +138,15 @@ export default function PackingChecklistList({
   sanity,
   sectionId,
 }: PackingChecklistListProps) {
-  const [ticks, setTicks] = useState<string[]>([]);
-  const [hydrated, setHydrated] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const restorePrintRef = useRef<(() => void) | null>(null);
   const storageKey = useMemo(() => storageKeyFor(sectionId), [sectionId]);
-
-  // Read once after mount so the server and first client render agree.
-  useEffect(() => {
-    setTicks(readTicks(storageKey));
-    setHydrated(true);
-  }, [storageKey]);
-
-  useEffect(() => {
-    if (hydrated) writeTicks(storageKey, ticks);
-  }, [hydrated, storageKey, ticks]);
+  const rawTicks = useSyncExternalStore(
+    subscribe,
+    () => readRaw(storageKey),
+    () => null,
+  );
+  const ticks = useMemo(() => parseTicks(rawTicks), [rawTicks]);
 
   useEffect(() => {
     const handleAfterPrint = () => {
@@ -138,14 +167,15 @@ export default function PackingChecklistList({
   const tickSet = useMemo(() => new Set(ticks), [ticks]);
   const packedCount = tickable.filter((key) => tickSet.has(key)).length;
 
-  const toggle = useCallback((key: string, checked: boolean) => {
-    setTicks((current) => {
-      const next = current.filter((value) => value !== key);
-      return checked ? [...next, key] : next;
-    });
-  }, []);
+  const toggle = useCallback(
+    (key: string, checked: boolean) => {
+      const current = parseTicks(readRaw(storageKey)).filter((value) => value !== key);
+      writeTicks(storageKey, checked ? [...current, key] : current);
+    },
+    [storageKey],
+  );
 
-  const clear = useCallback(() => setTicks([]), []);
+  const clear = useCallback(() => writeTicks(storageKey, []), [storageKey]);
 
   const print = useCallback(() => {
     const section = rootRef.current?.closest("section");

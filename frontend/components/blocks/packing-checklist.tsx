@@ -129,7 +129,7 @@ export default function PackingChecklist({
       className={cn("bg-pine-night py-section text-birch-bark", styles.section)}
       id={sectionId}
     >
-      <div className="container-content">
+      <div className={cn("container-content", styles.inner)}>
         <div
           className={cn(
             "grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.55fr)] lg:items-end lg:gap-16",

@@ -74,7 +74,7 @@
     color: #000 !important;
   }
 
-  .section :global(.container-content) {
+  .inner {
     max-width: none;
     padding: 0;
   }
