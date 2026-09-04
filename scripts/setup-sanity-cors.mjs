@@ -7,24 +7,53 @@ import { desiredSanityOrigins } from "./worktree-config.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-function runSanity(arguments_, options = {}) {
+function runSanity(arguments_) {
   return spawnSync("pnpm", ["--dir", "studio", "exec", "sanity", ...arguments_], {
     cwd: repoRoot,
-    encoding: options.capture ? "utf8" : undefined,
     env: process.env,
-    stdio: options.capture ? ["inherit", "pipe", "inherit"] : "inherit",
+    stdio: "inherit",
   });
 }
 
-function listedOrigins(output) {
-  const matches = output.matchAll(/https?:\/\/[^\s│]+/g);
-  return new Set(Array.from(matches, ([origin]) => origin.replace(/[),;]+$/, "")));
+async function existingOrigins(projectId, token) {
+  const response = await fetch(`https://api.sanity.io/v2021-06-07/projects/${projectId}/cors`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to list CORS origins (${response.status} ${response.statusText}).`);
+  }
+  const entries = await response.json();
+  return new Map(
+    entries
+      .filter((entry) => !entry.deletedAt)
+      .map((entry) => [entry.origin, Boolean(entry.allowCredentials)]),
+  );
 }
 
-function main() {
+function addOrigin(projectId, entry) {
+  const add = runSanity([
+    "cors",
+    "add",
+    entry.origin,
+    "--project-id",
+    projectId,
+    entry.credentials ? "--credentials" : "--no-credentials",
+  ]);
+  if (add.error) throw add.error;
+  if (add.status !== 0) process.exit(add.status ?? 1);
+}
+
+function deleteOrigin(projectId, origin) {
+  const remove = runSanity(["cors", "delete", origin, "--project-id", projectId]);
+  if (remove.error) throw remove.error;
+  if (remove.status !== 0) process.exit(remove.status ?? 1);
+}
+
+async function main() {
   const projectId = process.env.SANITY_STUDIO_PROJECT_ID?.trim();
   if (!projectId) throw new Error("Missing SANITY_STUDIO_PROJECT_ID in studio/.env.local.");
-  if (!process.env.SANITY_AUTH_TOKEN?.trim()) {
+  const token = process.env.SANITY_AUTH_TOKEN?.trim();
+  if (!token) {
     throw new Error("Missing SANITY_AUTH_TOKEN in studio/.env.local. Run `pnpm --dir studio exec sanity login` or add a project-scoped token.");
   }
 
@@ -35,33 +64,28 @@ function main() {
     console.log(`  ${entry.origin}  credentials=${entry.credentials ? "yes" : "no"}`);
   }
 
-  const list = runSanity(["cors", "list", "--project-id", projectId], { capture: true });
-  if (list.error) throw list.error;
-  if (list.status !== 0) process.exit(list.status ?? 1);
-  process.stdout.write(list.stdout);
-  const existing = listedOrigins(list.stdout);
+  const existing = await existingOrigins(projectId, token);
+  for (const [origin, credentials] of existing) {
+    console.log(`  ${origin}  credentials=${credentials ? "yes" : "no"}`);
+  }
 
   for (const entry of desired) {
-    if (existing.has(entry.origin)) {
+    if (!existing.has(entry.origin)) {
+      addOrigin(projectId, entry);
+      continue;
+    }
+    if (existing.get(entry.origin) === entry.credentials) {
       console.log(`kept ${entry.origin}`);
       continue;
     }
-    const add = runSanity([
-      "cors",
-      "add",
-      entry.origin,
-      "--project-id",
-      projectId,
-      entry.credentials ? "--credentials" : "--no-credentials",
-    ]);
-    if (add.error) throw add.error;
-    if (add.status !== 0) process.exit(add.status ?? 1);
+    // The CLI cannot update credentials in place, so replace the origin.
+    console.log(`fixing credentials for ${entry.origin}`);
+    deleteOrigin(projectId, entry.origin);
+    addOrigin(projectId, entry);
   }
 }
 
-try {
-  main();
-} catch (error) {
+main().catch((error) => {
   console.error(error.message);
   process.exitCode = 1;
-}
+});
