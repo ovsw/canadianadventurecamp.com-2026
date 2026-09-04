@@ -345,3 +345,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ------------------------------------------------------------------ */
+/* Print isolation                                                     */
+/* ------------------------------------------------------------------ */
+
+/*
+ * A "Print this" control marks every sibling on the path from its section
+ * up to <body> with data-print-hidden, so only that section reaches paper.
+ * The control removes the attribute on afterprint. See
+ * components/blocks/packing-checklist-list.tsx.
+ */
+@media print {
+  [data-print-hidden] {
+    display: none !important;
+  }
+}

@@ -1,0 +1,38 @@
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: activity-catalogue-rise 1ms both;
+      animation-range: entry 0% entry 40%;
+      animation-timeline: view();
+    }
+  }
+}
+
+@keyframes activity-catalogue-rise {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+}
+
+/* The jump bar follows the site header: it sits under the bar while the
+   header is visible and rises to the top edge when the header hides on
+   scroll. --site-header-offset is set by the header shell. */
+.jumpBar {
+  top: var(--site-header-offset, 0px);
+  transition: top 300ms var(--ease-reveal);
+}
+
+.jumpBarTrack {
+  scrollbar-width: none;
+}
+
+.jumpBarTrack::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jumpBar {
+    transition: none;
+  }
+}

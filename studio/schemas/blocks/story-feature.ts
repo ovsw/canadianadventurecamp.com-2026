@@ -4,11 +4,11 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 const richTextToPlainText = (value: unknown): string => {
   if (!Array.isArray(value)) return "";
   return value
-    .map((block) =>
-      Array.isArray(block?.children)
-        ? block.children.map((child: { text?: string }) => child.text ?? "").join("")
-        : "",
-    )
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
     .join(" ")
     .trim();
 };
@@ -55,22 +55,14 @@ export default defineType({
   type: "object",
   icon: BookOpenText,
   description:
-    "A photo beside a short story: heading, narrative, an optional checklist of key details, and up to two actions.",
+    "A reusable image-and-text section for a story, service, or point of view.",
   fields: [
     defineField({
       name: "useCreamBackground",
-      title: "Cream field",
+      title: "Use Alternate Background",
       type: "boolean",
       description:
-        "On: the section sits on the cream (Birch Bark) field. Off: the forest dark field. Alternate with the sections around it.",
-      initialValue: false,
-    }),
-    defineField({
-      name: "flipLayout",
-      title: "Photo on the right",
-      type: "boolean",
-      description:
-        "Off: photo left, text right. On: text left, photo right. Alternate between neighbouring Image and Text sections.",
+        "Turn on for a cream field instead of the default forest field. Alternate with the sections around it.",
       initialValue: false,
     }),
     defineField({
@@ -82,9 +74,8 @@ export default defineType({
       name: "title",
       title: "Heading",
       type: "minimalRichText",
-      description:
-        "The section heading. Italicise one phrase to set it in the handwritten accent.",
-      validation: (rule) => rule.required(),
+      description: "Use italic for the phrase that gets the handwritten style.",
+      validation: (rule) => rule.required().max(1),
     }),
     defineField({
       name: "image",
@@ -114,7 +105,7 @@ export default defineType({
       name: "keyDetails",
       title: "Key Details",
       type: "object",
-      description: "Optional short facts shown as a checklist under the story",
+      description: "Optional short facts shown as non-interactive pills",
       fields: [
         defineField({
           name: "title",
@@ -124,7 +115,7 @@ export default defineType({
         defineField({
           name: "items",
           type: "array",
-          description: "Short facts, one line each",
+          description: "Short facts to display as pills",
           of: [defineArrayMember({ type: "string" })],
           validation: (rule) => rule.required().min(1).max(8),
         }),

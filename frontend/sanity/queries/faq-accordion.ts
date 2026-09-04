@@ -7,7 +7,9 @@ export const faqAccordionQuery = groq`
   _type == "faqAccordion" => {
     useCreamBackground,
     eyebrow,
-    title,
+    title[]{
+      ...
+    },
     subtitle,
     "faqs": array::compact(faqs[]{
       _key,

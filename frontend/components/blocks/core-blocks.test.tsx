@@ -515,7 +515,7 @@ describe("core Page Builder sections", () => {
           title: "How is this content reused?",
         },
       ],
-      title: "Questions",
+      title: [paragraph("faq-title", "Questions")],
     } as unknown as ComponentProps<typeof FaqAccordion>;
     rerender(<FaqAccordion {...faqSection} />);
 

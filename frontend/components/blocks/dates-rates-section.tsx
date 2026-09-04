@@ -1,6 +1,7 @@
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
+import { getSafeLinkHref } from "@/lib/safe-href";
 import DatesRatesBrowser from "./dates-rates-browser";
 import styles from "./dates-rates-section.module.css";
 import { prepareLengths } from "./dates-rates-model";
@@ -56,6 +57,7 @@ export default function DatesRatesSection({
   heading,
   introduction,
   seasonDataAttribute,
+  secondaryLink,
   sessionIncludes,
 }: DatesRatesSectionProps) {
   if (!activeSeason?._id || !activeSeason.startDate) return null;
@@ -71,7 +73,22 @@ export default function DatesRatesSection({
   if (!conditions || conditions.length === 0) return null;
 
   const sectionId = `dates-rates-${stegaClean(_key)}`;
-  const seasonYear = new Date(`${seasonStart}T00:00:00.000Z`).getUTCFullYear();
+
+  // Both links are optional: the details link points at the Dates & Rates
+  // page and is hidden there; the secondary link renders only when its text
+  // and destination are both set.
+  const detailsText = stegaClean(detailsLinkText)?.trim();
+  const secondaryHref = getSafeLinkHref(secondaryLink?.href);
+  const secondaryText = stegaClean(secondaryLink?.text)?.trim();
+  const portalLink =
+    secondaryHref && secondaryText
+      ? {
+          dataSanity: dataAttribute?.("secondaryLink"),
+          href: secondaryHref,
+          openInNewTab: Boolean(stegaClean(secondaryLink?.openInNewTab)),
+          text: secondaryText,
+        }
+      : undefined;
 
   return (
     <section
@@ -106,14 +123,16 @@ export default function DatesRatesSection({
                 value={introduction}
               />
             </div>
-            <a
-              className={`focus-ring mt-4 inline-flex w-fit items-center gap-[9px] border-b-2 border-campfire-amber pb-1 font-semibold text-cedar transition-colors hover:text-cedar-deep motion-reduce:transition-none ${styles.detailsLink}`}
-              data-sanity={dataAttribute?.("detailsLinkText")}
-              href={detailsHref}
-            >
-              {detailsLinkText}
-              <span aria-hidden="true">&rarr;</span>
-            </a>
+            {detailsText ? (
+              <a
+                className={`focus-ring mt-4 inline-flex w-fit items-center gap-[9px] border-b-2 border-campfire-amber pb-1 font-semibold text-cedar transition-colors hover:text-cedar-deep motion-reduce:transition-none ${styles.detailsLink}`}
+                data-sanity={dataAttribute?.("detailsLinkText")}
+                href={detailsHref}
+              >
+                {detailsText}
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            ) : null}
           </div>
         </div>
 
@@ -121,8 +140,8 @@ export default function DatesRatesSection({
           conditions={conditions}
           conditionsDataAttribute={dataAttribute?.("conditions")}
           lengths={lengths}
+          portalLink={portalLink}
           seasonStart={seasonStart}
-          seasonYear={seasonYear}
           sessionIncludes={sessionIncludes.map((item) => ({
             _key: item._key,
             label: item.label,

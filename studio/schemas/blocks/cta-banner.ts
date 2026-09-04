@@ -7,19 +7,19 @@ export default defineType({
   type: "object",
   icon: Megaphone,
   description:
-    "A clear invitation with a heading, supporting line, and up to two actions.",
+    "A clear invitation with a heading, supporting line, and up to two actions. Closing bands end a page; nudges sit quietly between sections.",
   fields: [
     defineField({
       name: "variant",
       title: "Weight",
       type: "string",
       description:
-        "Closing: a full dark band that ends a page. Nudge: a quiet in-page panel, for example the fit quiz between two sections.",
+        "Closing: the full-width band that ends a page. Nudge: a quiet in-page prompt between sections.",
       initialValue: "closing",
       options: {
         layout: "radio",
         list: [
-          { title: "Closing banner", value: "closing" },
+          { title: "Closing band", value: "closing" },
           { title: "In-page nudge", value: "nudge" },
         ],
       },
@@ -39,7 +39,7 @@ export default defineType({
       name: "buttons",
       type: "array",
       description:
-        "One or two actions. The first button is emphasized; the second renders as an outline.",
+        "One or two actions. The first is the main action; the second is secondary.",
       of: [defineArrayMember({ type: "button" })],
       validation: (rule) => rule.required().min(1).max(2),
     }),
@@ -48,7 +48,7 @@ export default defineType({
     select: { title: "title", variant: "variant" },
     prepare: ({ title, variant }) => ({
       title: title || "Untitled Call to Action",
-      subtitle: variant === "nudge" ? "In-page nudge" : "Closing banner",
+      subtitle: variant === "nudge" ? "Call to Action · nudge" : "Call to Action · closing band",
     }),
   },
 });

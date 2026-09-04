@@ -20,6 +20,9 @@ import InnerHero from "@/components/blocks/inner-hero";
 import Testimonials from "@/components/blocks/testimonials";
 import Journey from "@/components/blocks/journey";
 import StackedTimeline from "@/components/blocks/stacked-timeline";
+import ActivityCatalogue from "@/components/blocks/activity-catalogue";
+import IncludedExtras from "@/components/blocks/included-extras";
+import PackingChecklist from "@/components/blocks/packing-checklist";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -72,6 +75,9 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "journey",
   "testimonials",
   "stackedTimeline",
+  "activityCatalogue",
+  "includedExtras",
+  "packingChecklist",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -100,6 +106,9 @@ const componentMap: Partial<{
   testimonials: Testimonials,
   journey: Journey,
   stackedTimeline: StackedTimeline,
+  activityCatalogue: ActivityCatalogue,
+  includedExtras: IncludedExtras,
+  packingChecklist: PackingChecklist,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };
@@ -164,7 +173,8 @@ export default function Blocks({
                         }).toString()
                     : undefined,
                 }
-              : block._type === "activitySchedule"
+              : block._type === "activitySchedule" ||
+                  block._type === "activityCatalogue"
                 ? {
                     dataAttribute,
                     activityDataAttribute: stega

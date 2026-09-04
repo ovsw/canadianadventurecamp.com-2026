@@ -10,6 +10,7 @@
     "dev:studio": "pnpm --dir studio dev",
     "setup:worktree": "node scripts/setup-worktree.mjs",
     "dev:worktree": "node scripts/dev-worktree.mjs",
+    "dev:stop": "node scripts/dev-stop.mjs",
     "setup:sanity-cors": "node --env-file=studio/.env.local scripts/setup-sanity-cors.mjs",
     "page-builder:new": "node scripts/create-page-builder-block.mjs",
     "build": "pnpm --dir frontend build && pnpm --dir studio build",
