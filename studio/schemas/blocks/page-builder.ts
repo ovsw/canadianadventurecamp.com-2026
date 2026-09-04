@@ -18,6 +18,7 @@ export const contentPageBuilderBlockTypes = [
   "journey",
   "testimonials",
   "stackedTimeline",
+  "includedExtras",
   // page-builder-generator:content-types
 ] as const;
 

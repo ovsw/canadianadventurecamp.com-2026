@@ -1,69 +1,81 @@
 import { MessageCircle } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) => {
+      const children = (block as { children?: { text?: string }[] })?.children;
+      if (!Array.isArray(children)) return "";
+      return children.map((child) => child?.text ?? "").join("");
+    })
+    .join(" ")
+    .trim();
+};
+
 export default defineType({
   name: "faqAccordion",
   title: "FAQ Section",
   type: "object",
   icon: MessageCircle,
-  description: "A reusable FAQ section built from selected FAQ documents.",
+  description:
+    "Intro and a side link beside an accordion of selected FAQ documents. Cream by default; switch to the dark field when the section before it is cream.",
   initialValue: {
+    useCreamBackground: true,
     eyebrow: "FAQ",
-    title: "Common questions",
     subtitle: "Replace this sample with the questions visitors ask most often.",
   },
   fields: [
     defineField({
       name: "useCreamBackground",
-      title: "Use Alternate Background",
+      title: "Cream background",
       type: "boolean",
       description:
-        "Turn on to separate this section from the surrounding page content.",
-      initialValue: false,
+        "On: cream field (Birch Bark). Off: dark forest field. Alternate with the sections around it.",
+      initialValue: true,
     }),
     defineField({
       name: "eyebrow",
       type: "string",
-      title: "Eyebrow",
-      description:
-        "The smaller text that sits above the title to provide context",
+      description: "Optional short label above the heading.",
     }),
     defineField({
       name: "title",
-      type: "string",
-      title: "Title",
-      description: "The large text that is the primary focus of the block",
-      validation: (rule) => rule.required(),
+      title: "Heading",
+      type: "minimalRichText",
+      description: "Use italic for the phrase that gets the handwritten style.",
+      validation: (rule) => rule.required().max(1),
     }),
     defineField({
       name: "subtitle",
-      type: "string",
-      title: "Subtitle",
-      description: "Additional context below the main title",
+      type: "text",
+      rows: 2,
+      title: "Intro line",
+      description: "Optional. One or two sentences under the heading.",
     }),
     defineField({
       name: "link",
-      title: "Link",
+      title: "Side link",
       type: "object",
-      description: "Optional link for additional content or actions",
+      description:
+        'Optional. A small label and a link under the intro, e.g. "Still unsure?" / "Talk to the Directors".',
       fields: [
         defineField({
           name: "title",
           type: "string",
-          title: "Link Title",
-          description: "The text to display for the link",
+          title: "Label",
+          description: 'Small line above the link, e.g. "Still unsure?"',
         }),
         defineField({
           name: "description",
           type: "string",
-          title: "Link Description",
-          description: "A brief description of where the link leads",
+          title: "Link text",
+          description: 'The link itself, e.g. "Talk to the Directors".',
         }),
         defineField({
           name: "url",
           type: "customUrl",
-          title: "URL",
-          description: "The destination URL for the link",
+          title: "Destination",
         }),
       ],
     }),
@@ -83,10 +95,13 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: "title" },
-    prepare: ({ title }) => ({
-      title: title || "Untitled FAQ Section",
-      subtitle: "FAQ Section",
-    }),
+    select: { title: "title", faqs: "faqs" },
+    prepare: ({ title, faqs }) => {
+      const count = Array.isArray(faqs) ? faqs.length : 0;
+      return {
+        title: richTextToPlainText(title) || "Untitled FAQ Section",
+        subtitle: `FAQ Section · ${count} ${count === 1 ? "question" : "questions"}`,
+      };
+    },
   },
 });
