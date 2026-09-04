@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { cn } from "@/lib/utils";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import Link from "next/link";
+import type { ComponentProps } from "react";
+import styles from "./cta-banner.module.css";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -23,8 +25,28 @@ type CtaBannerProps = CtaBannerBlock & {
  * 44px tucked top corners, headline left, the two actions right, one amber
  * primary and one ghost. Nudge: a quiet Light card between sections on the
  * cream field, title-sized, for "not sure yet?" moments. Buttons stack on
- * phones in both weights.
+ * phones in both weights. Both reveal on scroll; reduced motion skips it.
  */
+
+type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
+
+/** An editor's stored button variant wins when it is one we render. */
+function resolveCtaButtonVariant(
+  variant: string | null | undefined,
+  index: number,
+): ButtonVariant {
+  const cleanVariant = stegaClean(variant);
+  if (
+    cleanVariant === "default" ||
+    cleanVariant === "secondary" ||
+    cleanVariant === "outline" ||
+    cleanVariant === "ghost" ||
+    cleanVariant === "link"
+  ) {
+    return cleanVariant;
+  }
+  return index === 0 ? "default" : "outline";
+}
 
 export function resolveCtaBannerVariant(variant?: string | null) {
   return stegaClean(variant) === "nudge" ? "nudge" : "closing";
@@ -49,9 +71,14 @@ function CtaButtons({
         label: stegaClean(button.text)?.trim() || "Learn more",
         openInNewTab: Boolean(stegaClean(button.openInNewTab)),
         path: `buttons[_key=="${button._key}"]`,
+        storedVariant: button.variant,
       },
     ];
-  }).map((action, index) => ({ ...action, primary: index === 0 }));
+  }).map(({ storedVariant, ...action }, index) => ({
+    ...action,
+    primary: index === 0,
+    variant: resolveCtaButtonVariant(storedVariant, index),
+  }));
 
   if (!actions.length) return null;
 
@@ -66,7 +93,7 @@ function CtaButtons({
           className="w-full sm:w-auto"
           key={action.key}
           onDark={onDark}
-          variant={action.primary ? "default" : "outline"}
+          variant={action.variant}
         >
           <Link
             data-sanity={dataAttribute?.(action.path)}
@@ -75,7 +102,9 @@ function CtaButtons({
             target={action.openInNewTab ? "_blank" : undefined}
           >
             {action.label}
-            {action.primary ? (
+            {action.openInNewTab ? (
+              <ArrowUpRight aria-hidden="true" className="size-4" />
+            ) : action.primary ? (
               <ArrowRight aria-hidden="true" className="size-4" />
             ) : null}
           </Link>
@@ -108,7 +137,12 @@ export default function CtaBanner({
         id={`cta-banner-${cleanKey}`}
       >
         <div className="container-content">
-          <div className="grid gap-6 rounded-lg border border-pine-night/10 bg-birch-bark-bright px-6 py-7 sm:px-[30px] sm:py-[34px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10">
+          <div
+            className={cn(
+              "grid gap-6 rounded-lg border border-pine-night/10 bg-birch-bark-bright px-6 py-7 sm:px-[30px] sm:py-[34px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10",
+              styles.reveal,
+            )}
+          >
             <div className="grid gap-2">
               <h2
                 className="text-balance font-display text-2xl font-extrabold leading-tight tracking-[-0.01em] sm:text-3xl"
@@ -141,7 +175,12 @@ export default function CtaBanner({
       )}
       id={`cta-banner-${cleanKey}`}
     >
-      <div className="container-content grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-14">
+      <div
+        className={cn(
+          "container-content grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-14",
+          styles.reveal,
+        )}
+      >
         <div className="lg:col-span-8">
           <h2
             className="max-w-3xl text-balance font-display text-headline"
