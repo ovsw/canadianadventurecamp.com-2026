@@ -1,4 +1,5 @@
 import { groq } from "next-sanity";
+import { urlInternalHref } from "./shared/internal-href";
 
 const seasonConfigFields = `
   rate,
@@ -18,6 +19,15 @@ export const datesRatesSectionQuery = groq`
     heading,
     introduction,
     detailsLinkText,
+    secondaryLink {
+      text,
+      "openInNewTab": url.openInNewTab,
+      "href": select(
+        url.type == "internal" => ${urlInternalHref},
+        url.type == "external" => url.external,
+        url.href
+      )
+    },
     sessionIncludes,
     conditions,
     "activeSeason": *[_id == "seasonsConfig" && _type == "seasonsConfig"][0].activeSeason->{

@@ -62,6 +62,7 @@ import testimonials from "./schemas/blocks/testimonials";
 import journey from "./schemas/blocks/journey";
 import stackedTimeline from "./schemas/blocks/stacked-timeline";
 import activityCatalogue from "./schemas/blocks/activity-catalogue";
+import includedExtras from "./schemas/blocks/included-extras";
 // page-builder-generator:block-imports
 import { internationalCampersSection } from "./schemas/blocks/international-campers-section";
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
@@ -130,6 +131,7 @@ export const schemaTypes = [
   journey,
   stackedTimeline,
   activityCatalogue,
+  includedExtras,
   // page-builder-generator:block-types
   internationalCampersSection,
 ];

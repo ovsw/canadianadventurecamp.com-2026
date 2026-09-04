@@ -19,6 +19,7 @@ export const contentPageBuilderBlockTypes = [
   "testimonials",
   "stackedTimeline",
   "activityCatalogue",
+  "includedExtras",
   // page-builder-generator:content-types
 ] as const;
 
