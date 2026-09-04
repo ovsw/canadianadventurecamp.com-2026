@@ -83,7 +83,6 @@ export default function DatesRatesBrowser({
   conditions,
   conditionsDataAttribute,
   lengths,
-  noteId,
   portalLink,
   seasonStart,
   seasonYear,
@@ -93,7 +92,6 @@ export default function DatesRatesBrowser({
   conditions: ConditionBlock[];
   conditionsDataAttribute?: string;
   lengths: PreparedLength[];
-  noteId: string;
   portalLink?: {
     dataSanity?: string;
     href: string;
@@ -114,7 +112,6 @@ export default function DatesRatesBrowser({
     lengths.find((length) => length.key === selectedKey) ?? lengths[0];
   const ticks = useMemo(() => getSeasonTicks(seasonStart), [seasonStart]);
   const animatedRate = useAnimatedRate(activeLength?.rateValue ?? 0);
-  const enrollNoteId = noteId;
 
   if (!activeLength) return null;
 
@@ -154,8 +151,8 @@ export default function DatesRatesBrowser({
             );
           })}
         </div>
-        {/* Actions: Enroll leaves for CampBrain, so it says so; the quiet
-            portal link beside it is Rachel's way back to last year's account. */}
+        {/* Actions: Enroll for CampBrain, and the quiet portal link beside it
+            for returning families. */}
         <div className="order-4 mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 lg:order-none lg:ml-auto lg:mt-0">
           {portalLink ? (
             <a
@@ -169,9 +166,7 @@ export default function DatesRatesBrowser({
               <span aria-hidden="true">&nearr;</span>
             </a>
           ) : null}
-          <span className="flex flex-col items-start gap-2 sm:items-end">
-            <a
-              aria-describedby={enrollNoteId}
+          <a
               className="focus-ring inline-flex w-fit items-center gap-2 rounded-pill bg-campfire-amber px-7 py-4 font-bold text-pine-night transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-campfire-amber-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               href={enrollmentHref}
               rel="noreferrer"
@@ -180,10 +175,6 @@ export default function DatesRatesBrowser({
               Enroll for {seasonYear}
               <span aria-hidden="true">&rarr;</span>
             </a>
-            <span className="text-label text-pine-night/50" id={enrollNoteId}>
-              Enroll opens CampBrain in a new tab
-            </span>
-          </span>
         </div>
       </div>
 
@@ -270,7 +261,6 @@ export default function DatesRatesBrowser({
                     data-open={interactive}
                     {...(interactive
                       ? {
-                          "aria-describedby": enrollNoteId,
                           href: enrollmentHref,
                           rel: "noreferrer",
                           target: "_blank",

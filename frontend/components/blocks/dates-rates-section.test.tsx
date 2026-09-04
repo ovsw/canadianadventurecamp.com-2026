@@ -241,15 +241,6 @@ describe("DatesRatesSection", () => {
     expect(screen.queryByRole("link", { name: "Log in" })).toBeNull();
   });
 
-  it("tells visitors that Enroll opens CampBrain", () => {
-    render(<DatesRatesSection {...section} />);
-
-    const note = screen.getByText("Enroll opens CampBrain in a new tab");
-    expect(
-      screen.getByRole("link", { name: /Enroll for 2027/ }),
-    ).toHaveAttribute("aria-describedby", note.id);
-  });
-
   it("does not render the season label / date range line", () => {
     render(<DatesRatesSection {...section} />);
 
