@@ -95,9 +95,9 @@ describe("StackedFeatureRows", () => {
     );
     expect(rowHeading.parentElement).toHaveClass("items-center");
     expect(rowHeading.closest("li")).toHaveClass(
-      "md:last:odd:col-span-2",
-      "lg:col-span-1",
+      "md:max-lg:last:odd:col-span-2",
     );
+    expect(rowHeading.closest("li")).not.toHaveClass("md:last:odd:col-span-2");
     expect(
       screen.getByText("OCA accredited").closest("[data-sanity]"),
     ).toHaveAttribute(
@@ -128,16 +128,16 @@ describe("StackedFeatureRows", () => {
     expect(rowLink).toHaveClass("text-cedar", "hover:text-cedar-deep");
   });
 
-  it("omits incomplete rows", () => {
+  it("omits rows without points", () => {
     render(
       <StackedFeatureRows
         {...block}
         rows={[
           ...(block.rows ?? []),
           {
-            _key: "missing-link",
+            _key: "missing-items",
             icon: null,
-            title: "Missing link",
+            title: "Missing items",
             items: [
               {
                 _key: "detail",
@@ -150,7 +150,21 @@ describe("StackedFeatureRows", () => {
       />,
     );
 
-    expect(screen.queryByText("Missing link")).not.toBeInTheDocument();
+    expect(screen.queryByText("Missing items")).not.toBeInTheDocument();
+  });
+
+  it("renders a row without a link", () => {
+    render(
+      <StackedFeatureRows
+        {...block}
+        rows={[{ ...(block.rows ?? [])[0], link: null }]}
+      />,
+    );
+
+    expect(screen.getByText("Accredited & inspected")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Our accreditations" }),
+    ).not.toBeInTheDocument();
   });
 
   it("omits supporting points with blank rich text", () => {

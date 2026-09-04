@@ -91,6 +91,7 @@ const row = defineArrayMember({
       name: "link",
       title: "Link",
       type: "object",
+      description: "Optional. Shown under the points when both fields are set.",
       fields: [
         defineField({
           name: "text",
@@ -105,7 +106,6 @@ const row = defineArrayMember({
           validation: (rule) => rule.required(),
         }),
       ],
-      validation: (rule) => rule.required(),
     }),
   ],
   preview: {
