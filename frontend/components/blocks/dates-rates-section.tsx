@@ -73,7 +73,6 @@ export default function DatesRatesSection({
   if (!conditions || conditions.length === 0) return null;
 
   const sectionId = `dates-rates-${stegaClean(_key)}`;
-  const seasonYear = new Date(`${seasonStart}T00:00:00.000Z`).getUTCFullYear();
 
   // Both links are optional: the details link points at the Dates & Rates
   // page and is hidden there; the secondary link renders only when its text
@@ -143,7 +142,6 @@ export default function DatesRatesSection({
           lengths={lengths}
           portalLink={portalLink}
           seasonStart={seasonStart}
-          seasonYear={seasonYear}
           sessionIncludes={sessionIncludes.map((item) => ({
             _key: item._key,
             label: item.label,

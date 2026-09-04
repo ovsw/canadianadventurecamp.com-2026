@@ -25,14 +25,15 @@ function renderConditionBlock(block: ConditionBlock) {
   });
 }
 
+/** Label colours hold 4.5:1 on cream; the bar colour carries the status. */
 function availabilityClass(status: string) {
   if (status === "full") {
-    return "text-pine-night/40";
+    return "text-pine-night/60";
   }
   if (status === "limited") {
-    return "text-campfire-amber-deep";
+    return "text-cedar-deep";
   }
-  return "text-pine-night/60";
+  return "text-pine-night/70";
 }
 
 /** Animates the displayed rate from its previous value to the active length's rate over ~620ms. */
@@ -85,7 +86,6 @@ export default function DatesRatesBrowser({
   lengths,
   portalLink,
   seasonStart,
-  seasonYear,
   sessionIncludes,
   sessionIncludesDataAttribute,
 }: {
@@ -99,7 +99,6 @@ export default function DatesRatesBrowser({
     text: string;
   };
   seasonStart: string;
-  seasonYear: number;
   sessionIncludes: {
     _key: string;
     label?: string | null;
@@ -151,10 +150,10 @@ export default function DatesRatesBrowser({
             );
           })}
         </div>
-        {/* Actions: Enroll for CampBrain, and the quiet portal link beside it
-            for returning families. */}
-        <div className="order-4 mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 lg:order-none lg:ml-auto lg:mt-0">
-          {portalLink ? (
+        {/* Every open row carries its own Enroll bar, so the only action up
+            here is the quiet portal link for returning families. */}
+        {portalLink ? (
+          <div className="order-4 mt-8 lg:order-none lg:ml-auto lg:mt-0">
             <a
               className="focus-ring inline-flex w-fit items-center gap-1.5 text-[15px] font-semibold text-cedar underline decoration-cedar/30 underline-offset-4 transition-colors hover:text-cedar-deep hover:decoration-cedar-deep motion-reduce:transition-none"
               data-sanity={portalLink.dataSanity}
@@ -163,19 +162,10 @@ export default function DatesRatesBrowser({
               target={portalLink.openInNewTab ? "_blank" : undefined}
             >
               {portalLink.text}
-              <span aria-hidden="true">&nearr;</span>
+              <span aria-hidden="true">{"\u2197"}</span>
             </a>
-          ) : null}
-          <a
-            className="focus-ring inline-flex w-fit items-center gap-2 rounded-pill bg-campfire-amber px-7 py-4 font-bold text-pine-night transition-[background-color,transform] hover:-translate-y-0.5 hover:bg-campfire-amber-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-            href={enrollmentHref}
-            rel="noreferrer"
-            target="_blank"
-          >
-            Enroll for {seasonYear}
-            <span aria-hidden="true">&rarr;</span>
-          </a>
-        </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="max-lg:contents lg:grid lg:grid-cols-[320px_1fr] lg:gap-14">
@@ -293,7 +283,7 @@ export default function DatesRatesBrowser({
                           {interactive ? <>Enroll&nbsp;&rarr;</> : null}
                         </span>
                         <span
-                          className={`absolute inset-y-0 inline-flex items-center whitespace-nowrap font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] ${availabilityClass(row.status)}`}
+                          className={`absolute inset-y-0 inline-flex items-center whitespace-nowrap font-mono text-[11px] font-bold uppercase tracking-[0.1em] ${availabilityClass(row.status)}`}
                           data-sanity={row.availabilityNoteAttribute}
                           style={
                             labelOnLeft
@@ -339,24 +329,17 @@ export default function DatesRatesBrowser({
         </ul>
       </div>
 
-      <p
-        className="mt-6 border-t border-dashed border-pine-night/16 pt-6 text-sm leading-relaxed text-pine-night/70"
+      <ul
+        className="mt-6 grid gap-x-8 gap-y-3 border-t border-dashed border-pine-night/16 pt-6 text-sm leading-relaxed text-pine-night/70 md:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]"
         data-sanity={conditionsDataAttribute}
       >
         {conditions.map((condition, index) => (
-          <span key={condition._key || index}>
-            {index > 0 ? (
-              <span
-                aria-hidden="true"
-                className="px-2.5 align-[-1px] text-cedar"
-              >
-                &#9679;
-              </span>
-            ) : null}
-            {renderConditionBlock(condition)}
-          </span>
+          <li className="flex gap-2.5" key={condition._key || index}>
+            <span aria-hidden="true" className="mt-[7px] size-1.5 shrink-0 rounded-full bg-cedar" />
+            <span>{renderConditionBlock(condition)}</span>
+          </li>
         ))}
-      </p>
+      </ul>
     </div>
   );
 }
