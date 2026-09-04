@@ -16,6 +16,7 @@ import ActivitySchedule from "@/components/blocks/activity-schedule";
 import FacilitiesMapSection from "@/components/blocks/facilities-map-section";
 import DatesRatesSection from "@/components/blocks/dates-rates-section";
 import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
+import Journey from "@/components/blocks/journey";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -60,6 +61,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "facilitiesMapSection",
   "datesRatesSection",
   "stackedFeatureRows",
+  "journey",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -84,6 +86,7 @@ const componentMap: Partial<{
   facilitiesMapSection: FacilitiesMapSection,
   datesRatesSection: DatesRatesSection,
   stackedFeatureRows: StackedFeatureRows,
+  journey: Journey,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };
