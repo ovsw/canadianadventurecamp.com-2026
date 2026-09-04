@@ -18,9 +18,9 @@ type IncludedExtrasProps = Extract<PageBlock, { _type: "includedExtras" }> & {
 /*
  * Included & Extras — a two-plan comparison on a cream field.
  *
- * Desktop: two cards side by side. The included card is a cream check list;
- * the extras card is a pine-night panel of priced rows, price on the right
- * in the mono legend. Phones: the cards stack, price stays on the row.
+ * Desktop: two cards side by side. The included card is a pale green check
+ * list (positive); the extras card is a white price sheet, price on the
+ * right in the mono legend. Phones: the cards stack, price stays on the row.
  */
 
 const headingComponents: PortableTextComponents = {
@@ -103,16 +103,16 @@ export default function IncludedExtras({
         </header>
 
         <div className="mt-14 grid gap-6 lg:grid-cols-2 lg:gap-8">
-          {/* Included: cream card, check list */}
+          {/* Included: pale green card (Sunlit Moss at reduced alpha), check list */}
           <section
             aria-labelledby={includedId}
             className={cn(
-              "flex flex-col rounded-[1.625rem] border border-pine-night/10 bg-birch-bark-bright p-7 sm:p-10",
+              "flex flex-col rounded-[1.625rem] border border-cedar/20 bg-sunlit-moss/40 p-7 sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("included")}
           >
-            <p className="text-label text-cedar">Included</p>
+            <p className="text-label text-cedar-deep">Included</p>
             <h3
               className="mt-4 font-display text-[1.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2rem]"
               data-sanity={dataAttribute?.("included.heading")}
@@ -129,7 +129,7 @@ export default function IncludedExtras({
               </p>
             ) : null}
             <ul
-              className="mt-8 divide-y divide-pine-night/10 border-t border-pine-night/10"
+              className="mt-8 divide-y divide-pine-night/12 border-t border-pine-night/12"
               data-sanity={dataAttribute?.("included.items")}
             >
               {includedItems.map((item) => (
@@ -161,16 +161,16 @@ export default function IncludedExtras({
             </ul>
           </section>
 
-          {/* Extras: pine panel, priced rows */}
+          {/* Extras: white price sheet, priced rows */}
           <section
             aria-labelledby={extrasId}
             className={cn(
-              "flex flex-col rounded-[1.625rem] bg-pine-night p-7 text-birch-bark sm:p-10",
+              "flex flex-col rounded-[1.625rem] border border-pine-night/10 bg-white p-7 sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("extras")}
           >
-            <p className="text-label text-campfire-amber">Extra</p>
+            <p className="text-label text-pine-night/55">Extra</p>
             <h3
               className="mt-4 font-display text-[1.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2rem]"
               data-sanity={dataAttribute?.("extras.heading")}
@@ -180,14 +180,14 @@ export default function IncludedExtras({
             </h3>
             {hasText(extras?.note) ? (
               <p
-                className="mt-2 text-[15px] leading-snug text-birch-bark/65"
+                className="mt-2 text-[15px] leading-snug text-pine-night/65"
                 data-sanity={dataAttribute?.("extras.note")}
               >
                 {extras?.note}
               </p>
             ) : null}
             <ul
-              className="mt-8 divide-y divide-birch-bark/14 border-t border-birch-bark/14"
+              className="mt-8 divide-y divide-pine-night/10 border-t border-pine-night/10"
               data-sanity={dataAttribute?.("extras.items")}
             >
               {extraItems.map((item) => {
@@ -204,7 +204,7 @@ export default function IncludedExtras({
                   >
                     <span
                       aria-hidden="true"
-                      className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-birch-bark/30 text-birch-bark"
+                      className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-pine-night/25 text-pine-night"
                     >
                       <Plus className="size-3.5" strokeWidth={2.5} />
                     </span>
@@ -217,7 +217,7 @@ export default function IncludedExtras({
                       </span>
                       {hasText(item.detail) ? (
                         <span
-                          className="mt-1 block text-[15px] leading-snug text-birch-bark/65"
+                          className="mt-1 block text-[15px] leading-snug text-pine-night/65"
                           data-sanity={dataAttribute?.(`${itemPath}.detail`)}
                         >
                           {item.detail}
@@ -225,7 +225,7 @@ export default function IncludedExtras({
                       ) : null}
                       {link ? (
                         <Link
-                          className="focus-ring mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-moss transition-colors hover:text-sunlit-moss motion-reduce:transition-none"
+                          className="focus-ring mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-cedar transition-colors hover:text-cedar-deep motion-reduce:transition-none"
                           data-sanity={dataAttribute?.(`${itemPath}.link`)}
                           href={link.href}
                           rel={
@@ -245,7 +245,7 @@ export default function IncludedExtras({
                       ) : null}
                     </span>
                     <span
-                      className="whitespace-nowrap pt-1 text-right font-mono text-[12px] font-bold uppercase tracking-[0.1em] text-birch-bark/85"
+                      className="whitespace-nowrap pt-1 text-right font-mono text-[12px] font-bold uppercase tracking-[0.1em] text-pine-night/85"
                       data-sanity={dataAttribute?.(`${itemPath}.price`)}
                     >
                       {item.price}
