@@ -2,6 +2,7 @@ import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
+import { ParentAside } from "@/components/parent-aside";
 import ActivityScheduleBuilder from "./activity-schedule-builder";
 import styles from "./activity-schedule.module.css";
 
@@ -51,6 +52,7 @@ export default function ActivitySchedule({
   _key,
   activityCount,
   activityDataAttribute,
+  aside,
   camperNames,
   dataAttribute,
   description,
@@ -59,6 +61,7 @@ export default function ActivitySchedule({
 }: ActivityScheduleProps) {
   const plainHeading = headingToPlainText(heading);
   const cleanDescription = stegaClean(description)?.trim();
+  const cleanAside = stegaClean(aside)?.trim();
   const cleanCamperNames = (camperNames ?? [])
     .map((name) => stegaClean(name)?.trim())
     .filter((name): name is string => Boolean(name));
@@ -123,12 +126,19 @@ export default function ActivitySchedule({
               </h2>
             </header>
 
-            <p
-              className="max-w-xl text-pretty text-lg/relaxed text-birch-bark/75 lg:col-span-4 lg:pb-2"
-              data-sanity={dataAttribute?.("description")}
-            >
-              {description}
-            </p>
+            <div className="grid gap-6 lg:col-span-4 lg:pb-2">
+              <p
+                className="max-w-xl text-pretty text-lg/relaxed text-birch-bark/75"
+                data-sanity={dataAttribute?.("description")}
+              >
+                {description}
+              </p>
+              {cleanAside ? (
+                <ParentAside dataSanity={dataAttribute?.("aside")}>
+                  {aside}
+                </ParentAside>
+              ) : null}
+            </div>
           </div>
 
           <ActivityScheduleBuilder

@@ -27,6 +27,7 @@ const activitySchedule: ComponentProps<typeof ActivitySchedule> = {
   _key: "schedule-test",
   _type: "activitySchedule",
   activityCount: 19,
+  aside: null,
   camperNames: ["Maya", "Leo"],
   description: "Choose a different day every morning.",
   featuredActivities,
@@ -316,6 +317,32 @@ describe("ActivitySchedule", () => {
     expect(
       screen.queryByRole("button", { name: /automatic schedule/ }),
     ).not.toBeInTheDocument();
+  });
+
+  it("renders the parent aside under the description only when present", () => {
+    const { container, rerender } = render(
+      <ActivitySchedule {...activitySchedule} />,
+    );
+
+    expect(screen.queryByRole("note", { name: "For parents" })).toBeNull();
+    expect(container.querySelector('[data-sanity="section:aside"]')).toBeNull();
+
+    rerender(
+      <ActivitySchedule
+        {...activitySchedule}
+        aside="Twinkies do many activities with their cabin group."
+      />,
+    );
+
+    const aside = screen.getByRole("note", { name: "For parents" });
+    expect(aside).toHaveTextContent(
+      "Twinkies do many activities with their cabin group.",
+    );
+    expect(aside).toHaveAttribute("data-sanity", "section:aside");
+    expect(
+      container.querySelector('[data-sanity="section:description"]')
+        ?.compareDocumentPosition(aside),
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
   it("links section fields and Activity titles back to Studio", () => {
