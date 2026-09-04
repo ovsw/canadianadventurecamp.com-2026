@@ -7,8 +7,23 @@ export default defineType({
   type: "object",
   icon: Megaphone,
   description:
-    "A clear closing invitation with a heading, supporting line, and up to two actions.",
+    "A clear invitation with a heading, supporting line, and up to two actions.",
   fields: [
+    defineField({
+      name: "variant",
+      title: "Weight",
+      type: "string",
+      description:
+        "Closing: a full dark band that ends a page. Nudge: a quiet in-page panel, for example the fit quiz between two sections.",
+      initialValue: "closing",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Closing banner", value: "closing" },
+          { title: "In-page nudge", value: "nudge" },
+        ],
+      },
+    }),
     defineField({
       name: "title",
       type: "string",
@@ -30,10 +45,10 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: "title" },
-    prepare: ({ title }) => ({
+    select: { title: "title", variant: "variant" },
+    prepare: ({ title, variant }) => ({
       title: title || "Untitled Call to Action",
-      subtitle: "Call to Action",
+      subtitle: variant === "nudge" ? "In-page nudge" : "Closing banner",
     }),
   },
 });

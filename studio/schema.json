@@ -2170,6 +2170,23 @@
             "value": "ctaBanner"
           }
         },
+        "variant": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "closing"
+              },
+              {
+                "type": "string",
+                "value": "nudge"
+              }
+            ]
+          },
+          "optional": true
+        },
         "title": {
           "type": "objectAttribute",
           "value": {
@@ -2535,6 +2552,13 @@
           },
           "optional": true
         },
+        "flipLayout": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "boolean"
+          },
+          "optional": true
+        },
         "eyebrow": {
           "type": "objectAttribute",
           "value": {
@@ -2545,7 +2569,8 @@
         "title": {
           "type": "objectAttribute",
           "value": {
-            "type": "string"
+            "type": "inline",
+            "name": "minimalRichText"
           },
           "optional": true
         },

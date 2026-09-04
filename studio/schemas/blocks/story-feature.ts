@@ -1,6 +1,18 @@
 import { BookOpenText } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+const richTextToPlainText = (value: unknown): string => {
+  if (!Array.isArray(value)) return "";
+  return value
+    .map((block) =>
+      Array.isArray(block?.children)
+        ? block.children.map((child: { text?: string }) => child.text ?? "").join("")
+        : "",
+    )
+    .join(" ")
+    .trim();
+};
+
 const storyRichTextField = defineField({
   name: "richText",
   title: "Narrative",
@@ -43,14 +55,22 @@ export default defineType({
   type: "object",
   icon: BookOpenText,
   description:
-    "A reusable image-and-text section for a story, service, or point of view.",
+    "A photo beside a short story: heading, narrative, an optional checklist of key details, and up to two actions.",
   fields: [
     defineField({
       name: "useCreamBackground",
-      title: "Use Alternate Background",
+      title: "Cream field",
       type: "boolean",
       description:
-        "Turn on to separate this section from the surrounding page content.",
+        "On: the section sits on the cream (Birch Bark) field. Off: the forest dark field. Alternate with the sections around it.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "flipLayout",
+      title: "Photo on the right",
+      type: "boolean",
+      description:
+        "Off: photo left, text right. On: text left, photo right. Alternate between neighbouring Image and Text sections.",
       initialValue: false,
     }),
     defineField({
@@ -60,8 +80,10 @@ export default defineType({
     }),
     defineField({
       name: "title",
-      type: "string",
-      description: "The main heading for this story",
+      title: "Heading",
+      type: "minimalRichText",
+      description:
+        "The section heading. Italicise one phrase to set it in the handwritten accent.",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -92,7 +114,7 @@ export default defineType({
       name: "keyDetails",
       title: "Key Details",
       type: "object",
-      description: "Optional short facts shown as non-interactive pills",
+      description: "Optional short facts shown as a checklist under the story",
       fields: [
         defineField({
           name: "title",
@@ -102,7 +124,7 @@ export default defineType({
         defineField({
           name: "items",
           type: "array",
-          description: "Short facts to display as pills",
+          description: "Short facts, one line each",
           of: [defineArrayMember({ type: "string" })],
           validation: (rule) => rule.required().min(1).max(8),
         }),
@@ -120,7 +142,7 @@ export default defineType({
   preview: {
     select: { title: "title", media: "image" },
     prepare: ({ title, media }) => ({
-      title: title || "Untitled Image and Text",
+      title: richTextToPlainText(title) || "Untitled Image and Text",
       subtitle: "Image and Text",
       media,
     }),

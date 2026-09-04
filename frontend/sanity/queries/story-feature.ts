@@ -7,8 +7,11 @@ import { urlInternalHref } from "./shared/internal-href";
 export const storyFeatureQuery = groq`
   _type == "storyFeature" => {
     useCreamBackground,
+    flipLayout,
     eyebrow,
-    title,
+    title[]{
+      ...
+    },
     image {
       ${imageQuery}
     },
