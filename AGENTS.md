@@ -118,6 +118,14 @@ Use the canonical labels `needs-triage`, `needs-info`, `ready-for-agent`, `ready
 
 This repository uses a single-context domain-doc layout. See `docs/agents/domain.md`.
 
+### Page rethink
+
+Inner pages are rethought, not migrated. `/page-brief <slug>` runs the
+interview (avatar, jobs, content, layout) and files a sized spec issue. A
+one-shot page goes straight to `page-build`. A ticketed page goes through
+`/to-tickets` then `/implement-spec`, with `page-build` per ticket. Avatars
+live in `docs/avatars.md`.
+
 ### Page Builder work
 
 Before adding or changing a Page Builder section, its fields, or its stored
