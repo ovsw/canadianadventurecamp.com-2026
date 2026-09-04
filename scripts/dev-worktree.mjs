@@ -124,6 +124,9 @@ async function main() {
     child.once("error", (error) => {
       console.error(`${name} failed to start: ${error.message}`);
       exitCode = 1;
+      // A failed spawn may never emit "close", so record the failure on the
+      // process now instead of waiting for the final close handler.
+      process.exitCode = 1;
       stopAll();
     });
     child.once("exit", (code, signal) => {
