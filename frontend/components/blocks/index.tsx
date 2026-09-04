@@ -20,6 +20,7 @@ import InnerHero from "@/components/blocks/inner-hero";
 import Testimonials from "@/components/blocks/testimonials";
 import Journey from "@/components/blocks/journey";
 import StackedTimeline from "@/components/blocks/stacked-timeline";
+import IncludedExtras from "@/components/blocks/included-extras";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -72,6 +73,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "journey",
   "testimonials",
   "stackedTimeline",
+  "includedExtras",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -100,6 +102,7 @@ const componentMap: Partial<{
   testimonials: Testimonials,
   journey: Journey,
   stackedTimeline: StackedTimeline,
+  includedExtras: IncludedExtras,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };
