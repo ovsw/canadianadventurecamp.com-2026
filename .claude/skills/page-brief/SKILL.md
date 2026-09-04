@@ -86,7 +86,7 @@ plain words, with the job it serves.
 ### Step 4: Layout
 
 Only after content is settled. For each section, sketch desktop and 375px in
-two sentences and classify it:
+two sentences and mark it as one of:
 
 - **reuse**: an existing block, as-is;
 - **extend**: an existing block gains a field or variant;
@@ -133,7 +133,7 @@ Numbered, extensive. "As a <avatar>, I want <thing on this page>, so that
 
 ## Content outline
 Ordered sections. For each: the question it answers, the proof it shows,
-the copy direction, media needed, behaviour if any, and its classification
+the copy direction, media needed, behaviour if any, and its block mark
 (reuse <block> / extend <block> / new).
 
 ## Copy notes
