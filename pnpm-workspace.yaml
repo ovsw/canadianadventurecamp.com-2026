@@ -10,3 +10,6 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+patchedDependencies:
+  sanity-plugin-media@5.0.11: patches/sanity-plugin-media@5.0.11.patch

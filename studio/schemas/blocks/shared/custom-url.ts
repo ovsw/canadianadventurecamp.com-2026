@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { InlineObjectField } from "../../inputs/inline-object-field";
 
 const safeProtocols = new Set(["http:", "https:", "mailto:", "tel:"]);
 
@@ -32,6 +33,9 @@ export default defineType({
   name: "customUrl",
   title: "URL",
   type: "object",
+  // The type radio, page reference, and URL field read fine on their own; the
+  // fieldset frame only nests the form one level deeper.
+  components: { field: InlineObjectField },
   fields: [
     defineField({
       name: "external",
@@ -69,6 +73,7 @@ export default defineType({
       initialValue: "internal",
       options: {
         layout: "radio",
+        direction: "horizontal",
         list: [
           { title: "Internal", value: "internal" },
           { title: "External", value: "external" },

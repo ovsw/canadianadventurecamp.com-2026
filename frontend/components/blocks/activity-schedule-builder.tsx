@@ -265,7 +265,10 @@ export default function ActivityScheduleBuilder({
         {activitiesLink}
       </div>
 
-      <div className="relative self-center lg:col-span-5">
+      {/* In the single-column layout the card would stretch to the full
+          content width; cap it so the four-row schedule still reads as a
+          note card. */}
+      <div className="relative w-full max-w-[26rem] self-center justify-self-center md:max-w-none lg:col-span-5">
         <div className="relative -rotate-1 rounded-2xl bg-birch-bark-bright p-7 text-pine-night shadow-2xl motion-reduce:rotate-0">
           {fullDay ? (
             <span className="absolute -right-2 -top-4 rounded-pill bg-campfire-amber px-4 py-2 font-mono text-[0.6875rem] font-bold tracking-[0.14em] text-pine-night shadow-lg">
