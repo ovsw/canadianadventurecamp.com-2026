@@ -111,8 +111,13 @@ export function SiteFooter({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-11 border-y border-birch-bark/15 py-[60px] tablet:grid-cols-2 desktop:grid-cols-[1.5fr_repeat(4,1fr)] desktop:gap-12">
-          <section aria-label="Canadian Adventure Camp contact information">
+        {/* Below desktop the contact block takes the whole row so the logos
+            stay on one line, and the link columns pair up beneath it. */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-11 border-y border-birch-bark/15 py-[60px] desktop:grid-cols-[1.5fr_repeat(4,1fr)] desktop:gap-12">
+          <section
+            aria-label="Canadian Adventure Camp contact information"
+            className="col-span-2 desktop:col-span-1"
+          >
             <div className="mb-[26px] flex flex-wrap items-center gap-3">
               {model.logos.map((logo) => (
                 <FooterLink key={logo.key} link={logo.link}>
