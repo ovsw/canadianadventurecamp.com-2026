@@ -125,4 +125,16 @@ flowchart TD
     handoff["Card to Ovi Polish, handoff comment, For Ovi comment, Client input list, issue comment, coherence issues"]
   end
   push -- head SHA, forOvi --> handoff --> done(["Draft ready for Ovi · /page-integrate batches into one PR"])
+  style P1 fill:#f1f3f5,stroke:#868e96
+  style P2 fill:#e7f0fb,stroke:#2c88d9
+  style P3 fill:#f3e8fb,stroke:#9c36b5
+  style P4 fill:#fff1e6,stroke:#e8833a
+  style P5 fill:#e6f7f2,stroke:#207868
+  style abort fill:#d3455b,stroke:#a02a3c,color:#fff
+  style start fill:#788896,stroke:#4b5c6b,color:#fff
+  style done fill:#207868,stroke:#14513f,color:#fff
 ```
+
+Rendered copies: `flow.svg` and `flow.png`. Regenerate after editing the
+Mermaid with `node .claude/workflows/page-draft/render-flow.mjs` (Playwright's
+Chromium, Mermaid from the jsdelivr CDN).
