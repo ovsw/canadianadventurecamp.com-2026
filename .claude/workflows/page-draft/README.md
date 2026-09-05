@@ -206,13 +206,17 @@ Make the to-do list of things the camp must supply"]
   style done fill:#207868,stroke:#14513f,color:#fff
 ```
 
-Rendered copies: `flow.svg`, `flow.png`, and `flow.excalidraw` (open it at
-excalidraw.com or with the VS Code Excalidraw extension). Regenerate after
-editing the Mermaid:
+Rendered copies: `flow.svg` and `flow.png` come from the Mermaid above
+(`node .claude/workflows/page-draft/render-flow.mjs`, Playwright's Chromium
+plus Mermaid from a CDN).
+
+Editable copies: `flow.excalidraw` (open at excalidraw.com or with the VS
+Code Excalidraw extension) and `flow.drawio` (open at app.diagrams.net or
+with the VS Code draw.io extension). Both are built from the same list of
+boxes and connections in `flow-data.mjs`; every arrow is bound to its two
+boxes, so moving a box moves its arrows. Edit `flow-data.mjs`, then:
 
 ```bash
-node .claude/workflows/page-draft/render-flow.mjs    # svg + png
-node .claude/workflows/page-draft/to-excalidraw.mjs  # .excalidraw
+node .claude/workflows/page-draft/build-excalidraw.mjs
+node .claude/workflows/page-draft/build-drawio.mjs
 ```
-
-Both use Playwright's Chromium and fetch Mermaid and Excalidraw from CDNs.
