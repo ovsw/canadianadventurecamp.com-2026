@@ -82,49 +82,69 @@ place: `docs/agents/page-workflow.md` (repo facts, also used by
 
 ```mermaid
 flowchart TD
-  start(["/page-draft target · args {target, stopAfter}"]) --> claim
-  subgraph P1["1. Claim"]
-    claim["Claim: resolve target, card to Building, Branch line"] --> claimed{Claimed?}
-    claimed -- no --> stop(["Return: owned elsewhere / not found"])
-    claimed -- yes --> hasissue{Spec issue on the card?}
+  start(["Start: name a page"]) --> claim
+  subgraph P1["1. Take the page"]
+    claim["Find the page's Basecamp card"] --> claimed{Is someone else
+already working on it?}
+    claimed -- yes --> stop(["Stop. Touch nothing."])
+    claimed -- no --> mark["Mark the card as in progress
+with this branch name"] --> hasplan{Has the plan for this page
+already been written?}
   end
-  subgraph P2["2. Gather (5 readers in parallel, barrier)"]
-    gA["A. Avatars & rules"]
-    gB["B. Old page"]
-    gC["C. Posts & neighbours"]
-    gD["D. Blocks & design, lock list"]
-    gE["E. Images"]
+  subgraph P2["2. Research (5 agents at once)"]
+    gA["Who the page is for
+and the writing rules"]
+    gB["What the old page says"]
+    gC["Related blog posts and
+the pages next to it in the menu"]
+    gD["Which page sections exist
+and the design rules"]
+    gE["Which photos exist"]
   end
-  hasissue -- no --> gA & gB & gC & gD & gE
-  subgraph P3["3. Decide"]
-    decide["Decide: file spec issue, link on card"] --> critic["Critic (effort high)"] --> critq{Problems?}
-    critq -- yes --> revise["Revise the issue, one round"]
-    readspec["Read existing spec"]
+  hasplan -- no --> gA & gB & gC & gD & gE
+  subgraph P3["3. Plan"]
+    decide["Write the plan for the page
+as a GitHub issue, link it on the card"] --> critic["A second agent reads the plan
+as the parent it is written for"] --> critq{Found problems?}
+    critq -- yes --> revise["Fix the plan"]
+    readplan["Read the existing plan"]
   end
-  hasissue -- yes --> readspec
-  gA & gB & gC & gD & gE -- dossiers --> decide
+  hasplan -- yes --> readplan
+  gA & gB & gC & gD & gE -- notes --> decide
   subgraph P4["4. Build"]
-    prep["Prep: sync main, lock list, raw backup to backups/"] --> prepq{ok?}
-    prepq -- yes --> blocks["One agent per block: new, design, then extend, sequential"]
-    blocks --> seed["Seed: backups/seeds/slug.mjs, page:seed --apply, drafts only"]
-    seed --> checker["Checker (effort high): page:text, unslop, rhythm, CTAs"] --> revq{Problems? max 3 rounds}
-    revq -- yes --> fixer["Fixer: apply, re-seed, commit"] --> checker
-    revq -- no --> render["Render check: draft-mode curl, grep headings"] --> renderq{ok?}
-    renderq -- no --> renderfix["Render fixer, once"] --> render
-    renderq -- yes --> push["Push: sync main, typecheck, verify:typegen, push"]
+    prep["Get the latest code,
+check nobody else is editing the same sections,
+back up the content database"] --> prepq{All good?}
+    prepq -- yes --> blocks["Build each new or redesigned
+page section, one at a time"]
+    blocks --> seed["Write the page text and
+save it as a draft in Sanity"]
+    seed --> checker["Proofread the page:
+voice, banned words, unconfirmed facts,
+colours alternate, buttons in place"] --> revq{Found problems?
+Up to 3 rounds}
+    revq -- yes --> fixer["Fix them and save again"] --> checker
+    revq -- no --> render["Load the page on the dev server
+and check every section shows up"] --> renderq{Page loads?}
+    renderq -- no --> renderfix["Fix it, one try"] --> render
+    renderq -- yes --> push["Final checks, then push the code"]
   end
   critq -- no --> prep
   revise --> prep
-  readspec --> prep
+  readplan --> prep
   prepq -- no --> abort
-  blocks -. typecheck fails twice .-> abort
-  seed -. seed fails .-> abort
+  blocks -. code will not compile .-> abort
+  seed -. draft will not save .-> abort
   push -. push fails .-> abort
-  abort["Abort: comment on card with stage, reason, For Ovi lines; card stays in Building"]
-  subgraph P5["5. Hand off"]
-    handoff["Card to Ovi Polish, handoff comment, For Ovi comment, Client input list, issue comment, coherence issues"]
+  abort["Give up: write what went wrong
+on the card, leave it marked in progress"]
+  subgraph P5["5. Hand over to Ovi"]
+    handoff["Move the card to Ovi Polish
+Write on the card: what to look at, what was guessed,
+what to ask the camp
+Make the to-do list of things the camp must supply"]
   end
-  push -- head SHA, forOvi --> handoff --> done(["Draft ready for Ovi · /page-integrate batches into one PR"])
+  push --> handoff --> done(["Draft ready for Ovi"])
   style P1 fill:#f1f3f5,stroke:#868e96
   style P2 fill:#e7f0fb,stroke:#2c88d9
   style P3 fill:#f3e8fb,stroke:#9c36b5
