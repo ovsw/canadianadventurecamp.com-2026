@@ -64,6 +64,10 @@ A nested block is an object used only inside another section, such as a card ins
 
 ## Change an existing section
 
+Other worktrees may be drafting pages against the same block at the same
+time. Check the block lock list and keep changes additive, per
+`docs/agents/page-workflow.md` "Shared-state rules for parallel drafts".
+
 Trace the whole vertical slice before editing:
 
 - Studio fields: `studio/schemas/blocks/`

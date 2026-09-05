@@ -124,11 +124,15 @@ This repository uses a single-context domain-doc layout. See `docs/agents/domain
 
 ### Page rethink
 
-Inner pages are rethought, not migrated. `/page-brief <slug>` runs the
-interview (avatar, jobs, content, layout) and files a sized spec issue. A
-one-shot page goes straight to `page-build`. A ticketed page goes through
-`/to-tickets` then `/implement-spec`, with `page-build` per ticket. Avatars
-live in `docs/avatars.md`.
+Inner pages are rethought, not migrated. `/page-draft <slug>` is a dynamic
+workflow (`.claude/workflows/page-draft.js`, step instructions in
+`.claude/workflows/page-draft/`) that takes a page from the old site to a
+draft with nobody watching (take the page, research, write the plan, build,
+hand over to Ovi), and the `/page-integrate` skill merges the finished
+branches into one PR. Several drafts run in parallel worktrees, so read
+"Taking a page so nobody else works on it" and "Rules for working in
+parallel" in `docs/agents/page-workflow.md` before touching a page, a
+section, or the content database. Avatars live in `docs/avatars.md`.
 
 ### Page Builder work
 

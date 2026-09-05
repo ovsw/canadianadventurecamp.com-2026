@@ -42,6 +42,11 @@ pnpm dev:frontend
 pnpm dev:studio
 pnpm dev:stop
 pnpm page-builder:new <name>
+pnpm legacy:page <slug>
+pnpm page:text <slug>
+pnpm page:seed <seed.mjs> [--apply]
+pnpm sync:main
+pnpm merge:refs <ref>...
 pnpm verify
 pnpm lint
 pnpm typecheck
@@ -60,6 +65,11 @@ Run `pnpm verify` before opening a pull request. It checks generated Sanity type
 `pnpm page-builder:new <name>` creates and registers a typed Studio schema,
 GROQ projection, and React renderer. Use `--scope content|general|home`,
 `--title "Studio title"`, `--preview ./preview.jpg`, or `--dry-run` as needed.
+
+`pnpm legacy:page`, `pnpm page:text`, and `pnpm page:seed` read and write one
+page's content for the page workflow; `pnpm sync:main` and `pnpm merge:refs`
+merge branches with generated Sanity types regenerated. See
+`docs/agents/page-workflow.md`.
 
 Use plain pnpm commands from the repository root. Add workspace dependencies with `pnpm --dir frontend add <package>` or `pnpm --dir studio add <package>`.
 

@@ -15,7 +15,9 @@
     "typegen": "rm -f schema.json && sanity schema extract; test -f schema.json && sanity typegen generate",
     "typecheck": "tsc --noEmit",
     "migrate:activity-schedule-headings": "node --env-file=.env.local scripts/migrate-activity-schedule-headings.mjs",
-    "legacy:page": "node --env-file=.env.local scripts/print-legacy-page.mjs"
+    "legacy:page": "node --env-file=.env.local scripts/print-legacy-page.mjs",
+    "page:text": "node --env-file=.env.local scripts/print-page-text.mjs",
+    "page:seed": "node --env-file=.env.local scripts/seed-page-draft.mjs"
   },
   "dependencies": {
     "@portabletext/react": "^6.2.0",
