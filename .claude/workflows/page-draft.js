@@ -13,7 +13,7 @@ export const meta = {
   ],
 }
 
-// Instructions live in docs/agents/page-draft/. This script holds the order,
+// Instructions live in .claude/workflows/page-draft/. This script holds the order,
 // the loops, and the data between stages. Stage docs stay the source of truth.
 
 // ---- input -----------------------------------------------------------------
@@ -21,13 +21,35 @@ const opts = args && typeof args === 'object' ? args : { target: args }
 const target = opts.target == null ? '' : String(opts.target).trim()
 const stopAfter = opts.stopAfter ? String(opts.stopAfter) : ''
 
-const DOCS = 'docs/agents/page-draft'
+const DOCS = '.claude/workflows/page-draft'
 const PREAMBLE = [
   'You are one stage of the page-draft workflow for the Canadian Adventure Camp website, run inside this repository.',
   'Ovi is away. Never wait for him: take the decision you would have recommended and record the fact or rule it rests on.',
   `Read \`${DOCS}/README.md\` first, then the file named for your stage. Repository facts (Basecamp ids, the claim protocol, shared-state rules, scripts, the render check) are in \`docs/agents/page-workflow.md\`.`,
   'Your final output is data for the orchestrating script, never a message for a person. Fill every field the schema asks for; what you do not return is lost.',
+  'When the schema has `forOvi`, return one line per assumption, educated guess, decision a human should confirm, or fact to check with the client that you made in this stage, prefixed with its kind: `decision:`, `review:`, `client:`, or `assumption:`. Empty list only when you made none.',
 ].join('\n')
+
+// Model and effort per stage. Mechanical stages run on a smaller model; the
+// stages that write copy, design blocks, or judge inherit the session model.
+// Edit here to tune cost against quality.
+const MODEL = {
+  claim: { model: 'sonnet' },
+  gather: { model: 'sonnet' },
+  readSpec: { model: 'sonnet' },
+  decide: {},
+  critic: { effort: 'high' },
+  revise: {},
+  prep: { model: 'sonnet' },
+  block: {},
+  seed: {},
+  review: { effort: 'high' },
+  fix: {},
+  render: { model: 'sonnet', effort: 'low' },
+  push: { model: 'sonnet' },
+  handoff: { model: 'sonnet' },
+  abort: { model: 'haiku', effort: 'low' },
+}
 
 // ---- schema helpers --------------------------------------------------------
 const str = { type: 'string' }
@@ -74,22 +96,23 @@ const SPEC = obj({
 })
 const CRITIQUE = obj({ issues: list(obj({ section: str, problem: str, fix: str })) })
 const PREP = obj(
-  { ok: bool, backupPath: str, lockConflicts: strList, sections: list(SECTION), notes: str },
-  ['ok', 'backupPath', 'lockConflicts', 'notes'],
+  { ok: bool, backupPath: str, lockConflicts: strList, sections: list(SECTION), forOvi: strList, notes: str },
+  ['ok', 'backupPath', 'lockConflicts', 'forOvi', 'notes'],
 )
-const BLOCK = obj({ block: str, typecheckOk: bool, files: strList, notes: str })
+const BLOCK = obj({ block: str, typecheckOk: bool, files: strList, forOvi: strList, notes: str })
 const SEED = obj({
   applied: bool,
   seedPath: str,
   documentIds: strList,
   placeholders: strList,
   missingImages: strList,
+  forOvi: strList,
   notes: str,
 })
 const REVIEW = obj({ issues: list(obj({ where: str, problem: str, fix: str })) })
-const FIX = obj({ fixed: strList, notes: str })
+const FIX = obj({ fixed: strList, forOvi: strList, notes: str })
 const RENDER = obj({ ok: bool, missingHeadings: strList, errors: strList })
-const PUSH = obj({ pushed: bool, headSha: str, notes: str })
+const PUSH = obj({ pushed: bool, headSha: str, forOvi: strList, notes: str })
 const HANDOFF = obj({
   cardUrl: str,
   issueUrl: str,
@@ -117,6 +140,14 @@ async function run(label, phaseTitle, body, schema, extra) {
   return result
 }
 
+// Everything a human must confirm, review, or check with the client,
+// collected from every build stage and written on the card at hand off.
+const forOvi = []
+function collect(stage, result) {
+  for (const line of result.forOvi ?? []) forOvi.push(`${stage}: ${line}`)
+  return result
+}
+
 function pageLine(claim) {
   return [
     `Page: "${claim.title}", slug \`${claim.slug}\`, Sanity id \`${claim.pageId || '(none yet: new page)'}\`,`,
@@ -138,9 +169,12 @@ async function abort(claim, stage, reason) {
     [
       `Stage: abort. The build stopped at "${stage}": ${reason}`,
       pageLine(claim),
-      'Comment on the Basecamp card (Markdown from stdin, per page-workflow.md "Basecamp") with the stage, the reason, and what a human should check. Leave the card in Building. Commit nothing, push nothing, write nothing to Sanity.',
+      'Comment on the Basecamp card (Markdown from stdin, per page-workflow.md "Basecamp") with the stage, the reason, what a human should check, and the "For Ovi" lines below. Leave the card in Building. Commit nothing, push nothing, write nothing to Sanity.',
+      '',
+      forOvi.length ? forOvi.map((l) => `- ${l}`).join('\n') : '(no For Ovi lines yet)',
     ].join('\n'),
     DONE,
+    MODEL.abort,
   )
   return { status: 'failed', stage, reason, card: claim.cardUrl, branch: claim.branch }
 }
@@ -155,6 +189,7 @@ const claim = await run(
     `Target: ${target || '(none: take the top card in the To Build column)'}.`,
   ].join('\n'),
   CLAIM,
+  MODEL.claim,
 )
 if (claim.status !== 'claimed') {
   log(`Not claimed: ${claim.status}. ${claim.note}`)
@@ -175,6 +210,7 @@ if (claim.issueNumber) {
       `Read GitHub issue #${claim.issueNumber} with \`gh issue view\` and return its outline: every section of "Content outline" in order with block, mark, and field colour; the homepage candidates; the open questions for the client; and a short summary of "Decisions made without Ovi". Change nothing.`,
     ].join('\n'),
     SPEC,
+    MODEL.readSpec,
   )
 } else {
   phase('Gather')
@@ -196,6 +232,7 @@ if (claim.issueNumber) {
           pageLine(claim),
         ].join('\n'),
         DOSSIER,
+        MODEL.gather,
       ),
     ),
   )
@@ -221,6 +258,7 @@ if (claim.issueNumber) {
       dossierText,
     ].join('\n'),
     SPEC,
+    MODEL.decide,
   )
   log(`Spec filed: ${drafted.issueUrl} (${drafted.sections.length} sections)`)
   const critique = await run(
@@ -234,7 +272,7 @@ if (claim.issueNumber) {
       `### ${readers[0].section}\n\n${dossiers[0].dossier}`,
     ].join('\n'),
     CRITIQUE,
-    { effort: 'high' },
+    MODEL.critic,
   )
   if (critique.issues.length) {
     log(`Critic found ${critique.issues.length} problem(s); revising`)
@@ -249,6 +287,7 @@ if (claim.issueNumber) {
         JSON.stringify(critique.issues, null, 2),
       ].join('\n'),
       SPEC,
+      MODEL.revise,
     )
   } else {
     spec = drafted
@@ -258,7 +297,7 @@ if (stopAfter === 'spec') return { status: 'stopped-after-spec', claim, spec }
 
 // ---- 4. Build --------------------------------------------------------------
 phase('Build')
-const prep = await run(
+const prep = collect('prep', await run(
   'prep',
   'Build',
   [
@@ -268,7 +307,8 @@ const prep = await run(
     outlineText(spec.sections),
   ].join('\n'),
   PREP,
-)
+  MODEL.prep,
+))
 if (!prep.ok) return abort(claim, 'prep', prep.notes)
 const sections = prep.sections && prep.sections.length ? prep.sections : spec.sections
 if (prep.lockConflicts.length) log(`Locked blocks avoided: ${prep.lockConflicts.join(', ')}`)
@@ -288,20 +328,24 @@ for (const b of blocks) {
     pageLine(claim),
     `Spec issue: ${spec.issueUrl}. Read its "Content outline" and "Implementation Decisions" for this block.`,
   ].join('\n')
-  let result = await run(`block:${b.block}`, 'Build', body, BLOCK)
+  let result = collect(`block ${b.block}`, await run(`block:${b.block}`, 'Build', body, BLOCK, MODEL.block))
   if (!result.typecheckOk) {
-    result = await run(
-      `block:${b.block}:fix`,
-      'Build',
-      `${body}\n\nThe previous attempt left typecheck failing: ${result.notes}\nFix it until \`pnpm typecheck\` and \`pnpm verify:typegen\` pass, then commit.`,
-      BLOCK,
+    result = collect(
+      `block ${b.block}`,
+      await run(
+        `block:${b.block}:fix`,
+        'Build',
+        `${body}\n\nThe previous attempt left typecheck failing: ${result.notes}\nFix it until \`pnpm typecheck\` and \`pnpm verify:typegen\` pass, then commit.`,
+        BLOCK,
+        MODEL.block,
+      ),
     )
     if (!result.typecheckOk) return abort(claim, `block ${b.block}`, result.notes)
   }
   log(`Block ${b.block} (${b.mark}) built`)
 }
 
-const seed = await run(
+const seed = collect('seed', await run(
   'seed',
   'Build',
   [
@@ -312,7 +356,8 @@ const seed = await run(
     `Client questions already known: ${spec.clientQuestions.join(' | ') || '(none)'}`,
   ].join('\n'),
   SEED,
-)
+  MODEL.seed,
+))
 if (!seed.applied) return abort(claim, 'seed', seed.notes)
 log(`Seeded ${seed.documentIds.length} document(s)`)
 
@@ -327,7 +372,7 @@ for (let round = 1; round <= 3; round++) {
       `Spec issue: ${spec.issueUrl}. Seed: ${seed.seedPath}. Return problems only.`,
     ].join('\n'),
     REVIEW,
-    { effort: 'high' },
+    MODEL.review,
   )
   unresolved = review.issues
   if (!unresolved.length) {
@@ -335,7 +380,7 @@ for (let round = 1; round <= 3; round++) {
     break
   }
   log(`Review round ${round}: ${unresolved.length} problem(s)`)
-  await run(
+  collect(`fix round ${round}`, await run(
     `fix:${round}`,
     'Build',
     [
@@ -346,7 +391,8 @@ for (let round = 1; round <= 3; round++) {
       JSON.stringify(unresolved, null, 2),
     ].join('\n'),
     FIX,
-  )
+    MODEL.fix,
+  ))
 }
 
 let render = await run(
@@ -359,9 +405,10 @@ let render = await run(
     sections.map((s) => `- ${s.title}`).join('\n'),
   ].join('\n'),
   RENDER,
+  MODEL.render,
 )
 if (!render.ok) {
-  await run(
+  collect('render fix', await run(
     'render:fix',
     'Build',
     [
@@ -372,7 +419,8 @@ if (!render.ok) {
       'Find the cause (renderer crash, missing field, seed mismatch), fix it, commit, and report.',
     ].join('\n'),
     FIX,
-  )
+    MODEL.fix,
+  ))
   render = await run(
     'render:again',
     'Build',
@@ -383,15 +431,17 @@ if (!render.ok) {
       sections.map((s) => `- ${s.title}`).join('\n'),
     ].join('\n'),
     RENDER,
+    MODEL.render,
   )
 }
 
-const push = await run(
+const push = collect('push', await run(
   'push',
   'Build',
   [`Stage: build, section "Push" of \`${DOCS}/build.md\`.`, pageLine(claim)].join('\n'),
   PUSH,
-)
+  MODEL.push,
+))
 if (!push.pushed) return abort(claim, 'push', push.notes)
 log(`Pushed ${claim.branch} at ${push.headSha}`)
 
@@ -413,8 +463,12 @@ const handoff = await run(
     `Render check: ${render.ok ? 'passed' : `still failing: ${render.errors.join('; ')} ${render.missingHeadings.join('; ')}`}`,
     `Homepage candidates: ${spec.homepageCandidates.join('; ') || '(none)'}`,
     `Client questions: ${spec.clientQuestions.join(' | ') || '(none)'}`,
+    '',
+    'For Ovi lines collected from the build stages (add the spec issue\'s "Decisions made without Ovi" and "Open questions for the client" to them):',
+    forOvi.length ? forOvi.map((l) => `- ${l}`).join('\n') : '- (none returned)',
   ].join('\n'),
   HANDOFF,
+  MODEL.handoff,
 )
 
 return {
@@ -431,6 +485,7 @@ return {
   placeholders: handoff.placeholders,
   missingImages: handoff.missingImages,
   unresolved,
+  forOvi,
   renderOk: render.ok,
   summary: handoff.summary,
 }

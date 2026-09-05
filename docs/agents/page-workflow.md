@@ -1,7 +1,7 @@
 # Page workflow: from old page to draft, in parallel
 
 Repository facts for the `page-draft` workflow (`.claude/workflows/`, stage
-instructions in `docs/agents/page-draft/`) and the `page-integrate` skill.
+instructions in `.claude/workflows/page-draft/`) and the `page-integrate` skill.
 They hold the process; this file holds what is true about this repo, its
 Basecamp project, and its dataset. Update it here when any of it changes.
 

@@ -126,7 +126,7 @@ This repository uses a single-context domain-doc layout. See `docs/agents/domain
 
 Inner pages are rethought, not migrated. `/page-draft <slug>` is a dynamic
 workflow (`.claude/workflows/page-draft.js`, stage instructions in
-`docs/agents/page-draft/`) that takes a page from the old site to a draft
+`.claude/workflows/page-draft/`) that takes a page from the old site to a draft
 with nobody in the loop (claim, gather, decide, build, hand off), and the
 `/page-integrate` skill batches the finished branches into one PR. Several drafts run in parallel worktrees, so
 read the claim protocol and shared-state rules in

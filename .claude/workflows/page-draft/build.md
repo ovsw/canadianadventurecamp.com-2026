@@ -18,8 +18,13 @@ such section in the handoff so he knows where to look.
    and the outline; say so in "Decisions made without Ovi").
 3. Read `docs/agents/page-builder.md`, `frontend/DESIGN.md` whole, the
    renderers the page reuses, and the ones it will sit beside.
-4. Back up the dataset per `page-workflow.md`; `gzip -t` the archive. A failed
-   backup stops the build.
+4. Back up the dataset before any write, as a **raw** export (documents
+   with their asset references, no asset files) into the gitignored
+   `backups/` folder at the repo root:
+   `sanity dataset export production backups/production-<timestamp>-<slug>.tar.gz --raw`
+   with `SANITY_AUTH_TOKEN` from `studio/.env.local`, then `gzip -t` the
+   archive. Never write the archive anywhere git tracks. A failed backup or
+   check stops the build.
 5. When the lock list forces a mark to change (a `design` block another branch
    holds becomes `reuse` as on `main`, or a new block), edit the issue's
    outline, add the reason under "Decisions made without Ovi", and return the
