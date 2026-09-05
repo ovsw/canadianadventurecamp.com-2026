@@ -36,13 +36,19 @@ export const UNION_FILES = [
 
 const TYPEGEN_INPUT_PREFIXES = ["studio/schemas/", "frontend/sanity/queries/"];
 
-async function git(cwd, args, { allowFailure = false } = {}) {
+async function git(cwd, args, { allowFailure = false, raw = false } = {}) {
+  const tidy = (text) => (raw ? text : text.trimEnd());
   try {
     const { stdout } = await execFileAsync("git", args, { cwd, maxBuffer: 64 * 1024 * 1024 });
-    return { ok: true, stdout: stdout.trimEnd() };
+    return { ok: true, code: 0, stdout: tidy(stdout) };
   } catch (error) {
     if (allowFailure) {
-      return { ok: false, stdout: `${error.stdout ?? ""}`.trimEnd(), stderr: `${error.stderr ?? ""}` };
+      return {
+        ok: false,
+        code: typeof error.code === "number" ? error.code : 1,
+        stdout: tidy(`${error.stdout ?? ""}`),
+        stderr: `${error.stderr ?? ""}`,
+      };
     }
     throw error;
   }
@@ -55,9 +61,10 @@ async function conflictedFiles(cwd) {
 
 async function stagePath(cwd, stage, file) {
   // Stage 1 is the merge base, 2 is ours, 3 is theirs. A side that lacks the
-  // file (added on one side only) yields an empty string.
-  const result = await git(cwd, ["show", `:${stage}:${file}`], { allowFailure: true });
-  return result.ok ? `${result.stdout}\n` : "";
+  // file (added on one side only) yields an empty string. Raw, so the file's
+  // own trailing whitespace survives the round trip.
+  const result = await git(cwd, ["show", `:${stage}:${file}`], { allowFailure: true, raw: true });
+  return result.ok ? result.stdout : "";
 }
 
 const MARKER = "page-builder-generator:";
@@ -107,7 +114,12 @@ export async function unionMerge(cwd, file) {
   );
   let merged;
   try {
-    const result = await git(cwd, ["merge-file", "-p", ...temporary], { allowFailure: true });
+    // merge-file exits with the number of conflicts (at most 127); anything
+    // above that is a real error, and its output is not a merge result.
+    const result = await git(cwd, ["merge-file", "-p", ...temporary], { allowFailure: true, raw: true });
+    if (result.code > 127) {
+      throw new Error(`git merge-file failed on ${file}:\n${result.stderr}`);
+    }
     merged = unionAtMarkers(result.stdout);
   } finally {
     await Promise.all(
@@ -115,7 +127,7 @@ export async function unionMerge(cwd, file) {
     );
   }
   if (merged === null) return false;
-  await writeFile(path.join(cwd, file), `${merged}\n`, "utf8");
+  await writeFile(path.join(cwd, file), merged, "utf8");
   await git(cwd, ["add", "--", file]);
   return true;
 }

@@ -5,7 +5,9 @@ const dir = new URL(".", import.meta.url).pathname.replace(/\/$/, "");
 // installed once: `pnpm --dir frontend exec playwright install chromium`.
 const { chromium } = createRequire(`${dir}/../../../frontend/package.json`)("playwright-core");
 const readme = readFileSync(`${dir}/README.md`, "utf8");
-const src = readme.match(/```mermaid\n([\s\S]*?)```/)[1];
+const block = readme.match(/```mermaid\n([\s\S]*?)```/);
+if (!block) throw new Error(`No \`\`\`mermaid block found in ${dir}/README.md`);
+const src = block[1];
 const html = `<!doctype html><html><body style="margin:0;background:#fff;padding:24px">
 <pre class="mermaid">${src.replace(/</g, "&lt;")}</pre>
 <script type="module">
@@ -20,6 +22,10 @@ page.on("pageerror", (e) => console.error("pageerror", e.message));
 await page.setContent(html, { waitUntil: "domcontentloaded" });
 await page.waitForSelector("body[data-done='1']", { timeout: 60000 });
 const svg = await page.$("svg");
+if (!svg) {
+  await browser.close();
+  throw new Error("Mermaid produced no <svg>: the diagram did not render (see pageerror lines above)");
+}
 writeFileSync(`${dir}/flow.svg`, await svg.evaluate((el) => el.outerHTML));
 await svg.screenshot({ path: `${dir}/flow.png` });
 const box = await svg.boundingBox();

@@ -129,17 +129,39 @@ const HANDED_OVER = obj({
 const DONE = obj({ done: bool })
 
 // ---- helpers ---------------------------------------------------------------
+// Once the page is ours, a crash must still end with a comment on the card,
+// or Ovi sees a card stuck "in progress" with no explanation.
+let takenPage = null
 async function run(label, phaseTitle, body, schema, extra) {
-  const result = await agent(`${PREAMBLE}\n\n${body}`, {
-    label,
-    phase: phaseTitle,
-    schema,
-    ...(extra ?? {}),
-  })
+  let result
+  try {
+    result = await agent(`${PREAMBLE}\n\n${body}`, {
+      label,
+      phase: phaseTitle,
+      schema,
+      ...(extra ?? {}),
+    })
+  } catch (error) {
+    await writeFailureOnCard(label, error?.message ?? String(error))
+    throw error
+  }
   if (result == null) {
-    throw new Error(`${label}: the agent returned nothing (it was stopped, or the API failed after retries)`)
+    const reason = `${label}: the agent returned nothing (it was stopped, or the API failed after retries)`
+    await writeFailureOnCard(label, reason)
+    throw new Error(reason)
   }
   return result
+}
+
+async function writeFailureOnCard(stepName, reason) {
+  if (!takenPage || stepName === 'give up') return
+  const page = takenPage
+  takenPage = null // one comment, and no loop if giving up fails too
+  try {
+    await giveUp(page, stepName, reason)
+  } catch (error) {
+    log(`Could not write the failure on the card: ${error?.message ?? error}`)
+  }
 }
 
 // Notes for Ovi: everything a human must confirm, review, or check with the
@@ -197,6 +219,7 @@ if (page.status !== 'taken') {
   log(`Did not take the page: ${page.status}. ${page.note}`)
   return { status: page.status, note: page.note, slug: page.slug, card: page.cardUrl }
 }
+takenPage = page
 log(`Took "${page.title}" (/${page.slug}) on branch ${page.branch}`)
 if (stopAfter === 'take-the-page') return { status: 'stopped after taking the page', page }
 

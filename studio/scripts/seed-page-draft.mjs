@@ -30,7 +30,7 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
 import process from "node:process";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { getCliClient } from "sanity/cli";
 import { assertCacProductionTarget } from "./assert-cac-production-target.mjs";
 
@@ -172,7 +172,7 @@ async function main() {
   console.log("Nothing was published.");
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname)) {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message ?? error);
     process.exit(1);
