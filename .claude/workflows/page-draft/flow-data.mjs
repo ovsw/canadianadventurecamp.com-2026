@@ -27,7 +27,7 @@ export const nodes = [
   n("fixPlan", R, 1200, "box", `AGENT: fix the plan (${SESSION})\nApplies the fixes to the issue`),
 
   n("getReady", C, 1600, "box", "AGENT: get ready (sonnet)\nGet the latest code, check nobody else is editing the same sections, back up the content database"),
-  n("q4", C, 1790, "diamond", "SCRIPT checks: all good?"),
+  n("q4", C, 1790, "diamond", "SCRIPT checks: latest code pulled, backup made and checked?"),
   n("buildSection", C, 1960, "box", `AGENT: build one section (${SESSION})\nOne agent per new or redesigned section, one after the other`),
   n("writeText", C, 2120, "box", `AGENT: write the page text (${SESSION})\nWrite the text and save it as a draft in Sanity`),
   n("proofread", C, 2280, "box", `AGENT: proofread (${SESSION}, high effort)\nVoice, banned words, unconfirmed facts, colours alternate, buttons in place`),

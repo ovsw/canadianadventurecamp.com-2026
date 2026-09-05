@@ -1547,7 +1547,7 @@
    "x": -150,
    "y": 1790,
    "width": 300,
-   "height": 150,
+   "height": 160,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffffff",
@@ -1588,10 +1588,10 @@
   {
    "id": "q4-text",
    "type": "text",
-   "x": -77,
-   "y": 1845,
-   "width": 154,
-   "height": 40,
+   "x": -81,
+   "y": 1830,
+   "width": 162,
+   "height": 80,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1611,8 +1611,8 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "SCRIPT checks: all\ngood?",
-   "originalText": "SCRIPT checks: all good?",
+   "text": "SCRIPT checks:\nlatest code pulled,\nbackup made and\nchecked?",
+   "originalText": "SCRIPT checks: latest code pulled, backup made and checked?",
    "fontSize": 16,
    "fontFamily": 5,
    "textAlign": "center",
@@ -3555,9 +3555,9 @@
    "id": "arrow-q4-buildSection",
    "type": "arrow",
    "x": 0,
-   "y": 1940,
+   "y": 1950,
    "width": 0,
-   "height": 20,
+   "height": 10,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -3584,7 +3584,7 @@
     ],
     [
      0,
-     20
+     10
     ]
    ],
    "lastCommittedPoint": null,
@@ -3606,7 +3606,7 @@
    "id": "arrow-q4-buildSection-label",
    "type": "text",
    "x": -4,
-   "y": 1928,
+   "y": 1933,
    "width": 32,
    "height": 20,
    "angle": 0,
@@ -3641,10 +3641,10 @@
   {
    "id": "arrow-q4-giveUp",
    "type": "arrow",
-   "x": 71.81719260065289,
-   "y": 1904.0914036996735,
-   "width": 727.3477343304536,
-   "height": 395.9085963003265,
+   "x": 74.62897526501767,
+   "y": 1910.1978798586572,
+   "width": 723.6832610219022,
+   "height": 389.8021201413428,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -3670,8 +3670,8 @@
      0
     ],
     [
-     727.3477343304536,
-     395.9085963003265
+     723.6832610219022,
+     389.8021201413428
     ]
    ],
    "lastCommittedPoint": null,
@@ -3692,8 +3692,8 @@
   {
    "id": "arrow-q4-giveUp-label",
    "type": "text",
-   "x": 435.4910597658797,
-   "y": 2080.045701849837,
+   "x": 436.47060577596875,
+   "y": 2083.0989399293285,
    "width": 24,
    "height": 20,
    "angle": 0,

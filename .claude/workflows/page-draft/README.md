@@ -155,7 +155,8 @@ Reads the existing plan"]
 Get the latest code,
 check nobody else is editing the same sections,
 back up the content database"] --> prepq{SCRIPT checks:
-all good?}
+latest code pulled,
+backup made and checked?}
     prepq -- yes --> blocks["AGENT: build one section (session model)
 One agent per new or redesigned section,
 one after the other"]
