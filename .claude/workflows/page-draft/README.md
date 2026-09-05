@@ -155,6 +155,13 @@ Make the to-do list of things the camp must supply"]
   style done fill:#207868,stroke:#14513f,color:#fff
 ```
 
-Rendered copies: `flow.svg` and `flow.png`. Regenerate after editing the
-Mermaid with `node .claude/workflows/page-draft/render-flow.mjs` (Playwright's
-Chromium, Mermaid from the jsdelivr CDN).
+Rendered copies: `flow.svg`, `flow.png`, and `flow.excalidraw` (open it at
+excalidraw.com or with the VS Code Excalidraw extension). Regenerate after
+editing the Mermaid:
+
+```bash
+node .claude/workflows/page-draft/render-flow.mjs    # svg + png
+node .claude/workflows/page-draft/to-excalidraw.mjs  # .excalidraw
+```
+
+Both use Playwright's Chromium and fetch Mermaid and Excalidraw from CDNs.
