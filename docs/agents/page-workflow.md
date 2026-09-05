@@ -1,9 +1,9 @@
-# Page workflow: from old page to draft, in parallel
+# Page workflow: from the old page to a draft, several pages at once
 
-Repository facts for the `page-draft` workflow (`.claude/workflows/`, stage
-instructions in `.claude/workflows/page-draft/`) and the `page-integrate` skill.
-They hold the process; this file holds what is true about this repo, its
-Basecamp project, and its dataset. Update it here when any of it changes.
+Facts about this repo for the `page-draft` workflow (`.claude/workflows/`,
+step instructions in `.claude/workflows/page-draft/`) and the
+`page-integrate` skill. They hold the process; this file holds what is true
+about this repo, its Basecamp project, and its content database. Update it here when any of it changes.
 
 ## Stages
 
@@ -14,14 +14,15 @@ in the page tracker card table.
 |---|---|---|
 | Backlog | Backlog | Ovi |
 | To build next | To Build | Ovi (top card is next) |
-| Draft in progress | Building | `page-draft`, as its first write (the claim) |
-| Ready for Ovi | Ovi Polish | `page-draft`, at handoff |
+| Draft in progress | Building | `page-draft`, as its first write (taking the page) |
+| Ready for Ovi | Ovi Polish | `page-draft`, when it hands the page over |
 | Ready for client feedback | Client review | Ovi, after polish and merge |
 | Accepted | Published | Ovi, after publishing |
 | Rejected | Rejected. | Ovi |
 
-A **draft** is the stage after `page-draft` finishes: spec issue filed, code on
-a pushed branch, Sanity draft content written, card in Ovi Polish. Ovi's polish
+A **draft** is what `page-draft` leaves behind: the plan written as a GitHub
+issue, the code on a pushed branch, the page text saved as a draft in Sanity,
+and the card in Ovi Polish. Ovi's polish
 and the client's feedback come after; neither is the draft's job.
 
 ## Basecamp
@@ -45,17 +46,18 @@ and the client's feedback come after; neither is the draft's job.
   `basecamp cards move <id> --to <column id>`, and comment with
   `basecamp comments create <id> - --in ...` reading Markdown from stdin.
 
-## Claim protocol
+## Taking a page so nobody else works on it
 
-Parallel sessions share Basecamp, GitHub issues, the Sanity dataset, and
-`origin`. Nothing locks them, so the workflow claims before it writes:
+Sessions running at the same time share Basecamp, GitHub issues, the Sanity
+content database, and `origin`. Nothing locks any of them, so the workflow
+takes the page on the card before it writes anything:
 
 1. Read the card. A card already in Building or Ovi Polish with a `Branch:`
    line from another session is taken: report it and stop.
 2. Move the card to Building and add the `Branch:` line naming this branch and
    worktree. Re-read the card; if two claims landed, the earlier comment wins
    and the later session stops.
-3. Search open issues for `Page: … (/<slug>)` before filing a spec, and reuse
+3. Search open issues for `Page: … (/<slug>)` before saving a plan, and reuse
    an existing one. Two sessions filed duplicate tickets for the Family Guide
    on 2026-09-04; this step exists because of that.
 
@@ -74,7 +76,7 @@ Parallel sessions share Basecamp, GitHub issues, the Sanity dataset, and
 - Generated files (`studio/schema.json`, `frontend/sanity.types.ts`) are never
   hand-merged. Take either side and run `pnpm typegen`.
 
-## Shared-state rules for parallel drafts
+## Rules for working in parallel
 
 These are the rules that keep two drafts from undoing each other. Each one
 paid for itself on 2026-09-04, when three sessions redesigned `storyFeature`
@@ -140,7 +142,7 @@ Seed modules and dataset backups live under `backups/` (gitignored). A seed
 hardcodes asset ids and is stale the moment Ovi edits in Studio, so it stays
 out of git.
 
-## Rendering a draft without a browser
+## Loading a draft without a browser
 
 Sanity Presentation needs a browser, but a server render of the draft catches
 a renderer crash or a missing field before handoff:
@@ -164,11 +166,11 @@ drafts from a script with `getCliClient(...).fetch(query, params,
 `sanity documents validate --yes --level warning --format ndjson` validates
 drafts too; grep the output for the page id.
 
-## Handoff
+## Finish checklist
 
 The draft is done when all of these are true:
 
-- the spec issue exists with the decisions and their basis, labelled
+- the plan exists as a GitHub issue with the decisions and their basis, labelled
   `page-brief` and `ready-for-agent`, and the Basecamp card links it;
 - the branch is pushed, `pnpm sync:main` is clean, `pnpm typecheck` passes,
   and `pnpm verify:typegen` passes when schemas changed;

@@ -1,20 +1,21 @@
 export const meta = {
   name: 'page-draft',
   description:
-    'Rebuild one Canadian Adventure Camp page from the old site into a Sanity draft with nobody in the loop: claim, gather, decide, build, hand off',
+    'Rebuild one Canadian Adventure Camp page from the old site into a draft with nobody watching: take the page, research, write the plan, build, hand over to Ovi',
   whenToUse:
-    'Ovi names a page slug, old-site URL, Basecamp card, or spec issue to rework, or says to draft the next page',
+    'Ovi names a page slug, an old-site URL, a Basecamp card, or a plan issue number to rework, or says to draft the next page',
   phases: [
-    { title: 'Claim', detail: 'resolve the target, claim the card' },
-    { title: 'Gather', detail: 'five readers, one dossier each' },
-    { title: 'Decide', detail: 'spec, critic, revision, issue on the card' },
-    { title: 'Build', detail: 'prep, blocks, seed, review loop, render check, push' },
-    { title: 'Hand off', detail: 'card to Ovi Polish, client input list, issue comment' },
+    { title: 'Take the page', detail: 'find the card, mark it in progress' },
+    { title: 'Research', detail: 'five readers at once, one set of notes each' },
+    { title: 'Plan', detail: 'write the plan, second reader, fix, save as a GitHub issue' },
+    { title: 'Build', detail: 'get ready, build sections, write the text, proofread, load the page, push' },
+    { title: 'Hand over to Ovi', detail: 'card to Ovi Polish, For Ovi comment, list for the camp' },
   ],
 }
 
-// Instructions live in .claude/workflows/page-draft/. This script holds the order,
-// the loops, and the data between stages. Stage docs stay the source of truth.
+// The instructions for each step live in .claude/workflows/page-draft/.
+// This script holds the order of the steps, the loops, and the data that
+// passes between them. The step files stay the source of truth.
 
 // ---- input -----------------------------------------------------------------
 const opts = args && typeof args === 'object' ? args : { target: args }
@@ -23,35 +24,36 @@ const stopAfter = opts.stopAfter ? String(opts.stopAfter) : ''
 
 const DOCS = '.claude/workflows/page-draft'
 const PREAMBLE = [
-  'You are one stage of the page-draft workflow for the Canadian Adventure Camp website, run inside this repository.',
-  'Ovi is away. Never wait for him: take the decision you would have recommended and record the fact or rule it rests on.',
-  `Read \`${DOCS}/README.md\` first, then the file named for your stage. Repository facts (Basecamp ids, the claim protocol, shared-state rules, scripts, the render check) are in \`docs/agents/page-workflow.md\`.`,
-  'Your final output is data for the orchestrating script, never a message for a person. Fill every field the schema asks for; what you do not return is lost.',
-  'When the schema has `forOvi`, return one line per assumption, educated guess, decision a human should confirm, or fact to check with the client that you made in this stage, prefixed with its kind: `decision:`, `review:`, `client:`, or `assumption:`. Empty list only when you made none.',
+  'You are one step of the page-draft workflow for the Canadian Adventure Camp website, run inside this repository.',
+  'Ovi is away. Never wait for him: take the decision you would have recommended to him, and write down the fact or rule it rests on.',
+  `Read \`${DOCS}/README.md\` first, then the file for your step. Facts about the repo (Basecamp ids, how to take a page, the rules for working in parallel, the scripts, how to load a page without a browser) are in \`docs/agents/page-workflow.md\`.`,
+  'Your final output is data for the script that runs the workflow, never a message for a person. Fill in every field you are asked for; anything you do not return is lost.',
+  'When you are asked for `forOvi`, return one line per thing you assumed, guessed, decided on your own, or could not confirm in this step. Start each line with `decision:`, `review:`, `client:`, or `assumption:`. Return an empty list only when there is truly nothing.',
 ].join('\n')
 
-// Model and effort per stage. Mechanical stages run on a smaller model; the
-// stages that write copy, design blocks, or judge inherit the session model.
-// Edit here to tune cost against quality.
+// Which model and effort each step uses. Simple, mechanical steps run on a
+// smaller model. The steps that write text, design sections, or judge
+// quality use the session's model. Edit this table to trade cost against
+// quality.
 const MODEL = {
-  claim: { model: 'sonnet' },
-  gather: { model: 'sonnet' },
-  readSpec: { model: 'sonnet' },
-  decide: {},
-  critic: { effort: 'high' },
-  revise: {},
-  prep: { model: 'sonnet' },
-  block: {},
-  seed: {},
-  review: { effort: 'high' },
+  takeThePage: { model: 'sonnet' },
+  research: { model: 'sonnet' },
+  readThePlan: { model: 'sonnet' },
+  writeThePlan: {},
+  secondReader: { effort: 'high' },
+  fixThePlan: {},
+  getReady: { model: 'sonnet' },
+  buildSection: {},
+  writeTheText: {},
+  proofread: { effort: 'high' },
   fix: {},
-  render: { model: 'sonnet', effort: 'low' },
+  loadThePage: { model: 'sonnet', effort: 'low' },
   push: { model: 'sonnet' },
-  handoff: { model: 'sonnet' },
-  abort: { model: 'haiku', effort: 'low' },
+  handOver: { model: 'sonnet' },
+  giveUp: { model: 'haiku', effort: 'low' },
 }
 
-// ---- schema helpers --------------------------------------------------------
+// ---- the shapes each step returns -----------------------------------------
 const str = { type: 'string' }
 const bool = { type: 'boolean' }
 const int = { type: 'integer' }
@@ -63,9 +65,9 @@ function list(item) {
   return { type: 'array', items: item }
 }
 
-const CLAIM = obj(
+const PAGE = obj(
   {
-    status: { type: 'string', enum: ['claimed', 'owned-elsewhere', 'not-found'] },
+    status: { type: 'string', enum: ['taken', 'someone-else-has-it', 'not-found'] },
     slug: str,
     title: str,
     pageId: str,
@@ -74,59 +76,59 @@ const CLAIM = obj(
     cardId: str,
     cardUrl: str,
     branch: str,
-    issueNumber: int,
+    planIssueNumber: int,
     note: str,
   },
   ['status', 'slug', 'title', 'pageId', 'isNewPage', 'cardId', 'cardUrl', 'branch', 'note'],
 )
-const DOSSIER = obj({ dossier: str })
+const NOTES = obj({ notes: str })
 const SECTION = obj({
   title: str,
   block: str,
   mark: { type: 'string', enum: ['reuse', 'extend', 'design', 'new'] },
   field: str,
 })
-const SPEC = obj({
+const PLAN = obj({
   issueNumber: int,
   issueUrl: str,
   sections: list(SECTION),
   homepageCandidates: strList,
-  clientQuestions: strList,
+  questionsForTheCamp: strList,
   decisions: str,
 })
-const CRITIQUE = obj({ issues: list(obj({ section: str, problem: str, fix: str })) })
-const PREP = obj(
-  { ok: bool, backupPath: str, lockConflicts: strList, sections: list(SECTION), forOvi: strList, notes: str },
-  ['ok', 'backupPath', 'lockConflicts', 'forOvi', 'notes'],
+const PROBLEMS_IN_PLAN = obj({ problems: list(obj({ section: str, problem: str, fix: str })) })
+const READY = obj(
+  { ok: bool, backupPath: str, sectionsOthersAreEditing: strList, sections: list(SECTION), forOvi: strList, notes: str },
+  ['ok', 'backupPath', 'sectionsOthersAreEditing', 'forOvi', 'notes'],
 )
-const BLOCK = obj({ block: str, typecheckOk: bool, files: strList, forOvi: strList, notes: str })
-const SEED = obj({
-  applied: bool,
+const SECTION_BUILT = obj({ block: str, typecheckOk: bool, files: strList, forOvi: strList, notes: str })
+const TEXT_SAVED = obj({
+  saved: bool,
   seedPath: str,
   documentIds: strList,
   placeholders: strList,
-  missingImages: strList,
+  missingPhotos: strList,
   forOvi: strList,
   notes: str,
 })
-const REVIEW = obj({ issues: list(obj({ where: str, problem: str, fix: str })) })
-const FIX = obj({ fixed: strList, forOvi: strList, notes: str })
-const RENDER = obj({ ok: bool, missingHeadings: strList, errors: strList })
-const PUSH = obj({ pushed: bool, headSha: str, forOvi: strList, notes: str })
-const HANDOFF = obj({
+const PROBLEMS_IN_PAGE = obj({ problems: list(obj({ where: str, problem: str, fix: str })) })
+const FIXED = obj({ fixed: strList, forOvi: strList, notes: str })
+const PAGE_LOADED = obj({ ok: bool, missingHeadings: strList, errors: strList })
+const PUSHED = obj({ pushed: bool, headSha: str, forOvi: strList, notes: str })
+const HANDED_OVER = obj({
   cardUrl: str,
   issueUrl: str,
   clientInputUrl: str,
   coherenceIssueUrls: strList,
-  designPassSections: strList,
+  sectionsForOviToDesign: strList,
   placeholders: strList,
-  missingImages: strList,
+  missingPhotos: strList,
   studioPath: str,
   summary: str,
 })
 const DONE = obj({ done: bool })
 
-// ---- agent helpers ---------------------------------------------------------
+// ---- helpers ---------------------------------------------------------------
 async function run(label, phaseTitle, body, schema, extra) {
   const result = await agent(`${PREAMBLE}\n\n${body}`, {
     label,
@@ -135,357 +137,342 @@ async function run(label, phaseTitle, body, schema, extra) {
     ...(extra ?? {}),
   })
   if (result == null) {
-    throw new Error(`${label}: the agent returned nothing (stopped, or an API error after retries)`)
+    throw new Error(`${label}: the agent returned nothing (it was stopped, or the API failed after retries)`)
   }
   return result
 }
 
-// Everything a human must confirm, review, or check with the client,
-// collected from every build stage and written on the card at hand off.
+// Notes for Ovi: everything a human must confirm, review, or check with the
+// camp, collected from every build step and written on the card at the end.
 const forOvi = []
-function collect(stage, result) {
-  for (const line of result.forOvi ?? []) forOvi.push(`${stage}: ${line}`)
+function collect(stepName, result) {
+  for (const line of result.forOvi ?? []) forOvi.push(`${line} [${stepName}]`)
   return result
 }
 
-function pageLine(claim) {
+function pageLine(page) {
   return [
-    `Page: "${claim.title}", slug \`${claim.slug}\`, Sanity id \`${claim.pageId || '(none yet: new page)'}\`,`,
-    `tier ${claim.tier || '?'}, card ${claim.cardUrl} (id ${claim.cardId}), branch \`${claim.branch}\`.`,
+    `The page: "${page.title}", slug \`${page.slug}\`, Sanity id \`${page.pageId || '(none yet: this is a new page)'}\`,`,
+    `tier ${page.tier || '?'}, Basecamp card ${page.cardUrl} (id ${page.cardId}), branch \`${page.branch}\`.`,
   ].join(' ')
 }
 
-function outlineText(sections) {
+function sectionList(sections) {
   return sections
-    .map((s, i) => `${i + 1}. ${s.title} — ${s.mark} ${s.block}${s.field ? ` (${s.field})` : ''}`)
+    .map((s, i) => `${i + 1}. ${s.title} — ${s.mark} ${s.block}${s.field ? ` (${s.field} background)` : ''}`)
     .join('\n')
 }
 
-async function abort(claim, stage, reason) {
-  log(`Stopping: ${stage} failed. ${reason}`)
+async function giveUp(page, stepName, reason) {
+  log(`Giving up: "${stepName}" failed. ${reason}`)
   await run(
-    'abort',
-    'Hand off',
+    'give up',
+    'Hand over to Ovi',
     [
-      `Stage: abort. The build stopped at "${stage}": ${reason}`,
-      pageLine(claim),
-      'Comment on the Basecamp card (Markdown from stdin, per page-workflow.md "Basecamp") with the stage, the reason, what a human should check, and the "For Ovi" lines below. Leave the card in Building. Commit nothing, push nothing, write nothing to Sanity.',
+      `Your job: give up cleanly. The build stopped at "${stepName}": ${reason}`,
+      pageLine(page),
+      'Write a comment on the Basecamp card (Markdown from stdin, see page-workflow.md "Basecamp") saying which step failed, why, what a human should check, and the notes for Ovi below. Leave the card marked in progress. Commit nothing, push nothing, write nothing to Sanity.',
       '',
-      forOvi.length ? forOvi.map((l) => `- ${l}`).join('\n') : '(no For Ovi lines yet)',
+      forOvi.length ? forOvi.map((l) => `- ${l}`).join('\n') : '(no notes for Ovi yet)',
     ].join('\n'),
     DONE,
-    MODEL.abort,
+    MODEL.giveUp,
   )
-  return { status: 'failed', stage, reason, card: claim.cardUrl, branch: claim.branch }
+  return { status: 'failed', step: stepName, reason, card: page.cardUrl, branch: page.branch }
 }
 
-// ---- 1. Claim --------------------------------------------------------------
-phase('Claim')
-const claim = await run(
-  'claim',
-  'Claim',
+// ---- 1. Take the page ------------------------------------------------------
+phase('Take the page')
+const page = await run(
+  'take the page',
+  'Take the page',
   [
-    `Stage: claim. Follow \`${DOCS}/claim.md\`.`,
-    `Target: ${target || '(none: take the top card in the To Build column)'}.`,
+    `Your job: take the page. Follow \`${DOCS}/take-the-page.md\`.`,
+    `Target: ${target || '(nothing given: take the top card in the "To Build" column)'}.`,
   ].join('\n'),
-  CLAIM,
-  MODEL.claim,
+  PAGE,
+  MODEL.takeThePage,
 )
-if (claim.status !== 'claimed') {
-  log(`Not claimed: ${claim.status}. ${claim.note}`)
-  return { status: claim.status, note: claim.note, slug: claim.slug, card: claim.cardUrl }
+if (page.status !== 'taken') {
+  log(`Did not take the page: ${page.status}. ${page.note}`)
+  return { status: page.status, note: page.note, slug: page.slug, card: page.cardUrl }
 }
-log(`Claimed "${claim.title}" (/${claim.slug}) on ${claim.branch}`)
-if (stopAfter === 'claim') return { status: 'stopped-after-claim', claim }
+log(`Took "${page.title}" (/${page.slug}) on branch ${page.branch}`)
+if (stopAfter === 'take-the-page') return { status: 'stopped after taking the page', page }
 
-// ---- 2 + 3. Gather and decide, or read the existing spec -------------------
-let spec
-if (claim.issueNumber) {
-  log(`Spec issue #${claim.issueNumber} exists; gather and decide are skipped`)
-  spec = await run(
-    'read-spec',
-    'Decide',
+// ---- 2 and 3. Research and plan, unless the plan is already written --------
+let plan
+if (page.planIssueNumber) {
+  log(`The plan is already written (issue #${page.planIssueNumber}). Skipping research and planning.`)
+  plan = await run(
+    'read the plan',
+    'Plan',
     [
-      `Stage: read the existing spec. ${pageLine(claim)}`,
-      `Read GitHub issue #${claim.issueNumber} with \`gh issue view\` and return its outline: every section of "Content outline" in order with block, mark, and field colour; the homepage candidates; the open questions for the client; and a short summary of "Decisions made without Ovi". Change nothing.`,
+      `Your job: read the plan that is already written. ${pageLine(page)}`,
+      `Read GitHub issue #${page.planIssueNumber} with \`gh issue view\` and return what it says: every section in its "Content outline", in order, with the section's code name, its label (reuse, extend, design, or new), and its background colour; the homepage candidates; the open questions for the client; and a short summary of "Decisions made without Ovi". Change nothing.`,
     ].join('\n'),
-    SPEC,
-    MODEL.readSpec,
+    PLAN,
+    MODEL.readThePlan,
   )
 } else {
-  phase('Gather')
+  phase('Research')
   const readers = [
-    { key: 'avatars', section: 'A. Avatars and rules' },
-    { key: 'old-page', section: 'B. The old page' },
-    { key: 'posts-nav', section: 'C. Posts and neighbours' },
-    { key: 'blocks-design', section: 'D. Blocks and design' },
-    { key: 'images', section: 'E. Images' },
+    { key: 'who the page is for', heading: 'A. Who the page is for, and the writing rules' },
+    { key: 'the old page', heading: 'B. What the old page says' },
+    { key: 'posts and neighbours', heading: 'C. Related blog posts, and the pages next to it in the menu' },
+    { key: 'sections and design', heading: 'D. Which page sections exist, and the design rules' },
+    { key: 'photos', heading: 'E. Which photos exist' },
   ]
-  // Barrier on purpose: decide needs all five dossiers together.
-  const dossiers = await parallel(
+  // All five sets of notes are needed together before the plan can be written.
+  const notes = await parallel(
     readers.map((r) => () =>
       run(
-        `gather:${r.key}`,
-        'Gather',
+        `research: ${r.key}`,
+        'Research',
         [
-          `Stage: gather, reader "${r.section}". Follow that section of \`${DOCS}/gather.md\` and nothing else.`,
-          pageLine(claim),
+          `Your job: research "${r.heading}". Follow that heading of \`${DOCS}/research.md\` and nothing else.`,
+          pageLine(page),
         ].join('\n'),
-        DOSSIER,
-        MODEL.gather,
+        NOTES,
+        MODEL.research,
       ),
     ),
   )
-  const missing = readers.filter((r, i) => !dossiers[i])
+  const missing = readers.filter((r, i) => !notes[i])
   if (missing.length) {
-    throw new Error(`Gather readers returned nothing: ${missing.map((r) => r.key).join(', ')}. Relaunch to resume.`)
+    throw new Error(`These research readers returned nothing: ${missing.map((r) => r.key).join(', ')}. Relaunch the workflow to continue.`)
   }
-  const dossierText = readers
-    .map((r, i) => `### ${r.section}\n\n${dossiers[i].dossier}`)
-    .join('\n\n')
-  if (stopAfter === 'gather') return { status: 'stopped-after-gather', claim, dossiers: dossierText }
+  const allNotes = readers.map((r, i) => `### ${r.heading}\n\n${notes[i].notes}`).join('\n\n')
+  if (stopAfter === 'research') return { status: 'stopped after research', page, notes: allNotes }
 
-  phase('Decide')
-  const drafted = await run(
-    'decide',
-    'Decide',
+  phase('Plan')
+  const written = await run(
+    'write the plan',
+    'Plan',
     [
-      `Stage: decide. Follow \`${DOCS}/decide.md\` steps 1 to 4 and "File the spec".`,
-      pageLine(claim),
+      `Your job: write the plan. Follow \`${DOCS}/plan.md\` parts 1 to 4 and "Save the plan".`,
+      pageLine(page),
       '',
-      'The five dossiers from the gather stage follow. They are your inputs; open a source file again only where a dossier is unclear.',
+      'The five sets of research notes follow. They are your inputs. Open a source file again only where the notes are unclear.',
       '',
-      dossierText,
+      allNotes,
     ].join('\n'),
-    SPEC,
-    MODEL.decide,
+    PLAN,
+    MODEL.writeThePlan,
   )
-  log(`Spec filed: ${drafted.issueUrl} (${drafted.sections.length} sections)`)
-  const critique = await run(
-    'critic',
-    'Decide',
+  log(`Plan saved: ${written.issueUrl} (${written.sections.length} sections)`)
+  const secondRead = await run(
+    'second reader',
+    'Plan',
     [
-      `Stage: critic. Follow "Critic" in \`${DOCS}/decide.md\`.`,
-      pageLine(claim),
-      `Spec issue: ${drafted.issueUrl}. Read the issue, the avatar dossier below, and the rules it cites. Return problems only.`,
+      `Your job: read the plan as the parent it is written for. Follow "The second reader" in \`${DOCS}/plan.md\`.`,
+      pageLine(page),
+      `The plan: ${written.issueUrl}. Read the issue, the notes below on who the page is for, and the rules they cite. Return problems only.`,
       '',
-      `### ${readers[0].section}\n\n${dossiers[0].dossier}`,
+      `### ${readers[0].heading}\n\n${notes[0].notes}`,
     ].join('\n'),
-    CRITIQUE,
-    MODEL.critic,
+    PROBLEMS_IN_PLAN,
+    MODEL.secondReader,
   )
-  if (critique.issues.length) {
-    log(`Critic found ${critique.issues.length} problem(s); revising`)
-    spec = await run(
-      'revise',
-      'Decide',
+  if (secondRead.problems.length) {
+    log(`The second reader found ${secondRead.problems.length} problem(s). Fixing the plan.`)
+    plan = await run(
+      'fix the plan',
+      'Plan',
       [
-        `Stage: revise. Follow "Revise" in \`${DOCS}/decide.md\`.`,
-        pageLine(claim),
-        `Spec issue: ${drafted.issueUrl}. Apply each fix below, then return the outline again.`,
+        `Your job: fix the plan. Follow "Fix the plan" in \`${DOCS}/plan.md\`.`,
+        pageLine(page),
+        `The plan: ${written.issueUrl}. Apply each fix below, then return the section list again.`,
         '',
-        JSON.stringify(critique.issues, null, 2),
+        JSON.stringify(secondRead.problems, null, 2),
       ].join('\n'),
-      SPEC,
-      MODEL.revise,
+      PLAN,
+      MODEL.fixThePlan,
     )
   } else {
-    spec = drafted
+    plan = written
   }
 }
-if (stopAfter === 'spec') return { status: 'stopped-after-spec', claim, spec }
+if (stopAfter === 'plan') return { status: 'stopped after the plan', page, plan }
 
 // ---- 4. Build --------------------------------------------------------------
 phase('Build')
-const prep = collect('prep', await run(
-  'prep',
+const ready = collect('get ready', await run(
+  'get ready',
   'Build',
   [
-    `Stage: build, section "Prep" of \`${DOCS}/build.md\`.`,
-    pageLine(claim),
-    `Spec issue: ${spec.issueUrl}. Outline:`,
-    outlineText(spec.sections),
+    `Your job: get ready to build. Follow "Get ready" in \`${DOCS}/build.md\`.`,
+    pageLine(page),
+    `The plan: ${plan.issueUrl}. Its sections:`,
+    sectionList(plan.sections),
   ].join('\n'),
-  PREP,
-  MODEL.prep,
+  READY,
+  MODEL.getReady,
 ))
-if (!prep.ok) return abort(claim, 'prep', prep.notes)
-const sections = prep.sections && prep.sections.length ? prep.sections : spec.sections
-if (prep.lockConflicts.length) log(`Locked blocks avoided: ${prep.lockConflicts.join(', ')}`)
-
-// One agent per block that needs code, design and new first, extend last,
-// one after the other: they share the generator-marker files.
-const rank = { design: 0, new: 0, extend: 1 }
-const blocks = []
-for (const s of sections) {
-  if (s.mark !== 'reuse' && !blocks.some((b) => b.block === s.block)) blocks.push(s)
+if (!ready.ok) return giveUp(page, 'get ready', ready.notes)
+const sections = ready.sections && ready.sections.length ? ready.sections : plan.sections
+if (ready.sectionsOthersAreEditing.length) {
+  log(`Sections other branches are editing, left as they are: ${ready.sectionsOthersAreEditing.join(', ')}`)
 }
-blocks.sort((a, b) => rank[a.mark] - rank[b.mark])
-for (const b of blocks) {
-  const uses = sections.filter((s) => s.block === b.block).map((s) => s.title)
+
+// One agent per section that needs code. New and redesigned sections first,
+// then extended ones, one after the other: they all touch the same
+// registration files.
+const order = { design: 0, new: 0, extend: 1 }
+const toBuild = []
+for (const s of sections) {
+  if (s.mark !== 'reuse' && !toBuild.some((b) => b.block === s.block)) toBuild.push(s)
+}
+toBuild.sort((a, b) => order[a.mark] - order[b.mark])
+for (const b of toBuild) {
+  const usedBy = sections.filter((s) => s.block === b.block).map((s) => s.title)
   const body = [
-    `Stage: build, section "Blocks" of \`${DOCS}/build.md\`. Build only the block \`${b.block}\`, mark \`${b.mark}\`, used by: ${uses.join('; ')}.`,
-    pageLine(claim),
-    `Spec issue: ${spec.issueUrl}. Read its "Content outline" and "Implementation Decisions" for this block.`,
+    `Your job: build one page section. Follow "Build one section" in \`${DOCS}/build.md\`. Build only the section \`${b.block}\`, labelled "${b.mark}", used by: ${usedBy.join('; ')}.`,
+    pageLine(page),
+    `The plan: ${plan.issueUrl}. Read its "Content outline" and "Implementation Decisions" for this section.`,
   ].join('\n')
-  let result = collect(`block ${b.block}`, await run(`block:${b.block}`, 'Build', body, BLOCK, MODEL.block))
-  if (!result.typecheckOk) {
-    result = collect(
-      `block ${b.block}`,
+  let built = collect(`build ${b.block}`, await run(`build section: ${b.block}`, 'Build', body, SECTION_BUILT, MODEL.buildSection))
+  if (!built.typecheckOk) {
+    built = collect(
+      `build ${b.block}`,
       await run(
-        `block:${b.block}:fix`,
+        `build section: ${b.block} (second try)`,
         'Build',
-        `${body}\n\nThe previous attempt left typecheck failing: ${result.notes}\nFix it until \`pnpm typecheck\` and \`pnpm verify:typegen\` pass, then commit.`,
-        BLOCK,
-        MODEL.block,
+        `${body}\n\nThe first try left the type check failing: ${built.notes}\nFix it until \`pnpm typecheck\` and \`pnpm verify:typegen\` pass, then commit.`,
+        SECTION_BUILT,
+        MODEL.buildSection,
       ),
     )
-    if (!result.typecheckOk) return abort(claim, `block ${b.block}`, result.notes)
+    if (!built.typecheckOk) return giveUp(page, `build section ${b.block}`, built.notes)
   }
-  log(`Block ${b.block} (${b.mark}) built`)
+  log(`Section ${b.block} (${b.mark}) built`)
 }
 
-const seed = collect('seed', await run(
-  'seed',
+const text = collect('write the text', await run(
+  'write the page text',
   'Build',
   [
-    `Stage: build, section "Seed" of \`${DOCS}/build.md\`.`,
-    pageLine(claim),
-    `Spec issue: ${spec.issueUrl}. Outline:`,
-    outlineText(sections),
-    `Client questions already known: ${spec.clientQuestions.join(' | ') || '(none)'}`,
+    `Your job: write the page text and save it as a draft. Follow "Write the page text and save the draft" in \`${DOCS}/build.md\`.`,
+    pageLine(page),
+    `The plan: ${plan.issueUrl}. Its sections:`,
+    sectionList(sections),
+    `Questions for the camp already known: ${plan.questionsForTheCamp.join(' | ') || '(none)'}`,
   ].join('\n'),
-  SEED,
-  MODEL.seed,
+  TEXT_SAVED,
+  MODEL.writeTheText,
 ))
-if (!seed.applied) return abort(claim, 'seed', seed.notes)
-log(`Seeded ${seed.documentIds.length} document(s)`)
+if (!text.saved) return giveUp(page, 'write the page text', text.notes)
+log(`Saved ${text.documentIds.length} draft document(s) in Sanity`)
 
-let unresolved = []
+let stillOpen = []
 for (let round = 1; round <= 3; round++) {
-  const review = await run(
-    `review:${round}`,
+  const read = await run(
+    `proofread (round ${round})`,
     'Build',
     [
-      `Stage: build, section "Review" of \`${DOCS}/build.md\`, checker, round ${round} of 3.`,
-      pageLine(claim),
-      `Spec issue: ${spec.issueUrl}. Seed: ${seed.seedPath}. Return problems only.`,
+      `Your job: proofread the page, round ${round} of 3. Follow "Proofread" in \`${DOCS}/build.md\`.`,
+      pageLine(page),
+      `The plan: ${plan.issueUrl}. The seed file: ${text.seedPath}. Return problems only.`,
     ].join('\n'),
-    REVIEW,
-    MODEL.review,
+    PROBLEMS_IN_PAGE,
+    MODEL.proofread,
   )
-  unresolved = review.issues
-  if (!unresolved.length) {
-    log(`Review round ${round}: clean`)
+  stillOpen = read.problems
+  if (!stillOpen.length) {
+    log(`Proofread round ${round}: no problems`)
     break
   }
-  log(`Review round ${round}: ${unresolved.length} problem(s)`)
-  collect(`fix round ${round}`, await run(
-    `fix:${round}`,
+  log(`Proofread round ${round}: ${stillOpen.length} problem(s)`)
+  collect(`fix (round ${round})`, await run(
+    `fix (round ${round})`,
     'Build',
     [
-      `Stage: build, section "Review" of \`${DOCS}/build.md\`, fixer, round ${round}.`,
-      pageLine(claim),
-      `Seed: ${seed.seedPath}. Apply every fix below (seed then \`pnpm page:seed ... --apply\`, or code), commit, and report what you fixed.`,
+      `Your job: fix the problems the proofreader found, round ${round}. Follow "Fix" in \`${DOCS}/build.md\`.`,
+      pageLine(page),
+      `The seed file: ${text.seedPath}. Apply every fix below (edit the seed file and run \`pnpm page:seed … --apply\`, or edit the code), commit, and say what you fixed.`,
       '',
-      JSON.stringify(unresolved, null, 2),
+      JSON.stringify(stillOpen, null, 2),
     ].join('\n'),
-    FIX,
+    FIXED,
     MODEL.fix,
   ))
 }
 
-let render = await run(
-  'render',
-  'Build',
-  [
-    `Stage: build, section "Render check" of \`${DOCS}/build.md\`.`,
-    pageLine(claim),
-    'Section headings to find:',
-    sections.map((s) => `- ${s.title}`).join('\n'),
-  ].join('\n'),
-  RENDER,
-  MODEL.render,
-)
-if (!render.ok) {
-  collect('render fix', await run(
-    'render:fix',
+const loadPrompt = [
+  `Your job: load the page and check it. Follow "Load the page and check it" in \`${DOCS}/build.md\`.`,
+  pageLine(page),
+  'Section headings that must appear:',
+  sections.map((s) => `- ${s.title}`).join('\n'),
+].join('\n')
+let loaded = await run('load the page', 'Build', loadPrompt, PAGE_LOADED, MODEL.loadThePage)
+if (!loaded.ok) {
+  collect('fix the page load', await run(
+    'fix the page load',
     'Build',
     [
-      `Stage: build, render fixer. The server render of /${claim.slug} failed.`,
-      pageLine(claim),
-      `Missing headings: ${render.missingHeadings.join('; ') || '(none)'}`,
-      `Errors: ${render.errors.join('; ') || '(none)'}`,
-      'Find the cause (renderer crash, missing field, seed mismatch), fix it, commit, and report.',
+      `Your job: the page /${page.slug} did not load correctly on the dev server. Find the cause (a component crashing, a missing field, the text not matching the section's fields), fix it, commit, and say what you did.`,
+      pageLine(page),
+      `Headings not found: ${loaded.missingHeadings.join('; ') || '(none)'}`,
+      `Errors seen: ${loaded.errors.join('; ') || '(none)'}`,
     ].join('\n'),
-    FIX,
+    FIXED,
     MODEL.fix,
   ))
-  render = await run(
-    'render:again',
-    'Build',
-    [
-      `Stage: build, section "Render check" of \`${DOCS}/build.md\`, second run.`,
-      pageLine(claim),
-      'Section headings to find:',
-      sections.map((s) => `- ${s.title}`).join('\n'),
-    ].join('\n'),
-    RENDER,
-    MODEL.render,
-  )
+  loaded = await run('load the page (second try)', 'Build', loadPrompt, PAGE_LOADED, MODEL.loadThePage)
 }
 
-const push = collect('push', await run(
-  'push',
+const pushed = collect('push', await run(
+  'push the code',
   'Build',
-  [`Stage: build, section "Push" of \`${DOCS}/build.md\`.`, pageLine(claim)].join('\n'),
-  PUSH,
+  [`Your job: push the code. Follow "Push the code" in \`${DOCS}/build.md\`.`, pageLine(page)].join('\n'),
+  PUSHED,
   MODEL.push,
 ))
-if (!push.pushed) return abort(claim, 'push', push.notes)
-log(`Pushed ${claim.branch} at ${push.headSha}`)
+if (!pushed.pushed) return giveUp(page, 'push the code', pushed.notes)
+log(`Pushed ${page.branch} at ${pushed.headSha}`)
 
-// ---- 5. Hand off -----------------------------------------------------------
-phase('Hand off')
-const handoff = await run(
-  'handoff',
-  'Hand off',
+// ---- 5. Hand over to Ovi ---------------------------------------------------
+phase('Hand over to Ovi')
+const sectionsForOvi = sections
+  .filter((s) => s.mark === 'new' || s.mark === 'design')
+  .map((s) => `${s.title} [${s.block}]`)
+const handed = await run(
+  'hand over to Ovi',
+  'Hand over to Ovi',
   [
-    `Stage: hand off. Follow \`${DOCS}/handoff.md\`.`,
-    pageLine(claim),
-    `Spec issue: ${spec.issueUrl}. Head: ${push.headSha}.`,
-    `Design-pass sections (new and design blocks): ${
-      sections.filter((s) => s.mark === 'new' || s.mark === 'design').map((s) => `${s.title} [${s.block}]`).join('; ') || '(none)'
-    }`,
-    `Placeholders: ${seed.placeholders.join('; ') || '(none)'}`,
-    `Missing images: ${seed.missingImages.join('; ') || '(none)'}`,
-    `Review problems left unresolved: ${unresolved.length ? JSON.stringify(unresolved) : '(none)'}`,
-    `Render check: ${render.ok ? 'passed' : `still failing: ${render.errors.join('; ')} ${render.missingHeadings.join('; ')}`}`,
-    `Homepage candidates: ${spec.homepageCandidates.join('; ') || '(none)'}`,
-    `Client questions: ${spec.clientQuestions.join(' | ') || '(none)'}`,
+    `Your job: hand the page over to Ovi. Follow \`${DOCS}/hand-over.md\`.`,
+    pageLine(page),
+    `The plan: ${plan.issueUrl}. Head commit: ${pushed.headSha}.`,
+    `Sections Ovi should design himself (built new or redesigned): ${sectionsForOvi.join('; ') || '(none)'}`,
+    `Placeholders: ${text.placeholders.join('; ') || '(none)'}`,
+    `Missing photos: ${text.missingPhotos.join('; ') || '(none)'}`,
+    `Proofreading problems still open: ${stillOpen.length ? JSON.stringify(stillOpen) : '(none)'}`,
+    `Page load check: ${loaded.ok ? 'passed' : `still failing: ${loaded.errors.join('; ')} ${loaded.missingHeadings.join('; ')}`}`,
+    `Homepage candidates: ${plan.homepageCandidates.join('; ') || '(none)'}`,
+    `Questions for the camp: ${plan.questionsForTheCamp.join(' | ') || '(none)'}`,
     '',
-    'For Ovi lines collected from the build stages (add the spec issue\'s "Decisions made without Ovi" and "Open questions for the client" to them):',
+    'Notes for Ovi from the build steps. Add the plan\'s "Decisions made without Ovi" and "Open questions for the client" to them:',
     forOvi.length ? forOvi.map((l) => `- ${l}`).join('\n') : '- (none returned)',
   ].join('\n'),
-  HANDOFF,
-  MODEL.handoff,
+  HANDED_OVER,
+  MODEL.handOver,
 )
 
 return {
-  status: 'draft',
-  page: claim.title,
-  slug: claim.slug,
-  branch: claim.branch,
-  issue: spec.issueUrl,
-  card: handoff.cardUrl,
-  clientInput: handoff.clientInputUrl,
-  coherenceIssues: handoff.coherenceIssueUrls,
-  studioPath: handoff.studioPath,
-  designPass: handoff.designPassSections,
-  placeholders: handoff.placeholders,
-  missingImages: handoff.missingImages,
-  unresolved,
+  status: 'draft ready for Ovi',
+  page: page.title,
+  slug: page.slug,
+  branch: page.branch,
+  plan: plan.issueUrl,
+  card: handed.cardUrl,
+  listForTheCamp: handed.clientInputUrl,
+  homepageIssues: handed.coherenceIssueUrls,
+  studioPath: handed.studioPath,
+  sectionsForOviToDesign: handed.sectionsForOviToDesign,
+  placeholders: handed.placeholders,
+  missingPhotos: handed.missingPhotos,
+  stillOpen,
   forOvi,
-  renderOk: render.ok,
-  summary: handoff.summary,
+  pageLoads: loaded.ok,
+  summary: handed.summary,
 }

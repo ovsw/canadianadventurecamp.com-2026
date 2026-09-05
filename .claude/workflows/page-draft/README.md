@@ -1,16 +1,18 @@
-# Page draft: one page from the old site to a draft, with nobody in the loop
+# Page draft: one page, from the old site to a draft, with nobody watching
 
-`/page-draft` is a dynamic workflow: `page-draft.js` beside this folder. It
-takes a page of the old Canadian Adventure Camp site to a **draft**: a spec
-issue, code on a pushed branch, draft content in Sanity, and the Basecamp
-card in Ovi Polish. Ovi is away for the whole run. Every question the old
-interactive skills asked him, the stage agent answers with the recommendation
-it would have given, and records the answer and the fact it rests on.
+`/page-draft` rebuilds one page of the Canadian Adventure Camp website. It
+starts from the old site's page and ends with a **draft**: a written plan, the
+code on a pushed branch, the page text saved as a draft in Sanity, and the
+page's Basecamp card moved to "Ovi Polish". Ovi is away for the whole run.
+Every question the old skills used to ask him, the agent answers with the
+recommendation it would have given, and writes down the answer and the fact it
+rests on.
 
-The script holds the plan and the data between stages. Each stage is a fresh
-agent that reads this folder's file for its stage, does that stage, and
-returns structured data. Whatever an agent learned and did not return is gone,
-so every stage fills its schema completely.
+It is a dynamic workflow: `page-draft.js` beside this folder is the script.
+The script holds the order of the steps, the loops, and the data between
+steps. Each step is a fresh agent that reads this folder's file for that step,
+does the step, and returns its results as data. Anything an agent learned and
+did not return is gone, so every agent fills in every field it is asked for.
 
 ## Run it
 
@@ -18,150 +20,80 @@ so every stage fills its schema completely.
 /page-draft family-guide
 /page-draft https://canadianadventurecamp.com/family-guide
 /page-draft https://app.basecamp.com/6230954/buckets/48063970/card_tables/cards/<id>
-/page-draft 57          an existing spec issue: gather and decide are skipped
-/page-draft             the top card in the To Build column
+/page-draft 57          the number of a plan that is already written; research and planning are skipped
+/page-draft             the top card in the "To Build" column
 ```
 
-`args` can also be an object `{ target, stopAfter }`. `stopAfter` is `claim`,
-`gather`, or `spec`; `stopAfter: "spec"` files the spec and stops, which is
-what the old `spec-only` flag did.
+`args` can also be an object `{ target, stopAfter }`. `stopAfter` can be
+`take-the-page`, `research`, or `plan`. `stopAfter: "plan"` writes the plan
+and stops, without building anything.
 
-One page per worktree. Several worktrees draft several pages at once; the
-claim protocol in `docs/agents/page-workflow.md` keeps them apart. A run uses
-about fifteen agents, so set the workflow size guideline to `large` or the
-task panel shows a warning. A stopped run resumes from cache in the same
-session: ask Claude to relaunch it.
+One page per worktree. Several worktrees can draft several pages at the same
+time; the "taking a page" rules in `docs/agents/page-workflow.md` keep them
+from colliding. A run uses about fifteen agents, so set the workflow size
+guideline to `large`, or the task panel shows a warning. A stopped run picks
+up where it left off in the same session: ask Claude to relaunch it.
 
-## Stages
+## The five steps
 
-| Phase | Agents | Instructions | Returns to the script |
+| Step | Agents | Instructions | What comes back to the script |
 |---|---|---|---|
-| Claim | 1 | `claim.md` | slug, page id, card, branch, existing issue |
-| Gather | 5 in parallel | `gather.md`, one reader each | one dossier per reader |
-| Decide | draft, critic, revise | `decide.md` | issue number, outline with marks |
-| Build | prep, one per block, seed, review loop, render, push | `build.md`, one section each | typecheck, seed, issues, push |
-| Hand off | 1 | `handoff.md` | card, lists, summary |
+| 1. Take the page | 1 | `take-the-page.md` | page name, card, branch, whether a plan already exists |
+| 2. Research | 5 at once | `research.md`, one reader each | one set of notes per reader |
+| 3. Plan | write, second reader, fix | `plan.md` | the plan's issue number and the list of sections |
+| 4. Build | get ready, one per section to build, write the text, proofread loop, load the page, push | `build.md`, one heading each | whether each part worked, plus notes for Ovi |
+| 5. Hand over to Ovi | 1 | `hand-over.md` | the card, the lists, a short summary |
 
-A failure in build comments on the card and leaves it in Building, so Ovi
-sees the state on the tracker. Claim failures return without writing.
+If building fails, the agent writes what went wrong on the card and leaves the
+card marked "in progress", so Ovi sees it on the tracker. If the page cannot
+be taken, the run stops without writing anything.
 
-Every build stage returns `forOvi` lines (`decision:`, `review:`, `client:`,
-`assumption:`). The script collects them and hand off writes them on the
-card as the **For Ovi** comment, with the spec's decisions and client
-questions. That comment is the list of what a human still has to settle.
+Every build step returns "notes for Ovi": things it assumed, guessed, decided
+on its own, or could not confirm. The script collects them all, and the last
+step writes them on the card under the heading **For Ovi**, together with the
+plan's decisions and the questions for the camp. That comment is the list of
+what a human still has to settle.
 
-## Models
+## Which model runs each step
 
-The `MODEL` table at the top of the script sets model and effort per stage.
-Mechanical stages (claim, gather, prep, render check, push, hand off, abort)
-run on a smaller model. Copy, block design, and judgement (decide, critic,
-blocks, seed, review, fixes) inherit the session model. Change the table,
-not the prompts, to tune cost.
+The `MODEL` table at the top of the script picks the model and effort for
+each step. Simple, mechanical steps (taking the page, research, getting
+ready, loading the page, pushing, handing over, giving up) run on a smaller
+model. The steps that write text, design sections, or judge quality (writing
+the plan, the second reader, building sections, writing the page text,
+proofreading, fixing) use the session's model. Change the table, not the
+prompts, to trade cost against quality.
 
 ## What lives here and what does not
 
-This folder holds only what exists for this workflow: the script and its
-stage instructions. Shared references stay where they are and are cited in
-place: `docs/agents/page-workflow.md` (repo facts, also used by
-`page-integrate`), `docs/agents/page-builder.md`, `frontend/DESIGN.md`,
-`docs/avatars.md`, `CONTEXT.md`, `frontend/PRODUCT.md`.
+This folder holds only what exists for this workflow: the script, its step
+files, and the diagram. Shared documents stay where they are and are named
+when needed: `docs/agents/page-workflow.md` (facts about the repo, Basecamp,
+and the content database, also used by `page-integrate`),
+`docs/agents/page-builder.md`, `frontend/DESIGN.md`, `docs/avatars.md`,
+`CONTEXT.md`, `frontend/PRODUCT.md`.
 
-## Principles every stage keeps
+## Words used in these files
 
-- The old page is a starting point, never a template. Existing blocks never
-  decide what a page says. Blog posts are out of scope; they migrate as-is.
-- Decide, do not ask. A decision with more than one defensible answer goes in
-  the spec's "Decisions made without Ovi" with the option taken and why. A
-  fact the site cannot supply is a client question, never an invention.
-- Repository facts live in `docs/agents/page-workflow.md`: Basecamp ids,
-  the claim protocol, the shared-state rules, scripts, the render check, the
-  handoff checklist. Read the part your stage needs.
-- Write drafts only. Touch only this page's documents. Never publish.
+- **Page section**: one horizontal band of a page, such as a hero or a list
+  of FAQs. The code calls it a "block".
+- **The plan**: the written plan for one page, stored as a GitHub issue.
+- **Draft in Sanity**: page content saved but not published. Nobody sees it
+  on the live site.
+- **Reader**: an avatar from `docs/avatars.md`, a type of parent or camper
+  the page is written for.
+- **Seed file**: a small script that writes the page text into Sanity.
 
-## Flow
+## Rules every step keeps
 
-```mermaid
-flowchart TD
-  start(["Start: name a page"]) --> claim
-  subgraph P1["1. Take the page"]
-    claim["Find the page's Basecamp card"] --> claimed{Is someone else
-already working on it?}
-    claimed -- yes --> stop(["Stop. Touch nothing."])
-    claimed -- no --> mark["Mark the card as in progress
-with this branch name"] --> hasplan{Has the plan for this page
-already been written?}
-  end
-  subgraph P2["2. Research (5 agents at once)"]
-    gA["Who the page is for
-and the writing rules"]
-    gB["What the old page says"]
-    gC["Related blog posts and
-the pages next to it in the menu"]
-    gD["Which page sections exist
-and the design rules"]
-    gE["Which photos exist"]
-  end
-  hasplan -- no --> gA & gB & gC & gD & gE
-  subgraph P3["3. Plan"]
-    decide["Write the plan for the page
-as a GitHub issue, link it on the card"] --> critic["A second agent reads the plan
-as the parent it is written for"] --> critq{Found problems?}
-    critq -- yes --> revise["Fix the plan"]
-    readplan["Read the existing plan"]
-  end
-  hasplan -- yes --> readplan
-  gA & gB & gC & gD & gE -- notes --> decide
-  subgraph P4["4. Build"]
-    prep["Get the latest code,
-check nobody else is editing the same sections,
-back up the content database"] --> prepq{All good?}
-    prepq -- yes --> blocks["Build each new or redesigned
-page section, one at a time"]
-    blocks --> seed["Write the page text and
-save it as a draft in Sanity"]
-    seed --> checker["Proofread the page:
-voice, banned words, unconfirmed facts,
-colours alternate, buttons in place"] --> revq{Found problems?
-Up to 3 rounds}
-    revq -- yes --> fixer["Fix them and save again"] --> checker
-    revq -- no --> render["Load the page on the dev server
-and check every section shows up"] --> renderq{Page loads?}
-    renderq -- no --> renderfix["Fix it, one try"] --> render
-    renderq -- yes --> push["Final checks, then push the code"]
-  end
-  critq -- no --> prep
-  revise --> prep
-  readplan --> prep
-  prepq -- no --> abort
-  blocks -. code will not compile .-> abort
-  seed -. draft will not save .-> abort
-  push -. push fails .-> abort
-  abort["Give up: write what went wrong
-on the card, leave it marked in progress"]
-  subgraph P5["5. Hand over to Ovi"]
-    handoff["Move the card to Ovi Polish
-Write on the card: what to look at, what was guessed,
-what to ask the camp
-Make the to-do list of things the camp must supply"]
-  end
-  push --> handoff --> done(["Draft ready for Ovi"])
-  style P1 fill:#f1f3f5,stroke:#868e96
-  style P2 fill:#e7f0fb,stroke:#2c88d9
-  style P3 fill:#f3e8fb,stroke:#9c36b5
-  style P4 fill:#fff1e6,stroke:#e8833a
-  style P5 fill:#e6f7f2,stroke:#207868
-  style abort fill:#d3455b,stroke:#a02a3c,color:#fff
-  style start fill:#788896,stroke:#4b5c6b,color:#fff
-  style done fill:#207868,stroke:#14513f,color:#fff
-```
-
-Rendered copies: `flow.svg`, `flow.png`, and `flow.excalidraw` (open it at
-excalidraw.com or with the VS Code Excalidraw extension). Regenerate after
-editing the Mermaid:
-
-```bash
-node .claude/workflows/page-draft/render-flow.mjs    # svg + png
-node .claude/workflows/page-draft/to-excalidraw.mjs  # .excalidraw
-```
-
-Both use Playwright's Chromium and fetch Mermaid and Excalidraw from CDNs.
+- The old page is a starting point, never a template. The sections that
+  already exist never decide what a page says. Blog posts are out of scope;
+  they move over as they are.
+- Decide, do not ask. A choice with more than one good answer goes into the
+  plan under "Decisions made without Ovi", with the option taken and why. A
+  fact the site cannot supply is a question for the camp, never an invention.
+- Facts about the repo live in `docs/agents/page-workflow.md`: Basecamp ids,
+  how to take a page, the rules for working in parallel, the scripts, how to
+  load a page without a browser, and the finish checklist. Read the part your
+  step needs.
+- Save drafts only. Touch only this page's documents. Never publish.
