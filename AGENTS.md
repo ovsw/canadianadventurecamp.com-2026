@@ -124,10 +124,11 @@ This repository uses a single-context domain-doc layout. See `docs/agents/domain
 
 ### Page rethink
 
-Inner pages are rethought, not migrated. `/page-draft <slug>` takes a page
-from the old site to a draft with nobody in the loop (avatar, jobs, content,
-layout, blocks, copy, Sanity draft, handoff) and `/page-integrate` batches the
-finished branches into one PR. Several drafts run in parallel worktrees, so
+Inner pages are rethought, not migrated. `/page-draft <slug>` is a dynamic
+workflow (`.claude/workflows/page-draft.js`, stage instructions in
+`docs/agents/page-draft/`) that takes a page from the old site to a draft
+with nobody in the loop (claim, gather, decide, build, hand off), and the
+`/page-integrate` skill batches the finished branches into one PR. Several drafts run in parallel worktrees, so
 read the claim protocol and shared-state rules in
 `docs/agents/page-workflow.md` before touching a page, a block, or the
 dataset. Avatars live in `docs/avatars.md`.

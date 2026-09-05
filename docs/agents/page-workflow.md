@@ -1,8 +1,9 @@
 # Page workflow: from old page to draft, in parallel
 
-Repository facts for the `page-draft` and `page-integrate` skills. The skills
-hold the process; this file holds what is true about this repo, its Basecamp
-project, and its dataset. Update it here when any of it changes.
+Repository facts for the `page-draft` workflow (`.claude/workflows/`, stage
+instructions in `docs/agents/page-draft/`) and the `page-integrate` skill.
+They hold the process; this file holds what is true about this repo, its
+Basecamp project, and its dataset. Update it here when any of it changes.
 
 ## Stages
 
@@ -47,7 +48,7 @@ and the client's feedback come after; neither is the draft's job.
 ## Claim protocol
 
 Parallel sessions share Basecamp, GitHub issues, the Sanity dataset, and
-`origin`. Nothing locks them, so the skill claims before it writes:
+`origin`. Nothing locks them, so the workflow claims before it writes:
 
 1. Read the card. A card already in Building or Ovi Polish with a `Branch:`
    line from another session is taken: report it and stop.
