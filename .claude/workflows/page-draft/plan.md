@@ -1,7 +1,10 @@
 # Step 3: Write the plan
 
-Three agents, one after the other: one writes the plan, a second one reads it
-as the parent it is written for, and a third fixes what the second one found.
+One agent writes the plan. Then a second agent reads it as the parent it is
+written for and lists the problems, and a third agent fixes them. The second
+reader then reads the fixed plan again. That goes round up to three times, or
+until the second reader finds nothing. Problems still open after the third
+round go into the notes for Ovi.
 
 Inputs are the five sets of notes from the research step. For every decision
 below, write the answer you would have recommended to Ovi, and the reader
@@ -167,5 +170,5 @@ against the rules, and returns problems only, each with a fix:
 
 When the second reader found problems, a third agent applies each fix to the
 issue with `gh issue edit`, adds one line per fix under "Decisions made
-without Ovi", and returns the section list again. One round only; the second
-reader does not run twice.
+without Ovi", and returns the section list again. Then the second reader
+reads the plan again. Up to three rounds.

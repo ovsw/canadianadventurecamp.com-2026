@@ -202,6 +202,7 @@ if (stopAfter === 'take-the-page') return { status: 'stopped after taking the pa
 
 // ---- 2 and 3. Research and plan, unless the plan is already written --------
 let plan
+let planProblemsStillOpen = []
 if (page.planIssueNumber) {
   log(`The plan is already written (issue #${page.planIssueNumber}). Skipping research and planning.`)
   plan = await run(
@@ -261,37 +262,45 @@ if (page.planIssueNumber) {
     MODEL.writeThePlan,
   )
   log(`Plan saved: ${written.issueUrl} (${written.sections.length} sections)`)
-  const secondRead = await run(
-    'second reader',
-    'Plan',
-    [
-      `Your job: read the plan as the parent it is written for. Follow "The second reader" in \`${DOCS}/plan.md\`.`,
-      pageLine(page),
-      `The plan: ${written.issueUrl}. Read the issue, the notes below on who the page is for, and the rules they cite. Return problems only.`,
-      '',
-      `### ${readers[0].heading}\n\n${notes[0].notes}`,
-    ].join('\n'),
-    PROBLEMS_IN_PLAN,
-    MODEL.secondReader,
-  )
-  if (secondRead.problems.length) {
-    log(`The second reader found ${secondRead.problems.length} problem(s). Fixing the plan.`)
-    plan = await run(
-      'fix the plan',
+  plan = written
+  // The second reader and the fixer take turns, up to three rounds, until
+  // the second reader finds nothing. What is still open after that goes
+  // into the notes for Ovi.
+  for (let round = 1; round <= 3; round++) {
+    const secondRead = await run(
+      `second reader (round ${round})`,
       'Plan',
       [
-        `Your job: fix the plan. Follow "Fix the plan" in \`${DOCS}/plan.md\`.`,
+        `Your job: read the plan as the parent it is written for, round ${round} of 3. Follow "The second reader" in \`${DOCS}/plan.md\`.`,
         pageLine(page),
-        `The plan: ${written.issueUrl}. Apply each fix below, then return the section list again.`,
+        `The plan: ${plan.issueUrl}. Read the issue as it is now, the notes below on who the page is for, and the rules they cite. Return problems only.`,
         '',
-        JSON.stringify(secondRead.problems, null, 2),
+        `### ${readers[0].heading}\n\n${notes[0].notes}`,
+      ].join('\n'),
+      PROBLEMS_IN_PLAN,
+      MODEL.secondReader,
+    )
+    planProblemsStillOpen = secondRead.problems
+    if (!planProblemsStillOpen.length) {
+      log(`Second reader, round ${round}: no problems`)
+      break
+    }
+    log(`Second reader, round ${round}: ${planProblemsStillOpen.length} problem(s). Fixing the plan.`)
+    plan = await run(
+      `fix the plan (round ${round})`,
+      'Plan',
+      [
+        `Your job: fix the plan, round ${round}. Follow "Fix the plan" in \`${DOCS}/plan.md\`.`,
+        pageLine(page),
+        `The plan: ${plan.issueUrl}. Apply each fix below, then return the section list again.`,
+        '',
+        JSON.stringify(planProblemsStillOpen, null, 2),
       ].join('\n'),
       PLAN,
       MODEL.fixThePlan,
     )
-  } else {
-    plan = written
   }
+  for (const p of planProblemsStillOpen) forOvi.push(`review: plan problem still open after 3 rounds: ${p.section}: ${p.problem} [second reader]`)
 }
 if (stopAfter === 'plan') return { status: 'stopped after the plan', page, plan }
 
@@ -472,6 +481,7 @@ return {
   placeholders: handed.placeholders,
   missingPhotos: handed.missingPhotos,
   stillOpen,
+  planProblemsStillOpen,
   forOvi,
   pageLoads: loaded.ok,
   summary: handed.summary,
