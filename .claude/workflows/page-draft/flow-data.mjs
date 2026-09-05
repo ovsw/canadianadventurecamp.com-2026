@@ -9,6 +9,7 @@ export const L = -420, C = 0, R = 440, RR = 880, FAR = -900;
 export const nodes = [
   // id, x centre, y top, kind, text, options
   n("start", C, 0, "pill", "Start: Ovi names a page", { fill: "#788896", color: "#fff" }),
+  n("note", RR, -40, "box", "Every AGENT box is a new agent with an empty memory. It knows only what the script hands it, and what is on disk, on GitHub, in Sanity, on Basecamp. A box that runs again is a new agent again.", { w: 420, fill: "#fffbe6", stroke: "#b8a200" }),
   n("claim", C, 110, "box", "AGENT: take the page (sonnet)\nFind the page's Basecamp card. If nobody else has it, mark it in progress with this branch name"),
   n("q1", C, 300, "diamond", "SCRIPT checks: did we get the page?"),
   n("stop", L, 340, "pill", "Stop. Touch nothing."),
@@ -22,17 +23,17 @@ export const nodes = [
 
   n("readPlan", FAR, 1120, "box", "AGENT: read the plan (sonnet)\nReads the plan that is already written"),
   n("writePlan", C, 960, "box", `AGENT: write the plan (${SESSION})\nWrite the plan as a GitHub issue and link it on the card`),
-  n("secondReader", C, 1120, "box", `AGENT: second reader (${SESSION}, high effort)\nReads the plan as the parent it is written for, and lists the problems`),
+  n("secondReader", C, 1120, "box", `AGENT: second reader (${SESSION}, high effort)\nReads the plan as the parent it is written for, and lists the problems. A new agent each round`),
   n("q3", C, 1300, "diamond", "SCRIPT checks: found problems? Up to 3 rounds"),
-  n("fixPlan", R, 1200, "box", `AGENT: fix the plan (${SESSION})\nApplies the fixes to the issue`),
+  n("fixPlan", R, 1200, "box", `AGENT: fix the plan (${SESSION})\nApplies the fixes to the issue. A new agent each round`),
 
   n("getReady", C, 1600, "box", "AGENT: get ready (sonnet)\nGet the latest code, check nobody else is editing the same sections, back up the content database"),
   n("q4", C, 1790, "diamond", "SCRIPT checks: latest code pulled, backup made and checked?"),
-  n("buildSection", C, 1960, "box", `AGENT: build one section (${SESSION})\nOne agent per new or redesigned section, one after the other`),
+  n("buildSection", C, 1960, "box", `AGENT: build one section (${SESSION})\nA new agent for each new or redesigned section, one after the other. None of them sees what the one before it did, only its files`),
   n("writeText", C, 2120, "box", `AGENT: write the page text (${SESSION})\nWrite the text and save it as a draft in Sanity`),
-  n("proofread", C, 2280, "box", `AGENT: proofread (${SESSION}, high effort)\nVoice, banned words, unconfirmed facts, colours alternate, buttons in place`),
+  n("proofread", C, 2280, "box", `AGENT: proofread (${SESSION}, high effort)\nVoice, banned words, unconfirmed facts, colours alternate, buttons in place. A new agent each round`),
   n("q5", C, 2470, "diamond", "SCRIPT checks: found problems? Up to 3 rounds"),
-  n("fix", R, 2370, "box", `AGENT: fix (${SESSION})\nFix them and save again`),
+  n("fix", R, 2370, "box", `AGENT: fix (${SESSION})\nFix them and save again. A new agent each round`),
   n("loadPage", C, 2650, "box", "AGENT: load the page (sonnet, low effort)\nLoad the page on the dev server and check every section shows up"),
   n("q6", C, 2840, "diamond", "SCRIPT checks: page loads?"),
   n("fixLoad", R, 2740, "box", `AGENT: fix (${SESSION})\nFix it, one try`),

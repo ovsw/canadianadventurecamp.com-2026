@@ -105,8 +105,20 @@ Every box names the agent that does the work and the model it runs on.
 the `MODEL` table at the top of the script. Diamonds are checks the script
 makes itself, without an agent.
 
+Every AGENT box is a new agent. It starts with an empty memory. It does not
+know what any earlier agent read, thought, or wrote, unless that agent
+returned it as data and the script put it in the new agent's instructions.
+A box that runs more than once (one per section, or one per round) is a new
+agent each time. What they share is on disk: the code on this branch, the
+plan on GitHub, the draft in Sanity, the card on Basecamp.
+
 ```mermaid
 flowchart TD
+  note["Every AGENT box is a new agent with an empty memory.
+It knows only what the script hands it
+and what is on disk, on GitHub, in Sanity, on Basecamp.
+A box that runs again is a new agent again."]
+  note ~~~ start
   start(["Start: Ovi names a page"]) --> claim
   subgraph P1["1. Take the page"]
     claim["AGENT: take the page (sonnet)
@@ -140,11 +152,13 @@ Which photos exist"]
 Write the plan as a GitHub issue,
 link it on the card"] --> critic["AGENT: second reader (session model, high effort)
 Reads the plan as the parent
-it is written for, lists problems"] --> critq{SCRIPT checks:
+it is written for, lists problems.
+A new agent each round"] --> critq{SCRIPT checks:
 found problems?
 Up to 3 rounds}
     critq -- yes --> revise["AGENT: fix the plan (session model)
-Applies the fixes to the issue"] --> critic
+Applies the fixes to the issue.
+A new agent each round"] --> critic
     readplan["AGENT: read the plan (sonnet)
 Reads the existing plan"]
   end
@@ -158,18 +172,21 @@ back up the content database"] --> prepq{SCRIPT checks:
 latest code pulled,
 backup made and checked?}
     prepq -- yes --> blocks["AGENT: build one section (session model)
-One agent per new or redesigned section,
-one after the other"]
+A new agent for each new or redesigned section,
+one after the other. None of them sees
+what the one before it did, only its files"]
     blocks --> seed["AGENT: write the page text (session model)
 Write the text and save it
 as a draft in Sanity"]
     seed --> checker["AGENT: proofread (session model, high effort)
 Voice, banned words, unconfirmed facts,
-colours alternate, buttons in place"] --> revq{SCRIPT checks:
+colours alternate, buttons in place.
+A new agent each round"] --> revq{SCRIPT checks:
 found problems?
 Up to 3 rounds}
     revq -- yes --> fixer["AGENT: fix (session model)
-Fix them and save again"] --> checker
+Fix them and save again.
+A new agent each round"] --> checker
     revq -- no --> render["AGENT: load the page (sonnet, low effort)
 Load the page on the dev server,
 check every section shows up"] --> renderq{SCRIPT checks:
@@ -205,6 +222,7 @@ Make the to-do list of things the camp must supply"]
   style abort fill:#d3455b,stroke:#a02a3c,color:#fff
   style start fill:#788896,stroke:#4b5c6b,color:#fff
   style done fill:#207868,stroke:#14513f,color:#fff
+  style note fill:#fffbe6,stroke:#b8a200
 ```
 
 Rendered copies: `flow.svg` and `flow.png` come from the Mermaid above
