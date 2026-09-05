@@ -100,55 +100,83 @@ and the content database, also used by `page-integrate`),
 
 ## Flow
 
+Every box names the agent that does the work and the model it runs on.
+"Session model" is whatever model the session runs; the others are set in
+the `MODEL` table at the top of the script. Diamonds are checks the script
+makes itself, without an agent.
+
 ```mermaid
 flowchart TD
-  start(["Start: name a page"]) --> claim
+  start(["Start: Ovi names a page"]) --> claim
   subgraph P1["1. Take the page"]
-    claim["Find the page's Basecamp card"] --> claimed{Is someone else
-already working on it?}
-    claimed -- yes --> stop(["Stop. Touch nothing."])
-    claimed -- no --> mark["Mark the card as in progress
-with this branch name"] --> hasplan{Has the plan for this page
+    claim["AGENT: take the page (sonnet)
+Find the page's Basecamp card.
+If nobody else has it, mark it in progress
+with this branch name"] --> claimed{SCRIPT checks:
+did we get the page?}
+    claimed -- no --> stop(["Stop. Touch nothing."])
+    claimed -- yes --> hasplan{SCRIPT checks:
+has the plan for this page
 already been written?}
   end
-  subgraph P2["2. Research (5 agents at once)"]
-    gA["Who the page is for
+  subgraph P2["2. Research: 5 agents at once (all sonnet)"]
+    gA["AGENT: research A
+Who the page is for
 and the writing rules"]
-    gB["What the old page says"]
-    gC["Related blog posts and
+    gB["AGENT: research B
+What the old page says"]
+    gC["AGENT: research C
+Related blog posts and
 the pages next to it in the menu"]
-    gD["Which page sections exist
+    gD["AGENT: research D
+Which page sections exist
 and the design rules"]
-    gE["Which photos exist"]
+    gE["AGENT: research E
+Which photos exist"]
   end
   hasplan -- no --> gA & gB & gC & gD & gE
   subgraph P3["3. Plan"]
-    decide["Write the plan for the page
-as a GitHub issue, link it on the card"] --> critic["A second agent reads the plan
-as the parent it is written for"] --> critq{Found problems?
+    decide["AGENT: write the plan (session model)
+Write the plan as a GitHub issue,
+link it on the card"] --> critic["AGENT: second reader (session model, high effort)
+Reads the plan as the parent
+it is written for, lists problems"] --> critq{SCRIPT checks:
+found problems?
 Up to 3 rounds}
-    critq -- yes --> revise["A third agent fixes the plan"] --> critic
-    readplan["Read the existing plan"]
+    critq -- yes --> revise["AGENT: fix the plan (session model)
+Applies the fixes to the issue"] --> critic
+    readplan["AGENT: read the plan (sonnet)
+Reads the existing plan"]
   end
   hasplan -- yes --> readplan
   gA & gB & gC & gD & gE -- notes --> decide
   subgraph P4["4. Build"]
-    prep["Get the latest code,
+    prep["AGENT: get ready (sonnet)
+Get the latest code,
 check nobody else is editing the same sections,
-back up the content database"] --> prepq{All good?}
-    prepq -- yes --> blocks["Build each new or redesigned
-page section, one at a time"]
-    blocks --> seed["Write the page text and
-save it as a draft in Sanity"]
-    seed --> checker["Proofread the page:
-voice, banned words, unconfirmed facts,
-colours alternate, buttons in place"] --> revq{Found problems?
+back up the content database"] --> prepq{SCRIPT checks:
+all good?}
+    prepq -- yes --> blocks["AGENT: build one section (session model)
+One agent per new or redesigned section,
+one after the other"]
+    blocks --> seed["AGENT: write the page text (session model)
+Write the text and save it
+as a draft in Sanity"]
+    seed --> checker["AGENT: proofread (session model, high effort)
+Voice, banned words, unconfirmed facts,
+colours alternate, buttons in place"] --> revq{SCRIPT checks:
+found problems?
 Up to 3 rounds}
-    revq -- yes --> fixer["Fix them and save again"] --> checker
-    revq -- no --> render["Load the page on the dev server
-and check every section shows up"] --> renderq{Page loads?}
-    renderq -- no --> renderfix["Fix it, one try"] --> render
-    renderq -- yes --> push["Final checks, then push the code"]
+    revq -- yes --> fixer["AGENT: fix (session model)
+Fix them and save again"] --> checker
+    revq -- no --> render["AGENT: load the page (sonnet, low effort)
+Load the page on the dev server,
+check every section shows up"] --> renderq{SCRIPT checks:
+page loads?}
+    renderq -- no --> renderfix["AGENT: fix (session model)
+Fix it, one try"] --> render
+    renderq -- yes --> push["AGENT: push the code (sonnet)
+Final checks, then push"]
   end
   critq -- no --> prep
   readplan --> prep
@@ -157,12 +185,14 @@ and check every section shows up"] --> renderq{Page loads?}
   blocks -. code will not compile .-> abort
   seed -. draft will not save .-> abort
   push -. push fails .-> abort
-  abort["Give up: write what went wrong
-on the card, leave it marked in progress"]
+  abort["AGENT: give up (haiku)
+Writes what went wrong on the card,
+leaves it marked in progress"]
   subgraph P5["5. Hand over to Ovi"]
-    handoff["Move the card to Ovi Polish
+    handoff["AGENT: hand over (sonnet)
+Move the card to Ovi Polish.
 Write on the card: what to look at, what was guessed,
-what to ask the camp
+what to ask the camp.
 Make the to-do list of things the camp must supply"]
   end
   push --> handoff --> done(["Draft ready for Ovi"])

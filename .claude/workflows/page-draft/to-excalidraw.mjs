@@ -8,7 +8,7 @@ import { parseMermaidToExcalidraw } from "https://esm.sh/@excalidraw/mermaid-to-
 import { convertToExcalidrawElements, exportToSvg } from "https://esm.sh/@excalidraw/excalidraw@0.18.0?deps=react@18.2.0,react-dom@18.2.0";
 const PHASE_FILL = ["#f1f3f5", "#e7f0fb", "#f3e8fb", "#fff1e6", "#e6f7f2"];
 const PHASE_STROKE = ["#868e96", "#2c88d9", "#9c36b5", "#e8833a", "#207868"];
-const PILL = { "Start: name a page": "#788896", "Draft ready for Ovi": "#207868", "Stop. Touch nothing.": "#e9ecef" };
+const PILL = { "Start: Ovi names a page": "#788896", "Draft ready for Ovi": "#207868", "Stop. Touch nothing.": "#e9ecef" };
 function polish(els) {
   const byId = Object.fromEntries(els.map((e) => [e.id, e]));
   const groups = [];
