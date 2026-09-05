@@ -231,11 +231,17 @@ plus Mermaid from a CDN).
 
 Editable copies: `flow.excalidraw` (open at excalidraw.com or with the VS
 Code Excalidraw extension) and `flow.drawio` (open at app.diagrams.net or
-with the VS Code draw.io extension). Both are built from the same list of
-boxes and connections in `flow-data.mjs`; every arrow is bound to its two
-boxes, so moving a box moves its arrows. Edit `flow-data.mjs`, then:
+with the VS Code draw.io extension). Both were first built from the same
+list of boxes and connections in `flow-data.mjs`; every arrow is bound to
+its two boxes, so moving a box moves its arrows.
+
+**`flow.drawio` is Ovi's hand-edited copy. Do not regenerate it and do not
+edit it with a script.** `build-drawio.mjs` refuses to overwrite an existing
+file. When the flow changes, change `flow-data.mjs` and the Mermaid above,
+rebuild the Excalidraw and the rendered copies, and tell Ovi what changed so
+he can update the draw.io file himself.
 
 ```bash
 node .claude/workflows/page-draft/build-excalidraw.mjs
-node .claude/workflows/page-draft/build-drawio.mjs
+node .claude/workflows/page-draft/render-flow.mjs
 ```

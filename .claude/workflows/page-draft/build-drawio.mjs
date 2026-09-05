@@ -1,7 +1,10 @@
 // Builds flow.drawio from flow-data.mjs. draw.io routes the arrows itself
 // (orthogonal edges from source to target), so only the boxes have positions.
 // Run: node .claude/workflows/page-draft/build-drawio.mjs
-import { writeFileSync } from "node:fs";
+//
+// flow.drawio is edited by hand once it exists. This script never overwrites
+// it. To start over, delete the file first, on purpose.
+import { existsSync, writeFileSync } from "node:fs";
 import { nodes, phases, edges } from "./flow-data.mjs";
 
 const dir = new URL(".", import.meta.url).pathname.replace(/\/$/, "");
@@ -49,5 +52,9 @@ const xml = `<mxfile host="page-draft/build-drawio.mjs" modified="2026-09-05T00:
   </diagram>
 </mxfile>
 `;
+if (existsSync(`${dir}/flow.drawio`)) {
+  console.error("flow.drawio already exists and is edited by hand. Not overwriting it. Delete it first if you really want a fresh one.");
+  process.exit(1);
+}
 writeFileSync(`${dir}/flow.drawio`, xml);
 console.log(`wrote flow.drawio: ${nodes.length} boxes, ${edges.length} arrows, ${phases.length} phase frames`);
