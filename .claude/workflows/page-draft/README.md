@@ -193,6 +193,7 @@ check every section shows up"] --> renderq{SCRIPT checks:
 page loads?}
     renderq -- no --> renderfix["AGENT: fix (session model)
 Fix it, one try"] --> render
+    renderq -. "no, second time" .-> abort
     renderq -- yes --> push["AGENT: push the code (sonnet)
 Final checks, then push"]
   end

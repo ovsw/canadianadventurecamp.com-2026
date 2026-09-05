@@ -52,7 +52,10 @@ export function withKeys(value, pathParts = []) {
     return value.map((item, index) => {
       const itemPath = [...pathParts, String(index)];
       if (item && typeof item === "object" && !Array.isArray(item)) {
-        const keyed = item._key ? item : { _key: keyFor(itemPath), ...item };
+        const keyed =
+          typeof item._key === "string" && item._key
+            ? item
+            : { ...item, _key: keyFor(itemPath) };
         return withKeys(keyed, [...pathParts, keyed._key]);
       }
       return withKeys(item, itemPath);

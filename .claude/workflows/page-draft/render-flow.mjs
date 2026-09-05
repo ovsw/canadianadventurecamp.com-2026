@@ -1,6 +1,9 @@
-import { chromium } from "/home/ovs/.local/share/mise/installs/npm-playwright/latest/node_modules/playwright/index.mjs";
 import { readFileSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 const dir = new URL(".", import.meta.url).pathname.replace(/\/$/, "");
+// playwright-core is a dependency of frontend/. Its Chromium build must be
+// installed once: `pnpm --dir frontend exec playwright install chromium`.
+const { chromium } = createRequire(`${dir}/../../../frontend/package.json`)("playwright-core");
 const readme = readFileSync(`${dir}/README.md`, "utf8");
 const src = readme.match(/```mermaid\n([\s\S]*?)```/)[1];
 const html = `<!doctype html><html><body style="margin:0;background:#fff;padding:24px">

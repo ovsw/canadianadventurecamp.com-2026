@@ -22,7 +22,8 @@ Read the card's `Spec issue` line. If it names an open GitHub issue, or the
 target was an issue number, return that number: the plan is already written,
 so the script skips research and planning.
 
-Return `taken` when the card is marked in progress with this branch on it.
+Return `taken` when your "Taking this page" comment is the first one on the
+card and the card is marked in progress with this branch on it.
 Return `someone-else-has-it` when another session is already working on the
 page, and say which branch in the note. Return `not-found` when no page and
 no card match, and say what you searched.

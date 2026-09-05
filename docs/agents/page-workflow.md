@@ -52,12 +52,17 @@ Sessions running at the same time share Basecamp, GitHub issues, the Sanity
 content database, and `origin`. Nothing locks any of them, so the workflow
 takes the page on the card before it writes anything:
 
-1. Read the card. A card already in Building or Ovi Polish with a `Branch:`
-   line from another session is taken: report it and stop.
-2. Move the card to Building and add the `Branch:` line naming this branch and
-   worktree. Re-read the card; if two claims landed, the earlier comment wins
-   and the later session stops.
-3. Search open issues for `Page: … (/<slug>)` before saving a plan, and reuse
+1. Read the card and its comments. A card already in Building or Ovi Polish
+   with a `Branch:` line from another session, or with a "Taking this page"
+   comment from another branch, is taken: report it and stop.
+2. Post a comment on the card: "Taking this page. Branch: `<branch>`,
+   worktree: `<path>`." Comments only append, so they keep their order.
+   Re-read the comments. If another "Taking this page" comment sits above
+   yours, that session was first: stop, and touch nothing else.
+3. Only then move the card to Building and add the `Branch:` line to the
+   card body. The body is one field that the last writer overwrites, which
+   is why it is written after the claim is settled, not before.
+4. Search open issues for `Page: … (/<slug>)` before saving a plan, and reuse
    an existing one. Two sessions filed duplicate tickets for the Family Guide
    on 2026-09-04; this step exists because of that.
 

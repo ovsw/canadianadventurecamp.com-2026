@@ -202,7 +202,7 @@ if (stopAfter === 'take-the-page') return { status: 'stopped after taking the pa
 
 // ---- 2 and 3. Research and plan, unless the plan is already written --------
 let plan
-let planProblemsStillOpen = []
+let planProblemsFixedUnchecked = []
 if (page.planIssueNumber) {
   log(`The plan is already written (issue #${page.planIssueNumber}). Skipping research and planning.`)
   plan = await run(
@@ -264,8 +264,9 @@ if (page.planIssueNumber) {
   log(`Plan saved: ${written.issueUrl} (${written.sections.length} sections)`)
   plan = written
   // The second reader and the fixer take turns, up to three rounds, until
-  // the second reader finds nothing. What is still open after that goes
-  // into the notes for Ovi.
+  // the second reader finds nothing. If the third round still found
+  // problems, the fixer fixed them but nobody read the plan again; those go
+  // into the notes for Ovi as unchecked.
   for (let round = 1; round <= 3; round++) {
     const secondRead = await run(
       `second reader (round ${round})`,
@@ -280,12 +281,12 @@ if (page.planIssueNumber) {
       PROBLEMS_IN_PLAN,
       MODEL.secondReader,
     )
-    planProblemsStillOpen = secondRead.problems
-    if (!planProblemsStillOpen.length) {
+    planProblemsFixedUnchecked = secondRead.problems
+    if (!planProblemsFixedUnchecked.length) {
       log(`Second reader, round ${round}: no problems`)
       break
     }
-    log(`Second reader, round ${round}: ${planProblemsStillOpen.length} problem(s). Fixing the plan.`)
+    log(`Second reader, round ${round}: ${planProblemsFixedUnchecked.length} problem(s). Fixing the plan.`)
     plan = await run(
       `fix the plan (round ${round})`,
       'Plan',
@@ -294,13 +295,13 @@ if (page.planIssueNumber) {
         pageLine(page),
         `The plan: ${plan.issueUrl}. Apply each fix below, then return the section list again.`,
         '',
-        JSON.stringify(planProblemsStillOpen, null, 2),
+        JSON.stringify(planProblemsFixedUnchecked, null, 2),
       ].join('\n'),
       PLAN,
       MODEL.fixThePlan,
     )
   }
-  for (const p of planProblemsStillOpen) forOvi.push(`review: plan problem still open after 3 rounds: ${p.section}: ${p.problem} [second reader]`)
+  for (const p of planProblemsFixedUnchecked) forOvi.push(`review: plan problem found in round 3 and fixed, but nobody read the plan again after the fix: ${p.section}: ${p.problem} [second reader]`)
 }
 if (stopAfter === 'plan') return { status: 'stopped after the plan', page, plan }
 
@@ -373,7 +374,9 @@ const text = collect('write the text', await run(
 if (!text.saved) return giveUp(page, 'write the page text', text.notes)
 log(`Saved ${text.documentIds.length} draft document(s) in Sanity`)
 
-let stillOpen = []
+// Same shape as the plan loop: what the third round found was fixed, but
+// not proofread again.
+let proofreadFixedUnchecked = []
 for (let round = 1; round <= 3; round++) {
   const read = await run(
     `proofread (round ${round})`,
@@ -386,12 +389,12 @@ for (let round = 1; round <= 3; round++) {
     PROBLEMS_IN_PAGE,
     MODEL.proofread,
   )
-  stillOpen = read.problems
-  if (!stillOpen.length) {
+  proofreadFixedUnchecked = read.problems
+  if (!proofreadFixedUnchecked.length) {
     log(`Proofread round ${round}: no problems`)
     break
   }
-  log(`Proofread round ${round}: ${stillOpen.length} problem(s)`)
+  log(`Proofread round ${round}: ${proofreadFixedUnchecked.length} problem(s)`)
   collect(`fix (round ${round})`, await run(
     `fix (round ${round})`,
     'Build',
@@ -400,7 +403,7 @@ for (let round = 1; round <= 3; round++) {
       pageLine(page),
       `The seed file: ${text.seedPath}. Apply every fix below (edit the seed file and run \`pnpm page:seed … --apply\`, or edit the code), commit, and say what you fixed.`,
       '',
-      JSON.stringify(stillOpen, null, 2),
+      JSON.stringify(proofreadFixedUnchecked, null, 2),
     ].join('\n'),
     FIXED,
     MODEL.fix,
@@ -428,6 +431,9 @@ if (!loaded.ok) {
     MODEL.fix,
   ))
   loaded = await run('load the page (second try)', 'Build', loadPrompt, PAGE_LOADED, MODEL.loadThePage)
+  if (!loaded.ok) {
+    return giveUp(page, 'load the page', [...loaded.errors, ...loaded.missingHeadings.map((h) => `heading not found: ${h}`)].join('; ') || 'the page did not load and the fix did not help')
+  }
 }
 
 const pushed = collect('push', await run(
@@ -455,8 +461,7 @@ const handed = await run(
     `Sections Ovi should design himself (built new or redesigned): ${sectionsForOvi.join('; ') || '(none)'}`,
     `Placeholders: ${text.placeholders.join('; ') || '(none)'}`,
     `Missing photos: ${text.missingPhotos.join('; ') || '(none)'}`,
-    `Proofreading problems still open: ${stillOpen.length ? JSON.stringify(stillOpen) : '(none)'}`,
-    `Page load check: ${loaded.ok ? 'passed' : `still failing: ${loaded.errors.join('; ')} ${loaded.missingHeadings.join('; ')}`}`,
+    `Proofreading problems fixed in the last round and not proofread again: ${proofreadFixedUnchecked.length ? JSON.stringify(proofreadFixedUnchecked) : '(none)'}`,
     `Homepage candidates: ${plan.homepageCandidates.join('; ') || '(none)'}`,
     `Questions for the camp: ${plan.questionsForTheCamp.join(' | ') || '(none)'}`,
     '',
@@ -480,9 +485,8 @@ return {
   sectionsForOviToDesign: handed.sectionsForOviToDesign,
   placeholders: handed.placeholders,
   missingPhotos: handed.missingPhotos,
-  stillOpen,
-  planProblemsStillOpen,
+  proofreadFixedUnchecked,
+  planProblemsFixedUnchecked,
   forOvi,
-  pageLoads: loaded.ok,
   summary: handed.summary,
 }

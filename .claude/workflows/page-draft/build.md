@@ -116,7 +116,8 @@ only, each with where it is and the fix:
 
 One agent applies the fixes: to the seed file and then `pnpm page:seed …
 --apply`, or to the code. Commit. The script runs proofread and fix up to
-three times; whatever is left goes into the hand-over as still open.
+three times. What the third round found is fixed but not proofread again;
+the hand-over lists it as unchecked.
 
 ## Load the page and check it
 

@@ -3,7 +3,7 @@
 One agent writes the plan. Then a second agent reads it as the parent it is
 written for and lists the problems, and a third agent fixes them. The second
 reader then reads the fixed plan again. That goes round up to three times, or
-until the second reader finds nothing. Problems still open after the third
+until the second reader finds nothing. Problems found in the third
 round go into the notes for Ovi.
 
 Inputs are the five sets of notes from the research step. For every decision

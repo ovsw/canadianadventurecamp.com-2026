@@ -83,6 +83,7 @@ export const edges = [
   e("q6", "fixLoad", "no"),
   e("fixLoad", "loadPage"),
   e("q6", "push", "yes"),
+  e("q6", "giveUp", "no, second time", { dashed: true }),
   e("push", "giveUp", "push fails", { dashed: true }),
   e("push", "handOver"),
   e("handOver", "done"),

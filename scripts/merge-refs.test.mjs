@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
-import { GENERATED_FILES, UNION_FILES, mergeRef } from "./merge-refs.mjs";
+import { GENERATED_FILES, UNION_FILES, mergeRef, unionAtMarkers } from "./merge-refs.mjs";
 
 const execFileAsync = promisify(execFile);
 
@@ -28,7 +28,7 @@ async function repoWithTwoBranches() {
   await git(cwd, "init", "--quiet", "-b", "main");
   await git(cwd, "config", "user.email", "test@example.com");
   await git(cwd, "config", "user.name", "Test");
-  await write(cwd, REGISTRY, "import a from './a';\n// page-builder-generator:block-imports\n");
+  await write(cwd, REGISTRY, "import a from './a';\n// page-builder-generator:block-imports\nexport const label = 'base';\n");
   await write(cwd, SCHEMA, '{"types":["a"]}\n');
   await write(cwd, TYPES, "export type A = 1;\n");
   await write(cwd, "studio/schemas/blocks/a.ts", "export default 'a';\n");
@@ -36,7 +36,7 @@ async function repoWithTwoBranches() {
   await git(cwd, "commit", "--quiet", "-m", "base");
 
   await git(cwd, "checkout", "--quiet", "-b", "page-b");
-  await write(cwd, REGISTRY, "import a from './a';\nimport b from './b';\n// page-builder-generator:block-imports\n");
+  await write(cwd, REGISTRY, "import a from './a';\nimport b from './b';\n// page-builder-generator:block-imports\nexport const label = 'base';\n");
   await write(cwd, SCHEMA, '{"types":["a","b"]}\n');
   await write(cwd, TYPES, "export type A = 1;\nexport type B = 2;\n");
   await write(cwd, "studio/schemas/blocks/b.ts", "export default 'b';\n");
@@ -45,7 +45,7 @@ async function repoWithTwoBranches() {
 
   await git(cwd, "checkout", "--quiet", "main");
   await git(cwd, "checkout", "--quiet", "-b", "page-c");
-  await write(cwd, REGISTRY, "import a from './a';\nimport c from './c';\n// page-builder-generator:block-imports\n");
+  await write(cwd, REGISTRY, "import a from './a';\nimport c from './c';\n// page-builder-generator:block-imports\nexport const label = 'base';\n");
   await write(cwd, SCHEMA, '{"types":["a","c"]}\n');
   await write(cwd, TYPES, "export type A = 1;\nexport type C = 3;\n");
   await write(cwd, "studio/schemas/blocks/c.ts", "export default 'c';\n");
@@ -76,7 +76,7 @@ test("generated files regenerate and marker registrations union-merge", async ()
   const registry = await readFile(path.join(cwd, REGISTRY), "utf8");
   assert.equal(
     registry,
-    "import a from './a';\nimport c from './c';\nimport b from './b';\n// page-builder-generator:block-imports\n",
+    "import a from './a';\nimport c from './c';\nimport b from './b';\n// page-builder-generator:block-imports\nexport const label = 'base';\n",
   );
   assert.equal(await readFile(path.join(cwd, SCHEMA), "utf8"), '{"types":["a","b","c"]}\n');
   assert.equal(await git(cwd, "status", "--porcelain"), "");
@@ -100,6 +100,39 @@ test("a conflict outside the known files stops with the merge in progress", asyn
   assert.deepEqual(report.unresolved, ["frontend/components/blocks/story.tsx"]);
   const unmerged = await git(cwd, "diff", "--name-only", "--diff-filter=U");
   assert.ok(unmerged.includes("story.tsx"), "merge is left in progress for a human");
+});
+
+test("a conflict in the hand-written part of a registration file stays unresolved", async () => {
+  const cwd = await repoWithTwoBranches();
+  // page-c (current) and page-b both add an import at the marker, and both
+  // rewrite the hand-written line below it in different ways.
+  await write(cwd, REGISTRY, "import a from './a';\nimport c from './c';\n// page-builder-generator:block-imports\nexport const label = 'c';\n");
+  await git(cwd, "add", ".");
+  await git(cwd, "commit", "--quiet", "-m", "label on c");
+  await git(cwd, "checkout", "--quiet", "page-b");
+  await write(cwd, REGISTRY, "import a from './a';\nimport b from './b';\n// page-builder-generator:block-imports\nexport const label = 'b';\n");
+  await git(cwd, "add", ".");
+  await git(cwd, "commit", "--quiet", "-m", "label on b");
+  await git(cwd, "checkout", "--quiet", "page-c");
+
+  const report = await mergeRef({ cwd, ref: "page-b", typegen: fakeTypegen });
+
+  assert.equal(report.merged, false);
+  assert.deepEqual(report.union, []);
+  assert.deepEqual(report.unresolved, [REGISTRY]);
+  const unmerged = await git(cwd, "diff", "--name-only", "--diff-filter=U");
+  assert.ok(unmerged.includes(REGISTRY), "merge is left in progress, nothing committed");
+  const registry = await readFile(path.join(cwd, REGISTRY), "utf8");
+  assert.match(registry, /<<<<<<< /, "git's conflict markers are still in the file");
+});
+
+test("unionAtMarkers keeps both sides only above a marker", () => {
+  const atMarker = "<<<<<<< ours\nimport c;\n=======\nimport b;\n>>>>>>> theirs\n// page-builder-generator:x\n";
+  assert.equal(unionAtMarkers(atMarker), "import c;\nimport b;\n// page-builder-generator:x\n");
+  const elsewhere = "// page-builder-generator:x\n<<<<<<< ours\nc\n=======\nb\n>>>>>>> theirs\n";
+  assert.equal(unionAtMarkers(elsewhere), null);
+  const diff3 = "<<<<<<< ours\nc\n||||||| base\n=======\nb\n>>>>>>> theirs\n// page-builder-generator:x\n";
+  assert.equal(unionAtMarkers(diff3), "c\nb\n// page-builder-generator:x\n");
 });
 
 test("a clean merge that touches schema sources still regenerates types", async () => {

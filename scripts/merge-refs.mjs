@@ -5,9 +5,11 @@
 // - generated files (studio/schema.json, frontend/sanity.types.ts) are taken
 //   from either side and regenerated with `pnpm typegen`;
 // - registration files that grow at page-builder-generator markers are merged
-//   as a union (both sides' additions kept, in order).
+//   as a union (both sides' additions kept, in order), but only where the
+//   conflict sits right above a marker. That is where the generator writes.
 //
-// Any other conflict stops the run with the merge left in progress so a human
+// Any other conflict, including one in the hand-written part of a
+// registration file, stops the run with the merge left in progress so a human
 // or agent can resolve it, commit, and run the script again for the remaining
 // refs.
 //
@@ -58,6 +60,40 @@ async function stagePath(cwd, stage, file) {
   return result.ok ? `${result.stdout}\n` : "";
 }
 
+const MARKER = "page-builder-generator:";
+
+/**
+ * Resolve the conflict blocks of a `git merge-file` result as a union (ours
+ * then theirs), but only when every block ends right above a generator
+ * marker line. Returns null when any block sits elsewhere: that conflict is
+ * in hand-written code and needs a person.
+ */
+export function unionAtMarkers(conflicted) {
+  const lines = conflicted.split("\n");
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (!lines[i].startsWith("<<<<<<< ")) {
+      out.push(lines[i]);
+      continue;
+    }
+    const ours = [];
+    const theirs = [];
+    let side = ours;
+    let j = i + 1;
+    for (; j < lines.length && !lines[j].startsWith(">>>>>>> "); j++) {
+      if (lines[j].startsWith("||||||| ")) side = null; // diff3 base part
+      else if (lines[j] === "=======") side = theirs;
+      else if (side) side.push(lines[j]);
+    }
+    if (j >= lines.length) return null;
+    const next = lines[j + 1];
+    if (next === undefined || !next.includes(MARKER)) return null;
+    out.push(...ours, ...theirs);
+    i = j;
+  }
+  return out.join("\n");
+}
+
 export async function unionMerge(cwd, file) {
   const [base, ours, theirs] = await Promise.all(
     [1, 2, 3].map((stage) => stagePath(cwd, stage, file)),
@@ -69,19 +105,19 @@ export async function unionMerge(cwd, file) {
       return target;
     }),
   );
+  let merged;
   try {
-    const result = await git(
-      cwd,
-      ["merge-file", "-p", "--union", ...temporary],
-      { allowFailure: true },
-    );
-    await writeFile(path.join(cwd, file), `${result.stdout}\n`, "utf8");
+    const result = await git(cwd, ["merge-file", "-p", ...temporary], { allowFailure: true });
+    merged = unionAtMarkers(result.stdout);
   } finally {
     await Promise.all(
       temporary.map((target) => execFileAsync("rm", ["-f", target])),
     );
   }
+  if (merged === null) return false;
+  await writeFile(path.join(cwd, file), `${merged}\n`, "utf8");
   await git(cwd, ["add", "--", file]);
+  return true;
 }
 
 function touchesTypegenInputs(files) {
@@ -132,10 +168,17 @@ export async function mergeRef({ cwd, ref, typegen, log = () => {} }) {
       if (GENERATED_FILES.includes(file)) {
         await git(cwd, ["checkout", "--theirs", "--", file]);
         await git(cwd, ["add", "--", file]);
-      } else {
-        await unionMerge(cwd, file);
+      } else if (await unionMerge(cwd, file)) {
         report.union.push(file);
+      } else {
+        report.unresolved.push(file);
       }
+    }
+    if (report.unresolved.length > 0) {
+      log(
+        `Merge of ${ref} needs a hand: ${report.unresolved.join(", ")} (conflict outside a generator marker)`,
+      );
+      return report;
     }
     await git(cwd, ["commit", "--quiet", "--no-edit"]);
   }
