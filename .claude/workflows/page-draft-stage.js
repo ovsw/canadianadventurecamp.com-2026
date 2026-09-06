@@ -189,7 +189,7 @@ if (stage === 'research') {
       ),
     ),
   )
-  const missing = readers.filter((r, i) => !notes[i])
+  const missing = readers.filter((r, i) => !notes[i] || !String(notes[i].notes ?? '').trim())
   if (missing.length) {
     return failed('research', `These readers returned nothing: ${missing.map((r) => r.key).join(', ')}. Run the research stage again.`)
   }
