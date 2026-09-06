@@ -92,7 +92,7 @@ for (const edge of edges) {
   const a = shapeById[edge.from], b = shapeById[edge.to];
   const [sx, sy] = border(a, b.cx, b.cy);
   const [ex, ey] = border(b, a.cx, a.cy);
-  const id = `arrow-${edge.from}-${edge.to}`;
+  const id = edge.id ?? `arrow-${edge.from}-${edge.to}`;
   const arrow = {
     ...base("arrow", sx, sy, Math.abs(ex - sx), Math.abs(ey - sy), {
       id, fill: "transparent", strokeStyle: edge.dashed ? "dashed" : "solid", strokeWidth: edge.dashed ? 1 : 2,

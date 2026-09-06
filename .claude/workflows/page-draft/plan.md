@@ -28,8 +28,9 @@ sections.
 ## Part 1: Who the page is for
 
 Which readers the page serves, which one comes first, and which ones it
-deliberately ignores. Start from the page's row in `docs/avatars.md` and
-deviate only with a reason from the profiles. Rachel never sees the fit quiz.
+deliberately ignores. Start from the page's row in the avatar matrix as the
+notes (A) report it, and deviate only with a reason from the profiles in
+those notes. Rachel never sees the fit quiz.
 Maya never gets a form.
 
 ## Part 2: What each reader is trying to do

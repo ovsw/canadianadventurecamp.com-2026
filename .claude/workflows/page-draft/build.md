@@ -30,10 +30,14 @@ Three things, about eight commands, nothing else:
 
    ```bash
    git fetch --quiet origin
-   for b in $(git branch -r --format='%(refname:short)' | grep -v -e HEAD -e origin/main); do
+   me=$(git branch --show-current)
+   for b in $(git branch --format='%(refname:short)' -a | grep -v -e HEAD -e '^main$' -e '^origin/main$' -e "^$me$" -e "^origin/$me$"); do
      git log --format= --name-only origin/main..$b | grep -E '^(frontend/components/blocks|frontend/sanity/queries|studio/schemas/blocks)/' | sed "s|^|$b |"
    done | sort -u
    ```
+
+   Local branches are in the list because other worktrees share them
+   before they push; this branch and `main` are left out.
 
    A section on that list that the plan marks `design` or `extend` is used
    exactly as it is on `main`, or replaced. If that changes a section's
@@ -46,9 +50,10 @@ Three things, about eight commands, nothing else:
    `backups/` at the repo root, which git ignores:
 
    ```bash
-   cd studio && SANITY_AUTH_TOKEN=$(grep '^SANITY_AUTH_TOKEN=' .env.local | cut -d= -f2-) \
-     pnpm exec sanity dataset export production ../backups/production-$(date -u +%Y%m%d%H%M%S)-<slug>.tar.gz --raw
-   gzip -t backups/production-*-<slug>.tar.gz
+   stamp=$(date -u +%Y%m%d%H%M%S)
+   (cd studio && SANITY_AUTH_TOKEN=$(grep '^SANITY_AUTH_TOKEN=' .env.local | cut -d= -f2-) \
+     pnpm exec sanity dataset export production ../backups/production-$stamp-<slug>.tar.gz --raw)
+   gzip -t backups/production-$stamp-<slug>.tar.gz
    ```
 
    Never write the archive anywhere git tracks. A failed export or check

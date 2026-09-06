@@ -119,13 +119,15 @@ block, list the files other unmerged branches touch:
 
 ```bash
 git fetch --quiet origin
-for b in $(git branch -r --format='%(refname:short)' | grep -v -e HEAD -e origin/main); do
+me=$(git branch --show-current)
+for b in $(git branch --format='%(refname:short)' -a | grep -v -e HEAD -e '^main$' -e '^origin/main$' -e "^$me$" -e "^origin/$me$"); do
   git log --format= --name-only origin/main..$b | grep -E '^(frontend/components/blocks|frontend/sanity/queries|studio/schemas/blocks)/' | sed "s|^|$b |"
 done | sort -u
 ```
 
-A renderer, query, or schema file that appears in that list belongs to
-another branch. Use the block as it is on `main`, or make a new block.
+Local branches are in the list because worktrees share them before they
+push; this branch and `main` are left out. A renderer, query, or schema file
+that appears in that list belongs to another branch. Use the block as it is on `main`, or make a new block.
 
 **"Reuse" means designed.** A spec's `reuse` mark is a claim to verify: open
 the renderer and look for the design system (`text-headline`,

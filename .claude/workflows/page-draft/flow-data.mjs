@@ -2,6 +2,8 @@
 // Shared by build-excalidraw.mjs and build-drawio.mjs.
 const SESSION = "session model";
 const n = (id, cx, y, kind, text, o = {}) => ({ id, cx, y, kind, text, ...o });
+// Two connections between the same boxes need their own `id`, or the
+// generated arrows collide.
 const e = (from, to, label = "", o = {}) => ({ from, to, label, ...o });
 
 // ---- the picture ---------------------------------------------------------
@@ -86,7 +88,7 @@ export const edges = [
   e("q5", "loadPage", "no"),
   e("loadPage", "q6"),
   e("q6", "push", "yes"),
-  e("q6", "push", "no, written for Ovi", { dashed: true }),
+  e("q6", "push", "no, written for Ovi", { dashed: true, id: "arrow-q6-push-failed" }),
   e("push", "giveUp", "push fails", { dashed: true }),
   e("push", "handOver"),
   e("handOver", "done"),
