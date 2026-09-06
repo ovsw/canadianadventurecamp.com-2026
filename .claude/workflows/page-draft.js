@@ -149,8 +149,8 @@ async function run(label, phaseTitle, body, schema, extra) {
       label,
       phase: phaseTitle,
       schema,
-      agentType: AGENT_TYPE,
       ...(extra ?? {}),
+      agentType: AGENT_TYPE,
     })
   } catch (error) {
     await writeFailureOnCard(label, error?.message ?? String(error))

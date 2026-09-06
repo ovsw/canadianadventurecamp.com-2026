@@ -1,6 +1,6 @@
 ---
 name: shell-and-files
-description: A sub-agent with five tools only, the shell and the file tools, for work that reaches everything through commands and files. Use it for workflow steps and any delegated job that does not need the browser, sub-agents, schedulers, or MCP tools; it starts about 22k tokens lighter than an agent with the full tool set, on every message.
+description: A sub-agent with five tools only, the shell and the file tools, for work that reaches everything through commands and files. Use it for workflow steps and any delegated job that does not need the browser, sub-agents, schedulers, or MCP tools; measured on 2026-09-06, it starts at about 8.5k tokens instead of the 37k an agent with the full tool set carries, on every message.
 tools: Bash, Read, Edit, Write, Skill
 model: inherit
 ---
