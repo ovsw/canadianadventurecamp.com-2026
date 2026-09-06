@@ -1,0 +1,4 @@
+interface:
+  display_name: "Page Draft"
+  short_description: "Draft one CAC page with supervised subagents"
+  default_prompt: "Use $page-draft for the requested page and continue until the draft is ready for Ovi."
