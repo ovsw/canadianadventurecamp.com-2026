@@ -41,18 +41,29 @@ up where it left off in the same session: ask Claude to relaunch it.
 
 On 2026-09-05 one run took about 100 minutes, 25 agents, 650 tool calls,
 and 5% of a week's Fable allowance. The cost is the number of tool calls
-times the size of the context each call re-reads, and every agent starts
-about 37k tokens deep before it reads a file: Claude Code's own prompt,
-`CLAUDE.md`, memory, and the tool listings of every MCP server the session
-has. So, to keep a run cheap:
+times the size of the context each call re-reads. Every agent started
+about 37k tokens deep before it read a file, measured like this:
 
-- run it in a session with the MCP servers it does not need turned off
-  (it needs none: Basecamp, GitHub, and Sanity are all reached from the
-  shell);
-- keep the step files exact, with the commands written out, so agents do
-  not explore;
-- keep review rounds short: one read and one fix, a second only when the
-  first read found more than eight problems.
+| Piece | Tokens |
+|---|---|
+| Claude Code's own prompt, both `CLAUDE.md` files, the memory index | 5k |
+| The definitions of all thirty built-in tools | 25k |
+| The skill list, inside the Skill tool's definition | 2k to 4k |
+| The names of the deferred MCP tools | 2k |
+| This workflow's preamble and step prompt | 1.5k |
+
+The tool definitions are two thirds of it, and they are stapled to every
+message. So every step now runs as the `shell-and-files` agent type
+(`.claude/agents/shell-and-files.md`), which has five tools: Bash, Read,
+Edit, Write, Skill. Measured on 2026-09-06, such an agent starts at about
+8.5k tokens instead of 37k. Nothing in this workflow needs the other tools:
+GitHub is `gh`, Basecamp is `basecamp`, Sanity is the CLI and the scripts.
+
+Turning MCP servers off does not help, and can hurt: with servers connected
+Claude Code loads tool definitions on demand, without them it loads all
+thirty in full. The other two levers are in the step files: exact commands
+so agents do not explore, and short review rounds (one read and one fix,
+a second only when the first read found more than eight problems).
 
 ## The five steps
 
@@ -83,6 +94,8 @@ model. The steps that write text, design sections, or judge quality (writing
 the plan, the second reader, building sections, writing the page text,
 proofreading, fixing) use the session's model; the two readers at medium
 effort. Change the table, not the prompts, to trade cost against quality.
+Every step runs as the `shell-and-files` agent type; see "What a run
+costs".
 
 ## What lives here and what does not
 

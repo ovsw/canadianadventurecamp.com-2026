@@ -131,6 +131,13 @@ const HANDED_OVER = obj({
 })
 const DONE = obj({ done: bool })
 
+// Every step runs as the `shell-and-files` agent type (.claude/agents/),
+// which has five tools: Bash, Read, Edit, Write, Skill. Claude Code staples
+// the definition of every tool an agent has to every message it sends, and
+// the full set of thirty costs about 25k tokens a message; these five cost
+// about 2.5k. Nothing in this workflow needs the rest.
+const AGENT_TYPE = 'shell-and-files'
+
 // ---- helpers ---------------------------------------------------------------
 // Once the page is ours, a crash must still end with a comment on the card,
 // or Ovi sees a card stuck "in progress" with no explanation.
@@ -143,6 +150,7 @@ async function run(label, phaseTitle, body, schema, extra) {
       phase: phaseTitle,
       schema,
       ...(extra ?? {}),
+      agentType: AGENT_TYPE,
     })
   } catch (error) {
     await writeFailureOnCard(label, error?.message ?? String(error))
