@@ -8,6 +8,8 @@ cd studio && SANITY_AUTH_TOKEN=$(grep SANITY_AUTH_TOKEN .env.local | cut -d= -f2
 
 This applies to all CLI operations: `dataset import`, `dataset export`, `deploy`, `schema extract`, etc.
 
+To read documents, skip the CLI: `pnpm sanity:query '<groq>' ['<json params>']` prints the result as JSON, includes drafts, and loads the token itself.
+
 ## Notes
 
 - Tokens are project-scoped. If the project ID changes, generate a new token at `https://www.sanity.io/manage/project/<projectId>/api#tokens` and update `studio/.env.local`.

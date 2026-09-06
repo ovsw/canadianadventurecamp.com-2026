@@ -14,7 +14,10 @@ started there joins the first run's page instead of taking its own. That
 happened on 2026-09-05: two runs drafted Health & Safety at the same time in
 the same checkout, and fought over one plan, one seed file, and one draft.
 
-The branch is this worktree's branch (`git branch --show-current`).
+Then run `git branch --show-current; pwd` once. The two lines it prints
+are the branch and the worktree. Write them into the commands below as
+literal text; do not put `$(git ...)` or `$PWD` inside another command, and
+do not run either again. Every later step gets both from your answer.
 
 ## Which page this is
 
@@ -47,8 +50,12 @@ write it, so the run that did is still going. Never treat one as your own.
 4. If any comment says "Taking this page": with a target given, return
    `someone-else-has-it` and name that branch; with nothing given, go back to
    step 2 and take the next card.
-5. Claim, from stdin:
-   `printf 'Taking this page. Branch: `%s`, worktree: `%s`.\n' "$(git branch --show-current)" "$PWD" | basecamp comments create <id> - --in 48063970 --account 6230954 --json`
+5. Claim, from stdin, with the branch and worktree written in as text:
+
+   ```bash
+   printf 'Taking this page. Branch: `<branch>`, worktree: `<worktree>`.\n' | basecamp comments create <id> - --in 48063970 --account 6230954 --json
+   ```
+
 6. Read the comments again (step 3). If another "Taking this page" comment
    sits above yours, that run was first: return `someone-else-has-it`.
 7. Move the card to Building:
@@ -70,7 +77,9 @@ and return the number if one matches the slug. Return 0 when there is none.
 ## What to return
 
 `taken` when your comment is the first "Taking this page" comment on the
-card, the card is in Building, and the body carries this branch.
+card, the card is in Building, and the body carries this branch. Return the
+slug without a leading slash (`programs/specialty-summer-camp-programs`,
+not `/programs/...`), and the worktree as the absolute path `pwd` printed.
 `someone-else-has-it` when another run has the page; name the branch.
 `not-found` when no page and no card match; say what you searched.
 `wrong-checkout` when this is the main checkout.

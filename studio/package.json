@@ -17,6 +17,7 @@
     "migrate:activity-schedule-headings": "node --env-file=.env.local scripts/migrate-activity-schedule-headings.mjs",
     "legacy:page": "node --env-file=.env.local scripts/print-legacy-page.mjs",
     "page:text": "node --env-file=.env.local scripts/print-page-text.mjs",
+    "sanity:query": "node --env-file=.env.local scripts/query.mjs",
     "page:seed": "node --env-file=.env.local scripts/seed-page-draft.mjs"
   },
   "dependencies": {

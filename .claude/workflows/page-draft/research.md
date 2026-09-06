@@ -6,6 +6,13 @@ copied word for word where a later step may cite them, and nothing the
 sources do not say. The planning step reads these notes instead of the
 sources, so a fact left out of the notes is a fact the page will not have.
 
+Every command below runs from the worktree named in your prompt. The
+content database is read with `pnpm sanity:query '<groq>' ['<json params>']`,
+which prints JSON for drafts and published documents alike, with the token
+already loaded. Do not look for the token, the project id, or the `sanity`
+binary, and write no script of your own: on 2026-09-06 three readers spent
+ten or more commands each on exactly that.
+
 ## A. Who the page is for, and the writing rules
 
 Sources: `docs/avatars.md` (the page's row in the matrix, its tier, and the
@@ -36,10 +43,19 @@ reader questions it answers, and which it leaves open.
 
 ## C. Related blog posts, and the pages next to it in the menu
 
-Sources: `post` documents in Sanity on the page's topic (title, summary, and
-the body where it holds a fact or a story); the `navigation` document
-(`items[].label` and each item's links) for the page's menu group and its
-neighbours; what those neighbouring pages already cover.
+Sources, three queries and a few page reads:
+
+```bash
+pnpm sanity:query '*[_type == "post"]{_id, title, summary, "slug": slug.current}'
+pnpm sanity:query '*[_type == "post" && _id == $id][0]{body}' '{"id":"<id>"}'   # only for a post worth citing
+pnpm sanity:query '*[_type == "navigation"][0]'
+pnpm page:text <neighbour slug>
+```
+
+The posts on the page's topic (title, summary, and the body where it holds
+a fact or a story); the `navigation` document (`items[].label` and each
+item's links) for the page's menu group and its neighbours; what those
+neighbouring pages already cover.
 
 Notes: the posts worth citing, with their facts or stories; the menu group
 and the neighbouring pages with what each already covers, so content can move
@@ -47,21 +63,29 @@ to a neighbour instead of being repeated.
 
 ## D. Which page sections exist, and the design rules
 
-Sources: `studio/schemas/blocks/` (every page section's name and fields); the
-`homePage` document's list of sections; `frontend/DESIGN.md` in full; the
-list of sections other branches are editing, and the list of sections that
-still have no design, both from `page-workflow.md` "Rules for working in
-parallel".
+Sources: `studio/schemas/blocks/` (every page section's name and fields);
+the homepage's list of sections,
+`pnpm sanity:query '*[_id == "homePage"][0].blocks[]._type'`;
+`frontend/DESIGN.md` in full, once; and the list of sections that still
+have no design, from `page-workflow.md` "Rules for working in parallel"
+("Reuse" means designed). Do not run the git lock scan: the build's "get
+ready" step runs it once, right before anything is written, when it is
+still true.
 
 Notes: one line per section (its Studio title, its code name, its fields,
-whether it is designed, and whether another branch is editing it and which);
-the named rules in `DESIGN.md` with one line each on what they demand; the
-order of sections on the homepage.
+and whether it is designed); the named rules in `DESIGN.md` with one line
+each on what they demand; the order of sections on the homepage.
 
 ## E. Which photos exist
 
-Sources: `frontend/public/images/`; Sanity image assets matched by alt text,
-file name, and use on related documents.
+Sources: `frontend/public/images/` (`find frontend/public/images -type f`);
+the image assets in the content database, one query:
+
+```bash
+pnpm sanity:query '*[_type == "sanity.imageAsset"]{_id, originalFilename, altText, title, "w": metadata.dimensions.width, "h": metadata.dimensions.height, "usedBy": *[references(^._id)]{_id, _type, title}}'
+```
+
+Match by alt text, file name, and use on related documents.
 
 Notes: every photo that could work on this page, with its asset id or public
 path, alt text, size, and where it is used already.

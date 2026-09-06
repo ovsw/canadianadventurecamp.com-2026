@@ -57,7 +57,7 @@ message. So every step now runs as the `shell-and-files` agent type
 (`.claude/agents/shell-and-files.md`), which has five tools: Bash, Read,
 Edit, Write, Skill. Measured on 2026-09-06, such an agent starts at about
 8.5k tokens instead of 37k. Nothing in this workflow needs the other tools:
-GitHub is `gh`, Basecamp is `basecamp`, Sanity is the CLI and the scripts.
+GitHub is `gh`, Basecamp is `basecamp`, Sanity is `pnpm sanity:query` and the scripts.
 
 Turning MCP servers off does not help, and can hurt: with servers connected
 Claude Code loads tool definitions on demand, without them it loads all
