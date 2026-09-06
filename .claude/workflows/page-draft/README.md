@@ -28,11 +28,31 @@ did not return is gone, so every agent fills in every field it is asked for.
 `take-the-page`, `research`, or `plan`. `stopAfter: "plan"` writes the plan
 and stops, without building anything.
 
-One page per worktree. Several worktrees can draft several pages at the same
-time; the "taking a page" rules in `docs/agents/page-workflow.md` keep them
-from colliding. A run uses about fifteen agents, so set the workflow size
+One run per worktree, never in the main checkout. Several worktrees can
+draft several pages at the same time; the "taking a page" rules in
+`docs/agents/page-workflow.md` keep them from colliding. Two runs started in
+the same checkout join the same page and fight over it; the first step now
+refuses the main checkout and treats every claim comment it did not write as
+someone else's. A run uses about fifteen agents, so set the workflow size
 guideline to `large`, or the task panel shows a warning. A stopped run picks
 up where it left off in the same session: ask Claude to relaunch it.
+
+## What a run costs
+
+On 2026-09-05 one run took about 100 minutes, 25 agents, 650 tool calls,
+and 5% of a week's Fable allowance. The cost is the number of tool calls
+times the size of the context each call re-reads, and every agent starts
+about 37k tokens deep before it reads a file: Claude Code's own prompt,
+`CLAUDE.md`, memory, and the tool listings of every MCP server the session
+has. So, to keep a run cheap:
+
+- run it in a session with the MCP servers it does not need turned off
+  (it needs none: Basecamp, GitHub, and Sanity are all reached from the
+  shell);
+- keep the step files exact, with the commands written out, so agents do
+  not explore;
+- keep review rounds short: one read and one fix, a second only when the
+  first read found more than eight problems.
 
 ## The five steps
 
@@ -40,8 +60,8 @@ up where it left off in the same session: ask Claude to relaunch it.
 |---|---|---|---|
 | 1. Take the page | 1 | `take-the-page.md` | page name, card, branch, whether a plan already exists |
 | 2. Research | 5 at once | `research.md`, one reader each | one set of notes per reader |
-| 3. Plan | write, then second reader and fix, up to 3 rounds | `plan.md` | the plan's issue number and the list of sections |
-| 4. Build | get ready, one per section to build, write the text, proofread loop, load the page, push | `build.md`, one heading each | whether each part worked, plus notes for Ovi |
+| 3. Plan | write, then second reader and fix; a second round only after a long first list | `plan.md` | the plan's issue number and the list of sections |
+| 4. Build | get ready, one per section to build, write the text, proofread and fix (same rule), load the page, push | `build.md`, one heading each | whether each part worked, plus notes for Ovi |
 | 5. Hand over to Ovi | 1 | `hand-over.md` | the card, the lists, a short summary |
 
 If building fails, the agent writes what went wrong on the card and leaves the
@@ -61,8 +81,8 @@ each step. Simple, mechanical steps (taking the page, research, getting
 ready, loading the page, pushing, handing over, giving up) run on a smaller
 model. The steps that write text, design sections, or judge quality (writing
 the plan, the second reader, building sections, writing the page text,
-proofreading, fixing) use the session's model. Change the table, not the
-prompts, to trade cost against quality.
+proofreading, fixing) use the session's model; the two readers at medium
+effort. Change the table, not the prompts, to trade cost against quality.
 
 ## What lives here and what does not
 
@@ -92,10 +112,13 @@ and the content database, also used by `page-integrate`),
 - Decide, do not ask. A choice with more than one good answer goes into the
   plan under "Decisions made without Ovi", with the option taken and why. A
   fact the site cannot supply is a question for the camp, never an invention.
-- Facts about the repo live in `docs/agents/page-workflow.md`: Basecamp ids,
-  how to take a page, the rules for working in parallel, the scripts, how to
-  load a page without a browser, and the finish checklist. Read the part your
-  step needs.
+- Facts about the repo live in `docs/agents/page-workflow.md`: Basecamp ids
+  and commands, how to take a page, the rules for working in parallel, the
+  scripts, how to load a page without a browser, and the finish checklist.
+  Read the part your step needs.
+- What the script hands a step is true. Research notes go to the plan
+  writer, the page writer, and the proofreader; none of them reads the
+  sources again. Run no `--help`; the commands are in the step files.
 - Save drafts only. Touch only this page's documents. Never publish.
 
 ## Flow
@@ -150,15 +173,17 @@ Which photos exist"]
   subgraph P3["3. Plan"]
     decide["AGENT: write the plan (session model)
 Write the plan as a GitHub issue,
-link it on the card"] --> critic["AGENT: second reader (session model, high effort)
+link it on the card"] --> critic["AGENT: second reader (session model, medium effort)
 Reads the plan as the parent
 it is written for, lists problems.
 A new agent each round"] --> critq{SCRIPT checks:
-found problems?
-Up to 3 rounds}
+found problems?}
     critq -- yes --> revise["AGENT: fix the plan (session model)
 Applies the fixes to the issue.
-A new agent each round"] --> critic
+A new agent each round"] --> critq2{SCRIPT checks:
+more than 8 problems,
+and only one round so far?}
+    critq2 -- yes --> critic
     readplan["AGENT: read the plan (sonnet)
 Reads the existing plan"]
   end
@@ -176,30 +201,34 @@ A new agent for each new or redesigned section,
 one after the other. None of them sees
 what the one before it did, only its files"]
     blocks --> seed["AGENT: write the page text (session model)
+Gets the research notes and the plan.
 Write the text and save it
 as a draft in Sanity"]
-    seed --> checker["AGENT: proofread (session model, high effort)
-Voice, banned words, unconfirmed facts,
+    seed --> checker["AGENT: proofread (session model, medium effort)
+Gets the notes on who the page is for.
+Unconfirmed facts, broken sentences, banned words,
 colours alternate, buttons in place.
 A new agent each round"] --> revq{SCRIPT checks:
-found problems?
-Up to 3 rounds}
+found problems?}
     revq -- yes --> fixer["AGENT: fix (session model)
 Fix them and save again.
-A new agent each round"] --> checker
+A new agent each round"] --> revq2{SCRIPT checks:
+more than 8 problems,
+and only one round so far?}
+    revq2 -- yes --> checker
     revq -- no --> render["AGENT: load the page (sonnet, low effort)
 Load the page on the dev server,
-check every section shows up"] --> renderq{SCRIPT checks:
+check the draft's headings show up.
+One try, no fixer"] --> renderq{SCRIPT checks:
 page loads?}
-    renderq -- no --> renderfix["AGENT: fix (session model)
-Fix it, one try"] --> render
-    renderq -. "no, second time" .-> abort
+    renderq -- no, written for Ovi --> push
     renderq -- yes --> push["AGENT: push the code (sonnet)
 Final checks, then push"]
   end
   critq -- no --> prep
+  critq2 -- no --> prep
+  revq2 -- no --> render
   readplan --> prep
-  revise ~~~ prep
   prepq -- no --> abort
   blocks -. code will not compile .-> abort
   seed -. draft will not save .-> abort

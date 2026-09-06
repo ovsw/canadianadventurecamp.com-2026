@@ -1,16 +1,25 @@
 # Step 3: Write the plan
 
 One agent writes the plan. Then a second agent reads it as the parent it is
-written for and lists the problems, and a third agent fixes them. The second
-reader then reads the fixed plan again. That goes round up to three times, or
-until the second reader finds nothing. Problems found in the third
-round go into the notes for Ovi.
+written for and lists the problems, and a third agent fixes them. That is
+one round. A second round runs only when the first read found more than
+eight problems. What the last read found is fixed but not read again, and
+goes into the notes for Ovi as unchecked.
 
-Inputs are the five sets of notes from the research step. For every decision
-below, write the answer you would have recommended to Ovi, and the reader
-line, fact, or rule it rests on. A decision without a basis is a guess: find
-the fact, or mark the gap as a question for the camp. The whole set of
-decisions becomes the plan, saved as a GitHub issue.
+Inputs are the five sets of notes from the research step, in your prompt.
+They are your sources: the readers, the writing rules, the old page, the
+posts and neighbours, the sections with their fields and whether each is
+designed, and the photos. Do not read `docs/avatars.md`, `CONTEXT.md`,
+`DESIGN.md`, the old page, or the renderers again to check the notes. Open a
+schema file only when a note leaves a field you need unknown. On 2026-09-05
+a plan writer spent its first seven minutes re-reading what the notes
+already said, and was stopped as stalled.
+
+For every decision below, write the answer you would have recommended to
+Ovi, and the reader line, fact, or rule it rests on. A decision without a
+basis is a guess: find the fact in the notes, or mark the gap as a question
+for the camp. The whole set of decisions becomes the plan, saved as a GitHub
+issue.
 
 Order matters: the content decides which page section to use, never the
 other way round. Settle parts 1 to 3 before you look at the list of existing
@@ -19,8 +28,9 @@ sections.
 ## Part 1: Who the page is for
 
 Which readers the page serves, which one comes first, and which ones it
-deliberately ignores. Start from the page's row in `docs/avatars.md` and
-deviate only with a reason from the profiles. Rachel never sees the fit quiz.
+deliberately ignores. Start from the page's row in the avatar matrix as the
+notes (A) report it, and deviate only with a reason from the profiles in
+those notes. Rachel never sees the fit quiz.
 Maya never gets a form.
 
 ## Part 2: What each reader is trying to do
@@ -68,18 +78,22 @@ one of these four labels:
   designs it to `DESIGN.md`.
 - **new**: a section that does not exist yet.
 
-Check every "reuse" against the section's code, following the "Reuse means
-designed" rule. A section another branch is editing is used exactly as it is
-on `main`, or replaced. Plan the background colours now so they alternate
+A "reuse" label is allowed only on a section the notes (D) say is designed
+and no other branch is editing; the build step trusts this label and does
+not open the renderers again. A section another branch is editing is used
+exactly as it is on `main`, or replaced. Plan the background colours now so
+they alternate
 (dark, cream, dark, and so on; money, trust, and forms on cream), and so the
 page opens with a hero section and each section opens with the small
 heading, the big heading, and the script line.
 
 ## Save the plan
 
-Search the open GitHub issues for `Page: … (/<slug>)` first and reuse one if
-it exists. Otherwise `gh issue create` with the labels `page-brief` and
-`ready-for-agent`, the title `Page: <page title> (/<slug>)`, and this body:
+Search once, `gh issue list --search "Page: (/<slug>)" --state open --json
+number,title,url`, and reuse a matching issue with `gh issue edit <n>
+--body-file <file>`. Otherwise write the body to a file and run
+`gh issue create --title "Page: <page title> (/<slug>)" --label page-brief
+--label ready-for-agent --body-file <file>`. The body:
 
 ```markdown
 ## Problem Statement
@@ -144,13 +158,19 @@ Only what the site cannot answer on its own; the same list goes to the camp.
 Reader profiles, old page, posts, documents consulted.
 ```
 
-Add the issue link to the card's `Spec issue` line. Done when the link is on
-the card.
+Add the issue link to the card's `Spec issue` line: read the body with
+`basecamp cards show <id> --in 48063970 --account 6230954 --json`
+(`data.content`, HTML), change only that line, and write it back with
+`basecamp cards update <id> --in 48063970 --account 6230954 --body "$BODY"
+--json`. Done when the link is on the card.
 
 ## The second reader
 
-A second agent reads the saved plan the way the main reader would, and
-against the rules, and returns problems only, each with a fix:
+A second agent reads the saved plan (`gh issue view <n> --json body -q
+.body`, once) the way the main reader would, and against the rules, and
+returns problems only, each with a fix. The notes on who the page is for are
+in the prompt; read nothing else unless a problem needs one fact checked.
+A problem is one of these:
 
 - one of the main reader's top questions that no section answers;
 - a section whose proof is missing or invented (check against the "do not
@@ -164,11 +184,16 @@ against the rules, and returns problems only, each with a fix:
 - a banned word from "Copy voice" in the writing direction;
 - an entry in "Decisions made without Ovi" with no reason given.
 
-"No problems" is a valid answer. Style and taste are not problems.
+Return only what would make the page say something untrue, or break one of
+the rules above. Wording, order, tone, numbering, the length of a label, and
+anything you would merely have written differently are not problems, and
+neither is a sentence the writer will cut anyway. "No problems" is a valid
+answer. Expect a handful; a list of twenty says the bar was set too low.
 
 ## Fix the plan
 
-When the second reader found problems, a third agent applies each fix to the
-issue with `gh issue edit`, adds one line per fix under "Decisions made
-without Ovi", and returns the section list again. Then the second reader
-reads the plan again. Up to three rounds.
+When the second reader found problems, a third agent applies each fix:
+`gh issue view <n> --json body -q .body > <file>`, edit the file, add one
+line per fix under "Decisions made without Ovi", then `gh issue edit <n>
+--body-file <file>`. Return the section list again. The script runs a second
+read only when the first found more than eight problems.

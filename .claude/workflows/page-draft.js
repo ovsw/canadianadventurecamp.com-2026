@@ -7,8 +7,8 @@ export const meta = {
   phases: [
     { title: 'Take the page', detail: 'find the card, mark it in progress' },
     { title: 'Research', detail: 'five readers at once, one set of notes each' },
-    { title: 'Plan', detail: 'write the plan, second reader, fix, save as a GitHub issue' },
-    { title: 'Build', detail: 'get ready, build sections, write the text, proofread, load the page, push' },
+    { title: 'Plan', detail: 'write the plan as a GitHub issue, second reader, fix' },
+    { title: 'Build', detail: 'get ready, build sections, write the text, proofread, fix, load the page, push' },
     { title: 'Hand over to Ovi', detail: 'card to Ovi Polish, For Ovi comment, list for the camp' },
   ],
 }
@@ -26,26 +26,29 @@ const DOCS = '.claude/workflows/page-draft'
 const PREAMBLE = [
   'You are one step of the page-draft workflow for the Canadian Adventure Camp website, run inside this repository.',
   'Ovi is away. Never wait for him: take the decision you would have recommended to him, and write down the fact or rule it rests on.',
-  `Read \`${DOCS}/README.md\` first, then the file for your step. Facts about the repo (Basecamp ids, how to take a page, the rules for working in parallel, the scripts, how to load a page without a browser) are in \`docs/agents/page-workflow.md\`.`,
+  `Read the file for your step in \`${DOCS}/\` and nothing else of that folder. Facts about the repo (Basecamp ids and commands, how to take a page, the rules for working in parallel, the scripts, how to load a page without a browser) are in \`docs/agents/page-workflow.md\`; read the part your step names.`,
+  'Every tool call re-reads everything you have read so far, so each one costs. What your instructions hand you (notes, the plan, section lists) is true: do not read the sources again to check it. Run no `--help`: the commands you need are written in your step file, with their flags. Read a file once, read only the part you need, and stop reading when you can act.',
   'Your final output is data for the script that runs the workflow, never a message for a person. Fill in every field you are asked for; anything you do not return is lost.',
   'When you are asked for `forOvi`, return one line per thing you assumed, guessed, decided on your own, or could not confirm in this step. Start each line with `decision:`, `review:`, `client:`, or `assumption:`. Return an empty list only when there is truly nothing.',
 ].join('\n')
 
 // Which model and effort each step uses. Simple, mechanical steps run on a
 // smaller model. The steps that write text, design sections, or judge
-// quality use the session's model. Edit this table to trade cost against
-// quality.
+// quality use the session's model. The two readers run at medium effort:
+// on 2026-09-05 they were the largest cost of a run at high effort, and
+// their round 1 findings were the ones that mattered. Edit this table to
+// trade cost against quality.
 const MODEL = {
   takeThePage: { model: 'sonnet' },
   research: { model: 'sonnet' },
   readThePlan: { model: 'sonnet' },
   writeThePlan: {},
-  secondReader: { effort: 'high' },
+  secondReader: { effort: 'medium' },
   fixThePlan: {},
   getReady: { model: 'sonnet' },
   buildSection: {},
   writeTheText: {},
-  proofread: { effort: 'high' },
+  proofread: { effort: 'medium' },
   fix: {},
   loadThePage: { model: 'sonnet', effort: 'low' },
   push: { model: 'sonnet' },
@@ -67,7 +70,7 @@ function list(item) {
 
 const PAGE = obj(
   {
-    status: { type: 'string', enum: ['taken', 'someone-else-has-it', 'not-found'] },
+    status: { type: 'string', enum: ['taken', 'someone-else-has-it', 'not-found', 'wrong-checkout'] },
     slug: str,
     title: str,
     pageId: str,
@@ -203,6 +206,15 @@ async function giveUp(page, stepName, reason) {
   return { status: 'failed', step: stepName, reason, card: page.cardUrl, branch: page.branch }
 }
 
+// A reader and a fixer take one turn each. A second turn runs only when the
+// first read found more than MANY problems: on 2026-09-05 both loops ran
+// their full three rounds every time, because a reader asked for problems
+// always finds some, and rounds 2 and 3 cost as much as round 1 while
+// finding less. What the last read found is fixed but not read again; the
+// script lists it for Ovi as unchecked.
+const MANY = 8
+const MAX_ROUNDS = 2
+
 // ---- 1. Take the page ------------------------------------------------------
 phase('Take the page')
 const page = await run(
@@ -210,7 +222,7 @@ const page = await run(
   'Take the page',
   [
     `Your job: take the page. Follow \`${DOCS}/take-the-page.md\`.`,
-    `Target: ${target || '(nothing given: take the top card in the "To Build" column)'}.`,
+    `Target: ${target || '(nothing given: take the top card in the "To Build" column that nobody has claimed)'}.`,
   ].join('\n'),
   PAGE,
   MODEL.takeThePage,
@@ -226,6 +238,10 @@ if (stopAfter === 'take-the-page') return { status: 'stopped after taking the pa
 // ---- 2 and 3. Research and plan, unless the plan is already written --------
 let plan
 let planProblemsFixedUnchecked = []
+// The research notes go to the plan writer, and again to the page writer
+// and the proofreader, so they do not read the sources a second time.
+let allNotes = ''
+let audienceNotes = ''
 if (page.planIssueNumber) {
   log(`The plan is already written (issue #${page.planIssueNumber}). Skipping research and planning.`)
   plan = await run(
@@ -266,7 +282,8 @@ if (page.planIssueNumber) {
   if (missing.length) {
     throw new Error(`These research readers returned nothing: ${missing.map((r) => r.key).join(', ')}. Relaunch the workflow to continue.`)
   }
-  const allNotes = readers.map((r, i) => `### ${r.heading}\n\n${notes[i].notes}`).join('\n\n')
+  allNotes = readers.map((r, i) => `### ${r.heading}\n\n${notes[i].notes}`).join('\n\n')
+  audienceNotes = `### ${readers[0].heading}\n\n${notes[0].notes}`
   if (stopAfter === 'research') return { status: 'stopped after research', page, notes: allNotes }
 
   phase('Plan')
@@ -286,20 +303,16 @@ if (page.planIssueNumber) {
   )
   log(`Plan saved: ${written.issueUrl} (${written.sections.length} sections)`)
   plan = written
-  // The second reader and the fixer take turns, up to three rounds, until
-  // the second reader finds nothing. If the third round still found
-  // problems, the fixer fixed them but nobody read the plan again; those go
-  // into the notes for Ovi as unchecked.
-  for (let round = 1; round <= 3; round++) {
+  for (let round = 1; round <= MAX_ROUNDS; round++) {
     const secondRead = await run(
       `second reader (round ${round})`,
       'Plan',
       [
-        `Your job: read the plan as the parent it is written for, round ${round} of 3. Follow "The second reader" in \`${DOCS}/plan.md\`.`,
+        `Your job: read the plan as the parent it is written for, round ${round}. Follow "The second reader" in \`${DOCS}/plan.md\`.`,
         pageLine(page),
-        `The plan: ${plan.issueUrl}. Read the issue as it is now, the notes below on who the page is for, and the rules they cite. Return problems only.`,
+        `The plan: ${plan.issueUrl}. Read the issue as it is now, and the notes below on who the page is for. Return problems only.`,
         '',
-        `### ${readers[0].heading}\n\n${notes[0].notes}`,
+        audienceNotes,
       ].join('\n'),
       PROBLEMS_IN_PLAN,
       MODEL.secondReader,
@@ -323,8 +336,9 @@ if (page.planIssueNumber) {
       PLAN,
       MODEL.fixThePlan,
     )
+    if (planProblemsFixedUnchecked.length <= MANY) break
   }
-  for (const p of planProblemsFixedUnchecked) forOvi.push(`review: plan problem found in round 3 and fixed, but nobody read the plan again after the fix: ${p.section}: ${p.problem} [second reader]`)
+  for (const p of planProblemsFixedUnchecked) forOvi.push(`review: plan problem found in the last read and fixed, but nobody read the plan again after the fix: ${p.section}: ${p.problem} [second reader]`)
 }
 if (stopAfter === 'plan') return { status: 'stopped after the plan', page, plan }
 
@@ -334,9 +348,9 @@ const ready = collect('get ready', await run(
   'get ready',
   'Build',
   [
-    `Your job: get ready to build. Follow "Get ready" in \`${DOCS}/build.md\`.`,
+    `Your job: get ready to build. Follow "Get ready" in \`${DOCS}/build.md\`: sync, the lock scan, the backup. Nothing else.`,
     pageLine(page),
-    `The plan: ${plan.issueUrl}. Its sections:`,
+    `The plan: ${plan.issueUrl}. Its sections, already checked by the plan writer against the code (a "reuse" here is designed; do not open the renderers again):`,
     sectionList(plan.sections),
   ].join('\n'),
   READY,
@@ -387,9 +401,14 @@ const text = collect('write the text', await run(
   [
     `Your job: write the page text and save it as a draft. Follow "Write the page text and save the draft" in \`${DOCS}/build.md\`.`,
     pageLine(page),
-    `The plan: ${plan.issueUrl}. Its sections:`,
+    `The plan: ${plan.issueUrl}. Read it once with \`gh issue view\`. Its sections:`,
     sectionList(sections),
     `Questions for the camp already known: ${plan.questionsForTheCamp.join(' | ') || '(none)'}`,
+    '',
+    allNotes
+      ? 'The research notes follow. They are your sources for the readers, the writing rules, the old page, the posts, the neighbouring pages, the sections and their fields, and the photos. Do not read those sources again.'
+      : 'The plan was written in an earlier run, so there are no research notes. Read the plan and `CONTEXT.md` "Copy voice", then the schema of each section you write.',
+    allNotes,
   ].join('\n'),
   TEXT_SAVED,
   MODEL.writeTheText,
@@ -397,17 +416,20 @@ const text = collect('write the text', await run(
 if (!text.saved) return giveUp(page, 'write the page text', text.notes)
 log(`Saved ${text.documentIds.length} draft document(s) in Sanity`)
 
-// Same shape as the plan loop: what the third round found was fixed, but
-// not proofread again.
+// Same shape as the plan loop: what the last read found is fixed but not
+// proofread again.
 let proofreadFixedUnchecked = []
-for (let round = 1; round <= 3; round++) {
+for (let round = 1; round <= MAX_ROUNDS; round++) {
   const read = await run(
     `proofread (round ${round})`,
     'Build',
     [
-      `Your job: proofread the page, round ${round} of 3. Follow "Proofread" in \`${DOCS}/build.md\`.`,
+      `Your job: proofread the page, round ${round}. Follow "Proofread" in \`${DOCS}/build.md\`.`,
       pageLine(page),
       `The plan: ${plan.issueUrl}. The seed file: ${text.seedPath}. Return problems only.`,
+      '',
+      audienceNotes ? 'Who the page is for, from the research step:' : '',
+      audienceNotes,
     ].join('\n'),
     PROBLEMS_IN_PAGE,
     MODEL.proofread,
@@ -431,32 +453,31 @@ for (let round = 1; round <= 3; round++) {
     FIXED,
     MODEL.fix,
   ))
+  if (proofreadFixedUnchecked.length <= MANY) break
 }
 
-const loadPrompt = [
-  `Your job: load the page and check it. Follow "Load the page and check it" in \`${DOCS}/build.md\`.`,
-  pageLine(page),
-  'Section headings that must appear:',
-  sections.map((s) => `- ${s.title}`).join('\n'),
-].join('\n')
-let loaded = await run('load the page', 'Build', loadPrompt, PAGE_LOADED, MODEL.loadThePage)
-if (!loaded.ok) {
-  collect('fix the page load', await run(
-    'fix the page load',
-    'Build',
-    [
-      `Your job: the page /${page.slug} did not load correctly on the dev server. Find the cause (a component crashing, a missing field, the text not matching the section's fields), fix it, commit, and say what you did.`,
-      pageLine(page),
-      `Headings not found: ${loaded.missingHeadings.join('; ') || '(none)'}`,
-      `Errors seen: ${loaded.errors.join('; ') || '(none)'}`,
-    ].join('\n'),
-    FIXED,
-    MODEL.fix,
-  ))
-  loaded = await run('load the page (second try)', 'Build', loadPrompt, PAGE_LOADED, MODEL.loadThePage)
-  if (!loaded.ok) {
-    return giveUp(page, 'load the page', [...loaded.errors, ...loaded.missingHeadings.map((h) => `heading not found: ${h}`)].join('; ') || 'the page did not load and the fix did not help')
-  }
+// One check, no fixer. The headings come from the draft itself (`pnpm
+// page:text`), not from the plan: on 2026-09-05 the check looked for the
+// plan's outline names, failed on a page that loaded fine, and a fixer
+// renamed four headings to satisfy it. A page that fails here is handed
+// over with the failure written for Ovi; it is a draft, and he reads it next.
+const loaded = await run(
+  'load the page',
+  'Build',
+  [
+    `Your job: load the page and check it. Follow "Load the page and check it" in \`${DOCS}/build.md\`.`,
+    pageLine(page),
+    `The draft holds ${sections.length} sections. Every heading that \`pnpm page:text ${page.slug}\` prints must appear in the HTML.`,
+  ].join('\n'),
+  PAGE_LOADED,
+  MODEL.loadThePage,
+)
+const loadProblem = loaded.ok
+  ? ''
+  : [...loaded.errors, ...loaded.missingHeadings.map((h) => `heading not found: ${h}`)].join('; ') || 'the page did not load'
+if (loadProblem) {
+  log(`The page did not load cleanly: ${loadProblem}`)
+  forOvi.push(`review: the page did not load cleanly on the dev server, nobody fixed it: ${loadProblem} [load the page]`)
 }
 
 const pushed = collect('push', await run(
@@ -485,6 +506,7 @@ const handed = await run(
     `Placeholders: ${text.placeholders.join('; ') || '(none)'}`,
     `Missing photos: ${text.missingPhotos.join('; ') || '(none)'}`,
     `Proofreading problems fixed in the last round and not proofread again: ${proofreadFixedUnchecked.length ? JSON.stringify(proofreadFixedUnchecked) : '(none)'}`,
+    `Loading the page on the dev server: ${loadProblem || 'loaded cleanly'}`,
     `Homepage candidates: ${plan.homepageCandidates.join('; ') || '(none)'}`,
     `Questions for the camp: ${plan.questionsForTheCamp.join(' | ') || '(none)'}`,
     '',
@@ -510,6 +532,7 @@ return {
   missingPhotos: handed.missingPhotos,
   proofreadFixedUnchecked,
   planProblemsFixedUnchecked,
+  loadProblem,
   forOvi,
   summary: handed.summary,
 }

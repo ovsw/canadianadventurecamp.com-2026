@@ -2,6 +2,8 @@
 // Shared by build-excalidraw.mjs and build-drawio.mjs.
 const SESSION = "session model";
 const n = (id, cx, y, kind, text, o = {}) => ({ id, cx, y, kind, text, ...o });
+// Two connections between the same boxes need their own `id`, or the
+// generated arrows collide.
 const e = (from, to, label = "", o = {}) => ({ from, to, label, ...o });
 
 // ---- the picture ---------------------------------------------------------
@@ -23,20 +25,21 @@ export const nodes = [
 
   n("readPlan", FAR, 1120, "box", "AGENT: read the plan (sonnet)\nReads the plan that is already written"),
   n("writePlan", C, 960, "box", `AGENT: write the plan (${SESSION})\nWrite the plan as a GitHub issue and link it on the card`),
-  n("secondReader", C, 1120, "box", `AGENT: second reader (${SESSION}, high effort)\nReads the plan as the parent it is written for, and lists the problems. A new agent each round`),
-  n("q3", C, 1300, "diamond", "SCRIPT checks: found problems? Up to 3 rounds"),
+  n("secondReader", C, 1120, "box", `AGENT: second reader (${SESSION}, medium effort)\nReads the plan as the parent it is written for, and lists the problems. A new agent each round`),
+  n("q3", C, 1300, "diamond", "SCRIPT checks: found problems?"),
   n("fixPlan", R, 1200, "box", `AGENT: fix the plan (${SESSION})\nApplies the fixes to the issue. A new agent each round`),
+  n("q3b", R, 1380, "diamond", "SCRIPT checks: more than 8 problems, and only one round so far?"),
 
   n("getReady", C, 1600, "box", "AGENT: get ready (sonnet)\nGet the latest code, check nobody else is editing the same sections, back up the content database"),
   n("q4", C, 1790, "diamond", "SCRIPT checks: latest code pulled, backup made and checked?"),
   n("buildSection", C, 1960, "box", `AGENT: build one section (${SESSION})\nA new agent for each new or redesigned section, one after the other. None of them sees what the one before it did, only its files`),
-  n("writeText", C, 2120, "box", `AGENT: write the page text (${SESSION})\nWrite the text and save it as a draft in Sanity`),
-  n("proofread", C, 2280, "box", `AGENT: proofread (${SESSION}, high effort)\nVoice, banned words, unconfirmed facts, colours alternate, buttons in place. A new agent each round`),
-  n("q5", C, 2470, "diamond", "SCRIPT checks: found problems? Up to 3 rounds"),
+  n("writeText", C, 2120, "box", `AGENT: write the page text (${SESSION})\nGets the research notes and the plan. Write the text and save it as a draft in Sanity`),
+  n("proofread", C, 2280, "box", `AGENT: proofread (${SESSION}, medium effort)\nGets the notes on who the page is for. Unconfirmed facts, broken sentences, banned words, colours alternate, buttons in place. A new agent each round`),
+  n("q5", C, 2470, "diamond", "SCRIPT checks: found problems?"),
   n("fix", R, 2370, "box", `AGENT: fix (${SESSION})\nFix them and save again. A new agent each round`),
-  n("loadPage", C, 2650, "box", "AGENT: load the page (sonnet, low effort)\nLoad the page on the dev server and check every section shows up"),
+  n("q5b", R, 2550, "diamond", "SCRIPT checks: more than 8 problems, and only one round so far?"),
+  n("loadPage", C, 2650, "box", "AGENT: load the page (sonnet, low effort)\nLoad the page on the dev server and check the draft's headings show up. One try, no fixer"),
   n("q6", C, 2840, "diamond", "SCRIPT checks: page loads?"),
-  n("fixLoad", R, 2740, "box", `AGENT: fix (${SESSION})\nFix it, one try`),
   n("push", C, 3020, "box", "AGENT: push the code (sonnet)\nFinal checks, then push"),
   n("giveUp", RR, 2300, "box", "AGENT: give up (haiku)\nWrites what went wrong on the card and leaves it marked in progress", { fill: "#d3455b", color: "#fff", stroke: "#a02a3c" }),
 
@@ -66,7 +69,9 @@ export const edges = [
   e("writePlan", "secondReader"),
   e("secondReader", "q3"),
   e("q3", "fixPlan", "yes"),
-  e("fixPlan", "secondReader"),
+  e("fixPlan", "q3b"),
+  e("q3b", "secondReader", "yes"),
+  e("q3b", "getReady", "no"),
   e("q3", "getReady", "no"),
   e("getReady", "q4"),
   e("q4", "buildSection", "yes"),
@@ -77,13 +82,13 @@ export const edges = [
   e("writeText", "giveUp", "draft will not save", { dashed: true }),
   e("proofread", "q5"),
   e("q5", "fix", "yes"),
-  e("fix", "proofread"),
+  e("fix", "q5b"),
+  e("q5b", "proofread", "yes"),
+  e("q5b", "loadPage", "no"),
   e("q5", "loadPage", "no"),
   e("loadPage", "q6"),
-  e("q6", "fixLoad", "no"),
-  e("fixLoad", "loadPage"),
   e("q6", "push", "yes"),
-  e("q6", "giveUp", "no, second time", { dashed: true }),
+  e("q6", "push", "no, written for Ovi", { dashed: true, id: "arrow-q6-push-failed" }),
   e("push", "giveUp", "push fails", { dashed: true }),
   e("push", "handOver"),
   e("handOver", "done"),
