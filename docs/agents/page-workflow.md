@@ -41,10 +41,25 @@ and the client's feedback come after; neither is the draft's job.
 - Client facts and media the camp must supply go on one to-do list per page,
   titled `Client input: <page title>`, in the project's to-dos. One to-do per
   fact or asset, so the client can tick them.
-- Update a card body with `basecamp cards update <id> --body '<html>'`
-  (`--content` is not a flag), move it with
-  `basecamp cards move <id> --to <column id>`, and comment with
-  `basecamp comments create <id> - --in ...` reading Markdown from stdin.
+- The commands, each with `--in 48063970 --account 6230954 --json`; the
+  answer is `{ ok, data }`. Run no `--help`; this list is complete for the
+  page workflow.
+
+  | What | Command |
+  |---|---|
+  | Columns of the tracker | `basecamp cards columns --card-table 10092471266` |
+  | Cards in a column, in order | `basecamp cards list --column <column id>` |
+  | One card, body in `data.content` (HTML) | `basecamp cards show <card id>` |
+  | Comments on a card, oldest first, in `data` | `basecamp comments list <card id>` |
+  | Comment, Markdown from stdin | `basecamp comments create <card id> - < <file>` |
+  | Move a card | `basecamp cards move <card id> --to <column id>` |
+  | Rewrite a card body (`--content` is not a flag) | `basecamp cards update <card id> --body "$BODY"` |
+  | Make a to-do list, id in `data.id` | `basecamp todolists create "<name>" -d "<description>"` |
+  | Add a to-do | `basecamp todos create "<text>" --list <list id>` |
+  | List the to-do lists | `basecamp todolists list` |
+
+  The card body is one field that the last writer overwrites: read it, change
+  only the line you own, and write the whole thing back.
 
 ## Taking a page so nobody else works on it
 
@@ -52,9 +67,16 @@ Sessions running at the same time share Basecamp, GitHub issues, the Sanity
 content database, and `origin`. Nothing locks any of them, so the workflow
 takes the page on the card before it writes anything:
 
-1. Read the card and its comments. A card already in Building or Ovi Polish
-   with a `Branch:` line from another session, or with a "Taking this page"
-   comment from another branch, is taken: report it and stop.
+0. Never from the main checkout. A run there leaves the checkout on a page
+   branch, and the next run started there joins the first run's page. Two
+   runs drafted Health & Safety at the same time in the main checkout on
+   2026-09-05 and fought over one plan issue, one seed file, and one draft.
+   Every run gets its own worktree.
+1. Read the card and its comments. A card with any "Taking this page"
+   comment you did not write yourself in this step is taken, even when the
+   comment names your branch or your worktree: you did not write it, so the
+   run that did is still going. Report it and stop, or, when no target was
+   given, take the next card that has no such comment.
 2. Post a comment on the card: "Taking this page. Branch: `<branch>`,
    worktree: `<path>`." Comments only append, so they keep their order.
    Re-read the comments. If another "Taking this page" comment sits above
@@ -152,8 +174,11 @@ out of git.
 Sanity Presentation needs a browser, but a server render of the draft catches
 a renderer crash or a missing field before handoff:
 
-1. Start `pnpm dev:worktree` (or reuse the running one; `pnpm dev:stop` lists
-   them) and note the Website port.
+1. The Website port is `frontendPort` in `.worktree-ports.json` at the
+   worktree root, written by `pnpm dev:worktree`. No file: `pnpm dev:stop`
+   with no flags lists the running servers; if none is this worktree's,
+   start `pnpm dev:worktree` in the background and wait for the port to
+   answer.
 2. From `frontend/`, create a preview secret with a short node script:
    `createPreviewSecret(client, "page-draft", studioUrl)` from
    `@sanity/preview-url-secret/create-secret` (the package resolves from the
@@ -161,9 +186,11 @@ a renderer crash or a missing field before handoff:
    frontend uses, with the `SANITY_AUTH_TOKEN` from `studio/.env.local`).
 3. `curl -c jar "http://127.0.0.1:<port>/api/draft-mode/enable?sanity-preview-secret=<secret>&sanity-preview-pathname=/<slug>"`
    (expect 307), then `curl -b jar http://127.0.0.1:<port>/<slug>`.
-4. Grep the HTML for every section's heading text and for a 500 or "Application
-   error". The `<title>` shows the site default because metadata reads the
-   published perspective; that is expected.
+4. Grep the HTML for every heading `pnpm page:text <slug>` prints for the
+   draft (the draft's own headings, never a plan's outline names), and for
+   "Application error" or "Internal Server Error". The `<title>` shows the
+   site default because metadata reads the published perspective; that is
+   expected.
 
 The Sanity CLI's `documents query` returns published documents only. Read
 drafts from a script with `getCliClient(...).fetch(query, params,
