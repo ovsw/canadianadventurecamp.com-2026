@@ -160,6 +160,7 @@ show as invalid everywhere else until that branch merges. So:
 |---|---|
 | `pnpm legacy:page <slug>` | Old site content for the page, as text. Starting point, never a template. |
 | `pnpm page:text <slug>` | The current draft (or published page) as a reader meets it. Proofread copy here. |
+| `pnpm sanity:query '<groq>' ['<json params>']` | Any GROQ query as JSON, drafts and published alike, token already loaded. The one way to read the dataset from a step. |
 | `pnpm page:seed <seed.mjs> [--apply]` | Write the page draft and its supporting drafts from a seed module. Dry run without `--apply`. Helpers in `studio/scripts/lib/portable-text.mjs`. |
 | `pnpm page-builder:new <name>` | Generate and register a new block's schema, query, and renderer. |
 | `pnpm sync:main` | Merge `origin/main` with generated files and marker registrations resolved. |
@@ -194,9 +195,9 @@ a renderer crash or a missing field before handoff:
    site default because metadata reads the published perspective; that is
    expected.
 
-The Sanity CLI's `documents query` returns published documents only. Read
-drafts from a script with `getCliClient(...).fetch(query, params,
-{ perspective: "raw" })`, as `studio/scripts/print-page-text.mjs` does.
+The Sanity CLI's `documents query` returns published documents only.
+`pnpm sanity:query` reads drafts too (it fetches with the raw perspective,
+as `studio/scripts/print-page-text.mjs` does).
 `sanity documents validate --yes --level warning --format ndjson` validates
 drafts too; grep the output for the page id.
 
