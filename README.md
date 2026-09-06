@@ -44,6 +44,7 @@ pnpm dev:stop
 pnpm page-builder:new <name>
 pnpm legacy:page <slug>
 pnpm page:text <slug>
+pnpm sanity:query '<groq>' ['<json params>']
 pnpm page:seed <seed.mjs> [--apply]
 pnpm sync:main
 pnpm merge:refs <ref>...
@@ -66,8 +67,8 @@ Run `pnpm verify` before opening a pull request. It checks generated Sanity type
 GROQ projection, and React renderer. Use `--scope content|general|home`,
 `--title "Studio title"`, `--preview ./preview.jpg`, or `--dry-run` as needed.
 
-`pnpm legacy:page`, `pnpm page:text`, and `pnpm page:seed` read and write one
-page's content for the page workflow; `pnpm sync:main` and `pnpm merge:refs`
+`pnpm legacy:page`, `pnpm page:text`, `pnpm sanity:query`, and `pnpm page:seed`
+read and write content for the page workflow; `pnpm sync:main` and `pnpm merge:refs`
 merge branches with generated Sanity types regenerated. See
 `docs/agents/page-workflow.md`.
 

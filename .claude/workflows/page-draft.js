@@ -79,6 +79,7 @@ const PAGE = obj(
     cardId: str,
     cardUrl: str,
     branch: str,
+    worktree: str,
     planIssueNumber: int,
     note: str,
   },
@@ -183,11 +184,17 @@ function collect(stepName, result) {
   return result
 }
 
+// Every step gets these lines. The facts an agent would otherwise go and
+// find again: on 2026-09-06 three research readers spent ten or more
+// commands each working out which checkout they were in and how to query
+// the content database.
 function pageLine(page) {
   return [
     `The page: "${page.title}", slug \`${page.slug}\`, Sanity id \`${page.pageId || '(none yet: this is a new page)'}\`,`,
     `tier ${page.tier || '?'}, Basecamp card ${page.cardUrl} (id ${page.cardId}), branch \`${page.branch}\`.`,
-  ].join(' ')
+    `Work in \`${page.worktree}\`: start every command with \`cd "${page.worktree}" &&\`. It is a worktree of the main checkout; never use the main checkout's path, and never guess a path from the project name.`,
+    'The content database: `pnpm sanity:query \'<groq>\' [\'<json params>\']` prints any query as JSON, drafts and published alike, with the token already loaded; `pnpm page:text <slug>` prints a page as text; `pnpm legacy:page <slug>` prints the old site\'s page. Nothing else is needed to read Sanity: no token lookup, no `npx sanity`, no script of your own.',
+  ].join('\n')
 }
 
 function sectionList(sections) {
@@ -239,6 +246,8 @@ if (page.status !== 'taken') {
   log(`Did not take the page: ${page.status}. ${page.note}`)
   return { status: page.status, note: page.note, slug: page.slug, card: page.cardUrl }
 }
+// Cards write the slug with a leading slash; the site and the scripts want it bare.
+page.slug = page.slug.replace(/^\/+/, '')
 takenPage = page
 log(`Took "${page.title}" (/${page.slug}) on branch ${page.branch}`)
 if (stopAfter === 'take-the-page') return { status: 'stopped after taking the page', page }

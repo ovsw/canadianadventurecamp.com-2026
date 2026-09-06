@@ -78,10 +78,10 @@ one of these four labels:
   designs it to `DESIGN.md`.
 - **new**: a section that does not exist yet.
 
-A "reuse" label is allowed only on a section the notes (D) say is designed
-and no other branch is editing; the build step trusts this label and does
-not open the renderers again. A section another branch is editing is used
-exactly as it is on `main`, or replaced. Plan the background colours now so
+A "reuse" label is allowed only on a section the notes (D) say is designed;
+the build step trusts this label and does not open the renderers again. The
+build's "get ready" step checks which sections other branches are editing
+and relabels if it must; you do not. Plan the background colours now so
 they alternate
 (dark, cream, dark, and so on; money, trust, and forms on cream), and so the
 page opens with a hero section and each section opens with the small
@@ -177,8 +177,7 @@ A problem is one of these:
   fabricate" list and the verified facts);
 - a call to action that breaks the funnel document or a reader rule (Rachel
   and the quiz, Maya and forms);
-- a "reuse" label on a section that is not designed, or that another branch
-  is editing;
+- a "reuse" label on a section that is not designed;
 - two cream backgrounds next to each other, or a page that does not open
   with a hero;
 - a banned word from "Copy voice" in the writing direction;
