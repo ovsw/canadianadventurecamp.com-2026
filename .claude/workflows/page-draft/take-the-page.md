@@ -51,7 +51,11 @@ write it, so the run that did is still going. Never treat one as your own.
    `someone-else-has-it` and name that branch; with nothing given, go back to
    step 2 and take the next card.
 5. Claim, from stdin, with the branch and worktree written in as text:
-   `printf 'Taking this page. Branch: `<branch>`, worktree: `<worktree>`.\n' | basecamp comments create <id> - --in 48063970 --account 6230954 --json`
+
+   ```bash
+   printf 'Taking this page. Branch: `<branch>`, worktree: `<worktree>`.\n' | basecamp comments create <id> - --in 48063970 --account 6230954 --json
+   ```
+
 6. Read the comments again (step 3). If another "Taking this page" comment
    sits above yours, that run was first: return `someone-else-has-it`.
 7. Move the card to Building:

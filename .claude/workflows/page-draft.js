@@ -83,7 +83,7 @@ const PAGE = obj(
     planIssueNumber: int,
     note: str,
   },
-  ['status', 'slug', 'title', 'pageId', 'isNewPage', 'cardId', 'cardUrl', 'branch', 'worktree', 'note'],
+  ['status', 'slug', 'title', 'pageId', 'isNewPage', 'cardId', 'cardUrl', 'branch', 'note'],
 )
 const NOTES = obj({ notes: str })
 const SECTION = obj({
@@ -192,7 +192,7 @@ function pageLine(page) {
   return [
     `The page: "${page.title}", slug \`${page.slug}\`, Sanity id \`${page.pageId || '(none yet: this is a new page)'}\`,`,
     `tier ${page.tier || '?'}, Basecamp card ${page.cardUrl} (id ${page.cardId}), branch \`${page.branch}\`.`,
-    `Work in \`${page.worktree}\`: start every command with \`cd ${page.worktree} &&\`. It is a worktree of the main checkout; never use the main checkout's path, and never guess a path from the project name.`,
+    `Work in \`${page.worktree}\`: start every command with \`cd "${page.worktree}" &&\`. It is a worktree of the main checkout; never use the main checkout's path, and never guess a path from the project name.`,
     'The content database: `pnpm sanity:query \'<groq>\' [\'<json params>\']` prints any query as JSON, drafts and published alike, with the token already loaded; `pnpm page:text <slug>` prints a page as text; `pnpm legacy:page <slug>` prints the old site\'s page. Nothing else is needed to read Sanity: no token lookup, no `npx sanity`, no script of your own.',
   ].join('\n')
 }
