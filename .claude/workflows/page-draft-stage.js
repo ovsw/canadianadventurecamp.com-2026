@@ -1,26 +1,38 @@
 export const meta = {
-  name: 'page-draft',
+  name: 'page-draft-stage',
   description:
-    'Rebuild one Canadian Adventure Camp page from the old site into a draft with nobody watching: take the page, research, write the plan, build, hand over to Ovi',
+    'One stage of the page-draft skill, run as a workflow: "research" (five readers at once) or "build" (get ready, build sections, write the text, proofread, fix, load the page, push)',
   whenToUse:
-    'Ovi names a page slug, an old-site URL, a Basecamp card, or a plan issue number to rework, or says to draft the next page',
+    'Only from the /page-draft skill, which takes the page, writes the plan, checks each stage, and hands over to Ovi. Never on its own.',
   phases: [
-    { title: 'Take the page', detail: 'find the card, mark it in progress' },
     { title: 'Research', detail: 'five readers at once, one set of notes each' },
-    { title: 'Plan', detail: 'write the plan as a GitHub issue, second reader, fix' },
     { title: 'Build', detail: 'get ready, build sections, write the text, proofread, fix, load the page, push' },
-    { title: 'Hand over to Ovi', detail: 'card to Ovi Polish, For Ovi comment, list for the camp' },
   ],
 }
 
 // The instructions for each step live in .claude/workflows/page-draft/.
-// This script holds the order of the steps, the loops, and the data that
-// passes between them. The step files stay the source of truth.
+// This script holds the two stages with real structure: the research
+// fan-out and the build loop. The main agent running the /page-draft skill
+// owns everything between them (taking the page, writing the plan, judging
+// each stage's result, handing over) and holds the state, so nothing is
+// re-derived and nothing is lost when a step agent forgets.
 
 // ---- input -----------------------------------------------------------------
-const opts = args && typeof args === 'object' ? args : { target: args }
-const target = opts.target == null ? '' : String(opts.target).trim()
-const stopAfter = opts.stopAfter ? String(opts.stopAfter) : ''
+// args: { stage: 'research' | 'build', page, plan?, notes?, audienceNotes? }
+// page: { slug, title, pageId, isNewPage, tier, cardId, cardUrl, branch, worktree }
+// plan (build only): { issueUrl, sections: [{title, block, mark, field}], questionsForTheCamp, homepageCandidates }
+// notes, audienceNotes (build only, optional): the research notes, whole and part A.
+const opts = args && typeof args === 'object' ? args : {}
+const stage = String(opts.stage ?? '')
+if (stage !== 'research' && stage !== 'build') {
+  throw new Error(`args.stage must be "research" or "build", got "${stage}"`)
+}
+const page = opts.page
+for (const k of ['slug', 'title', 'cardId', 'cardUrl', 'branch', 'worktree']) {
+  if (!page || !page[k]) throw new Error(`args.page.${k} is missing`)
+}
+// Cards write the slug with a leading slash; the site and the scripts want it bare.
+page.slug = String(page.slug).replace(/^\/+/, '')
 
 const DOCS = '.claude/workflows/page-draft'
 const PREAMBLE = [
@@ -34,17 +46,12 @@ const PREAMBLE = [
 
 // Which model and effort each step uses. Simple, mechanical steps run on a
 // smaller model. The steps that write text, design sections, or judge
-// quality use the session's model. The two readers run at medium effort:
-// on 2026-09-05 they were the largest cost of a run at high effort, and
-// their round 1 findings were the ones that mattered. Edit this table to
+// quality use the session's model. The proofreader runs at medium effort:
+// on 2026-09-05 the readers were the largest cost of a run at high effort,
+// and their round 1 findings were the ones that mattered. Edit this table to
 // trade cost against quality.
 const MODEL = {
-  takeThePage: { model: 'sonnet' },
   research: { model: 'sonnet' },
-  readThePlan: { model: 'sonnet' },
-  writeThePlan: {},
-  secondReader: { effort: 'medium' },
-  fixThePlan: {},
   getReady: { model: 'sonnet' },
   buildSection: {},
   writeTheText: {},
@@ -52,8 +59,6 @@ const MODEL = {
   fix: {},
   loadThePage: { model: 'sonnet', effort: 'low' },
   push: { model: 'sonnet' },
-  handOver: { model: 'sonnet' },
-  giveUp: { model: 'haiku', effort: 'low' },
 }
 
 // ---- the shapes each step returns -----------------------------------------
@@ -68,23 +73,6 @@ function list(item) {
   return { type: 'array', items: item }
 }
 
-const PAGE = obj(
-  {
-    status: { type: 'string', enum: ['taken', 'someone-else-has-it', 'not-found', 'wrong-checkout'] },
-    slug: str,
-    title: str,
-    pageId: str,
-    isNewPage: bool,
-    tier: str,
-    cardId: str,
-    cardUrl: str,
-    branch: str,
-    worktree: str,
-    planIssueNumber: int,
-    note: str,
-  },
-  ['status', 'slug', 'title', 'pageId', 'isNewPage', 'cardId', 'cardUrl', 'branch', 'note'],
-)
 const NOTES = obj({ notes: str })
 const SECTION = obj({
   title: str,
@@ -92,15 +80,6 @@ const SECTION = obj({
   mark: { type: 'string', enum: ['reuse', 'extend', 'design', 'new'] },
   field: str,
 })
-const PLAN = obj({
-  issueNumber: int,
-  issueUrl: str,
-  sections: list(SECTION),
-  homepageCandidates: strList,
-  questionsForTheCamp: strList,
-  decisions: str,
-})
-const PROBLEMS_IN_PLAN = obj({ problems: list(obj({ section: str, problem: str, fix: str })) })
 const READY = obj(
   { ok: bool, backupPath: str, sectionsOthersAreEditing: strList, sections: list(SECTION), forOvi: strList, notes: str },
   ['ok', 'backupPath', 'sectionsOthersAreEditing', 'forOvi', 'notes'],
@@ -119,18 +98,6 @@ const PROBLEMS_IN_PAGE = obj({ problems: list(obj({ where: str, problem: str, fi
 const FIXED = obj({ fixed: strList, forOvi: strList, notes: str })
 const PAGE_LOADED = obj({ ok: bool, missingHeadings: strList, errors: strList })
 const PUSHED = obj({ pushed: bool, headSha: str, forOvi: strList, notes: str })
-const HANDED_OVER = obj({
-  cardUrl: str,
-  issueUrl: str,
-  clientInputUrl: str,
-  coherenceIssueUrls: strList,
-  sectionsForOviToDesign: strList,
-  placeholders: strList,
-  missingPhotos: strList,
-  studioPath: str,
-  summary: str,
-})
-const DONE = obj({ done: bool })
 
 // Every step runs as the `shell-and-files` agent type (.claude/agents/),
 // which has five tools: Bash, Read, Edit, Write, Skill. Claude Code staples
@@ -140,40 +107,18 @@ const DONE = obj({ done: bool })
 const AGENT_TYPE = 'shell-and-files'
 
 // ---- helpers ---------------------------------------------------------------
-// Once the page is ours, a crash must still end with a comment on the card,
-// or Ovi sees a card stuck "in progress" with no explanation.
-let takenPage = null
 async function run(label, phaseTitle, body, schema, extra) {
-  let result
-  try {
-    result = await agent(`${PREAMBLE}\n\n${body}`, {
-      label,
-      phase: phaseTitle,
-      schema,
-      ...(extra ?? {}),
-      agentType: AGENT_TYPE,
-    })
-  } catch (error) {
-    await writeFailureOnCard(label, error?.message ?? String(error))
-    throw error
-  }
+  const result = await agent(`${PREAMBLE}\n\n${body}`, {
+    label,
+    phase: phaseTitle,
+    schema,
+    ...(extra ?? {}),
+    agentType: AGENT_TYPE,
+  })
   if (result == null) {
-    const reason = `${label}: the agent returned nothing (it was stopped, or the API failed after retries)`
-    await writeFailureOnCard(label, reason)
-    throw new Error(reason)
+    throw new Error(`${label}: the agent returned nothing (it was stopped, or the API failed after retries)`)
   }
   return result
-}
-
-async function writeFailureOnCard(stepName, reason) {
-  if (!takenPage || stepName === 'give up') return
-  const page = takenPage
-  takenPage = null // one comment, and no loop if giving up fails too
-  try {
-    await giveUp(page, stepName, reason)
-  } catch (error) {
-    log(`Could not write the failure on the card: ${error?.message ?? error}`)
-  }
 }
 
 // Notes for Ovi: everything a human must confirm, review, or check with the
@@ -203,22 +148,11 @@ function sectionList(sections) {
     .join('\n')
 }
 
-async function giveUp(page, stepName, reason) {
-  log(`Giving up: "${stepName}" failed. ${reason}`)
-  await run(
-    'give up',
-    'Hand over to Ovi',
-    [
-      `Your job: give up cleanly. The build stopped at "${stepName}": ${reason}`,
-      pageLine(page),
-      'Write a comment on the Basecamp card (Markdown from stdin, see page-workflow.md "Basecamp") saying which step failed, why, what a human should check, and the notes for Ovi below. Leave the card marked in progress. Commit nothing, push nothing, write nothing to Sanity.',
-      '',
-      forOvi.length ? forOvi.map((l) => `- ${l}`).join('\n') : '(no notes for Ovi yet)',
-    ].join('\n'),
-    DONE,
-    MODEL.giveUp,
-  )
-  return { status: 'failed', step: stepName, reason, card: page.cardUrl, branch: page.branch }
+// A stage that cannot go on returns instead of throwing, so the main agent
+// gets the notes collected so far and writes the failure on the card itself.
+function failed(stepName, reason) {
+  log(`Stopped: "${stepName}" failed. ${reason}`)
+  return { status: 'failed', step: stepName, reason, forOvi }
 }
 
 // A reader and a fixer take one turn each. A second turn runs only when the
@@ -230,48 +164,8 @@ async function giveUp(page, stepName, reason) {
 const MANY = 8
 const MAX_ROUNDS = 2
 
-// ---- 1. Take the page ------------------------------------------------------
-phase('Take the page')
-const page = await run(
-  'take the page',
-  'Take the page',
-  [
-    `Your job: take the page. Follow \`${DOCS}/take-the-page.md\`.`,
-    `Target: ${target || '(nothing given: take the top card in the "To Build" column that nobody has claimed)'}.`,
-  ].join('\n'),
-  PAGE,
-  MODEL.takeThePage,
-)
-if (page.status !== 'taken') {
-  log(`Did not take the page: ${page.status}. ${page.note}`)
-  return { status: page.status, note: page.note, slug: page.slug, card: page.cardUrl }
-}
-// Cards write the slug with a leading slash; the site and the scripts want it bare.
-page.slug = page.slug.replace(/^\/+/, '')
-takenPage = page
-log(`Took "${page.title}" (/${page.slug}) on branch ${page.branch}`)
-if (stopAfter === 'take-the-page') return { status: 'stopped after taking the page', page }
-
-// ---- 2 and 3. Research and plan, unless the plan is already written --------
-let plan
-let planProblemsFixedUnchecked = []
-// The research notes go to the plan writer, and again to the page writer
-// and the proofreader, so they do not read the sources a second time.
-let allNotes = ''
-let audienceNotes = ''
-if (page.planIssueNumber) {
-  log(`The plan is already written (issue #${page.planIssueNumber}). Skipping research and planning.`)
-  plan = await run(
-    'read the plan',
-    'Plan',
-    [
-      `Your job: read the plan that is already written. ${pageLine(page)}`,
-      `Read GitHub issue #${page.planIssueNumber} with \`gh issue view\` and return what it says: every section in its "Content outline", in order, with the section's code name, its label (reuse, extend, design, or new), and its background colour; the homepage candidates; the open questions for the client; and a short summary of "Decisions made without Ovi". Change nothing.`,
-    ].join('\n'),
-    PLAN,
-    MODEL.readThePlan,
-  )
-} else {
+// ---- research --------------------------------------------------------------
+if (stage === 'research') {
   phase('Research')
   const readers = [
     { key: 'who the page is for', heading: 'A. Who the page is for, and the writing rules' },
@@ -295,71 +189,27 @@ if (page.planIssueNumber) {
       ),
     ),
   )
-  const missing = readers.filter((r, i) => !notes[i])
+  const missing = readers.filter((r, i) => !notes[i] || !String(notes[i].notes ?? '').trim())
   if (missing.length) {
-    throw new Error(`These research readers returned nothing: ${missing.map((r) => r.key).join(', ')}. Relaunch the workflow to continue.`)
+    return failed('research', `These readers returned nothing: ${missing.map((r) => r.key).join(', ')}. Run the research stage again.`)
   }
-  allNotes = readers.map((r, i) => `### ${r.heading}\n\n${notes[i].notes}`).join('\n\n')
-  audienceNotes = `### ${readers[0].heading}\n\n${notes[0].notes}`
-  if (stopAfter === 'research') return { status: 'stopped after research', page, notes: allNotes }
-
-  phase('Plan')
-  const written = await run(
-    'write the plan',
-    'Plan',
-    [
-      `Your job: write the plan. Follow \`${DOCS}/plan.md\` parts 1 to 4 and "Save the plan".`,
-      pageLine(page),
-      '',
-      'The five sets of research notes follow. They are your inputs. Open a source file again only where the notes are unclear.',
-      '',
-      allNotes,
-    ].join('\n'),
-    PLAN,
-    MODEL.writeThePlan,
-  )
-  log(`Plan saved: ${written.issueUrl} (${written.sections.length} sections)`)
-  plan = written
-  for (let round = 1; round <= MAX_ROUNDS; round++) {
-    const secondRead = await run(
-      `second reader (round ${round})`,
-      'Plan',
-      [
-        `Your job: read the plan as the parent it is written for, round ${round}. Follow "The second reader" in \`${DOCS}/plan.md\`.`,
-        pageLine(page),
-        `The plan: ${plan.issueUrl}. Read the issue as it is now, and the notes below on who the page is for. Return problems only.`,
-        '',
-        audienceNotes,
-      ].join('\n'),
-      PROBLEMS_IN_PLAN,
-      MODEL.secondReader,
-    )
-    planProblemsFixedUnchecked = secondRead.problems
-    if (!planProblemsFixedUnchecked.length) {
-      log(`Second reader, round ${round}: no problems`)
-      break
-    }
-    log(`Second reader, round ${round}: ${planProblemsFixedUnchecked.length} problem(s). Fixing the plan.`)
-    plan = await run(
-      `fix the plan (round ${round})`,
-      'Plan',
-      [
-        `Your job: fix the plan, round ${round}. Follow "Fix the plan" in \`${DOCS}/plan.md\`.`,
-        pageLine(page),
-        `The plan: ${plan.issueUrl}. Apply each fix below, then return the section list again.`,
-        '',
-        JSON.stringify(planProblemsFixedUnchecked, null, 2),
-      ].join('\n'),
-      PLAN,
-      MODEL.fixThePlan,
-    )
-    if (planProblemsFixedUnchecked.length <= MANY) break
+  return {
+    status: 'researched',
+    notes: readers.map((r, i) => `### ${r.heading}\n\n${notes[i].notes}`).join('\n\n'),
+    audienceNotes: `### ${readers[0].heading}\n\n${notes[0].notes}`,
   }
-  for (const p of planProblemsFixedUnchecked) forOvi.push(`review: plan problem found in the last read and fixed, but nobody read the plan again after the fix: ${p.section}: ${p.problem} [second reader]`)
 }
-if (stopAfter === 'plan') return { status: 'stopped after the plan', page, plan }
 
-// ---- 4. Build --------------------------------------------------------------
+// ---- build -----------------------------------------------------------------
+const plan = opts.plan
+if (!plan || !plan.issueUrl || !Array.isArray(plan.sections) || !plan.sections.length) {
+  throw new Error('args.plan needs issueUrl and a non-empty sections list for the build stage')
+}
+plan.questionsForTheCamp = plan.questionsForTheCamp ?? []
+plan.homepageCandidates = plan.homepageCandidates ?? []
+const allNotes = opts.notes ? String(opts.notes) : ''
+const audienceNotes = opts.audienceNotes ? String(opts.audienceNotes) : ''
+
 phase('Build')
 const ready = collect('get ready', await run(
   'get ready',
@@ -373,7 +223,7 @@ const ready = collect('get ready', await run(
   READY,
   MODEL.getReady,
 ))
-if (!ready.ok) return giveUp(page, 'get ready', ready.notes)
+if (!ready.ok) return failed('get ready', ready.notes)
 const sections = ready.sections && ready.sections.length ? ready.sections : plan.sections
 if (ready.sectionsOthersAreEditing.length) {
   log(`Sections other branches are editing, left as they are: ${ready.sectionsOthersAreEditing.join(', ')}`)
@@ -407,7 +257,7 @@ for (const b of toBuild) {
         MODEL.buildSection,
       ),
     )
-    if (!built.typecheckOk) return giveUp(page, `build section ${b.block}`, built.notes)
+    if (!built.typecheckOk) return failed(`build section ${b.block}`, built.notes)
   }
   log(`Section ${b.block} (${b.mark}) built`)
 }
@@ -424,13 +274,13 @@ const text = collect('write the text', await run(
     '',
     allNotes
       ? 'The research notes follow. They are your sources for the readers, the writing rules, the old page, the posts, the neighbouring pages, the sections and their fields, and the photos. Do not read those sources again.'
-      : 'The plan was written in an earlier run, so there are no research notes. Read the plan and `CONTEXT.md` "Copy voice", then the schema of each section you write.',
+      : 'There are no research notes for this run. Read the plan and `CONTEXT.md` "Copy voice", then the schema of each section you write.',
     allNotes,
   ].join('\n'),
   TEXT_SAVED,
   MODEL.writeTheText,
 ))
-if (!text.saved) return giveUp(page, 'write the page text', text.notes)
+if (!text.saved) return failed('write the page text', text.notes)
 log(`Saved ${text.documentIds.length} draft document(s) in Sanity`)
 
 // Same shape as the plan loop: what the last read found is fixed but not
@@ -504,52 +354,23 @@ const pushed = collect('push', await run(
   PUSHED,
   MODEL.push,
 ))
-if (!pushed.pushed) return giveUp(page, 'push the code', pushed.notes)
+if (!pushed.pushed) return failed('push the code', pushed.notes)
 log(`Pushed ${page.branch} at ${pushed.headSha}`)
 
-// ---- 5. Hand over to Ovi ---------------------------------------------------
-phase('Hand over to Ovi')
-const sectionsForOvi = sections
-  .filter((s) => s.mark === 'new' || s.mark === 'design')
-  .map((s) => `${s.title} [${s.block}]`)
-const handed = await run(
-  'hand over to Ovi',
-  'Hand over to Ovi',
-  [
-    `Your job: hand the page over to Ovi. Follow \`${DOCS}/hand-over.md\`.`,
-    pageLine(page),
-    `The plan: ${plan.issueUrl}. Head commit: ${pushed.headSha}.`,
-    `Sections Ovi should design himself (built new or redesigned): ${sectionsForOvi.join('; ') || '(none)'}`,
-    `Placeholders: ${text.placeholders.join('; ') || '(none)'}`,
-    `Missing photos: ${text.missingPhotos.join('; ') || '(none)'}`,
-    `Proofreading problems fixed in the last round and not proofread again: ${proofreadFixedUnchecked.length ? JSON.stringify(proofreadFixedUnchecked) : '(none)'}`,
-    `Loading the page on the dev server: ${loadProblem || 'loaded cleanly'}`,
-    `Homepage candidates: ${plan.homepageCandidates.join('; ') || '(none)'}`,
-    `Questions for the camp: ${plan.questionsForTheCamp.join(' | ') || '(none)'}`,
-    '',
-    'Notes for Ovi from the build steps. Add the plan\'s "Decisions made without Ovi" and "Open questions for the client" to them:',
-    forOvi.length ? forOvi.map((l) => `- ${l}`).join('\n') : '- (none returned)',
-  ].join('\n'),
-  HANDED_OVER,
-  MODEL.handOver,
-)
-
+// The main agent hands over: it holds the plan, the decisions, and these
+// results, and writes the card, the For Ovi comment, and the to-do list.
 return {
-  status: 'draft ready for Ovi',
-  page: page.title,
-  slug: page.slug,
-  branch: page.branch,
-  plan: plan.issueUrl,
-  card: handed.cardUrl,
-  listForTheCamp: handed.clientInputUrl,
-  homepageIssues: handed.coherenceIssueUrls,
-  studioPath: handed.studioPath,
-  sectionsForOviToDesign: handed.sectionsForOviToDesign,
-  placeholders: handed.placeholders,
-  missingPhotos: handed.missingPhotos,
+  status: 'built',
+  sections,
+  sectionsForOviToDesign: sections
+    .filter((s) => s.mark === 'new' || s.mark === 'design')
+    .map((s) => `${s.title} [${s.block}]`),
+  seedPath: text.seedPath,
+  documentIds: text.documentIds,
+  placeholders: text.placeholders,
+  missingPhotos: text.missingPhotos,
   proofreadFixedUnchecked,
-  planProblemsFixedUnchecked,
   loadProblem,
+  headSha: pushed.headSha,
   forOvi,
-  summary: handed.summary,
 }

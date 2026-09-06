@@ -8,11 +8,22 @@ Every question the old skills used to ask him, the agent answers with the
 recommendation it would have given, and writes down the answer and the fact it
 rests on.
 
-It is a dynamic workflow: `page-draft.js` beside this folder is the script.
-The script holds the order of the steps, the loops, and the data between
-steps. Each step is a fresh agent that reads this folder's file for that step,
-does the step, and returns its results as data. Anything an agent learned and
-did not return is gone, so every agent fills in every field it is asked for.
+It is a skill with a workflow inside it. The main agent, the one Ovi types
+`/page-draft` to, is the **overseer**: it follows
+`.claude/skills/page-draft/SKILL.md`, takes the page, writes the plan,
+checks each stage's result against reality, and hands over. It keeps the
+page facts, the research notes, and the plan in its own memory for the
+whole run. The two parts with real structure, five readers at once and the
+build loop, run as the `page-draft-stage` workflow
+(`page-draft-stage.js` beside this folder), one call per stage. Inside a
+stage each step is a fresh agent that reads this folder's file for that
+step, does the step, and returns its results as data. Anything a step agent
+learned and did not return is gone, so every agent fills in every field it
+is asked for; the overseer is the memory between stages.
+
+Before 2026-09-06 the whole run was one script and nobody judged anything
+between steps: a step could return a filled-in answer that was wrong, and
+the next step built on it. The split puts the judgement where memory is.
 
 ## Run it
 
@@ -24,18 +35,17 @@ did not return is gone, so every agent fills in every field it is asked for.
 /page-draft             the top card in the "To Build" column
 ```
 
-`args` can also be an object `{ target, stopAfter }`. `stopAfter` can be
-`take-the-page`, `research`, or `plan`. `stopAfter: "plan"` writes the plan
-and stops, without building anything.
+To stop early, say so in the same message: `/page-draft family-guide, stop
+after the plan`. The overseer is an agent, so plain words work.
 
 One run per worktree, never in the main checkout. Several worktrees can
 draft several pages at the same time; the "taking a page" rules in
 `docs/agents/page-workflow.md` keep them from colliding. Two runs started in
 the same checkout join the same page and fight over it; the first step now
 refuses the main checkout and treats every claim comment it did not write as
-someone else's. A run uses about fifteen agents, so set the workflow size
-guideline to `large`, or the task panel shows a warning. A stopped run picks
-up where it left off in the same session: ask Claude to relaunch it.
+someone else's. A run uses about fifteen agents across its two stages. A
+stopped stage picks up where it left off in the same session: the overseer
+reruns it and the finished steps are cached.
 
 ## What a run costs
 
@@ -67,40 +77,44 @@ a second only when the first read found more than eight problems).
 
 ## The five steps
 
-| Step | Agents | Instructions | What comes back to the script |
+| Step | Who | Instructions | What the overseer checks after it |
 |---|---|---|---|
-| 1. Take the page | 1 | `take-the-page.md` | page name, card, branch, whether a plan already exists |
-| 2. Research | 5 at once | `research.md`, one reader each | one set of notes per reader |
-| 3. Plan | write, then second reader and fix; a second round only after a long first list | `plan.md` | the plan's issue number and the list of sections |
-| 4. Build | get ready, one per section to build, write the text, proofread and fix (same rule), load the page, push | `build.md`, one heading each | whether each part worked, plus notes for Ovi |
-| 5. Hand over to Ovi | 1 | `hand-over.md` | the card, the lists, a short summary |
+| 1. Take the page | the overseer | `take-the-page.md` | its claim comment is first on the card; card in Building with the branch line |
+| 2. Research | workflow stage: 5 agents at once | `research.md`, one reader each | five sets of notes, none empty |
+| 3. Plan | the overseer writes and fixes; one sub-agent reads; a second round only after a long first list | `plan.md` | the issue has its labels; the card's Spec issue line names it |
+| 4. Build | workflow stage: get ready, one per section to build, write the text, proofread and fix (same rule), load the page, push | `build.md`, one heading each | the push landed; `pnpm page:text` shows every planned section; the page loaded |
+| 5. Hand over to Ovi | the overseer | `hand-over.md` | the finish checklist |
 
-If building fails, the agent writes what went wrong on the card and leaves the
-card marked "in progress", so Ovi sees it on the tracker. If the page cannot
-be taken, the run stops without writing anything.
+If a stage fails, it returns the step, the reason, and the notes for Ovi so
+far. The overseer fixes a small, plain cause and reruns the stage (finished
+steps are cached), or writes what went wrong on the card and leaves it in
+Building, so Ovi sees it on the tracker. If the page cannot be taken, the
+run stops without writing anything.
 
 Every build step returns "notes for Ovi": things it assumed, guessed, decided
-on its own, or could not confirm. The script collects them all, and the last
-step writes them on the card under the heading **For Ovi**, together with the
-plan's decisions and the questions for the camp. That comment is the list of
-what a human still has to settle.
+on its own, or could not confirm. The stage collects them all, and the
+overseer writes them on the card under the heading **For Ovi**, together
+with the plan's decisions and the questions for the camp. That comment is
+the list of what a human still has to settle.
 
 ## Which model runs each step
 
-The `MODEL` table at the top of the script picks the model and effort for
-each step. Simple, mechanical steps (taking the page, research, getting
-ready, loading the page, pushing, handing over, giving up) run on a smaller
-model. The steps that write text, design sections, or judge quality (writing
-the plan, the second reader, building sections, writing the page text,
-proofreading, fixing) use the session's model; the two readers at medium
-effort. Change the table, not the prompts, to trade cost against quality.
-Every step runs as the `shell-and-files` agent type; see "What a run
-costs".
+The overseer is the session's model at the session's effort: it writes the
+plan and judges every stage. The `MODEL` table at the top of the stage
+script picks the model and effort for each step inside a stage. Simple,
+mechanical steps (research, getting ready, loading the page, pushing) run
+on a smaller model. The steps that write text, design sections, or judge
+quality (building sections, writing the page text, proofreading, fixing)
+use the session's model; the proofreader at medium effort, as is the
+second reader the overseer spawns. Change the table, not the prompts, to
+trade cost against quality. Every step runs as the `shell-and-files` agent
+type; see "What a run costs".
 
 ## What lives here and what does not
 
-This folder holds only what exists for this workflow: the script, its step
-files, and the diagram. Shared documents stay where they are and are named
+This folder holds only what exists for this workflow: the stage script,
+its step files, and the diagram; the overseer's instructions are the skill
+in `.claude/skills/page-draft/`. Shared documents stay where they are and are named
 when needed: `docs/agents/page-workflow.md` (facts about the repo, Basecamp,
 and the content database, also used by `page-integrate`),
 `docs/agents/page-builder.md`, `frontend/DESIGN.md`, `docs/avatars.md`,
@@ -129,45 +143,52 @@ and the content database, also used by `page-integrate`),
   and commands, how to take a page, the rules for working in parallel, the
   scripts, how to load a page without a browser, and the finish checklist.
   Read the part your step needs.
-- What the script hands a step is true. Research notes go to the plan
-  writer, the page writer, and the proofreader; none of them reads the
-  sources again. Run no `--help`; the commands are in the step files.
+- What the overseer hands a stage, and a stage hands a step, is true.
+  Research notes go to the plan writer, the page writer, and the
+  proofreader; none of them reads the sources again. Run no `--help`; the
+  commands are in the step files.
+- What a stage returns is data, not the truth. The overseer checks it
+  against the card, the issue, the branch, and the draft before going on.
 - Save drafts only. Touch only this page's documents. Never publish.
 
 ## Flow
 
-Every box names the agent that does the work and the model it runs on.
-"Session model" is whatever model the session runs; the others are set in
-the `MODEL` table at the top of the script. Diamonds are checks the script
-makes itself, without an agent.
+Every box names who does the work and the model it runs on. OVERSEER boxes
+are the main agent, one memory for the whole run, on the session model.
+AGENT boxes are step agents inside a stage; "session model" is whatever
+model the session runs, the others are set in the `MODEL` table at the top
+of the stage script. Diamonds are checks: the overseer's, made from its
+memory and a command or two, or the stage script's, made without an agent.
 
 Every AGENT box is a new agent. It starts with an empty memory. It does not
 know what any earlier agent read, thought, or wrote, unless that agent
 returned it as data and the script put it in the new agent's instructions.
 A box that runs more than once (one per section, or one per round) is a new
 agent each time. What they share is on disk: the code on this branch, the
-plan on GitHub, the draft in Sanity, the card on Basecamp.
+plan on GitHub, the draft in Sanity, the card on Basecamp. The overseer
+remembers all of it.
 
 ```mermaid
 flowchart TD
-  note["Every AGENT box is a new agent with an empty memory.
-It knows only what the script hands it
-and what is on disk, on GitHub, in Sanity, on Basecamp.
-A box that runs again is a new agent again."]
+  note["OVERSEER boxes are the main agent: one memory for the whole run.
+Every AGENT box is a new agent with an empty memory.
+It knows only what the stage script hands it
+and what is on disk, on GitHub, in Sanity, on Basecamp."]
   note ~~~ start
-  start(["Start: Ovi names a page"]) --> claim
+  start(["Start: Ovi types /page-draft"]) --> claim
   subgraph P1["1. Take the page"]
-    claim["AGENT: take the page (sonnet)
+    claim["OVERSEER: take the page
 Find the page's Basecamp card.
 If nobody else has it, mark it in progress
-with this branch name"] --> claimed{SCRIPT checks:
-did we get the page?}
+with this branch name"] --> claimed{OVERSEER checks:
+my claim comment is first,
+card in Building?}
     claimed -- no --> stop(["Stop. Touch nothing."])
-    claimed -- yes --> hasplan{SCRIPT checks:
+    claimed -- yes --> hasplan{OVERSEER checks:
 has the plan for this page
 already been written?}
   end
-  subgraph P2["2. Research: 5 agents at once (all sonnet)"]
+  subgraph P2["2. Research: workflow stage, 5 agents at once (all sonnet)"]
     gA["AGENT: research A
 Who the page is for
 and the writing rules"]
@@ -183,26 +204,30 @@ and the design rules"]
 Which photos exist"]
   end
   hasplan -- no --> gA & gB & gC & gD & gE
+  gA & gB & gC & gD & gE -- notes --> notesq{OVERSEER checks:
+five sets of notes,
+none empty?}
+  notesq -- no --> P2
   subgraph P3["3. Plan"]
-    decide["AGENT: write the plan (session model)
-Write the plan as a GitHub issue,
+    decide["OVERSEER: write the plan
+From the notes in memory.
+Save it as a GitHub issue,
 link it on the card"] --> critic["AGENT: second reader (session model, medium effort)
 Reads the plan as the parent
 it is written for, lists problems.
-A new agent each round"] --> critq{SCRIPT checks:
+A new agent each round"] --> critq{OVERSEER checks:
 found problems?}
-    critq -- yes --> revise["AGENT: fix the plan (session model)
-Applies the fixes to the issue.
-A new agent each round"] --> critq2{SCRIPT checks:
+    critq -- yes --> revise["OVERSEER: fix the plan
+Applies the fixes to the issue"] --> critq2{OVERSEER checks:
 more than 8 problems,
 and only one round so far?}
     critq2 -- yes --> critic
-    readplan["AGENT: read the plan (sonnet)
-Reads the existing plan"]
+    readplan["OVERSEER: read the plan
+Reads the existing plan into memory"]
   end
+  notesq -- yes --> decide
   hasplan -- yes --> readplan
-  gA & gB & gC & gD & gE -- notes --> decide
-  subgraph P4["4. Build"]
+  subgraph P4["4. Build: workflow stage"]
     prep["AGENT: get ready (sonnet)
 Get the latest code,
 check nobody else is editing the same sections,
@@ -242,27 +267,35 @@ Final checks, then push"]
   critq2 -- no --> prep
   revq2 -- no --> render
   readplan --> prep
-  prepq -- no --> abort
-  blocks -. code will not compile .-> abort
-  seed -. draft will not save .-> abort
-  push -. push fails .-> abort
-  abort["AGENT: give up (haiku)
+  prepq -- no --> failed
+  blocks -. code will not compile .-> failed
+  seed -. draft will not save .-> failed
+  push -. push fails .-> failed
+  failed["Stage returns: failed,
+which step, why, notes for Ovi so far"] --> failq{OVERSEER checks:
+small, plain cause?}
+  failq -- yes, fix it, rerun the stage --> prep
+  failq -- no --> abort["OVERSEER: give up
 Writes what went wrong on the card,
-leaves it marked in progress"]
+leaves it in Building"]
+  push --> builtq{OVERSEER checks:
+push landed, draft has
+every planned section, page loaded?}
   subgraph P5["5. Hand over to Ovi"]
-    handoff["AGENT: hand over (sonnet)
+    handoff["OVERSEER: hand over
 Move the card to Ovi Polish.
 Write on the card: what to look at, what was guessed,
 what to ask the camp.
 Make the to-do list of things the camp must supply"]
   end
-  push --> handoff --> done(["Draft ready for Ovi"])
+  builtq -- yes, or written for Ovi --> handoff --> done(["Draft ready for Ovi"])
   style P1 fill:#f1f3f5,stroke:#868e96
   style P2 fill:#e7f0fb,stroke:#2c88d9
   style P3 fill:#f3e8fb,stroke:#9c36b5
   style P4 fill:#fff1e6,stroke:#e8833a
   style P5 fill:#e6f7f2,stroke:#207868
   style abort fill:#d3455b,stroke:#a02a3c,color:#fff
+  style failed fill:#fde8ec,stroke:#a02a3c
   style start fill:#788896,stroke:#4b5c6b,color:#fff
   style done fill:#207868,stroke:#14513f,color:#fff
   style note fill:#fffbe6,stroke:#b8a200

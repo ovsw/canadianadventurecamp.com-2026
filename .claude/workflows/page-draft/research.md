@@ -1,6 +1,7 @@
 # Step 2: Research
 
-Five agents run at the same time. Each one reads its sources in full and
+The research stage of the `page-draft-stage` workflow. Five agents run at
+the same time. Each one reads its sources in full and
 returns one set of notes: Markdown, under 1500 words, with facts and quotes
 copied word for word where a later step may cite them, and nothing the
 sources do not say. The planning step reads these notes instead of the
