@@ -1,13 +1,12 @@
 # Step 5: Hand over to Ovi
 
-One agent, after the code is pushed. Inputs, all in the prompt: the page
-details, the plan's section list, the page text results, the proofreading
-problems left open, the result of loading the page, and the notes for Ovi
-from every build step. Read the plan once (`gh issue view <n> --json body -q
-.body`) for "Decisions made without Ovi", "Open questions for the client",
-and "Homepage candidates". Read nothing else: not other cards, not other
-issues, not the code. Every command is below with its flags; run no
-`--help`. About twenty commands.
+The main agent running `/page-draft` does this, after the code is pushed.
+Inputs, all in memory: the page details, the plan with its "Decisions made
+without Ovi", "Open questions for the client", and "Homepage candidates",
+the build stage's results, the proofreading problems left open, the result
+of loading the page, and the `forOvi` lines from every build step. Read
+nothing else: not other cards, not other issues, not the code. Every
+command is below with its flags; run no `--help`. About twenty commands.
 
 The Studio path is `http://localhost:<studioPort>/presentation?preview=/<slug>`
 with `studioPort` from `.worktree-ports.json` in the worktree root, written
@@ -58,6 +57,6 @@ lists the running servers and their ports.
 
 Then go through the finish checklist in `page-workflow.md` line by line from
 what you already know; run a command only for a line you cannot answer.
-Return every URL you created and a summary Ovi can read in one minute:
+Tell Ovi every URL you created and a summary he can read in one minute:
 branch, plan issue, card, Studio path, the sections he should design, and
 what the camp must supply.

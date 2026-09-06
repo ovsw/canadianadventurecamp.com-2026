@@ -1,19 +1,20 @@
 # Step 3: Write the plan
 
-One agent writes the plan. Then a second agent reads it as the parent it is
-written for and lists the problems, and a third agent fixes them. That is
-one round. A second round runs only when the first read found more than
-eight problems. What the last read found is fixed but not read again, and
-goes into the notes for Ovi as unchecked.
+The main agent running `/page-draft` writes the plan. Then a second agent,
+a sub-agent, reads it as the parent it is written for and lists the
+problems, and the main agent fixes them. That is one round. A second round
+runs only when the first read found more than eight problems. What the
+last read found is fixed but not read again, and goes into the notes for
+Ovi as unchecked.
 
-Inputs are the five sets of notes from the research step, in your prompt.
-They are your sources: the readers, the writing rules, the old page, the
-posts and neighbours, the sections with their fields and whether each is
-designed, and the photos. Do not read `docs/avatars.md`, `CONTEXT.md`,
-`DESIGN.md`, the old page, or the renderers again to check the notes. Open a
-schema file only when a note leaves a field you need unknown. On 2026-09-05
-a plan writer spent its first seven minutes re-reading what the notes
-already said, and was stopped as stalled.
+Inputs are the five sets of notes from the research stage, held in
+memory. They are your sources: the readers, the writing rules, the old
+page, the posts and neighbours, the sections with their fields and whether
+each is designed, and the photos. Do not read `docs/avatars.md`,
+`CONTEXT.md`, `DESIGN.md`, the old page, or the renderers again to check
+the notes. Open a schema file only when a note leaves a field you need
+unknown. On 2026-09-05 a plan writer spent its first seven minutes
+re-reading what the notes already said, and was stopped as stalled.
 
 For every decision below, write the answer you would have recommended to
 Ovi, and the reader line, fact, or rule it rests on. A decision without a
@@ -191,8 +192,8 @@ answer. Expect a handful; a list of twenty says the bar was set too low.
 
 ## Fix the plan
 
-When the second reader found problems, a third agent applies each fix:
+When the second reader found problems, the main agent applies each fix:
 `gh issue view <n> --json body -q .body > <file>`, edit the file, add one
 line per fix under "Decisions made without Ovi", then `gh issue edit <n>
---body-file <file>`. Return the section list again. The script runs a second
-read only when the first found more than eight problems.
+--body-file <file>`. A second read runs only when the first found more
+than eight problems.

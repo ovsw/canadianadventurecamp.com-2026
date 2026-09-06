@@ -1,7 +1,8 @@
 # Page workflow: from the old page to a draft, several pages at once
 
-Facts about this repo for the `page-draft` workflow (`.claude/workflows/`,
-step instructions in `.claude/workflows/page-draft/`) and the
+Facts about this repo for the `page-draft` skill (`.claude/skills/page-draft/`),
+its `page-draft-stage` workflow (`.claude/workflows/page-draft-stage.js`,
+step instructions in `.claude/workflows/page-draft/`), and the
 `page-integrate` skill. They hold the process; this file holds what is true
 about this repo, its Basecamp project, and its content database. Update it here when any of it changes.
 

@@ -124,12 +124,14 @@ This repository uses a single-context domain-doc layout. See `docs/agents/domain
 
 ### Page rethink
 
-Inner pages are rethought, not migrated. `/page-draft <slug>` is a dynamic
-workflow (`.claude/workflows/page-draft.js`, step instructions in
-`.claude/workflows/page-draft/`) that takes a page from the old site to a
-draft with nobody watching (take the page, research, write the plan, build,
-hand over to Ovi), and the `/page-integrate` skill merges the finished
-branches into one PR. Several drafts run in parallel worktrees, so read
+Inner pages are rethought, not migrated. `/page-draft <slug>` is a skill
+(`.claude/skills/page-draft/`) in which the main agent takes a page from the
+old site to a draft with nobody watching: it takes the page, writes the
+plan, checks each stage, and hands over to Ovi, and runs the two structured
+stages (research, build) as the `page-draft-stage` workflow
+(`.claude/workflows/page-draft-stage.js`, step instructions in
+`.claude/workflows/page-draft/`). The `/page-integrate` skill merges the
+finished branches into one PR. Several drafts run in parallel worktrees, so read
 "Taking a page so nobody else works on it" and "Rules for working in
 parallel" in `docs/agents/page-workflow.md` before touching a page, a
 section, or the content database. Avatars live in `docs/avatars.md`.
