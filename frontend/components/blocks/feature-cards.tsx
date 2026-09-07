@@ -17,17 +17,47 @@ type FeatureCardsProps = Extract<PageBlock, { _type: "featureCards" }> & {
   dataAttribute?: (path: string) => string | undefined;
 };
 
-const headingComponents: PortableTextComponents = {
-  block: { normal: ({ children }) => <>{children}</> },
-  marks: {
-    strong: ({ children }) => <strong>{children}</strong>,
-    em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">
-        {children}
-      </em>
-    ),
+/** Field-dependent colour recipes so the two variants stay in one component. */
+const fields = {
+  dark: {
+    section: "rounded-t-section bg-forest-floor text-birch-bark",
+    eyebrow: "text-campfire-amber",
+    accent: "text-campfire-amber",
+    description: "text-birch-bark/70",
+    groupDescription: "text-birch-bark/65",
+    hairline: "bg-birch-bark/15",
+    card: "bg-forest-floor hover:bg-white/5",
+    cardText: "text-birch-bark/65",
+    link: "text-moss hover:text-sunlit-moss",
   },
-};
+  cream: {
+    section: "bg-birch-bark text-pine-night",
+    eyebrow: "text-cedar",
+    accent: "text-cedar",
+    description: "text-pine-night/70",
+    groupDescription: "text-pine-night/65",
+    hairline: "bg-pine-night/15",
+    card: "bg-birch-bark hover:bg-pine-night/5",
+    cardText: "text-pine-night/65",
+    link: "text-cedar hover:text-cedar-deep",
+  },
+} as const;
+
+type Field = (typeof fields)[keyof typeof fields];
+
+function headingComponents(field: Field): PortableTextComponents {
+  return {
+    block: { normal: ({ children }) => <>{children}</> },
+    marks: {
+      strong: ({ children }) => <strong>{children}</strong>,
+      em: ({ children }) => (
+        <em className={cn("font-accent not-italic", field.accent)}>
+          {children}
+        </em>
+      ),
+    },
+  };
+}
 
 function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
@@ -54,9 +84,11 @@ export default function FeatureCards({
   eyebrow,
   groups,
   title,
+  useCreamBackground,
 }: FeatureCardsProps) {
   if (!title?.length || !groups?.length) return null;
 
+  const field = stegaClean(useCreamBackground) ? fields.cream : fields.dark;
   const headingId = `feature-cards-${stegaClean(_key)}`;
   const renderableGroups = groups.flatMap((group) => {
     if (!hasText(group.heading)) return [];
@@ -100,14 +132,14 @@ export default function FeatureCards({
   return (
     <section
       aria-labelledby={headingId}
-      className="rounded-t-section bg-forest-floor py-section text-birch-bark"
+      className={cn("py-section", field.section)}
       id={`features-${stegaClean(_key)}`}
     >
       <div className="container-content">
         <header className={cn("mb-14 max-w-3xl", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-campfire-amber"
+              className={cn("mb-5 text-eyebrow", field.eyebrow)}
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -119,12 +151,15 @@ export default function FeatureCards({
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
-            <PortableText components={headingComponents} value={title} />
+            <PortableText components={headingComponents(field)} value={title} />
           </h2>
 
           {hasText(description) ? (
             <p
-              className="mt-5 max-w-xl text-pretty text-lg/relaxed text-birch-bark/70"
+              className={cn(
+                "mt-5 max-w-xl text-pretty text-lg/relaxed",
+                field.description,
+              )}
               data-sanity={dataAttribute?.("description")}
             >
               {description}
@@ -160,7 +195,10 @@ export default function FeatureCards({
                   </h3>
                   {hasText(group.description) ? (
                     <p
-                      className="mt-2 text-pretty text-base/relaxed text-birch-bark/65"
+                      className={cn(
+                        "mt-2 text-pretty text-base/relaxed",
+                        field.groupDescription,
+                      )}
                       data-sanity={dataAttribute?.(`${groupPath}.description`)}
                     >
                       {group.description}
@@ -170,7 +208,8 @@ export default function FeatureCards({
 
                 <ol
                   className={cn(
-                    "grid list-none gap-px overflow-hidden rounded-lg bg-birch-bark/15 p-0 md:grid-cols-2",
+                    "grid list-none gap-px overflow-hidden rounded-lg p-0 md:grid-cols-2",
+                    field.hairline,
                     columnCount === 3 && "lg:grid-cols-3",
                     columnCount === 4 && "lg:grid-cols-4",
                   )}
@@ -185,7 +224,10 @@ export default function FeatureCards({
 
                     return (
                       <li
-                        className="group/card flex min-w-0 flex-col bg-forest-floor transition-colors duration-300 hover:bg-white/5"
+                        className={cn(
+                          "group/card flex min-w-0 flex-col transition-colors duration-300",
+                          field.card,
+                        )}
                         key={card._key}
                       >
                         <div
@@ -231,13 +273,19 @@ export default function FeatureCards({
                             {card.title}
                           </h4>
                           <p
-                            className="mt-3 text-pretty text-base/relaxed text-birch-bark/65"
+                            className={cn(
+                              "mt-3 text-pretty text-base/relaxed",
+                              field.cardText,
+                            )}
                             data-sanity={dataAttribute?.(`${cardPath}.text`)}
                           >
                             {card.text}
                           </p>
                           <Link
-                            className="focus-ring mt-5 inline-flex w-fit items-center gap-2 font-semibold text-moss hover:text-sunlit-moss"
+                            className={cn(
+                              "focus-ring mt-5 inline-flex w-fit items-center gap-2 font-semibold",
+                              field.link,
+                            )}
                             data-sanity={dataAttribute?.(`${cardPath}.link`)}
                             href={href}
                             rel={

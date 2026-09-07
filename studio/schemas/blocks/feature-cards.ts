@@ -128,6 +128,14 @@ export default defineType({
     "One or two rows of linked image cards with automatic numbering and columns.",
   fields: [
     defineField({
+      name: "useCreamBackground",
+      title: "Use Alternate Background",
+      type: "boolean",
+      description:
+        "Turn on for a cream field instead of the default forest field. Alternate with the sections around it.",
+      initialValue: false,
+    }),
+    defineField({
       name: "eyebrow",
       type: "string",
       description: "Optional short label shown above the heading.",
