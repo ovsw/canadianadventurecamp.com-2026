@@ -27,8 +27,8 @@ const cardStep = (track: HTMLElement) => {
 };
 
 /**
- * One card wide with horizontal swipe below `md`; a plain three-column grid
- * above it. The track is a labelled, focusable region so keyboard users can
+ * One card wide with horizontal swipe below `md`; a featured quote beside
+ * supporting quotes above it. The track is a labelled, focusable region so keyboard users can
  * reach it and move with the arrow keys; the buttons below it do the same
  * for pointer users on phones.
  */
@@ -81,7 +81,7 @@ export default function TestimonialsCarousel({
       <div
         aria-label={label}
         aria-roledescription="carousel"
-        className="-mx-(--gutter) flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-(--gutter) px-(--gutter) pb-2 [scrollbar-width:none] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-cedar [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0"
+        className="-mx-(--gutter) flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-px-(--gutter) px-(--gutter) pb-2 [scrollbar-width:none] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-cedar [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-8 md:overflow-visible md:px-0 md:pb-0 lg:gap-x-16"
         data-sanity={dataSanity}
         onKeyDown={onKeyDown}
         onScroll={syncIndex}

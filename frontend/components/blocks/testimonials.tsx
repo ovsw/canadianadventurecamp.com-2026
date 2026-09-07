@@ -54,17 +54,17 @@ function TestimonialCard({
 
   return (
     <figure
-      className={`m-0 flex w-[88%] shrink-0 snap-start flex-col gap-7 rounded-[22px] border border-pine-night/10 bg-birch-bark px-[30px] py-[34px] transition-[transform,box-shadow] motion-base hover:-translate-y-1 hover:shadow-[var(--shadow-card-rest-cream)] md:w-auto ${styles.reveal}`}
+      className={styles.quote}
       data-sanity={referenceDataAttribute}
     >
       <span
         aria-hidden="true"
-        className="font-display text-[3.25rem] font-extrabold leading-none text-cedar"
+        className={styles.quoteMark}
       >
         &ldquo;
       </span>
       <blockquote
-        className="m-0 grid grow gap-4 p-0 text-[17px] leading-[1.6] text-pine-night [&_p]:m-0"
+        className={styles.quoteBody}
         data-sanity={testimonialDataAttribute?.(testimonial._id, "body")}
       >
         <PortableText
@@ -72,15 +72,15 @@ function TestimonialCard({
           value={testimonial.body ?? []}
         />
       </blockquote>
-      <figcaption className="grid gap-2 border-t border-pine-night/10 pt-5">
+      <figcaption className={styles.attribution}>
         <span
-          className="font-display text-[19px] font-bold leading-tight tracking-[-0.01em] text-pine-night"
+          className="font-display text-lg font-bold leading-snug"
           data-sanity={testimonialDataAttribute?.(testimonial._id, "name")}
         >
           {testimonial.name}
         </span>
         {role || origin ? (
-          <span className="text-label text-pine-night/60">
+          <span className="text-label leading-relaxed opacity-80">
             {role ? (
               <span data-sanity={testimonialDataAttribute?.(testimonial._id, "title")}>
                 {testimonial.title}
