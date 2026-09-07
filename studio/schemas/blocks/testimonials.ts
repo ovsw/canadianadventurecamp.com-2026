@@ -19,7 +19,7 @@ export default defineType({
   type: "object",
   icon: MessageSquareQuote,
   description:
-    "Quotes from selected Testimonial documents. Three cards on desktop, one card wide with swipe on phones.",
+    "Quotes from selected Testimonial documents, one at a time in a slider. The next and previous quotes peek in from the edges.",
   fields: [
     defineField({
       name: "eyebrow",

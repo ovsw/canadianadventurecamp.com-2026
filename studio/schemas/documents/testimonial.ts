@@ -34,8 +34,10 @@ export default defineType({
     }),
     defineField({
       name: "image",
-      title: "Image",
+      title: "Portrait",
       type: "image",
+      description:
+        "Face of the person, shown as a round avatar beside their name. Set the hotspot on the face.",
       options: { hotspot: true },
       fields: [
         defineField({
