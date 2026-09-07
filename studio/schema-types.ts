@@ -64,6 +64,7 @@ import stackedTimeline from "./schemas/blocks/stacked-timeline";
 import activityCatalogue from "./schemas/blocks/activity-catalogue";
 import includedExtras from "./schemas/blocks/included-extras";
 import packingChecklist from "./schemas/blocks/packing-checklist";
+import bigImageList from "./schemas/blocks/big-image-list";
 // page-builder-generator:block-imports
 import { internationalCampersSection } from "./schemas/blocks/international-campers-section";
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
@@ -134,6 +135,7 @@ export const schemaTypes = [
   activityCatalogue,
   includedExtras,
   packingChecklist,
+  bigImageList,
   // page-builder-generator:block-types
   internationalCampersSection,
 ];
