@@ -202,17 +202,19 @@ Finish by updating the card with:
 - The complete client checklist, with any known shared confirmation links.
 - Necessary layout proposals, temporary presentation limitations, and media gaps.
 - Backup path and ids of documents changed.
-- The direct local Studio Presentation URL:
-  `http://localhost:<studioPort>/presentation?preview=/<slug>`.
+- When the matching servers are verified, the direct local Studio
+  Presentation URL: `http://localhost:<studioPort>/presentation?preview=/<slug>`.
+  Otherwise record the preview setup limitation and omit the URL.
 
 Preserve historical Spec issue, Branch, and PR links without creating new
 ones. Keep content planning and checklist updates on the card; no separate
 GitHub plan, homepage issues, or new client to-do list is required. Reuse
 and link an existing checklist when resuming rather than duplicate it.
 Move the card to Ovi Polish only after the content and checklist are saved.
-Record handover and release the run's claim. Tell Ovi the card and Studio
-URLs and any presentation limitations. Content ready and presentation work
-proposed are separate outcomes; a layout proposal does not block handover.
+Record handover and release the run's claim. Tell Ovi the card URL, the
+verified Studio URL if available, and any presentation limitations. Content
+ready and presentation work proposed are separate outcomes; a layout
+proposal does not block handover.
 
 ## Pauses, failures, and later corrections
 
