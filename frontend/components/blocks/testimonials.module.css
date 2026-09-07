@@ -1,16 +1,112 @@
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .reveal {
-      animation: testimonial-rise 1ms both;
-      animation-range: entry 0% entry 40%;
-      animation-timeline: view();
-    }
+.quote {
+  margin: 0;
+  display: flex;
+  flex: 0 0 88%;
+  min-width: 0;
+  scroll-snap-align: start;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 0.5rem;
+  border-top: 1px solid color-mix(in oklch, var(--color-cedar) 30%, transparent);
+  color: var(--color-pine-night);
+  overflow-wrap: anywhere;
+}
+
+.quoteMark {
+  height: 2rem;
+  font-family: var(--font-accent);
+  font-size: 4.5rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-cedar);
+}
+
+.quoteBody {
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+  font-family: var(--font-accent);
+  /* Handwriting needs more size and leading than the site's body font. */
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.quoteBody p {
+  margin: 0;
+}
+
+.quoteBody strong {
+  font-weight: 600;
+}
+
+.quoteBody a {
+  color: inherit;
+  text-decoration-color: currentColor;
+}
+
+.quoteBody a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.attribution {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.quote:first-child {
+  padding: 2rem;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-forest-panel);
+  color: var(--color-birch-bark-bright);
+}
+
+.quote:first-child .quoteMark {
+  color: var(--color-campfire-amber);
+}
+
+.quote:first-child .attribution {
+  border-top: 1px solid color-mix(in oklch, currentColor 22%, transparent);
+  padding-top: 1.5rem;
+}
+
+.quote ::selection {
+  background: var(--color-campfire-amber);
+  color: var(--color-pine-night);
+}
+
+@media (min-width: 48rem) {
+  .quote {
+    padding-inline: 0;
+  }
+
+  .quote:first-child {
+    grid-row: span 2;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .quote:only-child {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    max-width: 48rem;
+  }
+
+  .quote:first-child .quoteBody {
+    font-size: 2.25rem;
   }
 }
 
-@keyframes testimonial-rise {
-  from {
-    opacity: 0;
-    transform: translateY(2rem);
+@media (min-width: 64rem) {
+  .quote:first-child {
+    padding: 3rem;
+  }
+
+  .quote:first-child .quoteBody {
+    font-size: 2.5rem;
   }
 }
