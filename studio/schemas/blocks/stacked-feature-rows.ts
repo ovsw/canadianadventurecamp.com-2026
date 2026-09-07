@@ -26,7 +26,7 @@ const rowItem = defineArrayMember({
       name: "body",
       title: "Text",
       type: "simpleRichText",
-      description: "One short point. Supports bold, italic, and links.",
+      description: "One point or paragraph. Supports bold, italic, and links.",
       validation: (rule) => rule.required().max(1),
     }),
   ],
@@ -76,14 +76,14 @@ const row = defineArrayMember({
     defineField({
       name: "title",
       type: "string",
-      description: "The large heading shown for this row.",
+      description: "A short heading beside this row’s supporting text.",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "items",
       title: "Items",
       type: "array",
-      description: "Short supporting points shown in the order listed here.",
+      description: "Supporting points or paragraphs shown in the order listed here.",
       of: [rowItem],
       validation: (rule) => rule.required().min(1),
     }),
@@ -132,7 +132,7 @@ export default defineType({
     defineField({
       name: "eyebrow",
       type: "string",
-      description: "Optional short label shown beside the heading.",
+      description: "Optional short label shown above the heading.",
     }),
     defineField({
       name: "title",

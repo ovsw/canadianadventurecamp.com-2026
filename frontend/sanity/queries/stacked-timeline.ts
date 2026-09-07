@@ -6,6 +6,7 @@ import { minimalRichTextQuery } from "./shared/minimal-rich-text";
 // @sanity-typegen-ignore
 export const stackedTimelineQuery = groq`
   _type == "stackedTimeline" => {
+    useCreamBackground,
     eyebrow,
     title[]{
       ${minimalRichTextQuery}

@@ -21,17 +21,44 @@ type StackedTimelineProps = Extract<PageBlock, { _type: "stackedTimeline" }> & {
 type TimelineItem = NonNullable<StackedTimelineProps["items"]>[number];
 type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
 
-const headingComponents: PortableTextComponents = {
-  block: { normal: ({ children }) => <>{children}</> },
-  marks: {
-    strong: ({ children }) => <strong>{children}</strong>,
-    em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">
-        {children}
-      </em>
-    ),
+const fields = {
+  dark: {
+    section: "bg-forest-floor text-birch-bark",
+    accent: "text-campfire-amber",
+    body: "text-birch-bark/72",
+    label: "text-birch-bark/60",
+    number: "text-campfire-amber/80",
+    card: "border-birch-bark/12 bg-forest-panel",
+    media: "bg-pine-night",
+    onDark: true,
   },
-};
+  cream: {
+    section: "bg-birch-bark text-pine-night",
+    accent: "text-cedar",
+    body: "text-pine-night/70",
+    label: "text-pine-night/60",
+    number: "text-cedar",
+    card: "border-pine-night/12 bg-birch-bark-bright",
+    media: "bg-pine-night/10",
+    onDark: false,
+  },
+} as const;
+
+type Field = (typeof fields)[keyof typeof fields];
+
+function headingComponents(field: Field): PortableTextComponents {
+  return {
+    block: { normal: ({ children }) => <>{children}</> },
+    marks: {
+      strong: ({ children }) => <strong>{children}</strong>,
+      em: ({ children }) => (
+        <em className={cn("font-accent not-italic", field.accent)}>
+          {children}
+        </em>
+      ),
+    },
+  };
+}
 
 function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
@@ -62,7 +89,8 @@ export function getRenderableItems(items: StackedTimelineProps["items"]) {
 function TimelineButtons({
   buttons,
   dataAttribute,
-}: Readonly<Pick<StackedTimelineProps, "buttons" | "dataAttribute">>) {
+  field,
+}: Readonly<Pick<StackedTimelineProps, "buttons" | "dataAttribute"> & { field: Field }>) {
   const links = (buttons ?? []).flatMap((button, index) => {
     const href = getSafeLinkHref(button.href);
     if (!href) return [];
@@ -80,7 +108,7 @@ function TimelineButtons({
         <Button
           asChild
           key={button.key}
-          onDark
+          onDark={field.onDark}
           variant={getButtonVariant(button.variant)}
         >
           <Link
@@ -104,7 +132,9 @@ export default function StackedTimeline({
   intro,
   items,
   title,
+  useCreamBackground,
 }: StackedTimelineProps) {
+  const field = stegaClean(useCreamBackground) ? fields.cream : fields.dark;
   const renderableItems = getRenderableItems(items);
 
   if (!title?.length || renderableItems.length < 2) return null;
@@ -116,7 +146,7 @@ export default function StackedTimeline({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-forest-floor py-section text-birch-bark"
+      className={cn("py-section", field.section)}
       id={`stacked-timeline-${sectionKey}`}
     >
       <div className="container-content">
@@ -124,7 +154,7 @@ export default function StackedTimeline({
           <header className={cn("max-w-[34rem]", styles.intro)}>
             {hasText(eyebrow) ? (
               <p
-                className="mb-5 text-eyebrow text-campfire-amber"
+                className={`mb-5 text-eyebrow ${field.accent}`}
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {eyebrow}
@@ -135,17 +165,17 @@ export default function StackedTimeline({
               data-sanity={dataAttribute?.("title")}
               id={headingId}
             >
-              <PortableText components={headingComponents} value={title} />
+              <PortableText components={headingComponents(field)} value={title} />
             </h2>
             {hasText(intro) ? (
               <p
-                className="mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-birch-bark/72"
+                className={cn("mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6]", field.body)}
                 data-sanity={dataAttribute?.("intro")}
               >
                 {intro}
               </p>
             ) : null}
-            <TimelineButtons buttons={buttons} dataAttribute={dataAttribute} />
+            <TimelineButtons buttons={buttons} dataAttribute={dataAttribute} field={field} />
           </header>
 
           <ol
@@ -167,7 +197,8 @@ export default function StackedTimeline({
                   aria-describedby={textId}
                   aria-labelledby={labelId}
                   className={cn(
-                    "focus-ring rounded-xl border border-birch-bark/12 bg-forest-panel p-2",
+                    "focus-ring rounded-xl border p-2",
+                    field.card,
                     styles.reveal,
                   )}
                   data-timeline-item={number}
@@ -176,7 +207,7 @@ export default function StackedTimeline({
                 >
                   {item.image?.asset?._id ? (
                     <figure
-                      className="relative aspect-video w-full overflow-hidden rounded-lg bg-pine-night"
+                      className={cn("relative aspect-video w-full overflow-hidden rounded-lg", field.media)}
                       data-sanity={dataAttribute?.(`${itemPath}.image`)}
                     >
                       <Image
@@ -205,13 +236,13 @@ export default function StackedTimeline({
                     {!item.image?.asset?._id ? (
                       <span
                         aria-hidden="true"
-                        className="row-span-3 self-start font-display text-[3.25rem] font-extrabold leading-[0.9] tracking-[-0.03em] text-campfire-amber/80 sm:text-[4rem]"
+                        className={cn("row-span-3 self-start font-display text-[3.25rem] font-extrabold leading-[0.9] tracking-[-0.03em] sm:text-[4rem]", field.number)}
                         data-sanity={dataAttribute?.(`${itemPath}.image`)}
                       >
                         {number}
                       </span>
                     ) : null}
-                    <p className="flex items-center gap-2 text-label text-birch-bark/60">
+                    <p className={`flex items-center gap-2 text-label ${field.label}`}>
                       <span>{number}</span>
                       {meta ? (
                         <>
@@ -230,7 +261,7 @@ export default function StackedTimeline({
                       {item.title}
                     </h3>
                     <p
-                      className="mt-2 max-w-[34rem] text-pretty text-[15px] leading-[1.55] text-birch-bark/72"
+                      className={cn("mt-2 max-w-[34rem] text-pretty text-[15px] leading-[1.55]", field.body)}
                       data-sanity={dataAttribute?.(`${itemPath}.text`)}
                       id={textId}
                     >
