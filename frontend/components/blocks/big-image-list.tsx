@@ -98,9 +98,8 @@ export default function BigImageList({
                 key={stop._key}
                 aria-labelledby={labelId}
                 aria-describedby={textId}
-                tabIndex={0}
                 className={cn(
-                  "focus-ring border-b border-birch-bark/15",
+                  "border-b border-birch-bark/15",
                   styles.row,
                   styles.reveal,
                 )}
