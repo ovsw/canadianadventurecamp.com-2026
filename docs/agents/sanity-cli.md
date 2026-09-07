@@ -13,4 +13,7 @@ To read documents, skip the CLI: `pnpm sanity:query '<groq>' ['<json params>']` 
 ## Notes
 
 - Tokens are project-scoped. If the project ID changes, generate a new token at `https://www.sanity.io/manage/project/<projectId>/api#tokens` and update `studio/.env.local`.
-- Dataset mutations (import, delete, etc.) always require explicit user approval.
+- Required draft content writes have standing permission under AGENTS.md.
+  Verify the target and backup before writing. Page drafting uses Sanity MCP
+  for content mutations; the CLI supplies the verified recovery export.
+  Dataset deletion, access changes, and unrelated cleanup require approval.

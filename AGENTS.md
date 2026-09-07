@@ -124,19 +124,14 @@ This repository uses a single-context domain-doc layout. See `docs/agents/domain
 
 ### Page rethink
 
-Inner pages are rethought, not migrated. In Claude Code, `/page-draft <slug>`
-is a skill (`.claude/skills/page-draft/`) in which the main agent takes a
-page from the old site to a draft with nobody watching: it takes the page,
-writes the plan, checks each stage, and hands over to Ovi, and runs the two
-structured stages (research, build) as the `page-draft-stage` workflow
-(`.claude/workflows/page-draft-stage.js`). ChatGPT and Codex use the
-`$page-draft` skill in `.agents/skills/page-draft/`. Both read the same step
-instructions in `.claude/workflows/page-draft/`. The `/page-integrate` skill
-merges the finished branches into one PR. Several drafts run in parallel
-worktrees, so read
-"Taking a page so nobody else works on it" and "Rules for working in
-parallel" in `docs/agents/page-workflow.md` before touching a page, a
-section, or the content database. Avatars live in `docs/avatars.md`.
+`/page-draft <slug>` in Claude Code and `$page-draft` in ChatGPT/Codex
+share `docs/agents/page-workflow.md`. Read it before drafting a page.
+One writer creates content directly in Sanity, with proposed claims marked
+and a client checklist on the Basecamp card. Ovi is the reviewer. Content
+comes before layout; use existing sections and record development proposals
+on the card. No schema/frontend work, GitHub plan, dedicated worktree, seed
+file, or review agent belongs to content drafting. Code development is a
+separate task. Avatars live in `docs/avatars.md`.
 
 ### Page Builder work
 
