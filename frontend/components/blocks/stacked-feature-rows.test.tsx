@@ -86,18 +86,18 @@ describe("StackedFeatureRows", () => {
       screen.getByRole("heading", {
         name: "Built for kids. Trusted by parents.",
       }),
-    ).toHaveClass("text-display-page", "font-extrabold");
+    ).toHaveClass("text-headline");
     expect(screen.getByText("Trusted by parents.")).toHaveClass("text-cedar");
     const rowHeading = screen.getByText("Accredited & inspected");
     expect(rowHeading).toHaveAttribute(
       "data-sanity",
       'section:rows[_key=="accredited"].title',
     );
-    expect(rowHeading.parentElement).toHaveClass("items-center");
+    expect(rowHeading).toHaveClass("text-title-lg");
+    expect(rowHeading.parentElement).toHaveClass("items-start");
     expect(rowHeading.closest("li")).toHaveClass(
-      "md:max-lg:last:odd:col-span-2",
+      "md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]",
     );
-    expect(rowHeading.closest("li")).not.toHaveClass("md:last:odd:col-span-2");
     expect(
       screen.getByText("OCA accredited").closest("[data-sanity]"),
     ).toHaveAttribute(
@@ -116,7 +116,7 @@ describe("StackedFeatureRows", () => {
     expect(document.querySelector(".lucide-check")).toHaveClass("text-cedar");
     expect(
       document.querySelector('[data-sanity="section:rows"]'),
-    ).toHaveClass("md:grid-cols-2", "lg:grid-cols-1");
+    ).toHaveClass("divide-y");
     expect(
       document.querySelector('[data-sanity$=".items"]'),
     ).not.toHaveClass("md:grid-cols-2");
@@ -125,7 +125,7 @@ describe("StackedFeatureRows", () => {
       "href",
       "/accreditations",
     );
-    expect(rowLink).toHaveClass("text-cedar", "hover:text-cedar-deep");
+    expect(rowLink).toHaveClass("text-cedar", "hover:text-cedar-deep", "ms-8");
   });
 
   it("omits rows without points", () => {
