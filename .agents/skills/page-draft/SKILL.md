@@ -1,25 +1,18 @@
 ---
 name: page-draft
-description: Draft one Canadian Adventure Camp inner page from an old-site URL, slug, Basecamp card, GitHub plan issue, or the next unclaimed tracker card. Use for a complete page rethink that must end with a pushed branch, a Sanity draft, and a handoff to Ovi.
+description: Write one CAC page as a complete Sanity draft from a slug, old-site URL, Basecamp card, or the next unclaimed page. Content work only; record layout development proposals on the card.
 ---
 
-# Page Draft
+# Page draft
 
-Act as the operator for one resumable page-draft run. Keep control of shared
-state and delegate bounded research, planning, implementation, and checking.
+Follow `docs/agents/page-workflow.md` in the repository. It is the shared
+process for ChatGPT, Codex, and Claude Code.
 
-Read [references/operator.md](references/operator.md) before taking the page.
-It defines the phase order, delegation boundaries, checkpoints, recovery, and
-completion criteria. Read only the shared step file named for the active phase;
-those files remain the source of truth for page content and repository rules.
+You are the page's writer and operator. Keep composition in this thread.
+Delegate only substantial, independent research questions when useful;
+give each researcher its question and request a concise answer in the thread.
+Researchers are read-only. You own the page claim and all external writes.
 
-Run one page in one non-main worktree. Continue without waiting for Ovi. Record
-each choice that needs human judgment and each fact that the camp must confirm.
-
-Basecamp is the tracker. Use the available Basecamp skill for every Basecamp
-read or write. Use the exact project facts and fallback CLI commands in
-`docs/agents/page-workflow.md`.
-
-The draft is complete only when the plan issue exists, the code branch is
-pushed, the page content exists as a Sanity draft, the card is in Ovi Polish,
-and the handoff gives the exact local Studio Presentation URL.
+Use the available Basecamp skill for card operations and Sanity MCP for
+content mutations. Complete the draft and handover without waiting for
+editorial approval. Ovi reviews the copy afterward.
