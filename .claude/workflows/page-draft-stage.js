@@ -354,8 +354,9 @@ const pushed = collect('push', await run(
   PUSHED,
   MODEL.push,
 ))
-if (!pushed.pushed) return failed('push the code', pushed.notes)
-log(`Pushed ${page.branch} at ${pushed.headSha}`)
+// build.md returns the head SHA when reused sections leave nothing to push.
+if (!pushed.pushed && !pushed.headSha) return failed('push the code', pushed.notes)
+log(pushed.pushed ? `Pushed ${page.branch} at ${pushed.headSha}` : `Nothing to push; ${page.branch} is at ${pushed.headSha}`)
 
 // The main agent hands over: it holds the plan, the decisions, and these
 // results, and writes the card, the For Ovi comment, and the to-do list.
