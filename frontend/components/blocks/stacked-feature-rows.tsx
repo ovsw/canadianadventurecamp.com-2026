@@ -85,20 +85,18 @@ export default function StackedFeatureRows({
       id={`stacked-features-${stegaClean(_key)}`}
     >
       <div className="container-content">
-        <header className="grid gap-8 lg:grid-cols-[minmax(0,0.45fr)_minmax(0,1fr)] lg:gap-16">
+        <header className="grid max-w-4xl gap-4">
           {hasText(eyebrow) ? (
             <p
-              className="pt-2 text-eyebrow text-pine-night/55"
+              className="text-eyebrow text-pine-night/55"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
             </p>
-          ) : (
-            <span aria-hidden="true" />
-          )}
+          ) : null}
 
           <h2
-            className="max-w-4xl text-balance font-display text-display-page font-extrabold"
+            className="text-balance font-display text-headline"
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
@@ -107,7 +105,7 @@ export default function StackedFeatureRows({
         </header>
 
         <ol
-          className="mt-16 grid list-none gap-px bg-pine-night/15 p-0 md:grid-cols-2 lg:grid-cols-1"
+          className="mt-8 grid list-none divide-y divide-pine-night/15 border-y border-pine-night/15 p-0 md:mt-10"
           data-sanity={dataAttribute?.("rows")}
         >
           {renderableRows.map(({ items, link, row }) => {
@@ -117,30 +115,30 @@ export default function StackedFeatureRows({
 
             return (
               <li
-                className={`relative grid min-h-52 overflow-hidden bg-birch-bark px-5 py-10 md:max-lg:last:odd:col-span-2 md:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.4fr)] lg:items-center lg:gap-12 lg:py-8 ${styles.reveal}`}
+                className={`grid gap-5 py-7 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:items-start md:gap-10 md:py-8 lg:gap-16 ${styles.reveal}`}
                 key={row._key}
               >
-                <div className="relative z-10 flex items-center gap-4">
+                <div className="flex min-w-0 items-start gap-3">
                   {iconName && iconSvg ? (
                     <span
                       aria-hidden="true"
-                      className="flex size-10 shrink-0 items-center justify-center text-cedar [&_svg]:size-10"
+                      className="mt-1 flex size-6 shrink-0 items-center justify-center text-cedar [&_svg]:size-6"
                       data-sanity={dataAttribute?.(`${rowPath}.icon`)}
                     >
                       <NavigationIcon icon={{ name: iconName, svg: iconSvg }} />
                     </span>
                   ) : null}
                   <h3
-                    className="font-display text-headline"
+                    className="min-w-0 font-display text-title-lg wrap-break-word"
                     data-sanity={dataAttribute?.(`${rowPath}.title`)}
                   >
                     {row.title}
                   </h3>
                 </div>
 
-                <div className="relative z-10 mt-8 lg:mt-0">
+                <div className="min-w-0 max-w-prose">
                   <ul
-                    className="grid list-none gap-3 p-0"
+                    className="grid list-none gap-4 p-0 leading-relaxed"
                     data-sanity={dataAttribute?.(`${rowPath}.items`)}
                   >
                     {items.map((item) => {
@@ -153,7 +151,7 @@ export default function StackedFeatureRows({
                             className="mt-0.5 size-5 shrink-0 text-cedar"
                           />
                           <div
-                            className="grid min-w-0 gap-2"
+                            className="grid min-w-0 gap-2 wrap-break-word"
                             data-sanity={dataAttribute?.(`${itemPath}.body`)}
                           >
                             <PortableText
@@ -168,7 +166,7 @@ export default function StackedFeatureRows({
 
                   {link ? (
                     <Link
-                      className="focus-ring mt-6 inline-flex w-fit items-center gap-2 font-semibold text-cedar hover:text-cedar-deep"
+                      className="focus-ring mt-6 ms-8 inline-flex w-fit items-center gap-2 font-semibold text-cedar hover:text-cedar-deep"
                       data-sanity={dataAttribute?.(`${rowPath}.link`)}
                       href={link.href}
                       rel={

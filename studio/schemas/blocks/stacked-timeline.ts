@@ -62,6 +62,14 @@ export default defineType({
     "A sticky intro with up to two actions beside a stack of numbered cards, in order. Everything stacks on phones.",
   fields: [
     defineField({
+      name: "useCreamBackground",
+      title: "Use Alternate Background",
+      type: "boolean",
+      description:
+        "Turn on for a cream field instead of the default forest field. Alternate with the sections around it.",
+      initialValue: false,
+    }),
+    defineField({
       name: "eyebrow",
       type: "string",
       description: "Optional short label shown above the heading.",

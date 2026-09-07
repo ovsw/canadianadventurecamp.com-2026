@@ -241,15 +241,15 @@ export default function StoryFeature({
       <div className="container-content">
         <div
           className={cn(
-            "grid items-center gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 xl:gap-24",
+            "grid items-stretch gap-10 lg:grid-cols-2 lg:gap-16",
             styles.reveal,
           )}
         >
           {hasImage ? (
-            <figure className="m-0 min-w-0">
+            <figure className="m-0 flex min-w-0 flex-col">
               <div
                 className={cn(
-                  "relative aspect-[4/3] w-full overflow-hidden rounded-xl",
+                  "relative aspect-[4/3] w-full overflow-hidden rounded-xl lg:aspect-auto lg:min-h-96 lg:flex-1",
                   field.media,
                 )}
                 data-sanity={dataAttribute?.("image")}
@@ -260,7 +260,7 @@ export default function StoryFeature({
                   className="object-cover"
                   fill
                   placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
-                  sizes="(min-width: 1320px) 560px, (min-width: 1024px) 45vw, 100vw"
+                  sizes="(min-width: 1320px) 588px, (min-width: 1024px) 50vw, 100vw"
                   src={urlFor(image!).width(1200).height(900).url()}
                 />
               </div>

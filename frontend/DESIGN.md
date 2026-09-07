@@ -189,7 +189,7 @@ Translucent neutrals do the quiet work: secondary text is Birch Bark at 66-75% o
 ### Hierarchy
 - **Display** (800, clamp 3rem to 6.5rem, line-height 0.96, tracking -0.025em): hero headline only. One word or phrase of it is swapped to Script in Campfire Amber.
 - **Headline** (800, 58px desktop, line-height 1.02, tracking -0.02em): section openers. Pine Night on cream, Birch Bark on dark.
-- **Title** (700, 19-30px, line-height 1-1.1): card and program titles, stat numbers, nav wordmark at 15px with +0.04em tracking.
+- **Title** (700, 19-30px, line-height 1-1.1): card and program titles, stat numbers, nav wordmark at 15px with +0.04em tracking. Use `text-title` at 22px, or `text-title-lg` at 28px for row headings that can wrap. Both tokens use line-height 1.1 and tracking -0.01em.
 - **Script** (Caveat 600, roughly 1.15x the surrounding headline size, up to 118px in the hero): the aside inside a headline, a pull quote signature, a margin note. Always Campfire Amber on dark, Cedar on cream.
 - **Body** (Archivo 400, 16-17px, line-height 1.6): paragraphs, max 520-620px wide. Secondary body at 15px / 1.55 and reduced alpha.
 - **Eyebrow** (mono, 12px, tracking 0.24em, uppercase): the small line above a headline, Campfire Amber on dark, Cedar on cream, 20px below it.
