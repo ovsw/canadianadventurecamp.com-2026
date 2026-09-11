@@ -51,3 +51,6 @@ studio/backups/
 
 # per-worktree development port assignment
 /.worktree-ports.json
+
+# Parallel agent worktrees (nested checkouts, never tracked)
+.claude/worktrees/

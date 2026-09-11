@@ -3,8 +3,15 @@
  * page gutter. From the desktop breakpoint the section becomes a four-track
  * grid: [edge gutter] [left content half] [right content half] [edge gutter].
  * The photo spans the edge gutter and the left half, so it bleeds to the
- * viewport's left edge and stretches to the full section height; the copy
- * sits in the right half, aligned with the site's content container.
+ * viewport's left edge; the copy sits in the right half, aligned with the
+ * site's content container.
+ *
+ * The photo never grows taller than one screen. Its frame is sticky at the
+ * top of the viewport and capped at the viewport height, so when the copy
+ * runs longer than a screen the photo pins in the left half, in cover mode,
+ * and releases when the section scrolls out. When the section is shorter
+ * than a screen the frame is simply the section's height. Nothing above this
+ * block may clip overflow, or the sticky frame stops pinning.
  */
 .grid {
   display: grid;
@@ -16,8 +23,17 @@
   aspect-ratio: 4 / 3;
 }
 
+.frame {
+  position: relative;
+  height: 100%;
+}
+
 .copy {
   padding-inline: var(--gutter);
+  /* Stacked: the photo sits flush against the section above, a short gap
+     separates it from the copy, and the next section's own top padding is
+     the only space after the buttons. */
+  padding-block: 2.5rem 0;
 }
 
 @media (min-width: 1024px) {
@@ -35,9 +51,17 @@
     min-height: 100%;
   }
 
+  .frame {
+    position: sticky;
+    top: 0;
+    height: min(100vh, 100%);
+    height: min(100dvh, 100%);
+  }
+
   .copy {
     grid-column: 3 / 4;
     padding-inline: clamp(2.5rem, 5vw, 5.5rem) 0;
+    padding-block: var(--section-pad);
   }
 
   /* Keep the caption text on the content container's left edge. */

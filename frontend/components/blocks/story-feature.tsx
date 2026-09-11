@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { urlFor } from "@/sanity/lib/image";
 import type { PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { Check } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,8 +27,9 @@ type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
  * Story feature — one photo, one story, one or two actions.
  *
  * A closing or mid-page section: the photo bleeds from the viewport's left
- * edge to the container midline and runs the full section height; the
- * eyebrow, heading, narrative, "at a glance" chips and buttons sit in the
+ * edge to the container midline and pins to the viewport, one screen tall,
+ * while longer copy scrolls past it; the
+ * eyebrow, heading, narrative, "at a glance" checklist and buttons sit in the
  * right half (grid in story-feature.module.css). Default field is Forest
  * Floor (the site's default dark field); `useCreamBackground` swaps to Birch
  * Bark so the block can alternate with its neighbours (The Dusk Alternation
@@ -44,7 +46,8 @@ const fields = {
     quote: "text-birch-bark",
     caption: "text-birch-bark/60",
     chipTitle: "text-birch-bark/60",
-    chip: "border-birch-bark/22 text-birch-bark/85",
+    checkItem: "text-birch-bark/85",
+    check: "text-campfire-amber",
     link: "text-campfire-amber decoration-campfire-amber/40 hover:text-campfire-amber-deep hover:decoration-campfire-amber-deep",
     media: "bg-pine-night",
     onDark: true,
@@ -57,7 +60,8 @@ const fields = {
     quote: "text-pine-night",
     caption: "text-pine-night/60",
     chipTitle: "text-pine-night/55",
-    chip: "border-pine-night/18 text-pine-night/75",
+    checkItem: "text-pine-night/80",
+    check: "text-cedar",
     link: "text-cedar decoration-cedar/30 hover:text-cedar-deep hover:decoration-cedar-deep",
     media: "bg-pine-night/10",
     onDark: false,
@@ -192,18 +196,20 @@ function KeyDetails({
         </p>
       ) : null}
       <ul
-        className="flex list-none flex-wrap gap-2 p-0"
+        className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0"
         data-sanity={dataAttribute?.("keyDetails.items")}
       >
         {items.map((item) => (
           <li
-            className={cn(
-              "rounded-pill border px-3 py-[7px] text-label",
-              field.chip,
-            )}
+            className={cn("inline-flex items-center gap-1.5 text-[15px] leading-[1.45]", field.checkItem)}
             data-sanity={dataAttribute?.(`keyDetails.items[${item.index}]`)}
             key={`${item.value}-${item.index}`}
           >
+            <Check
+              aria-hidden="true"
+              className={cn("size-4 shrink-0", field.check)}
+              strokeWidth={2.5}
+            />
             {item.value}
           </li>
         ))}
@@ -245,30 +251,32 @@ export default function StoryFeature({
             className={cn(styles.photo, "m-0 min-w-0", field.media)}
             data-sanity={dataAttribute?.("image")}
           >
-            <Image
-              alt={stegaClean(image?.alt)?.trim() || ""}
-              blurDataURL={image?.asset?.metadata?.lqip || undefined}
-              className="object-cover"
-              fill
-              placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
-              sizes="(min-width: 1024px) 60vw, 100vw"
-              src={urlFor(image!).width(1400).height(1600).url()}
-            />
-            {displayCaption ? (
-              <figcaption
-                className={cn(
-                  styles.caption,
-                  "absolute inset-x-0 bottom-0 bg-gradient-to-t from-pine-night/70 to-transparent px-[var(--gutter)] pb-5 pt-14 text-label text-birch-bark/85",
-                )}
-                data-sanity={dataAttribute?.("imageCaption")}
-              >
-                {displayCaption}
-              </figcaption>
-            ) : null}
+            <div className={styles.frame}>
+              <Image
+                alt={stegaClean(image?.alt)?.trim() || ""}
+                blurDataURL={image?.asset?.metadata?.lqip || undefined}
+                className="object-cover"
+                fill
+                placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
+                sizes="(min-width: 1024px) 60vw, 100vw"
+                src={urlFor(image!).width(1400).height(1600).url()}
+              />
+              {displayCaption ? (
+                <figcaption
+                  className={cn(
+                    styles.caption,
+                    "absolute inset-x-0 bottom-0 bg-gradient-to-t from-pine-night/70 to-transparent px-[var(--gutter)] pb-5 pt-14 text-label text-birch-bark/85",
+                  )}
+                  data-sanity={dataAttribute?.("imageCaption")}
+                >
+                  {displayCaption}
+                </figcaption>
+              ) : null}
+            </div>
           </figure>
         ) : null}
 
-        <div className={cn(styles.copy, "flex min-w-0 max-w-[38rem] flex-col gap-7 py-section")}>
+        <div className={cn(styles.copy, "flex min-w-0 max-w-[38rem] flex-col gap-7")}>
           <header>
             {displayEyebrow ? (
               <p
