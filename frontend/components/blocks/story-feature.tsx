@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { urlFor } from "@/sanity/lib/image";
 import type { PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { Check } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,12 +26,14 @@ type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
 /*
  * Story feature — one photo, one story, one or two actions.
  *
- * A closing or mid-page section: the photo sits in a soft slab on the left,
- * the eyebrow, heading, narrative, "at a glance" chips and buttons on the
- * right. Default field is Forest Floor (the site's default dark field);
- * `useCreamBackground` swaps to Birch Bark so the block can alternate with
- * its neighbours (The Dusk Alternation Rule). Phones stack: photo first,
- * then the copy.
+ * A closing or mid-page section: the photo bleeds from the viewport's left
+ * edge to the container midline and pins to the viewport, one screen tall,
+ * while longer copy scrolls past it; the
+ * eyebrow, heading, narrative, "at a glance" checklist and buttons sit in the
+ * right half (grid in story-feature.module.css). Default field is Forest
+ * Floor (the site's default dark field); `useCreamBackground` swaps to Birch
+ * Bark so the block can alternate with its neighbours (The Dusk Alternation
+ * Rule). Phones stack: photo first at 4:3, then the copy.
  */
 
 /** Field-dependent colour recipes so the two variants stay in one component. */
@@ -43,9 +46,10 @@ const fields = {
     quote: "text-birch-bark",
     caption: "text-birch-bark/60",
     chipTitle: "text-birch-bark/60",
-    chip: "border-birch-bark/22 text-birch-bark/85",
+    checkItem: "text-birch-bark/85",
+    check: "text-campfire-amber",
     link: "text-campfire-amber decoration-campfire-amber/40 hover:text-campfire-amber-deep hover:decoration-campfire-amber-deep",
-    media: "bg-pine-night shadow-[var(--shadow-media-rest)]",
+    media: "bg-pine-night",
     onDark: true,
   },
   cream: {
@@ -56,9 +60,10 @@ const fields = {
     quote: "text-pine-night",
     caption: "text-pine-night/60",
     chipTitle: "text-pine-night/55",
-    chip: "border-pine-night/18 text-pine-night/75",
+    checkItem: "text-pine-night/80",
+    check: "text-cedar",
     link: "text-cedar decoration-cedar/30 hover:text-cedar-deep hover:decoration-cedar-deep",
-    media: "bg-pine-night/10 shadow-[var(--shadow-card-rest-cream)]",
+    media: "bg-pine-night/10",
     onDark: false,
   },
 } as const;
@@ -191,18 +196,20 @@ function KeyDetails({
         </p>
       ) : null}
       <ul
-        className="flex list-none flex-wrap gap-2 p-0"
+        className="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0"
         data-sanity={dataAttribute?.("keyDetails.items")}
       >
         {items.map((item) => (
           <li
-            className={cn(
-              "rounded-pill border px-3 py-[7px] text-label",
-              field.chip,
-            )}
+            className={cn("inline-flex items-center gap-1.5 text-[15px] leading-[1.45]", field.checkItem)}
             data-sanity={dataAttribute?.(`keyDetails.items[${item.index}]`)}
             key={`${item.value}-${item.index}`}
           >
+            <Check
+              aria-hidden="true"
+              className={cn("size-4 shrink-0", field.check)}
+              strokeWidth={2.5}
+            />
             {item.value}
           </li>
         ))}
@@ -235,80 +242,79 @@ export default function StoryFeature({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("py-section", field.section)}
+      className={field.section}
       id={`story-feature-${sectionKey}`}
     >
-      <div className="container-content">
-        <div
-          className={cn(
-            "grid items-stretch gap-10 lg:grid-cols-2 lg:gap-16",
-            styles.reveal,
-          )}
-        >
-          {hasImage ? (
-            <figure className="m-0 flex min-w-0 flex-col">
-              <div
-                className={cn(
-                  "relative aspect-[4/3] w-full overflow-hidden rounded-xl lg:aspect-auto lg:min-h-96 lg:flex-1",
-                  field.media,
-                )}
-                data-sanity={dataAttribute?.("image")}
-              >
-                <Image
-                  alt={stegaClean(image?.alt)?.trim() || ""}
-                  blurDataURL={image?.asset?.metadata?.lqip || undefined}
-                  className="object-cover"
-                  fill
-                  placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
-                  sizes="(min-width: 1320px) 588px, (min-width: 1024px) 50vw, 100vw"
-                  src={urlFor(image!).width(1200).height(900).url()}
-                />
-              </div>
+      <div className={cn(styles.grid, styles.reveal)}>
+        {hasImage ? (
+          <figure
+            className={cn(styles.photo, "m-0 min-w-0", field.media)}
+            data-sanity={dataAttribute?.("image")}
+          >
+            <div className={styles.frame}>
+              <Image
+                alt={stegaClean(image?.alt)?.trim() || ""}
+                blurDataURL={image?.asset?.metadata?.lqip || undefined}
+                className="object-cover"
+                fill
+                placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
+                sizes="(min-width: 1024px) 60vw, 100vw"
+                src={urlFor(image!).width(1400).height(1600).url()}
+              />
               {displayCaption ? (
                 <figcaption
-                  className={cn("mt-4 text-label", field.caption)}
+                  className={cn(
+                    styles.caption,
+                    "absolute inset-x-0 bottom-0 bg-gradient-to-t from-pine-night/70 to-transparent px-[var(--gutter)] pb-5 pt-14 text-label text-birch-bark/85",
+                  )}
                   data-sanity={dataAttribute?.("imageCaption")}
                 >
                   {displayCaption}
                 </figcaption>
               ) : null}
-            </figure>
+            </div>
+          </figure>
+        ) : null}
+
+        <div
+          className={cn(
+            styles.copy,
+            !hasImage && styles.copyWithoutPhoto,
+            "flex min-w-0 max-w-[38rem] flex-col gap-7",
+          )}
+        >
+          <header>
+            {displayEyebrow ? (
+              <p
+                className={cn("mb-5 text-eyebrow", field.eyebrow)}
+                data-sanity={dataAttribute?.("eyebrow")}
+              >
+                {displayEyebrow}
+              </p>
+            ) : null}
+            <h2
+              className="text-balance font-display text-headline"
+              data-sanity={dataAttribute?.("title")}
+              id={headingId}
+            >
+              <PortableText components={headingComponents(field)} value={title} />
+            </h2>
+          </header>
+
+          {richText?.length ? (
+            <div
+              className={cn(
+                "flex flex-col gap-4 text-pretty text-[17px] leading-[1.6]",
+                field.body,
+              )}
+              data-sanity={dataAttribute?.("richText")}
+            >
+              <PortableText components={richTextComponents(field)} value={richText} />
+            </div>
           ) : null}
 
-          <div className="flex min-w-0 max-w-[38rem] flex-col gap-7">
-            <header>
-              {displayEyebrow ? (
-                <p
-                  className={cn("mb-5 text-eyebrow", field.eyebrow)}
-                  data-sanity={dataAttribute?.("eyebrow")}
-                >
-                  {displayEyebrow}
-                </p>
-              ) : null}
-              <h2
-                className="text-balance font-display text-headline"
-                data-sanity={dataAttribute?.("title")}
-                id={headingId}
-              >
-                <PortableText components={headingComponents(field)} value={title} />
-              </h2>
-            </header>
-
-            {richText?.length ? (
-              <div
-                className={cn(
-                  "flex flex-col gap-4 text-pretty text-[17px] leading-[1.6]",
-                  field.body,
-                )}
-                data-sanity={dataAttribute?.("richText")}
-              >
-                <PortableText components={richTextComponents(field)} value={richText} />
-              </div>
-            ) : null}
-
-            <KeyDetails dataAttribute={dataAttribute} details={keyDetails} field={field} />
-            <StoryButtons buttons={buttons} dataAttribute={dataAttribute} field={field} />
-          </div>
+          <KeyDetails dataAttribute={dataAttribute} details={keyDetails} field={field} />
+          <StoryButtons buttons={buttons} dataAttribute={dataAttribute} field={field} />
         </div>
       </div>
     </section>
