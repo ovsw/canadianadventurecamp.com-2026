@@ -19,6 +19,8 @@
     "legacy:page": "pnpm --dir studio legacy:page",
     "setup:sanity-cors": "node --env-file=studio/.env.local scripts/setup-sanity-cors.mjs",
     "page-builder:new": "node scripts/create-page-builder-block.mjs",
+    "impeccable:live": "\"$HOME/.claude/skills/impeccable/scripts/impeccable\" live --target frontend",
+    "impeccable:stop": "\"$HOME/.claude/skills/impeccable/scripts/impeccable\" live-server stop",
     "build": "pnpm --dir frontend build && pnpm --dir studio build",
     "typegen": "pnpm --dir studio typegen",
     "verify:typegen": "pnpm typegen && git diff --exit-code -- studio/schema.json frontend/sanity.types.ts",

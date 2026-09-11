@@ -12,6 +12,14 @@ Before starting a development server, inspect the required port. If the exact se
 
 ## Sanity browser checks (Codex)
 
+For local frontend reviews, open the draft-preview version of the page and
+preserve its preview parameters, including `sanity-preview-perspective=drafts`.
+Verify that known draft-only content and the expected sections are visible
+before reviewing or taking screenshots. A Studio login, preview query parameter,
+or HTTP 200 alone is not proof that the frontend is showing drafts. If content
+is missing or the published version appears, report the mismatch and restore
+draft preview before continuing the visual review.
+
 In Codex, always use the ChatGPT in-app browser for local or remote Sanity
 checks. Never use the Next.js loop browser to open or inspect Sanity Studio or
 any Sanity URL.
