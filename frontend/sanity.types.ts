@@ -344,7 +344,27 @@ export type DatesRatesSection = {
     _type: "includeItem";
     _key: string;
   }>;
-  conditions?: MinimalRichText;
+  conditions?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?:
+      | "normal"
+      | "savings"
+      | "payment"
+      | "transport"
+      | "shop"
+      | "tax"
+      | "waitlist";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
 };
 
 export type FacilitiesMapSection = {
@@ -2091,7 +2111,27 @@ export type BLOG_INDEX_QUERY_RESULT =
               _type: "includeItem";
               _key: string;
             }> | null;
-            conditions: MinimalRichText | null;
+            conditions: Array<{
+              children?: Array<{
+                marks?: Array<string>;
+                text?: string;
+                _type: "span";
+                _key: string;
+              }>;
+              style?:
+                | "normal"
+                | "payment"
+                | "savings"
+                | "shop"
+                | "tax"
+                | "transport"
+                | "waitlist";
+              listItem?: never;
+              markDefs?: null;
+              level?: number;
+              _type: "block";
+              _key: string;
+            }> | null;
             activeSeason: {
               _id: string;
               name: string | null;
@@ -3354,7 +3394,27 @@ export type BLOG_INDEX_QUERY_RESULT =
               _type: "includeItem";
               _key: string;
             }> | null;
-            conditions: MinimalRichText | null;
+            conditions: Array<{
+              children?: Array<{
+                marks?: Array<string>;
+                text?: string;
+                _type: "span";
+                _key: string;
+              }>;
+              style?:
+                | "normal"
+                | "payment"
+                | "savings"
+                | "shop"
+                | "tax"
+                | "transport"
+                | "waitlist";
+              listItem?: never;
+              markDefs?: null;
+              level?: number;
+              _type: "block";
+              _key: string;
+            }> | null;
             activeSeason: {
               _id: string;
               name: string | null;
@@ -4713,7 +4773,27 @@ export type BLOG_INDEX_QUERY_RESULT =
               _type: "includeItem";
               _key: string;
             }> | null;
-            conditions: MinimalRichText | null;
+            conditions: Array<{
+              children?: Array<{
+                marks?: Array<string>;
+                text?: string;
+                _type: "span";
+                _key: string;
+              }>;
+              style?:
+                | "normal"
+                | "payment"
+                | "savings"
+                | "shop"
+                | "tax"
+                | "transport"
+                | "waitlist";
+              listItem?: never;
+              markDefs?: null;
+              level?: number;
+              _type: "block";
+              _key: string;
+            }> | null;
             activeSeason: {
               _id: string;
               name: string | null;
@@ -6399,7 +6479,27 @@ export type HOME_PAGE_QUERY_RESULT = {
           _type: "includeItem";
           _key: string;
         }> | null;
-        conditions: MinimalRichText | null;
+        conditions: Array<{
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?:
+            | "normal"
+            | "payment"
+            | "savings"
+            | "shop"
+            | "tax"
+            | "transport"
+            | "waitlist";
+          listItem?: never;
+          markDefs?: null;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }> | null;
         activeSeason: {
           _id: string;
           name: string | null;
@@ -7818,7 +7918,27 @@ export type PAGE_QUERY_RESULT = {
           _type: "includeItem";
           _key: string;
         }> | null;
-        conditions: MinimalRichText | null;
+        conditions: Array<{
+          children?: Array<{
+            marks?: Array<string>;
+            text?: string;
+            _type: "span";
+            _key: string;
+          }>;
+          style?:
+            | "normal"
+            | "payment"
+            | "savings"
+            | "shop"
+            | "tax"
+            | "transport"
+            | "waitlist";
+          listItem?: never;
+          markDefs?: null;
+          level?: number;
+          _type: "block";
+          _key: string;
+        }> | null;
         activeSeason: {
           _id: string;
           name: string | null;
