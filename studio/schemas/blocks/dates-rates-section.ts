@@ -59,76 +59,96 @@ export default defineType({
       { _key: "include-activities", _type: "includeItem", label: "All 35 activities" },
       { _key: "include-instruction", _type: "includeItem", label: "Expert instruction" },
       { _key: "include-gear", _type: "includeItem", label: "Top-of-the-line gear" },
-      { _key: "include-deposit", _type: "includeItem", label: "Fully refundable deposit" },
-      { _key: "include-siblings", _type: "includeItem", label: "5-10% sibling discount" },
     ],
     conditions: [
       {
-        _key: "dates-rates-condition-deposits",
-        _type: "block",
-        style: "normal",
-        markDefs: [],
-        children: [
+        "_key": "dates-rates-condition-siblings",
+        "_type": "block",
+        "style": "savings",
+        "markDefs": [],
+        "children": [
           {
-            _key: "dates-rates-condition-deposits-1",
-            _type: "span",
-            text: "Deposit ",
-            marks: [],
+            "_key": "siblings-label",
+            "_type": "span",
+            "text": "Sibling savings. ",
+            "marks": [
+              "strong"
+            ]
           },
           {
-            _key: "dates-rates-condition-deposits-2",
-            _type: "span",
-            text: "refund and balance deadlines are confirmed during enrollment",
-            marks: ["strong"],
-          },
-          {
-            _key: "dates-rates-condition-deposits-3",
-            _type: "span",
-            text: ".",
-            marks: [],
-          },
-        ],
+            "_key": "siblings-text",
+            "_type": "span",
+            "text": "5% off the second camper and 10% off the third, applied automatically.",
+            "marks": []
+          }
+        ]
       },
       {
-        _key: "dates-rates-condition-siblings",
-        _type: "block",
-        style: "normal",
-        markDefs: [],
-        children: [
+        "_key": "dates-rates-condition-deposits",
+        "_type": "block",
+        "style": "payment",
+        "markDefs": [],
+        "children": [
           {
-            _key: "dates-rates-condition-siblings-1",
-            _type: "span",
-            text: "Siblings save — ",
-            marks: [],
+            "_key": "deposits-label",
+            "_type": "span",
+            "text": "Deposit & balance. ",
+            "marks": [
+              "strong"
+            ]
           },
           {
-            _key: "dates-rates-condition-siblings-2",
-            _type: "span",
-            text: "5% off the 2nd camper, 10% off the 3rd",
-            marks: ["strong"],
-          },
-          {
-            _key: "dates-rates-condition-siblings-3",
-            _type: "span",
-            text: ", applied automatically.",
-            marks: [],
-          },
-        ],
+            "_key": "deposits-text",
+            "_type": "span",
+            "text": "Refund and balance deadlines are confirmed during enrollment.",
+            "marks": []
+          }
+        ]
       },
       {
-        _key: "dates-rates-condition-extras",
-        _type: "block",
-        style: "normal",
-        markDefs: [],
-        children: [
+        "_key": "dates-rates-condition-extras",
+        "_type": "block",
+        "style": "transport",
+        "markDefs": [],
+        "children": [
           {
-            _key: "dates-rates-condition-extras-1",
-            _type: "span",
-            text: "Transportation to and from camp and applicable government taxes are in addition to the rates above. A $150 tuck-shop deposit is added per camper — unused funds fully refunded.",
-            marks: [],
+            "_key": "extras-label",
+            "_type": "span",
+            "text": "Transport & taxes \u2014 extra. ",
+            "marks": [
+              "strong"
+            ]
           },
-        ],
+          {
+            "_key": "extras-text",
+            "_type": "span",
+            "text": "Transportation to and from camp and applicable government taxes are in addition to the session rate.",
+            "marks": []
+          }
+        ]
       },
+      {
+        "_key": "dates-rates-condition-tuck-shop",
+        "_type": "block",
+        "style": "shop",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "tuck-shop-label",
+            "_type": "span",
+            "text": "Tuck shop \u2014 spending deposit. ",
+            "marks": [
+              "strong"
+            ]
+          },
+          {
+            "_key": "tuck-shop-text",
+            "_type": "span",
+            "text": "A $150 deposit is added per camper. Unused funds are fully refunded.",
+            "marks": []
+          }
+        ]
+      }
     ],
   },
   fields: [
@@ -178,7 +198,8 @@ export default defineType({
     }),
     defineField({
       name: "sessionIncludes",
-      title: "Every Session Includes",
+      title: "Included in Your Rate",
+      description: "Services covered by the session rate. Put discounts, deposits, and extra costs in the next field.",
       type: "array",
       of: [
         defineArrayMember({
@@ -201,9 +222,31 @@ export default defineType({
     }),
     defineField({
       name: "conditions",
-      title: "Conditions",
-      description: "Each paragraph renders as one bullet-separated item.",
-      type: "minimalRichText",
+      title: "Discounts, Payments & Extras",
+      description: "One item per paragraph. Choose its icon from the paragraph style menu and start with a short bold label. Separate savings, payment deadlines, and extra costs.",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "block",
+          styles: [
+            { title: "Information icon", value: "normal" },
+            { title: "Sibling savings icon", value: "savings" },
+            { title: "Payment icon", value: "payment" },
+            { title: "Transport icon", value: "transport" },
+            { title: "Tuck shop icon", value: "shop" },
+            { title: "Tax icon", value: "tax" },
+            { title: "Waitlist icon", value: "waitlist" },
+          ],
+          lists: [],
+          marks: {
+            annotations: [],
+            decorators: [
+              { title: "Bold", value: "strong" },
+              { title: "Italic", value: "em" },
+            ],
+          },
+        }),
+      ],
       validation: (rule) => rule.required().min(1),
     }),
   ],

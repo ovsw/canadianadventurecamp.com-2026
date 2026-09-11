@@ -7,23 +7,8 @@ import {
   formatRate,
   getSeasonTicks,
   maxSessionRows,
-  type ConditionBlock,
   type PreparedLength,
 } from "./dates-rates-model";
-
-function renderConditionBlock(block: ConditionBlock) {
-  return block.children?.map((span) => {
-    const marks = span.marks ?? [];
-    let node: React.ReactNode = span.text;
-    if (marks.includes("em")) node = <em>{node}</em>;
-    if (marks.includes("strong")) {
-      node = (
-        <strong className="font-semibold text-pine-night/85">{node}</strong>
-      );
-    }
-    return <span key={span._key}>{node}</span>;
-  });
-}
 
 /** Label colours hold 4.5:1 on cream; the bar colour carries the status. */
 function availabilityClass(status: string) {
@@ -81,16 +66,10 @@ function useAnimatedRate(rateValue: number) {
 }
 
 export default function DatesRatesBrowser({
-  conditions,
-  conditionsDataAttribute,
   lengths,
   portalLink,
   seasonStart,
-  sessionIncludes,
-  sessionIncludesDataAttribute,
 }: {
-  conditions: ConditionBlock[];
-  conditionsDataAttribute?: string;
   lengths: PreparedLength[];
   portalLink?: {
     dataSanity?: string;
@@ -99,12 +78,6 @@ export default function DatesRatesBrowser({
     text: string;
   };
   seasonStart: string;
-  sessionIncludes: {
-    _key: string;
-    label?: string | null;
-    dataSanity?: string;
-  }[];
-  sessionIncludesDataAttribute?: string;
 }) {
   const [selectedKey, setSelectedKey] = useState(lengths[0]?.key);
   const activeLength =
@@ -171,7 +144,7 @@ export default function DatesRatesBrowser({
       <div className="max-lg:contents lg:grid lg:grid-cols-[320px_1fr] lg:gap-14">
         <aside className="order-1 lg:order-none">
           <p className="text-label text-pine-night/50">
-            Per camper &middot; all-inclusive
+            Per camper &middot; session rate
           </p>
           <div className="mt-3 flex items-baseline gap-2.5">
             <span
@@ -304,42 +277,6 @@ export default function DatesRatesBrowser({
       </div>
       </div>
 
-      <div className="mt-7 grid gap-4 lg:grid-cols-[320px_1fr] lg:gap-14 lg:items-baseline">
-        <p className="text-label whitespace-nowrap text-pine-night/50 lg:text-right">
-          Every session includes
-        </p>
-        <ul
-          className="grid grid-cols-2 gap-x-10 gap-y-3.5 sm:flex sm:flex-wrap sm:gap-x-10 sm:gap-y-3.5"
-          data-sanity={sessionIncludesDataAttribute}
-        >
-          {sessionIncludes.map((item, i) => (
-            <li
-              className="flex items-baseline gap-2.5"
-              data-sanity={item.dataSanity}
-              key={item._key || i}
-            >
-              <span aria-hidden="true" className="shrink-0 font-bold text-cedar">
-                &#10003;
-              </span>
-              <span className="text-[17px] font-semibold leading-snug text-pine-night/88">
-                {item.label}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <ul
-        className="mt-6 grid gap-x-8 gap-y-3 border-t border-dashed border-pine-night/16 pt-6 text-sm leading-relaxed text-pine-night/70 md:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]"
-        data-sanity={conditionsDataAttribute}
-      >
-        {conditions.map((condition, index) => (
-          <li className="flex gap-2.5" key={condition._key || index}>
-            <span aria-hidden="true" className="mt-[7px] size-1.5 shrink-0 rounded-full bg-cedar" />
-            <span>{renderConditionBlock(condition)}</span>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

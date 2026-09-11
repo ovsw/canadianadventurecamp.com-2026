@@ -236,6 +236,14 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   letter-spacing: -0.01em;
 }
 
+/* Larger title — row headings with room to wrap */
+@utility text-title-lg {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
 /* Eyebrow — small label above headlines */
 @utility text-eyebrow {
   font-family: var(--font-mono);

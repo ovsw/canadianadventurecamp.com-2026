@@ -1,223 +1,250 @@
-# Page workflow: from the old page to a draft, several pages at once
+# Page content workflow
 
-Facts about this repo for the `page-draft` skill (`.claude/skills/page-draft/`),
-its `page-draft-stage` workflow (`.claude/workflows/page-draft-stage.js`,
-step instructions in `.claude/workflows/page-draft/`), and the
-`page-integrate` skill. They hold the process; this file holds what is true
-about this repo, its Basecamp project, and its content database. Update it here when any of it changes.
+Shared process for `$page-draft` in ChatGPT/Codex and `/page-draft` in
+Claude Code. One capable writer owns the complete page. Basecamp holds
+content planning and client review; Sanity holds the content; GitHub holds
+separately approved code work.
 
-## Stages
+## Scope and outcome
 
-A page moves through these stages. Basecamp is the tracker; one card per page
-in the page tracker card table.
+Write a complete, ambitious proposed page for a high-end camp, then map it
+to existing presentation layouts. Content comes first. Freely propose the
+promises, services, details, numbers, and experiences appropriate to the
+page. Factual accuracy is a later client pass: mark unconfirmed claims
+`(camp to confirm)` and put each on the page's checklist. Existing source
+facts are useful inputs, not a limit on what the draft can propose. For this
+drafting stage, this rule supersedes source-only or "do not fabricate"
+restrictions in older page guidance and PRODUCT.md. Nothing is published.
 
-| Stage | Basecamp column | Who moves it |
-|---|---|---|
-| Backlog | Backlog | Ovi |
-| To build next | To Build | Ovi (top card is next) |
-| Draft in progress | Building | `page-draft`, as its first write (taking the page) |
-| Ready for Ovi | Ovi Polish | `page-draft`, when it hands the page over |
-| Ready for client feedback | Client review | Ovi, after polish and merge |
-| Accepted | Published | Ovi, after publishing |
-| Rejected | Rejected. | Ovi |
+The result is a complete Sanity draft, its Basecamp card in Ovi Polish,
+and a traceable confirmation checklist. A temporary layout limitation is
+acceptable when recorded. Missing content and failed writes are not.
+Ovi is the editorial reviewer; do not create a review agent or review loop.
 
-A **draft** is what `page-draft` leaves behind: the plan written as a GitHub
-issue, the code on a pushed branch, the page text saved as a draft in Sanity,
-and the card in Ovi Polish. Ovi's polish
-and the client's feedback come after; neither is the draft's job.
+Content work requires no dedicated branch or worktree. Read repository
+instructions and section definitions from an available checkout, including
+main, without changing it. No schemas, queries, frontend, generated types,
+code commits, pushes, GitHub plans, PRs, or release checks belong to this
+task. Propose section changes on the card for Ovi to decide on later.
 
-## Basecamp
+## Start and claim one page
 
-- Account `6230954`, project "CAC" `48063970`. No `.basecamp/config.json`, so
-  every command carries `--in 48063970 --account 6230954`.
-- Page tracker card table `10092471266`. Column ids on 2026-09-05: Backlog
-  `10092471267`, To Build `10274031872`, Building `10092471270`, Ovi Polish
-  `10274031944`, Client review `10274032020`, Published `10092471271`,
-  Rejected. `10092471268`. Titles get renamed; resolve a column by title with
-  `basecamp cards columns --card-table 10092471266` before moving a card.
-- Card body, one line each, kept current by the skills:
-  `Slug`, `Sanity id`, `Tier`, `Primary avatars`, `Secondary`, `Spec issue`,
-  `Branch`, `PR`, `Client input` (link to the to-do list). Avatar names link to
-  the avatar documents in the Design folder (`docs/avatars.md` names them).
-- Client facts and media the camp must supply go on one to-do list per page,
-  titled `Client input: <page title>`, in the project's to-dos. One to-do per
-  fact or asset, so the client can tick them.
-- The commands, each with `--in 48063970 --account 6230954 --json`; the
-  answer is `{ ok, data }`. Run no `--help`; this list is complete for the
-  page workflow.
+Accept a slug, old-site URL, or Basecamp card URL. With no target, select
+the first unclaimed card in To Build. Resolve the card, slug, title, and
+Sanity document id. Normalize the slug without a leading slash. A missing
+page document can be created as a draft after the backup. An old Spec issue
+link may be read as reference if useful; do not create or update an issue.
 
-  | What | Command |
-  |---|---|
-  | Columns of the tracker | `basecamp cards columns --card-table 10092471266` |
-  | Cards in a column, in order | `basecamp cards list --column <column id>` |
-  | One card, body in `data.content` (HTML) | `basecamp cards show <card id>` |
-  | Comments on a card, oldest first, in `data` | `basecamp comments list <card id>` |
-  | Comment, Markdown from stdin | `basecamp comments create <card id> - < <file>` |
-  | Move a card | `basecamp cards move <card id> --to <column id>` |
-  | Rewrite a card body (`--content` is not a flag) | `basecamp cards update <card id> --body "$BODY"` |
-  | Make a to-do list, id in `data.id` | `basecamp todolists create "<name>" -d "<description>"` |
-  | Add a to-do | `basecamp todos create "<text>" --list <list id>` |
-  | List the to-do lists | `basecamp todolists list` |
+Before claiming, confirm that Sanity MCP can read and mutate the target
+dataset, and that Basecamp is available. If the required connection is
+unavailable, report the specific missing capability. Do not replace MCP
+mutations with local seeds or an invented CLI write path.
 
-  The card body is one field that the last writer overwrites: read it, change
-  only the line you own, and write the whole thing back.
+### Taking a page so nobody else works on it
 
-## Taking a page so nobody else works on it
+1. Read the card and all claim/release comments. Use a unique session or
+   run identifier independent of Git branches.
+2. An active claim by another run blocks writes, even in the same checkout.
+   An old claim without an explicit release or completed handover remains
+   active. Ask before taking over; age alone does not release it. For an
+   untargeted run, choose the next unclaimed card instead.
+3. Post `Taking this page. Run: <id>. Page: /<slug>.` Re-read the comments.
+   The earliest unreleased claim wins. If another run won, record that your
+   claim was withdrawn and stop without touching the draft or card body.
+4. After winning, move the card to Building and record the active run in
+   the card body. Re-read the body immediately before each update and
+   preserve unrelated fields and edits.
 
-Sessions running at the same time share Basecamp, GitHub issues, the Sanity
-content database, and `origin`. Nothing locks any of them, so the workflow
-takes the page on the card before it writes anything:
+Resume only a known claim from this session, or a takeover authorized by
+Ovi. Inspect the card and current Sanity draft to establish what remains.
+Never infer ownership from a branch name or replay a cached mutation.
 
-0. Never from the main checkout. A run there leaves the checkout on a page
-   branch, and the next run started there joins the first run's page. Two
-   runs drafted Health & Safety at the same time in the main checkout on
-   2026-09-05 and fought over one plan issue, one seed file, and one draft.
-   Every run gets its own worktree.
-1. Read the card and its comments. A card with any "Taking this page"
-   comment you did not write yourself in this step is taken, even when the
-   comment names your branch or your worktree: you did not write it, so the
-   run that did is still going. Report it and stop, or, when no target was
-   given, take the next card that has no such comment.
-2. Post a comment on the card: "Taking this page. Branch: `<branch>`,
-   worktree: `<path>`." Comments only append, so they keep their order.
-   Re-read the comments. If another "Taking this page" comment sits above
-   yours, that session was first: stop, and touch nothing else.
-3. Only then move the card to Building and add the `Branch:` line to the
-   card body. The body is one field that the last writer overwrites, which
-   is why it is written after the claim is settled, not before.
-4. Search open issues for `Page: … (/<slug>)` before saving a plan, and reuse
-   an existing one. Two sessions filed duplicate tickets for the Family Guide
-   on 2026-09-04; this step exists because of that.
+## Brief and selective research
 
-## Branches and integration
+Read the page's avatar row and relevant profiles in `docs/avatars.md`,
+`CONTEXT.md` "Conversion funnel" and "Copy voice", and the relevant CTA
+rules in `docs/adr/0001-conversion-funnel-and-header-ctas.md`. Keep the
+reader restrictions, such as Rachel not receiving a fit quiz and Maya not
+receiving a form. Use `frontend/PRODUCT.md` for useful camp context.
 
-- Work on the branch the worktree was created with (T3 Code names it
-  `t3code/<name>`). On `main`, branch to `page/<slug>` first.
-- Run `pnpm sync:main` before the first commit and again before the final
-  push. It merges `origin/main`, regenerates Sanity types, and union-merges
-  the generator-marker registrations. It stops on any other conflict and
-  says which files need a hand.
-- Push the branch. Do not open a PR per page. `page-integrate` merges every
-  branch in Ovi Polish into one integration branch (`pnpm merge:refs
-  origin/<branch>…`), runs the gate once, and opens one PR. Ovi polishes on
-  that branch with every draft visible on one dev server.
-- Generated files (`studio/schema.json`, `frontend/sanity.types.ts`) are never
-  hand-merged. Take either side and run `pnpm typegen`.
+Record a short brief on the card: primary reader, page purpose, questions
+to answer, intended next action, and important decisions. This replaces
+the GitHub plan issue. Keep work in the conversation and the card, not a
+local plan, research artifact, state manifest, or seed file.
 
-## Rules for working in parallel
+Read the current page and old page where helpful. `pnpm legacy:page <slug>`
+is an available read helper. Choose further research for this page, not
+from a fixed roster. Delegate only substantial independent questions and
+keep the answers concise. No fixed audience/content/photo agent pipeline.
+Do not repeat research to verify proposed claims. Defer layout and asset
+selection until the content is written.
 
-These are the rules that keep two drafts from undoing each other. Each one
-paid for itself on 2026-09-04, when three sessions redesigned `storyFeature`
-and two of them threw their work away.
+The unit of delivery is this page. Use supplied links or known shared facts
+when relevant. Ask Ovi before searching other pages for matching defects,
+claim occurrences, or wider coherence problems. Do not start a site audit.
 
-**Code is additive.** A page branch adds new blocks, adds optional fields to
-existing blocks, and adds documents. It renames nothing, retypes nothing, and
-removes nothing. A shape change to a shared block is its own PR on a quiet
-main, never part of a page draft.
+## Write the complete page
 
-**Blocks in flight are locked.** Before designing or extending an existing
-block, list the files other unmerged branches touch:
+Write without regard to available layouts. Serve the reader's questions
+in a clear sequence with complete headings, body copy, and appropriate
+calls to action. Run `unslop` on the writing; Ovi's later review is not a
+reason to leave known repetition, fragments, or missing material.
 
-```bash
-git fetch --quiet origin
-me=$(git branch --show-current)
-for b in $(git branch --format='%(refname:short)' -a | grep -v -e HEAD -e '^main$' -e '^origin/main$' -e "^$me$" -e "^origin/$me$"); do
-  git log --format= --name-only origin/main..$b | grep -E '^(frontend/components/blocks|frontend/sanity/queries|studio/schemas/blocks)/' | sed "s|^|$b |"
-done | sort -u
-```
+Clearly mark each unconfirmed promise wherever it appears. If a field
+cannot carry a visible marker, place one immediately beside its displayed
+content and name the exact field in the checklist. Metadata claims also
+need markers and checklist locations. Invented example quotations must
+be visibly identified as proposed placeholders, not attributed as genuine
+testimony. Preserve useful proposed detail instead of deleting it for lack
+of a source.
 
-Local branches are in the list because worktrees share them before they
-push; this branch and `main` are left out. A renderer, query, or schema file
-that appears in that list belongs to another branch. Use the block as it is on `main`, or make a new block.
+### Client confirmation checklist
 
-**"Reuse" means designed.** A spec's `reuse` mark is a claim to verify: open
-the renderer and look for the design system (`text-headline`,
-`bg-forest-floor`, `container-content`, the eyebrow-headline-script opening).
-A renderer still on starter utility classes is undesigned; treat it as
-`design` (design it in this branch, if it is not locked) or choose another
-block. Starter blocks still undesigned on 2026-09-05: `richTextBlock`,
-`teamMembers`, `latestArticles`. Every other block on `main` has a designed
-renderer.
+Keep the checklist on the page's Basecamp card, in its body or a linked
+card comment. Update existing entries rather than appending duplicates.
+One entry contains:
 
-**The dataset is shared and live.** Every branch reads the same `production`
-dataset. A draft written by one branch is visible to every other branch's dev
-server, and a document whose shape only one branch's schema understands will
-show as invalid everywhere else until that branch merges. So:
+- The exact proposed claim.
+- Every location on this page, including section/field, FAQs, and metadata.
+- A request to confirm or supply replacement wording.
+- Its status: awaiting client, confirmed, or replacement supplied.
 
-- write drafts only; publish nothing;
-- write only this page's document and documents created for it (FAQs,
-  testimonials, redirects) with deterministic ids scoped to the page, e.g.
-  `faq-airport-return-flight`, `testimonial-placeholder-madrid-parent`;
-- the `homePage`, `navigation`, `settings`, and `footer` documents belong to
-  nobody's draft. Nav label or description changes, and homepage candidates,
-  go in the spec issue and the handoff, not the dataset;
-- use a new block's stored shape only on this page's draft until it merges;
-- back up before the first write (`sanity dataset export production
-  backups/production-<timestamp>-<slug>.tar.gz --raw`, then `gzip -t`).
+Group repeated occurrences into one item. Include missing media requests.
+Link an already known shared confirmation record instead of asking the
+same camp question again. Shared client answers apply to known affected
+locations; ask before searching for further occurrences or changing other
+pages. Confirmation and propagation are later tasks, not this drafting run.
 
-## Scripts
+## Match presentation layouts
 
-| Command | What it does |
-|---|---|
-| `pnpm legacy:page <slug>` | Old site content for the page, as text. Starting point, never a template. |
-| `pnpm page:text <slug>` | The current draft (or published page) as a reader meets it. Proofread copy here. |
-| `pnpm sanity:query '<groq>' ['<json params>']` | Any GROQ query as JSON, drafts and published alike, token already loaded. The one way to read the dataset from a step. |
-| `pnpm page:seed <seed.mjs> [--apply]` | Write the page draft and its supporting drafts from a seed module. Dry run without `--apply`. Helpers in `studio/scripts/lib/portable-text.mjs`. |
-| `pnpm page-builder:new <name>` | Generate and register a new block's schema, query, and renderer. |
-| `pnpm sync:main` | Merge `origin/main` with generated files and marker registrations resolved. |
-| `pnpm merge:refs <ref>…` | Same, for any refs; used by `page-integrate`. |
-| `pnpm dev:worktree` | Website and Studio on this worktree's port slot. `pnpm dev:stop --here` stops them. |
-| `pnpm typecheck`, `pnpm verify:typegen` | The cheap checks after code changes. |
+After writing, read `docs/agents/page-builder.md` and inspect only the
+existing section definitions needed to select layouts. General sections
+are content-agnostic presentation patterns; their names are not topics.
+Specialized sections, such as a facilities map, retain their actual purpose.
 
-Seed modules and dataset backups live under `backups/` (gitignored). A seed
-hardcodes asset ids and is stale the moment Ovi edits in Studio, so it stays
-out of git.
+Choose by presentation mode, fields, capacity, and existing rendering
+support. Aim to reuse existing sections nearly all the time. Preserve the
+complete copy with multiple instances or the closest flexible layout when
+necessary. Do not shorten, omit, or rewrite ideas merely to fit a block.
+Preserve meaningful emphasis, links, ordering, and required fields.
 
-## Loading a draft without a browser
+Choose existing assets after the copy. Use supplied or stored descriptions
+for alt text; record uncertain image suitability for Ovi. Leave an optional
+image slot empty and note the gap rather than create a broken asset link.
 
-Sanity Presentation needs a browser, but a server render of the draft catches
-a renderer crash or a missing field before handoff:
+A new section or schema modification is a proposal only. Record the
+affected content, current fallback, specific presentation limitation, and
+benefit of the proposed change on the card. Ovi decides whether to start
+separate design/development work. Make no schema or frontend changes here,
+and do not create a GitHub issue for an unapproved proposal.
 
-1. The Website port is `frontendPort` in `.worktree-ports.json` at the
-   worktree root, written by `pnpm dev:worktree`. No file: `pnpm dev:stop`
-   with no flags lists the running servers; if none is this worktree's,
-   start `pnpm dev:worktree` in the background and wait for the port to
-   answer.
-2. From `frontend/`, create a preview secret with a short node script:
-   `createPreviewSecret(client, "page-draft", studioUrl)` from
-   `@sanity/preview-url-secret/create-secret` (the package resolves from the
-   repo root under `node_modules/.pnpm/`; use the `@sanity/client` the
-   frontend uses, with the `SANITY_AUTH_TOKEN` from `studio/.env.local`).
-3. `curl -c jar "http://127.0.0.1:<port>/api/draft-mode/enable?sanity-preview-secret=<secret>&sanity-preview-pathname=/<slug>"`
-   (expect 307), then `curl -b jar http://127.0.0.1:<port>/<slug>`.
-4. Grep the HTML for every heading `pnpm page:text <slug>` prints for the
-   draft (the draft's own headings, never a plan's outline names), and for
-   "Application error" or "Internal Server Error". The `<title>` shows the
-   site default because metadata reads the published perspective; that is
-   expected.
+## Save directly to Sanity
 
-The Sanity CLI's `documents query` returns published documents only.
-`pnpm sanity:query` reads drafts too (it fetches with the raw perspective,
-as `studio/scripts/print-page-text.mjs` does).
-`sanity documents validate --yes --level warning --format ndjson` validates
-drafts too; grep the output for the page id.
+### Rules for working in parallel
 
-## Finish checklist
+The dataset is shared. Only the operator mutates the claimed page and its
+page-owned supporting drafts. Keep deterministic, page-scoped ids for new
+FAQs or other supporting documents. Read shared references, but do not
+overwrite them. Leave `homePage`, `navigation`, `settings`, `footer`, other
+pages, asset documents, and global configuration unchanged.
 
-The draft is done when all of these are true:
+Before the first dataset write, name and verify the configured Sanity
+project and dataset against the MCP target. Current repository project:
+`bf76qlx9`, dataset `production`; verify rather than assume. Create a
+timestamped export under `backups/` and run `gzip -t` on that exact archive.
+Follow `docs/agents/sanity-cli.md` to pass the auth token from
+`studio/.env.local` to the CLI. Use `sanity datasets export <dataset>
+<absolute-backup>.tar.gz --raw` for document-only work. If the task changes
+asset references, use a full export including assets. A failed export or
+verification stops writes. Backups are recovery archives only.
 
-- the plan exists as a GitHub issue with the decisions and their basis, labelled
-  `page-brief` and `ready-for-agent`, and the Basecamp card links it;
-- the branch is pushed, `pnpm sync:main` is clean, `pnpm typecheck` passes,
-  and `pnpm verify:typegen` passes when schemas changed;
-- the page draft holds every section in the spec, every required field filled,
-  every link resolving, camp-supplied facts marked `(camp to confirm)`;
-- `pnpm page:text <slug>` reads like the site's voice, with the banned words
-  from `CONTEXT.md` "Copy voice" absent and jargon explained at first use;
-- the `Client input: <page>` to-do list holds every fact and asset the camp
-  must supply;
-- the card sits in Ovi Polish with `Branch`, `Spec issue`, and `Client input`
-  filled, and a comment listing: sections that need Ovi's design pass (every
-  `new` and `design` block), placeholder content, missing images, and the
-  Studio path `/presentation?preview=/<slug>`;
-- a `homepage-coherence` issue exists when the spec named homepage candidates.
+Use Sanity MCP to read current document ids and revisions, then apply
+scoped mutations to drafts. For an existing published-only page, create
+the draft from its current content without altering the published version.
+Preserve fields outside the task. Use revision preconditions when patching
+existing drafts; create new drafts without replacing a concurrently created
+document. On a conflict, re-read the document and reconcile the scoped
+change. Do not blindly retry or overwrite another writer's work.
+
+Use registered section types and actual schema fields. Portable Text
+blocks, spans, list items, and marks need valid keys and references. Create
+supporting drafts with the page in a transaction where supported. Follow
+the repository's draft-reference convention; do not publish supporting
+documents to make references pass. If MCP lacks the operation needed for
+a safe write, stop and report it instead of using an unsafe replacement.
+
+Write and fix the dataset directly. No seed files, repeated imports,
+content artifacts, or local progress files are required or created.
+The Sanity draft is the content result.
+
+## Check storage and hand over
+
+Read the affected drafts back through MCP, including referenced page-owned
+documents. Check that all intended copy survived in order, required fields
+and keys are present, references resolve in the draft perspective, and
+every proposed claim has its marker and checklist entry. Use scoped schema
+validation where available. Fix mutation or structural errors; distinguish
+pre-existing warnings from new failures. This is a completeness check, not
+a factual or independent editorial review.
+
+No browser, screenshot, server-render test, typecheck, or build gate is part
+of content drafting. Browser checks belong to separate section design work.
+For the handover URL, identify the existing Studio server and its matching
+frontend from `.worktree-ports.json` or `pnpm dev:stop` without stop flags.
+Inspect ports before starting a server; reuse a matching server. Start the
+existing development setup only if needed to provide the review link.
+Do not guess the port or change CORS/settings. If preview setup is blocked,
+report that limitation and retain the draft; do not claim a working link.
+
+Finish by updating the card with:
+
+- The brief and decisions, Sanity page id, and completed content status.
+- The complete client checklist, with any known shared confirmation links.
+- Necessary layout proposals, temporary presentation limitations, and media gaps.
+- Backup path and ids of documents changed.
+- When the matching servers are verified, the direct local Studio
+  Presentation URL: `http://localhost:<studioPort>/presentation?preview=/<slug>`.
+  Otherwise record the preview setup limitation and omit the URL.
+
+Preserve historical Spec issue, Branch, and PR links without creating new
+ones. Keep content planning and checklist updates on the card; no separate
+GitHub plan, homepage issues, or new client to-do list is required. Reuse
+and link an existing checklist when resuming rather than duplicate it.
+Move the card to Ovi Polish only after the content and checklist are saved.
+Record handover and release the run's claim. Tell Ovi the card URL, the
+verified Studio URL if available, and any presentation limitations. Content
+ready and presentation work proposed are separate outcomes; a layout
+proposal does not block handover.
+
+## Pauses, failures, and later corrections
+
+Honor a requested stop after the brief or writing. Record progress on the
+card and release the claim on a deliberate pause. A later session reads
+the card and current draft, then claims the page again before writing.
+On an unexpected failure, record the step, cause, saved document ids, and
+next action on the card when possible. Keep Building status and the claim
+until the same run resumes or Ovi authorizes takeover. If Basecamp itself
+fails, report the failure directly to Ovi. Never report incomplete content
+as handed over.
+
+When Ovi reports a quality failure, correct this page and identify the
+cause. Ask before searching other pages for the same failure. Broader
+coherence, client fact confirmation, and section development are separate
+passes. Do not start them as cleanup for this run.
+
+## Basecamp project reference
+
+Account `6230954`, project CAC `48063970`, page tracker `10092471266`.
+Use the Basecamp skill. Pass `--in 48063970 --account 6230954` for this
+project's CLI operations. Resolve current column ids by title before moving
+a card: To Build, Building, Ovi Polish. The existing column ids are
+`10274031872`, `10092471270`, and `10274031944`, respectively.
+
+Useful reads: `basecamp cards columns --card-table 10092471266`,
+`basecamp cards list --column <id>`, `basecamp cards show <id>`, and
+`basecamp comments list <id>`. Read all relevant comment pages when claiming.
+Bodies are HTML in `data.content`; preserve unrelated fields when updating.
+Use `basecamp cards update <id> --body <html>` and
+`basecamp cards move <id> --to <column>`. Comments accept Markdown through
+`basecamp comments create <id> <text>`. Supply content as structured tool
+arguments or safely quoted text; no local content file is needed.

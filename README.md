@@ -67,10 +67,14 @@ Run `pnpm verify` before opening a pull request. It checks generated Sanity type
 GROQ projection, and React renderer. Use `--scope content|general|home`,
 `--title "Studio title"`, `--preview ./preview.jpg`, or `--dry-run` as needed.
 
-`pnpm legacy:page`, `pnpm page:text`, `pnpm sanity:query`, and `pnpm page:seed`
-read and write content for the page workflow; `pnpm sync:main` and `pnpm merge:refs`
-merge branches with generated Sanity types regenerated. See
-`docs/agents/page-workflow.md`.
+`$page-draft` in ChatGPT/Codex and `/page-draft` in Claude Code write page
+content directly through Sanity MCP and update the page's Basecamp card.
+They reuse existing layouts and propose code changes for separate work.
+See `docs/agents/page-workflow.md`. The legacy read and seed commands remain
+available for other tasks; seeds are not part of page drafting.
+
+`pnpm sync:main` and `pnpm merge:refs` support code development and regenerate
+Sanity types while merging branches. Content-only work needs neither.
 
 Use plain pnpm commands from the repository root. Add workspace dependencies with `pnpm --dir frontend add <package>` or `pnpm --dir studio add <package>`.
 

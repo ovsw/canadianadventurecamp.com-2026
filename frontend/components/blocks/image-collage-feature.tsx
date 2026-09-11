@@ -123,9 +123,9 @@ export default function ImageCollageFeature({
                     className="relative top-px size-2.5 shrink-0 rotate-45 rounded-xs bg-campfire-amber"
                   />
                   <p className="text-base/relaxed text-foreground">
-                    <strong data-sanity={dataAttribute?.(`${pointPath}.title`)}>
+                    <strong className="mb-1 block" data-sanity={dataAttribute?.(`${pointPath}.title`)}>
                       {pointTitle}
-                    </strong>{" "}
+                    </strong>
                     <span data-sanity={dataAttribute?.(`${pointPath}.body`)}>
                       {pointBody}
                     </span>

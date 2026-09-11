@@ -2,6 +2,13 @@
 
 Read this guide before adding or changing a section in a page's `blocks` array.
 
+For page content drafting, use existing types and fields only. General
+sections describe presentation layouts, not content topics; specialized
+sections such as a facilities map retain their specific purpose. Preserve
+the complete copy with the closest existing layout and record any proposed
+schema or layout change on the Basecamp card. The development instructions
+below apply only to a separately authorized section-development task.
+
 ## How a section reaches the page
 
 A top-level section passes through this flow:
@@ -64,9 +71,11 @@ A nested block is an object used only inside another section, such as a card ins
 
 ## Change an existing section
 
-Other worktrees may be drafting pages against the same block at the same
-time. Check the block lock list and keep changes additive, per
-`docs/agents/page-workflow.md` "Shared-state rules for parallel drafts".
+Other development worktrees may be editing the same block. Before changing
+it, inspect unmerged branch changes for the affected schema, query, and
+renderer files. Coordinate overlapping work rather than overwrite it.
+Content drafts use existing schemas; schema changes require their own
+development task and the migration checks below.
 
 Trace the whole vertical slice before editing:
 

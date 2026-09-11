@@ -1,7 +1,18 @@
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import type { ReactNode } from "react";
 import { stegaClean } from "next-sanity";
 import { getSafeLinkHref } from "@/lib/safe-href";
+import {
+  Bus,
+  CalendarClock,
+  Check,
+  ClipboardList,
+  Info,
+  ReceiptText,
+  ShoppingBag,
+  UsersRound,
+} from "lucide-react";
 import DatesRatesBrowser from "./dates-rates-browser";
 import styles from "./dates-rates-section.module.css";
 import { prepareLengths } from "./dates-rates-model";
@@ -23,6 +34,16 @@ type DatesRatesSectionProps = Extract<
 
 const detailsHref = "/dates-and-rates/";
 
+const conditionIcons = {
+  savings: UsersRound,
+  payment: CalendarClock,
+  transport: Bus,
+  shop: ShoppingBag,
+  tax: ReceiptText,
+  waitlist: ClipboardList,
+  normal: Info,
+};
+
 const headingComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => <>{children}</>,
@@ -43,6 +64,18 @@ const introductionComponents: PortableTextComponents = {
   },
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
+    em: ({ children }) => <em>{children}</em>,
+  },
+};
+
+const conditionComponents: PortableTextComponents = {
+  block: ({ children }: { children?: ReactNode }) => (
+    <p className="max-w-[65ch] text-pretty">{children}</p>
+  ),
+  marks: {
+    strong: ({ children }) => (
+      <strong className="font-semibold text-pine-night/85">{children}</strong>
+    ),
     em: ({ children }) => <em>{children}</em>,
   },
 };
@@ -137,20 +170,79 @@ export default function DatesRatesSection({
         </div>
 
         <DatesRatesBrowser
-          conditions={conditions}
-          conditionsDataAttribute={dataAttribute?.("conditions")}
           lengths={lengths}
           portalLink={portalLink}
           seasonStart={seasonStart}
-          sessionIncludes={sessionIncludes.map((item) => ({
-            _key: item._key,
-            label: item.label,
-            dataSanity: dataAttribute?.(
-              `sessionIncludes[_key=="${item._key}"]`,
-            ),
-          }))}
-          sessionIncludesDataAttribute={dataAttribute?.("sessionIncludes")}
         />
+
+        <div className="mt-10 grid gap-10 md:px-8 lg:mt-12 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-14">
+          <section aria-labelledby={`${sectionId}-included`}>
+            <h3
+              className="mb-6 text-balance font-display text-title-lg font-bold"
+              id={`${sectionId}-included`}
+            >
+              Included in your rate
+            </h3>
+            <ul
+              className="divide-y divide-pine-night/16 border-y border-pine-night/16"
+              data-sanity={dataAttribute?.("sessionIncludes")}
+              role="list"
+            >
+              {sessionIncludes.map((item) => (
+                <li
+                  className="flex items-start gap-3 py-5"
+                  data-sanity={dataAttribute?.(
+                    `sessionIncludes[_key=="${item._key}"]`,
+                  )}
+                  key={item._key}
+                >
+                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-cedar" />
+                  <span className="text-pretty text-base/relaxed font-semibold text-pine-night/85 [overflow-wrap:anywhere]">
+                    {item.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section aria-labelledby={`${sectionId}-conditions`}>
+            <h3
+              className="mb-6 text-balance font-display text-title-lg font-bold"
+              id={`${sectionId}-conditions`}
+            >
+              Discounts, payments &amp; extras
+            </h3>
+            <ul
+              className="min-w-0 divide-y divide-pine-night/16 border-y border-pine-night/16 text-base/relaxed text-pine-night/75"
+              data-sanity={dataAttribute?.("conditions")}
+              role="list"
+            >
+              {conditions.map((condition) => {
+                const Icon =
+                  conditionIcons[stegaClean(condition.style) ?? "normal"] ?? Info;
+                return (
+                  <li
+                    className="flex items-start gap-3 py-5 [overflow-wrap:anywhere]"
+                    data-sanity={dataAttribute?.(
+                      `conditions[_key=="${condition._key}"]`,
+                    )}
+                    key={condition._key}
+                  >
+                    <Icon
+                      aria-hidden="true"
+                      className="mt-1 size-5 shrink-0 text-cedar"
+                    />
+                    <div className="min-w-0">
+                      <PortableText
+                        components={conditionComponents}
+                        value={[condition]}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        </div>
       </div>
     </section>
   );

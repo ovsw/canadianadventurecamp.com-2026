@@ -1,11 +1,13 @@
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
+import { urlFor } from "@/sanity/lib/image";
 import {
   PortableText,
   toPlainText,
   type PortableTextComponents,
 } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
+import Image from "next/image";
 import TestimonialsCarousel from "./testimonials-carousel";
 import styles from "./testimonials.module.css";
 
@@ -40,6 +42,40 @@ function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
 }
 
+/** Up to two initials from the name, for the avatar fallback. */
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter((word) => /^\p{L}/u.test(word))
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+function Avatar({
+  image,
+  name,
+}: Readonly<{ image: TestimonialDocument["image"]; name: string }>) {
+  const hasImage = Boolean(image?.asset?._id);
+  return (
+    <span aria-hidden={hasImage ? undefined : "true"} className={styles.avatar}>
+      {hasImage && image ? (
+        <Image
+          alt={stegaClean(image.alt) || ""}
+          blurDataURL={image.asset?.metadata?.lqip || undefined}
+          className="object-cover"
+          fill
+          placeholder={image.asset?.metadata?.lqip ? "blur" : undefined}
+          sizes="72px"
+          src={urlFor(image).width(160).height(160).url()}
+        />
+      ) : (
+        <span className={styles.avatarFallback}>{initials(name)}</span>
+      )}
+    </span>
+  );
+}
+
 function TestimonialCard({
   referenceDataAttribute,
   testimonial,
@@ -51,20 +87,15 @@ function TestimonialCard({
 }>) {
   const role = stegaClean(testimonial.title)?.trim();
   const origin = stegaClean(testimonial.origin)?.trim();
+  const name = stegaClean(testimonial.name) ?? "";
 
   return (
-    <figure
-      className={`m-0 flex w-[88%] shrink-0 snap-start flex-col gap-7 rounded-[22px] border border-pine-night/10 bg-birch-bark px-[30px] py-[34px] transition-[transform,box-shadow] motion-base hover:-translate-y-1 hover:shadow-[var(--shadow-card-rest-cream)] md:w-auto ${styles.reveal}`}
-      data-sanity={referenceDataAttribute}
-    >
-      <span
-        aria-hidden="true"
-        className="font-display text-[3.25rem] font-extrabold leading-none text-cedar"
-      >
+    <figure className={styles.card} data-sanity={referenceDataAttribute}>
+      <span aria-hidden="true" className={styles.quoteMark}>
         &ldquo;
       </span>
       <blockquote
-        className="m-0 grid grow gap-4 p-0 text-[17px] leading-[1.6] text-pine-night [&_p]:m-0"
+        className={styles.quoteBody}
         data-sanity={testimonialDataAttribute?.(testimonial._id, "body")}
       >
         <PortableText
@@ -72,28 +103,36 @@ function TestimonialCard({
           value={testimonial.body ?? []}
         />
       </blockquote>
-      <figcaption className="grid gap-2 border-t border-pine-night/10 pt-5">
+      <figcaption className={styles.attribution}>
         <span
-          className="font-display text-[19px] font-bold leading-tight tracking-[-0.01em] text-pine-night"
-          data-sanity={testimonialDataAttribute?.(testimonial._id, "name")}
+          className={styles.avatarSlot}
+          data-sanity={testimonialDataAttribute?.(testimonial._id, "image")}
         >
-          {testimonial.name}
+          <Avatar image={testimonial.image} name={name} />
         </span>
-        {role || origin ? (
-          <span className="text-label text-pine-night/60">
-            {role ? (
-              <span data-sanity={testimonialDataAttribute?.(testimonial._id, "title")}>
-                {testimonial.title}
-              </span>
-            ) : null}
-            {role && origin ? <span aria-hidden="true"> · </span> : null}
-            {origin ? (
-              <span data-sanity={testimonialDataAttribute?.(testimonial._id, "origin")}>
-                {testimonial.origin}
-              </span>
-            ) : null}
+        <span className={styles.who}>
+          <span
+            className={styles.name}
+            data-sanity={testimonialDataAttribute?.(testimonial._id, "name")}
+          >
+            {testimonial.name}
           </span>
-        ) : null}
+          {role || origin ? (
+            <span className={styles.meta}>
+              {role ? (
+                <span data-sanity={testimonialDataAttribute?.(testimonial._id, "title")}>
+                  {testimonial.title}
+                </span>
+              ) : null}
+              {role && origin ? <span aria-hidden="true"> · </span> : null}
+              {origin ? (
+                <span data-sanity={testimonialDataAttribute?.(testimonial._id, "origin")}>
+                  {testimonial.origin}
+                </span>
+              ) : null}
+            </span>
+          ) : null}
+        </span>
       </figcaption>
     </figure>
   );
@@ -132,39 +171,41 @@ export default function Testimonials({
       className="bg-birch-bark-bright py-section text-pine-night"
       id={`testimonials-${stegaClean(_key)}`}
     >
-      <div className="container-content grid gap-12 lg:gap-16">
-        <header className="grid max-w-3xl gap-5">
-          {hasText(eyebrow) ? (
-            <p
-              className="text-eyebrow text-cedar"
-              data-sanity={dataAttribute?.("eyebrow")}
+      <div className="grid gap-12 lg:gap-16">
+        <header className="container-content">
+          <div className="grid max-w-3xl gap-5">
+            {hasText(eyebrow) ? (
+              <p
+                className="text-eyebrow text-cedar"
+                data-sanity={dataAttribute?.("eyebrow")}
+              >
+                {eyebrow}
+              </p>
+            ) : null}
+            <h2
+              className="text-balance font-display text-headline"
+              data-sanity={dataAttribute?.("heading")}
+              id={headingId}
             >
-              {eyebrow}
-            </p>
-          ) : null}
-          <h2
-            className="text-balance font-display text-headline"
-            data-sanity={dataAttribute?.("heading")}
-            id={headingId}
-          >
-            <PortableText components={headingComponents} value={heading} />
-          </h2>
+              <PortableText components={headingComponents} value={heading} />
+            </h2>
+          </div>
         </header>
 
         <TestimonialsCarousel
-          count={cards.length}
           dataSanity={dataAttribute?.("testimonials")}
           label={headingText ? `Testimonials: ${headingText}` : "Testimonials"}
-        >
-          {cards.map(({ document, key, path }) => (
-            <TestimonialCard
-              key={key}
-              referenceDataAttribute={dataAttribute?.(path)}
-              testimonial={document}
-              testimonialDataAttribute={testimonialDataAttribute}
-            />
-          ))}
-        </TestimonialsCarousel>
+          slides={cards.map(({ document, key, path }) => ({
+            key,
+            node: (
+              <TestimonialCard
+                referenceDataAttribute={dataAttribute?.(path)}
+                testimonial={document}
+                testimonialDataAttribute={testimonialDataAttribute}
+              />
+            ),
+          }))}
+        />
       </div>
     </section>
   );
