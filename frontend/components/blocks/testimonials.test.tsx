@@ -42,6 +42,7 @@ const block: ComponentProps<typeof Testimonials> = {
         title: "Parent of a first-year camper",
         origin: "Toronto",
         rating: 5,
+        image: null,
         body: quote("q1", "The lake was the whole summer."),
       },
     },
@@ -56,6 +57,7 @@ const block: ComponentProps<typeof Testimonials> = {
         title: "Parent",
         origin: null,
         rating: null,
+        image: null,
         body: quote("q2", "One island, one community."),
       },
     },
@@ -70,6 +72,7 @@ const block: ComponentProps<typeof Testimonials> = {
         title: null,
         origin: "Mexico City",
         rating: null,
+        image: null,
         body: quote("q3", "I can already picture my first day."),
       },
     },
@@ -79,14 +82,14 @@ const block: ComponentProps<typeof Testimonials> = {
 };
 
 describe("Testimonials", () => {
-  const scrollBy = vi.fn();
+  const scrollTo = vi.fn();
 
   beforeEach(() => {
-    scrollBy.mockReset();
-    Element.prototype.scrollBy = scrollBy as unknown as Element["scrollBy"];
+    scrollTo.mockReset();
+    Element.prototype.scrollTo = scrollTo as unknown as Element["scrollTo"];
   });
 
-  it("names the swipe region after the heading and reaches it by keyboard", async () => {
+  it("names the carousel after the heading and reaches it by keyboard", async () => {
     const user = userEvent.setup();
     render(<Testimonials {...block} />);
 
@@ -100,31 +103,35 @@ describe("Testimonials", () => {
     expect(region).toHaveFocus();
 
     await user.keyboard("{ArrowRight}");
-    expect(scrollBy).toHaveBeenCalledWith(
+    expect(scrollTo).toHaveBeenCalledWith(
       expect.objectContaining({ left: expect.any(Number) }),
     );
-    expect(scrollBy.mock.calls[0][0].left).toBeGreaterThan(0);
 
-    // At the first card "Previous" is disabled, so the next tab stop is "Next".
+    // At the first slide "Previous" is disabled, so the next tab stop is the
+    // first dot, then the remaining dots, then "Next".
     expect(
       screen.getByRole("button", { name: "Previous testimonial" }),
     ).toBeDisabled();
     await user.tab();
+    const firstDot = screen.getByRole("button", { name: "Go to testimonial 1" });
+    expect(firstDot).toHaveFocus();
+    expect(firstDot).toHaveAttribute("aria-current", "true");
     const next = screen.getByRole("button", { name: "Next testimonial" });
-    expect(next).toHaveFocus();
     await user.click(next);
-    expect(scrollBy).toHaveBeenCalledTimes(2);
+    expect(scrollTo).toHaveBeenCalledTimes(2);
   });
 
-  it("renders three cards with quote, name, role, and optional origin", () => {
+  it("renders three slides with quote, avatar fallback, name, role, and optional origin", () => {
     render(<Testimonials {...block} />);
 
     expect(
       screen.getByRole("heading", { name: "What families say about the island" }),
     ).toBeInTheDocument();
     expect(screen.getByText("about the island")).toHaveClass("text-cedar");
+    expect(screen.getAllByRole("group", { name: /of 3$/ })).toHaveLength(3);
     expect(document.querySelectorAll("figure")).toHaveLength(3);
     expect(screen.getByText("The lake was the whole summer.")).toBeInTheDocument();
+    expect(screen.getByText("PO")).toBeInTheDocument();
     expect(screen.getByText("Parent of a first-year camper")).toHaveAttribute(
       "data-sanity",
       "t1:title",
@@ -134,7 +141,7 @@ describe("Testimonials", () => {
     expect(
       screen.getByText("Parent one").closest("figure"),
     ).toHaveAttribute("data-sanity", 'section:testimonials[_key=="ref-1"]');
-    expect(screen.getByText("1 / 3")).toBeInTheDocument();
+    expect(screen.getByText("Testimonial 1 of 3")).toBeInTheDocument();
   });
 
   it("skips unresolved or empty testimonials", () => {
@@ -156,6 +163,6 @@ describe("Testimonials", () => {
     fireEvent.scroll(
       screen.getByRole("region", { name: /^Testimonials:/ }),
     );
-    expect(screen.getByText("1 / 3")).toBeInTheDocument();
+    expect(screen.getByText("Testimonial 1 of 3")).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import { groq } from "next-sanity";
+import { imageQuery } from "./shared/image";
 import { simpleRichTextQuery } from "./shared/simple-rich-text";
 
 // @sanity-typegen-ignore
@@ -19,6 +20,9 @@ export const testimonialsQuery = groq`
         title,
         origin,
         rating,
+        image{
+          ${imageQuery}
+        },
         body[]{
           ${simpleRichTextQuery}
         }

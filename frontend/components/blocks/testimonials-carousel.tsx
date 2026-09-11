@@ -9,67 +9,113 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
+import styles from "./testimonials.module.css";
+
+export type TestimonialSlide = Readonly<{
+  key: string;
+  node: ReactNode;
+}>;
 
 type TestimonialsCarouselProps = Readonly<{
-  /** Accessible name for the swipe region, e.g. "What families say". */
+  /** Accessible name for the carousel region, e.g. "Testimonials: In their words". */
   label: string;
-  count: number;
-  children: ReactNode;
+  slides: readonly TestimonialSlide[];
   dataSanity?: string;
 }>;
 
-/** One card plus the gap after it; falls back to the track width, then 1px. */
-const cardStep = (track: HTMLElement) => {
-  const first = track.firstElementChild as HTMLElement | null;
-  const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
-  const cardWidth = first?.getBoundingClientRect().width ?? 0;
-  return cardWidth + gap || track.clientWidth || 1;
+const reducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** Index of the slide whose centre is nearest the track's centre. */
+const nearestIndex = (track: HTMLElement) => {
+  const centre = track.scrollLeft + track.clientWidth / 2;
+  let best = 0;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  Array.from(track.children).forEach((child, index) => {
+    const slide = child as HTMLElement;
+    const distance = Math.abs(slide.offsetLeft + slide.offsetWidth / 2 - centre);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = index;
+    }
+  });
+  return best;
 };
 
 /**
- * One card wide with horizontal swipe below `md`; a featured quote beside
- * supporting quotes above it. The track is a labelled, focusable region so keyboard users can
- * reach it and move with the arrow keys; the buttons below it do the same
- * for pointer users on phones.
+ * One testimonial centred on stage, with its neighbours peeking in from both
+ * edges of the viewport. The track is a native scroll-snap strip, so swipe,
+ * trackpad, and scroll-wheel all work without JavaScript; the script only
+ * tracks which slide is centred and drives the dots and arrow buttons.
  */
 export default function TestimonialsCarousel({
-  children,
-  count,
   dataSanity,
   label,
+  slides,
 }: TestimonialsCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<number | undefined>(undefined);
   const [index, setIndex] = useState(0);
-
-  const scrollByCards = useCallback((direction: 1 | -1) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    track.scrollBy({
-      left: direction * cardStep(track),
-      behavior: reduced ? "auto" : "smooth",
-    });
-  }, []);
+  const count = slides.length;
 
   const syncIndex = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
-    const step = cardStep(track);
-    setIndex(Math.min(count - 1, Math.max(0, Math.round(track.scrollLeft / step))));
-  }, [count]);
+    setIndex(nearestIndex(track));
+  }, []);
+
+  const onScroll = useCallback(() => {
+    if (frameRef.current !== undefined) return;
+    frameRef.current = window.requestAnimationFrame(() => {
+      frameRef.current = undefined;
+      syncIndex();
+    });
+  }, [syncIndex]);
 
   useEffect(() => {
     syncIndex();
+    return () => {
+      if (frameRef.current !== undefined) {
+        window.cancelAnimationFrame(frameRef.current);
+      }
+    };
   }, [syncIndex]);
+
+  const goTo = useCallback(
+    (target: number) => {
+      const track = trackRef.current;
+      if (!track) return;
+      const next = Math.min(count - 1, Math.max(0, target));
+      const slide = track.children[next] as HTMLElement | undefined;
+      if (!slide) return;
+      track.scrollTo({
+        left: slide.offsetLeft - (track.clientWidth - slide.offsetWidth) / 2,
+        behavior: reducedMotion() ? "auto" : "smooth",
+      });
+    },
+    [count],
+  );
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.target !== event.currentTarget) return;
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      scrollByCards(1);
-    } else if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      scrollByCards(-1);
+    switch (event.key) {
+      case "ArrowRight":
+        event.preventDefault();
+        goTo(index + 1);
+        break;
+      case "ArrowLeft":
+        event.preventDefault();
+        goTo(index - 1);
+        break;
+      case "Home":
+        event.preventDefault();
+        goTo(0);
+        break;
+      case "End":
+        event.preventDefault();
+        goTo(count - 1);
+        break;
+      default:
     }
   };
 
@@ -77,43 +123,70 @@ export default function TestimonialsCarousel({
   const atEnd = index >= count - 1;
 
   return (
-    <div className="grid gap-6">
-      <div
-        aria-label={label}
-        aria-roledescription="carousel"
-        className="-mx-(--gutter) flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-px-(--gutter) px-(--gutter) pb-2 [scrollbar-width:none] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-cedar [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-2 md:gap-x-10 md:gap-y-8 md:overflow-visible md:px-0 md:pb-0 lg:gap-x-16"
-        data-sanity={dataSanity}
-        onKeyDown={onKeyDown}
-        onScroll={syncIndex}
-        ref={trackRef}
-        role="region"
-        tabIndex={0}
-      >
-        {children}
+    <div className="grid gap-10">
+      <div className={styles.stage}>
+        <div
+          aria-label={label}
+          aria-roledescription="carousel"
+          className={styles.track}
+          data-sanity={dataSanity}
+          onKeyDown={onKeyDown}
+          onScroll={onScroll}
+          ref={trackRef}
+          role="region"
+          tabIndex={0}
+        >
+          {slides.map((slide, slideIndex) => (
+            <div
+              aria-label={`${slideIndex + 1} of ${count}`}
+              aria-roledescription="slide"
+              className={styles.slide}
+              data-active={slideIndex === index ? "true" : undefined}
+              key={slide.key}
+              role="group"
+            >
+              {slide.node}
+            </div>
+          ))}
+        </div>
       </div>
 
       {count > 1 ? (
-        <div className="flex items-center gap-4 md:hidden">
+        <div className="container-content flex items-center justify-center gap-4">
           <button
             aria-label="Previous testimonial"
-            className="inline-flex size-11 items-center justify-center rounded-pill border border-pine-night/25 text-pine-night transition-[background-color,border-color,transform] motion-base hover:-translate-y-0.5 hover:border-cedar focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-cedar disabled:opacity-45 disabled:hover:translate-y-0 disabled:hover:border-pine-night/25"
+            className={styles.arrow}
             disabled={atStart}
-            onClick={() => scrollByCards(-1)}
+            onClick={() => goTo(index - 1)}
             type="button"
           >
             <ChevronLeft aria-hidden="true" className="size-5" />
           </button>
+          <div className="flex items-center" role="group" aria-label="Choose a testimonial">
+            {slides.map((slide, slideIndex) => (
+              <button
+                aria-current={slideIndex === index ? "true" : undefined}
+                aria-label={`Go to testimonial ${slideIndex + 1}`}
+                className={styles.dot}
+                key={slide.key}
+                onClick={() => goTo(slideIndex)}
+                type="button"
+              >
+                <span aria-hidden="true" />
+              </button>
+            ))}
+          </div>
           <button
             aria-label="Next testimonial"
-            className="inline-flex size-11 items-center justify-center rounded-pill border border-pine-night/25 text-pine-night transition-[background-color,border-color,transform] motion-base hover:-translate-y-0.5 hover:border-cedar focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-cedar disabled:opacity-45 disabled:hover:translate-y-0 disabled:hover:border-pine-night/25"
+            className={styles.arrow}
             disabled={atEnd}
-            onClick={() => scrollByCards(1)}
+            onClick={() => goTo(index + 1)}
             type="button"
           >
             <ChevronRight aria-hidden="true" className="size-5" />
           </button>
-          <p aria-live="polite" className="ml-auto text-label text-pine-night/60">
-            {index + 1} / {count}
+          <p aria-live="polite" className="sr-only">
+            Testimonial {index + 1} of {count}
           </p>
         </div>
       ) : null}

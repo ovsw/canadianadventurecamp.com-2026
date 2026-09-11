@@ -1,35 +1,95 @@
-.quote {
-  margin: 0;
+/* Stage: one testimonial centred, neighbours peeking in from both edges.
+   Container units keep the slide width and the centring padding in the
+   same coordinate space, so the first and last slides also snap to centre. */
+.stage {
+  container-type: inline-size;
+  width: 100%;
+}
+
+.track {
+  --peek: clamp(2.75rem, 7cqw, 8.5rem);
+  --gap: 1rem;
+  --slide-w: min(50rem, 100cqw - 2 * var(--peek));
+  position: relative;
   display: flex;
-  flex: 0 0 88%;
+  gap: var(--gap);
+  padding-inline: calc((100cqw - var(--slide-w)) / 2);
+  padding-block: 0.25rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.track:focus-visible {
+  outline: 2px solid var(--color-cedar);
+  outline-offset: 3px;
+}
+
+.slide {
+  flex: 0 0 var(--slide-w);
   min-width: 0;
-  scroll-snap-align: start;
+  display: flex;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  opacity: 0.5;
+  transform: scale(0.96);
+  transition:
+    opacity 0.5s var(--ease-reveal),
+    transform 0.5s var(--ease-reveal);
+}
+
+.slide[data-active="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.card {
+  margin: 0;
+  width: 100%;
+  display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1.5rem 0.5rem;
-  border-top: 1px solid color-mix(in oklch, var(--color-cedar) 30%, transparent);
+  gap: 1.75rem;
+  padding: 2rem 1.75rem 1.75rem;
+  border: 1px solid color-mix(in oklch, var(--color-pine-night) 10%, transparent);
+  border-radius: var(--radius-xl);
+  background: var(--color-birch-bark);
   color: var(--color-pine-night);
   overflow-wrap: anywhere;
 }
 
+.card ::selection {
+  background: var(--color-campfire-amber);
+  color: var(--color-pine-night);
+}
+
+/* Opening quote mark in the display face, clipped so it hangs above the text. */
 .quoteMark {
-  height: 2rem;
-  font-family: var(--font-accent);
-  font-size: 4.5rem;
-  font-weight: 600;
-  line-height: 1;
+  height: 2.25rem;
+  font-family: var(--font-display);
+  font-size: 5.5rem;
+  font-weight: 800;
+  line-height: 0.75;
+  letter-spacing: -0.02em;
   color: var(--color-cedar);
+  user-select: none;
 }
 
 .quoteBody {
   margin: 0;
   display: grid;
   gap: 1rem;
-  font-family: var(--font-accent);
-  /* Handwriting needs more size and leading than the site's body font. */
-  font-size: 1.75rem;
+  max-width: 34em;
+  font-family: var(--font-body);
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
   font-weight: 500;
-  line-height: 1.3;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
+  text-wrap: pretty;
 }
 
 .quoteBody p {
@@ -37,76 +97,193 @@
 }
 
 .quoteBody strong {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .quoteBody a {
-  color: inherit;
+  color: var(--color-cedar);
+  text-decoration-color: color-mix(in oklch, var(--color-cedar) 45%, transparent);
+  text-underline-offset: 0.18em;
+}
+
+.quoteBody a:hover {
+  color: var(--color-cedar-deep);
   text-decoration-color: currentColor;
 }
 
 .quoteBody a:focus-visible {
-  outline: 2px solid currentColor;
+  outline: 2px solid var(--color-cedar);
   outline-offset: 3px;
 }
 
+/* Attribution row: face, then signature and role side by side. */
 .attribution {
-  display: grid;
-  gap: 0.5rem;
   margin-top: auto;
-  padding-top: 0.5rem;
-}
-
-.quote:first-child {
-  padding: 2rem;
-  border: 0;
-  border-radius: var(--radius-lg);
-  background: var(--color-forest-panel);
-  color: var(--color-birch-bark-bright);
-}
-
-.quote:first-child .quoteMark {
-  color: var(--color-campfire-amber);
-}
-
-.quote:first-child .attribution {
-  border-top: 1px solid color-mix(in oklch, currentColor 22%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding-top: 1.5rem;
+  border-top: 1px solid color-mix(in oklch, var(--color-pine-night) 10%, transparent);
 }
 
-.quote ::selection {
-  background: var(--color-campfire-amber);
+.avatarSlot {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.avatar {
+  position: relative;
+  display: block;
+  width: 3.75rem;
+  height: 3.75rem;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklch, var(--color-pine-night) 12%, transparent);
+  background: var(--color-forest-panel);
+}
+
+.avatarFallback {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-birch-bark);
+}
+
+.who {
+  display: grid;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--font-accent);
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-cedar);
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--color-pine-night) 68%, transparent);
+}
+
+/* Controls */
+.arrow {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid color-mix(in oklch, var(--color-pine-night) 25%, transparent);
+  border-radius: var(--radius-pill);
   color: var(--color-pine-night);
+  background: transparent;
+  transition:
+    border-color 0.2s var(--ease-standard),
+    background-color 0.2s var(--ease-standard),
+    transform 0.2s var(--ease-standard);
+}
+
+.arrow:hover:not(:disabled) {
+  border-color: var(--color-cedar);
+  transform: translateY(-2px);
+}
+
+.arrow:focus-visible {
+  outline: 2px solid var(--color-cedar);
+  outline-offset: 3px;
+}
+
+.arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.dot {
+  display: inline-flex;
+  width: 2rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+}
+
+.dot span {
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--color-pine-night) 22%, transparent);
+  transition:
+    width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.2s var(--ease-standard);
+}
+
+.dot:hover span {
+  background: color-mix(in oklch, var(--color-pine-night) 45%, transparent);
+}
+
+.dot[aria-current="true"] span {
+  width: 1.5rem;
+  background: var(--color-cedar);
+}
+
+.dot:focus-visible {
+  outline: 2px solid var(--color-cedar);
+  outline-offset: -2px;
 }
 
 @media (min-width: 48rem) {
-  .quote {
-    padding-inline: 0;
+  .track {
+    --gap: 1.25rem;
   }
 
-  .quote:first-child {
-    grid-row: span 2;
-    gap: 2rem;
-    padding: 2rem;
+  .card {
+    gap: 2.25rem;
+    padding: 2.75rem 3rem 2.5rem;
   }
 
-  .quote:only-child {
-    grid-column: 1 / -1;
-    grid-row: auto;
-    max-width: 48rem;
+  .avatar {
+    width: 4.5rem;
+    height: 4.5rem;
   }
 
-  .quote:first-child .quoteBody {
-    font-size: 2.25rem;
+  .name {
+    font-size: 2.125rem;
   }
 }
 
 @media (min-width: 64rem) {
-  .quote:first-child {
-    padding: 3rem;
+  .card {
+    padding: 3.25rem 3.5rem 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .arrow,
+  .dot span {
+    transition: none;
   }
 
-  .quote:first-child .quoteBody {
-    font-size: 2.5rem;
+  .slide {
+    transform: none;
+  }
+
+  .arrow:hover:not(:disabled) {
+    transform: none;
   }
 }
