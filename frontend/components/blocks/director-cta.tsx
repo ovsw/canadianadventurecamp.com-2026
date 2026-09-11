@@ -57,7 +57,7 @@ export default function DirectorCta({
     <section aria-labelledby={headingId} id={`director-cta-${sectionKey}`}>
       <SectionContainer className="overflow-hidden rounded-t-section bg-forest-floor text-birch-bark [&>div]:container-content">
         <div
-          className={`grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end lg:gap-10 lg:pt-[var(--section-pad)] ${styles.reveal}`}
+          className={`grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-10 ${styles.reveal}`}
         >
           <div className="order-2 pb-[var(--section-pad)] pt-[26px] text-center lg:order-1 lg:pt-0 lg:text-left">
             <h2
@@ -116,15 +116,13 @@ export default function DirectorCta({
           >
             <div
               aria-hidden="true"
-              className="absolute left-1/2 top-[70px] size-[330px] -translate-x-1/2 rounded-full border border-birch-bark/12 bg-forest-panel after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(55%_45%_at_50%_95%,color-mix(in_oklab,var(--color-campfire-amber)_16%,transparent),transparent_70%)] lg:top-auto lg:bottom-[-170px] lg:size-[540px]"
+              className="absolute left-1/2 top-[70px] size-[330px] -translate-x-1/2 rounded-full border border-birch-bark/18 bg-forest-panel after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_16%,transparent),transparent_70%)] lg:left-[calc(50%_-_40px)] lg:top-auto lg:bottom-[-110px] lg:size-[600px]"
             />
             {portrait ? (
               <Image
                 alt={stegaClean(portrait.alt)?.trim() || ""}
-                blurDataURL={portrait.asset?.metadata?.lqip || undefined}
-                className="absolute bottom-0 left-1/2 z-10 h-[300px] w-auto max-w-none -translate-x-[47%] drop-shadow-[0_34px_38px_rgba(13,18,8,0.55)] lg:h-[620px] lg:-translate-x-[46%]"
+                className="absolute bottom-0 left-1/2 z-10 h-[300px] w-auto max-w-none -translate-x-[47%] drop-shadow-[0_34px_38px_rgba(13,18,8,0.55)] lg:h-[580px] lg:-translate-x-1/2"
                 height={portraitHeight}
-                placeholder={portrait.asset?.metadata?.lqip ? "blur" : undefined}
                 sizes="(max-width: 1023px) 400px, 827px"
                 src={urlFor(portrait).width(1400).url()}
                 width={portraitWidth}
