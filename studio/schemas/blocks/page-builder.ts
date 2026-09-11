@@ -22,6 +22,7 @@ export const contentPageBuilderBlockTypes = [
   "includedExtras",
   "packingChecklist",
   "bigImageList",
+  "directorCta",
   // page-builder-generator:content-types
 ] as const;
 
@@ -73,6 +74,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "activityCatalogue",
   "packingChecklist",
   "bigImageList",
+  "directorCta",
   // page-builder-generator:preview-types
 ]);
 

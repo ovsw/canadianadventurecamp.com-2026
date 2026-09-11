@@ -24,6 +24,7 @@ import ActivityCatalogue from "@/components/blocks/activity-catalogue";
 import IncludedExtras from "@/components/blocks/included-extras";
 import PackingChecklist from "@/components/blocks/packing-checklist";
 import BigImageList from "@/components/blocks/big-image-list";
+import DirectorCta from "@/components/blocks/director-cta";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -80,6 +81,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "includedExtras",
   "packingChecklist",
   "bigImageList",
+  "directorCta",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -112,6 +114,7 @@ const componentMap: Partial<{
   includedExtras: IncludedExtras,
   packingChecklist: PackingChecklist,
   bigImageList: BigImageList,
+  directorCta: DirectorCta,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };
