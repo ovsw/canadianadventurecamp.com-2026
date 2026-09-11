@@ -276,7 +276,13 @@ export default function StoryFeature({
           </figure>
         ) : null}
 
-        <div className={cn(styles.copy, "flex min-w-0 max-w-[38rem] flex-col gap-7")}>
+        <div
+          className={cn(
+            styles.copy,
+            !hasImage && styles.copyWithoutPhoto,
+            "flex min-w-0 max-w-[38rem] flex-col gap-7",
+          )}
+        >
           <header>
             {displayEyebrow ? (
               <p
