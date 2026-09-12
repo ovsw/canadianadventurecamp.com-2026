@@ -60,6 +60,10 @@ export default function LargeSlidesTrack({
 }: LargeSlidesTrackProps) {
   const listRef = useRef<HTMLOListElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  // Re-observe when slides are added, removed, or reordered, not only when
+  // the count changes; a same-length replacement would otherwise keep
+  // observing stale list items.
+  const slideKeys = slides.map((slide) => slide.key).join("|");
 
   useEffect(() => {
     const list = listRef.current;
@@ -78,7 +82,7 @@ export default function LargeSlidesTrack({
     );
     items.forEach((item) => observer.observe(item));
     return () => observer.disconnect();
-  }, [slides.length]);
+  }, [slideKeys]);
 
   const active = slides[activeIndex] ?? slides[0];
 
