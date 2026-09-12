@@ -248,10 +248,10 @@ export default function StoryFeature({
       <div className={cn(styles.grid, styles.reveal)}>
         {hasImage ? (
           <figure
-            className={cn(styles.photo, "m-0 min-w-0", field.media)}
+            className={cn(styles.photo, "m-0 min-w-0")}
             data-sanity={dataAttribute?.("image")}
           >
-            <div className={styles.frame}>
+            <div className={cn(styles.frame, field.media)}>
               <Image
                 alt={stegaClean(image?.alt)?.trim() || ""}
                 blurDataURL={image?.asset?.metadata?.lqip || undefined}
