@@ -22,6 +22,7 @@ import { includedExtrasQuery } from "./included-extras";
 import { packingChecklistQuery } from "./packing-checklist";
 import { bigImageListQuery } from "./big-image-list";
 import { directorCtaQuery } from "./director-cta";
+import { largeSlidesQuery } from "./large-slides";
 // page-builder-generator:query-imports
 import { internationalCampersSectionQuery } from "./international-campers-section";
 
@@ -53,6 +54,7 @@ export const pageBuilderQuery = `
     ${packingChecklistQuery},
     ${bigImageListQuery},
     ${directorCtaQuery},
+    ${largeSlidesQuery},
     ${"" /* page-builder-generator:query-spreads */}
     ${internationalCampersSectionQuery}
   }
