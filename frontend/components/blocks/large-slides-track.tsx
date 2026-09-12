@@ -1,8 +1,20 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import styles from "./large-slides.module.css";
+
+export type LargeSlideImage = Readonly<{
+  alt: string;
+  lqip?: string;
+  /** Full-width source for the pinned desktop frame. */
+  pinnedSrc: string;
+  /** 3:2 crop for the stacked phone row. */
+  stackedSrc: string;
+  /** Hotspot as a CSS object-position, when the editor set one. */
+  objectPosition?: string;
+}>;
 
 export type LargeSlide = Readonly<{
   key: string;
@@ -10,17 +22,30 @@ export type LargeSlide = Readonly<{
   textId: string;
   /** Two-digit slide number, e.g. "03". */
   number: string;
-  /** Pinned desktop photo, or null when the slide has no image. */
-  photo: ReactNode;
-  /** Photo shown above the copy when slides stack on phones. */
-  stackedPhoto: ReactNode;
-  copy: ReactNode;
+  /** Shown as written, e.g. "7:15 am". */
+  time: string;
+  label: string;
+  text: string;
+  image: LargeSlideImage | null;
+  /** Click-to-edit attributes, present only in draft mode. */
+  sanity: Readonly<{
+    image?: string;
+    label?: string;
+    text?: string;
+    time?: string;
+  }>;
 }>;
 
 type LargeSlidesTrackProps = Readonly<{
   slides: readonly LargeSlide[];
   dataSanity?: string;
 }>;
+
+/** Split a trailing am/pm off the written time so it can be set smaller. */
+function splitTime(time: string) {
+  const suffix = time.match(/\s*[ap]m\s*$/i)?.[0];
+  return suffix ? [time.slice(0, -suffix.length), suffix] : [time, ""];
+}
 
 /*
  * Desktop: the photo frame pins and shows the photo of whichever slide
@@ -67,7 +92,22 @@ export default function LargeSlidesTrack({
               data-active={index === activeIndex ? "" : undefined}
               key={slide.key}
             >
-              {slide.photo}
+              {slide.image ? (
+                <Image
+                  alt={slide.image.alt}
+                  blurDataURL={slide.image.lqip}
+                  className="object-cover"
+                  fill
+                  placeholder={slide.image.lqip ? "blur" : undefined}
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  src={slide.image.pinnedSrc}
+                  style={
+                    slide.image.objectPosition
+                      ? { objectPosition: slide.image.objectPosition }
+                      : undefined
+                  }
+                />
+              ) : null}
             </div>
           ))}
           <p className={styles.counter}>{active?.number}</p>
@@ -80,17 +120,68 @@ export default function LargeSlidesTrack({
         ref={listRef}
         role="list"
       >
-        {slides.map((slide) => (
-          <li
-            aria-describedby={slide.textId}
-            aria-labelledby={slide.labelId}
-            className={styles.slide}
-            key={slide.key}
-          >
-            <div className={styles.stackedPhoto}>{slide.stackedPhoto}</div>
-            {slide.copy}
-          </li>
-        ))}
+        {slides.map((slide) => {
+          const [time, suffix] = splitTime(slide.time);
+          return (
+            <li
+              aria-describedby={slide.textId}
+              aria-labelledby={slide.labelId}
+              className={styles.slide}
+              key={slide.key}
+            >
+              <figure
+                className={cn(
+                  styles.stackedPhoto,
+                  "relative m-0 aspect-[3/2] w-full overflow-hidden rounded-md bg-forest-panel shadow-media-rest",
+                )}
+                data-sanity={slide.sanity.image}
+              >
+                {slide.image ? (
+                  <Image
+                    alt={slide.image.alt}
+                    blurDataURL={slide.image.lqip}
+                    className="object-cover"
+                    fill
+                    loading="lazy"
+                    placeholder={slide.image.lqip ? "blur" : undefined}
+                    sizes="100vw"
+                    src={slide.image.stackedSrc}
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 flex items-center justify-center font-display text-6xl text-birch-bark/20"
+                  >
+                    {slide.number}
+                  </span>
+                )}
+              </figure>
+              <div className="min-w-0">
+                <p className="mb-3.5 text-label text-birch-bark/60">
+                  {slide.number}
+                </p>
+                <p className={styles.time} data-sanity={slide.sanity.time}>
+                  {time}
+                  {suffix ? <small>{suffix}</small> : null}
+                </p>
+                <h3
+                  className="max-w-[30rem] font-display text-[30px] leading-[1.1] font-bold tracking-[-0.01em] wrap-break-word"
+                  data-sanity={slide.sanity.label}
+                  id={slide.labelId}
+                >
+                  {slide.label}
+                </h3>
+                <p
+                  className="mt-2.5 max-w-[30rem] text-pretty text-[15px] leading-[1.55] text-birch-bark/72 wrap-break-word"
+                  data-sanity={slide.sanity.text}
+                  id={slide.textId}
+                >
+                  {slide.text}
+                </p>
+              </div>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
