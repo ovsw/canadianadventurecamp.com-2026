@@ -23,6 +23,7 @@ export const contentPageBuilderBlockTypes = [
   "packingChecklist",
   "bigImageList",
   "directorCta",
+  "largeSlides",
   // page-builder-generator:content-types
 ] as const;
 
