@@ -44,7 +44,6 @@ const fields = {
     accent: "text-campfire-amber",
     body: "text-birch-bark/72",
     quote: "text-birch-bark",
-    caption: "text-birch-bark/60",
     chipTitle: "text-birch-bark/60",
     checkItem: "text-birch-bark/85",
     check: "text-campfire-amber",
@@ -58,7 +57,6 @@ const fields = {
     accent: "text-cedar",
     body: "text-pine-night/70",
     quote: "text-pine-night",
-    caption: "text-pine-night/60",
     chipTitle: "text-pine-night/55",
     checkItem: "text-pine-night/80",
     check: "text-cedar",
@@ -224,7 +222,6 @@ export default function StoryFeature({
   dataAttribute,
   eyebrow,
   image,
-  imageCaption,
   keyDetails,
   richText,
   title,
@@ -234,7 +231,6 @@ export default function StoryFeature({
 
   const field = stegaClean(useCreamBackground) ? fields.cream : fields.dark;
   const displayEyebrow = stegaClean(eyebrow)?.trim();
-  const displayCaption = stegaClean(imageCaption)?.trim();
   const sectionKey = stegaClean(_key);
   const headingId = `story-feature-${sectionKey}-title`;
   const hasImage = Boolean(image?.asset?._id);
@@ -261,17 +257,6 @@ export default function StoryFeature({
                 sizes="(min-width: 1024px) 60vw, 100vw"
                 src={urlFor(image!).width(1400).height(1600).url()}
               />
-              {displayCaption ? (
-                <figcaption
-                  className={cn(
-                    styles.caption,
-                    "absolute inset-x-0 bottom-0 bg-gradient-to-t from-pine-night/70 to-transparent px-[var(--gutter)] pb-5 pt-14 text-label text-birch-bark/85",
-                  )}
-                  data-sanity={dataAttribute?.("imageCaption")}
-                >
-                  {displayCaption}
-                </figcaption>
-              ) : null}
             </div>
           </figure>
         ) : null}

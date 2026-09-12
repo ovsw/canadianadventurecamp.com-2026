@@ -268,6 +268,16 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
 /* Button / control utilities (consumed by components/ui/button.tsx)    */
 /* ------------------------------------------------------------------ */
 
+/* Step number above a stop's time in the day-list blocks ("01", "02"). */
+@utility text-step-number {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
 @utility rounded-control {
   border-radius: var(--radius-pill);
 }

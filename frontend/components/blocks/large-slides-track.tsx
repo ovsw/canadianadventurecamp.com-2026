@@ -161,7 +161,7 @@ export default function LargeSlidesTrack({
                 )}
               </figure>
               <div className="min-w-0">
-                <p className="mb-3.5 text-label text-birch-bark/60">
+                <p className="mb-3.5 text-step-number text-birch-bark/55">
                   {slide.number}
                 </p>
                 <p className={styles.time} data-sanity={slide.sanity.time}>
