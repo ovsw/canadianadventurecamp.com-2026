@@ -19,7 +19,7 @@
 @theme {
   /* ---- Colours ---- */
   --color-campfire-amber: oklch(76.3% 0.141 73);
-  --color-navigation-yellow: #f3cf4c;
+  --color-navigation-yellow: oklch(84% 0.095 92);
   --color-campfire-amber-deep: oklch(67.3% 0.135 71);
 
   --color-cedar: oklch(50.7% 0.095 131);

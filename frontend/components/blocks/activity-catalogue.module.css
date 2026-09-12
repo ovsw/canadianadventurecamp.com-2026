@@ -20,7 +20,9 @@
    scroll. --site-header-offset is set by the header shell. */
 .jumpBar {
   top: var(--site-header-offset, 0px);
-  transition: top 300ms var(--ease-reveal);
+  transition:
+    top 300ms var(--ease-reveal),
+    border-radius 200ms var(--ease-reveal);
 }
 
 .jumpBarTrack {
