@@ -120,10 +120,10 @@ export default function DirectorCta({
           >
             <div
               aria-hidden="true"
-              className={`absolute left-1/2 top-[70px] size-[330px] -translate-x-1/2 rounded-full border after:absolute after:inset-0 after:rounded-full lg:left-[calc(50%_-_40px)] lg:top-auto lg:bottom-[-110px] lg:size-[600px] ${
+              className={`absolute left-1/2 top-[70px] size-[330px] -translate-x-1/2 rounded-full after:absolute after:inset-0 after:rounded-full lg:left-[calc(50%_-_40px)] lg:top-auto lg:bottom-[-110px] lg:size-[600px] ${
                 onDark
-                  ? "border-birch-bark/18 bg-forest-panel after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_16%,transparent),transparent_70%)]"
-                  : "border-cedar/15 bg-[color-mix(in_oklab,var(--color-sunlit-moss)_45%,var(--section-surface))] after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_14%,transparent),transparent_70%)]"
+                  ? "bg-forest-panel after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_16%,transparent),transparent_70%)]"
+                  : "bg-[color-mix(in_oklab,var(--color-sunlit-moss)_45%,var(--section-surface))] after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_14%,transparent),transparent_70%)]"
               }`}
             />
             {portrait ? (
