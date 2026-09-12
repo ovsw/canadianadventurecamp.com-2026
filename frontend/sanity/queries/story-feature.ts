@@ -15,7 +15,6 @@ export const storyFeatureQuery = groq`
     image {
       ${imageQuery}
     },
-    imageCaption,
     richText[]{
       ...,
       ${customLinkMarkDefsQuery}

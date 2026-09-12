@@ -53,7 +53,7 @@
 
   /* The frame, not the figure, carries the placeholder colour and the soft
      slab corners on the side that faces the copy, so the notches show the
-     section field and the caption clips with the photo. */
+     section field. */
   .frame {
     position: sticky;
     top: 0;
@@ -74,14 +74,6 @@
   .copyWithoutPhoto {
     grid-column: 2 / 4;
     padding-inline: 0;
-  }
-
-  /* Keep the caption text on the content container's left edge. */
-  .caption {
-    padding-left: max(
-      var(--gutter),
-      calc((100vw - var(--container-content)) / 2 + var(--gutter))
-    );
   }
 }
 

@@ -1,11 +1,12 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import {
   useCallback,
   useEffect,
   useRef,
   useState,
+  type FocusEvent,
   type KeyboardEvent,
   type ReactNode,
 } from "react";
@@ -47,6 +48,14 @@ const nearestIndex = (track: HTMLElement) => {
  * edges of the viewport. The track is a native scroll-snap strip, so swipe,
  * trackpad, and scroll-wheel all work without JavaScript; the script only
  * tracks which slide is centred and drives the dots and arrow buttons.
+ *
+ * The carousel auto-advances. The active dot doubles as the timer: a fill
+ * grows across it with a CSS animation whose end fires the next slide, so the
+ * bar and the advance can never drift apart, and pausing the animation pauses
+ * the advance. It pauses while the pointer is over the carousel, while
+ * anything inside it has focus, and while the tab is hidden. A pause button
+ * stops it until the visitor starts it again. Reduced motion turns autoplay
+ * off.
  */
 export default function TestimonialsCarousel({
   dataSanity,
@@ -56,7 +65,27 @@ export default function TestimonialsCarousel({
   const trackRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | undefined>(undefined);
   const [index, setIndex] = useState(0);
+  const [autoplay, setAutoplay] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [stopped, setStopped] = useState(false);
   const count = slides.length;
+
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setAutoplay(count > 1 && !motion.matches);
+    update();
+    motion.addEventListener("change", update);
+    return () => motion.removeEventListener("change", update);
+  }, [count]);
+
+  useEffect(() => {
+    const update = () => setHidden(document.visibilityState === "hidden");
+    update();
+    document.addEventListener("visibilitychange", update);
+    return () => document.removeEventListener("visibilitychange", update);
+  }, []);
 
   const syncIndex = useCallback(() => {
     const track = trackRef.current;
@@ -119,11 +148,24 @@ export default function TestimonialsCarousel({
     }
   };
 
+  const onBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+  };
+
   const atStart = index <= 0;
   const atEnd = index >= count - 1;
+  const paused = stopped || hovered || focused || hidden;
 
   return (
-    <div className="grid gap-10">
+    <div
+      className="grid gap-10"
+      data-autoplay={autoplay ? "true" : undefined}
+      data-paused={paused ? "true" : undefined}
+      onBlur={onBlur}
+      onFocus={() => setFocused(true)}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+    >
       <div className={styles.stage}>
         <div
           aria-label={label}
@@ -172,7 +214,14 @@ export default function TestimonialsCarousel({
                 onClick={() => goTo(slideIndex)}
                 type="button"
               >
-                <span aria-hidden="true" />
+                <span aria-hidden="true">
+                  {autoplay && slideIndex === index ? (
+                    <i
+                      className={styles.timer}
+                      onAnimationEnd={() => goTo((index + 1) % count)}
+                    />
+                  ) : null}
+                </span>
               </button>
             ))}
           </div>
@@ -185,7 +234,22 @@ export default function TestimonialsCarousel({
           >
             <ChevronRight aria-hidden="true" className="size-5" />
           </button>
-          <p aria-live="polite" className="sr-only">
+          {autoplay ? (
+            <button
+              aria-label={stopped ? "Start automatic rotation" : "Stop automatic rotation"}
+              aria-pressed={stopped}
+              className={styles.arrow}
+              onClick={() => setStopped((value) => !value)}
+              type="button"
+            >
+              {stopped ? (
+                <Play aria-hidden="true" className="size-4" />
+              ) : (
+                <Pause aria-hidden="true" className="size-4" />
+              )}
+            </button>
+          ) : null}
+          <p aria-live={autoplay && !paused ? "off" : "polite"} className="sr-only">
             Testimonial {index + 1} of {count}
           </p>
         </div>

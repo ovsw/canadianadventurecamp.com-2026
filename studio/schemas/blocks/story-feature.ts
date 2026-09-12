@@ -94,12 +94,6 @@ export default defineType({
       ],
       validation: (rule) => rule.required(),
     }),
-    defineField({
-      name: "imageCaption",
-      title: "Image Caption",
-      type: "string",
-      description: "Optional context shown directly beneath the image",
-    }),
     storyRichTextField,
     defineField({
       name: "keyDetails",
