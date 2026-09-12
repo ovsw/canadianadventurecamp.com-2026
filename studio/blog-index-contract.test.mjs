@@ -45,6 +45,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
     "packingChecklist",
     "bigImageList",
     "directorCta",
+    "largeSlides",
   ]);
   assert.equal(blocksField.of.some(({ hidden }) => hidden), false);
   assert.equal(new Set(pageBuilderBlockTypes).size, pageBuilderBlockTypes.length);
