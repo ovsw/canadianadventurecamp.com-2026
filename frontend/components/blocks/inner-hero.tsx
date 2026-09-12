@@ -65,6 +65,10 @@ export default function InnerHero({
       aria-labelledby={headingId}
       className="relative flex flex-col overflow-hidden bg-pine-night text-birch-bark lg:block lg:min-h-[min(88svh,52rem)]"
       data-header-overlay={hasImage ? "" : undefined}
+      // Empty space in the hero focuses the background image: the copy fields
+      // below carry their own data-sanity, so clicks resolve to the nearest
+      // ancestor and only fall back to the image where no field sits.
+      data-sanity={dataAttribute?.("image")}
       id={`inner-hero-${cleanKey}`}
     >
       {/* Photo: poster block on phones, full-bleed backdrop on desktop */}
@@ -74,7 +78,6 @@ export default function InnerHero({
             alt={stegaClean(image.alt) || ""}
             blurDataURL={image.asset?.metadata?.lqip || undefined}
             className="object-cover"
-            data-sanity={dataAttribute?.("image")}
             fill
             placeholder={image.asset?.metadata?.lqip ? "blur" : undefined}
             priority
