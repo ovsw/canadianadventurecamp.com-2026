@@ -23,7 +23,6 @@ const TEXT_FIELDS = new Set([
   "name",
   "alt",
   "caption",
-  "imageCaption",
   "note",
 ]);
 

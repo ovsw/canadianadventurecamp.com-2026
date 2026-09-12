@@ -641,7 +641,6 @@ export type StoryFeature = {
     alt?: string;
     _type: "image";
   };
-  imageCaption?: string;
   richText?: Array<{
     children?: Array<{
       marks?: Array<string>;
