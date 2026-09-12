@@ -26,13 +26,6 @@ export default defineType({
           name: "alt",
           title: "Alternative text",
           type: "string",
-          validation: (rule) =>
-            rule.custom((value, context) => {
-              const image = context.parent as { asset?: unknown } | undefined;
-              return image?.asset && !value?.trim()
-                ? "Describe the photo for visitors who cannot see it"
-                : true;
-            }),
         }),
       ],
     }),
