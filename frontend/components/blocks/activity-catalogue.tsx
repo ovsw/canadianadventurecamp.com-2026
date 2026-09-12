@@ -71,9 +71,10 @@ function ActivityCard({
 
   return (
     <li
-      className="group/card flex min-w-0 flex-col overflow-hidden rounded-lg border border-birch-bark/12 bg-forest-panel transition-[transform,box-shadow] motion-base hover:-translate-y-2 hover:shadow-interactive-lift focus-within:-translate-y-2 focus-within:shadow-interactive-lift motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-within:translate-y-0"
+      className="group/card min-w-0"
       data-sanity={referenceDataAttribute}
     >
+      <div className="flex h-full flex-col overflow-hidden rounded-lg border border-birch-bark/12 bg-forest-panel transition-[transform,box-shadow] motion-base group-hover/card:-translate-y-2 group-hover/card:shadow-interactive-lift group-focus-within/card:-translate-y-2 group-focus-within/card:shadow-interactive-lift motion-reduce:transition-none motion-reduce:group-hover/card:translate-y-0 motion-reduce:group-focus-within/card:translate-y-0">
       <div
         className="relative aspect-[4/3] overflow-hidden bg-forest-floor"
         data-sanity={activityDataAttribute?.(activity._id, "image")}
@@ -152,6 +153,7 @@ function ActivityCard({
             </Link>
           ) : null}
         </div>
+      </div>
       </div>
     </li>
   );
