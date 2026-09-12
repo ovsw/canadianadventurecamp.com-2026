@@ -51,11 +51,16 @@
     min-height: 100%;
   }
 
+  /* The frame, not the figure, carries the placeholder colour and the soft
+     slab corners on the side that faces the copy, so the notches show the
+     section field and the caption clips with the photo. */
   .frame {
     position: sticky;
     top: 0;
     height: min(100vh, 100%);
     height: min(100dvh, 100%);
+    overflow: hidden;
+    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
   }
 
   .copy {
