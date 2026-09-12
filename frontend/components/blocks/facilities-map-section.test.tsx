@@ -30,6 +30,7 @@ const minimalRichText = (text: string) => [
 const section = {
   _key: "facilities-test",
   _type: "facilitiesMapSection" as const,
+  background: null,
   bigTopArea: 9000,
   bigTopBody: richText("Big Top body"),
   bigTopGallery: [

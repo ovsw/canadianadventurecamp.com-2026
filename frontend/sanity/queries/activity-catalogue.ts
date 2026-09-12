@@ -13,14 +13,12 @@ export const activityCatalogueQuery = groq`
       _key,
       title,
       blurb,
-      aside,
       "activities": array::compact(activities[]{
         _key,
         ...(@->{
           _id,
           title,
           line,
-          beginnerFriendly,
           image {
             ${imageQuery}
           },

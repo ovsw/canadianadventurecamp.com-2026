@@ -1,3 +1,4 @@
+import { sectionThemeClass } from "./section-theme";
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { urlFor } from "@/sanity/lib/image";
@@ -7,6 +8,7 @@ import {
   type PortableTextComponents,
 } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import TestimonialsCarousel from "./testimonials-carousel";
 import styles from "./testimonials.module.css";
@@ -33,7 +35,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-cedar not-italic">{children}</em>
+      <em className="font-accent text-[var(--section-accent)] not-italic">{children}</em>
     ),
   },
 };
@@ -140,6 +142,7 @@ function TestimonialCard({
 
 export default function Testimonials({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   heading,
@@ -168,7 +171,10 @@ export default function Testimonials({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-birch-bark-bright py-section text-pine-night"
+      className={cn(
+        "py-section",
+        sectionThemeClass(stegaClean(background)),
+      )}
       id={`testimonials-${stegaClean(_key)}`}
     >
       <div className="grid gap-12 lg:gap-16">
@@ -176,7 +182,7 @@ export default function Testimonials({
           <div className="grid max-w-3xl gap-5">
             {hasText(eyebrow) ? (
               <p
-                className="text-eyebrow text-cedar"
+                className="text-eyebrow text-[var(--section-accent)]"
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {eyebrow}

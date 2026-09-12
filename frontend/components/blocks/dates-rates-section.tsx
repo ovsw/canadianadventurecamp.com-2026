@@ -16,6 +16,7 @@ import {
 import DatesRatesBrowser from "./dates-rates-browser";
 import styles from "./dates-rates-section.module.css";
 import { prepareLengths } from "./dates-rates-model";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -51,7 +52,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[clamp(2.75rem,5vw,4.5rem)] font-semibold not-italic leading-none text-cedar">
+      <em className="font-accent text-[clamp(2.75rem,5vw,4.5rem)] font-semibold not-italic leading-none text-[var(--section-accent)]">
         {children}
       </em>
     ),
@@ -74,7 +75,7 @@ const conditionComponents: PortableTextComponents = {
   ),
   marks: {
     strong: ({ children }) => (
-      <strong className="font-semibold text-pine-night/85">{children}</strong>
+      <strong className="font-semibold text-current">{children}</strong>
     ),
     em: ({ children }) => <em>{children}</em>,
   },
@@ -82,6 +83,7 @@ const conditionComponents: PortableTextComponents = {
 
 export default function DatesRatesSection({
   _key,
+  background,
   activeSeason,
   conditions,
   dataAttribute,
@@ -126,14 +128,14 @@ export default function DatesRatesSection({
   return (
     <section
       aria-labelledby={sectionId}
-      className="relative z-0 -mt-11 rounded-t-[2.75rem] bg-birch-bark px-content-x py-section text-pine-night"
+      className={`relative z-0 -mt-11 rounded-t-[2.75rem] px-content-x py-section ${sectionThemeClass(background)}`}
       id={`dates-rates-${stegaClean(_key)}`}
     >
       <div className="mx-auto max-w-[1320px]">
         <div className="mb-12 grid gap-8 lg:grid-cols-[1fr_400px] lg:items-end">
           <header>
             <p
-              className={`mb-5 text-eyebrow text-cedar ${styles.reveal}`}
+              className={`mb-5 text-eyebrow text-[var(--section-accent)] ${styles.reveal}`}
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -148,7 +150,7 @@ export default function DatesRatesSection({
           </header>
           <div className={`max-w-xl ${styles.reveal}`}>
             <div
-              className="text-pretty text-base/relaxed text-pine-night/72 [&_p]:m-0"
+              className="text-pretty text-base/relaxed text-current/80 [&_p]:m-0"
               data-sanity={dataAttribute?.("introduction")}
             >
               <PortableText
@@ -158,7 +160,7 @@ export default function DatesRatesSection({
             </div>
             {detailsText ? (
               <a
-                className={`focus-ring mt-4 inline-flex w-fit items-center gap-[9px] border-b-2 border-campfire-amber pb-1 font-semibold text-cedar transition-colors hover:text-cedar-deep motion-reduce:transition-none ${styles.detailsLink}`}
+                className={`focus-ring mt-4 inline-flex w-fit items-center gap-[9px] border-b-2 border-[var(--section-accent)] pb-1 font-semibold text-[var(--section-accent)] transition-opacity hover:opacity-75 motion-reduce:transition-none ${styles.detailsLink}`}
                 data-sanity={dataAttribute?.("detailsLinkText")}
                 href={detailsHref}
               >
@@ -184,7 +186,7 @@ export default function DatesRatesSection({
               Included in your rate
             </h3>
             <ul
-              className="divide-y divide-pine-night/16 border-y border-pine-night/16"
+              className="divide-y divide-current/20 border-y border-current/20"
               data-sanity={dataAttribute?.("sessionIncludes")}
               role="list"
             >
@@ -196,8 +198,8 @@ export default function DatesRatesSection({
                   )}
                   key={item._key}
                 >
-                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-cedar" />
-                  <span className="text-pretty text-base/relaxed font-semibold text-pine-night/85 [overflow-wrap:anywhere]">
+                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-[var(--section-accent)]" />
+                  <span className="text-pretty text-base/relaxed font-semibold text-current [overflow-wrap:anywhere]">
                     {item.label}
                   </span>
                 </li>
@@ -212,7 +214,7 @@ export default function DatesRatesSection({
               Discounts, payments &amp; extras
             </h3>
             <ul
-              className="min-w-0 divide-y divide-pine-night/16 border-y border-pine-night/16 text-base/relaxed text-pine-night/75"
+              className="min-w-0 divide-y divide-current/20 border-y border-current/20 text-base/relaxed text-current/80"
               data-sanity={dataAttribute?.("conditions")}
               role="list"
             >
@@ -229,7 +231,7 @@ export default function DatesRatesSection({
                   >
                     <Icon
                       aria-hidden="true"
-                      className="mt-1 size-5 shrink-0 text-cedar"
+                      className="mt-1 size-5 shrink-0 text-[var(--section-accent)]"
                     />
                     <div className="min-w-0">
                       <PortableText

@@ -24,6 +24,7 @@ vi.mock("cobe", () => ({
 const section: ComponentProps<typeof InternationalCampersSection> = {
   _key: "world-test",
   _type: "internationalCampersSection",
+  background: null,
   eyebrow: "08 · FROM EVERYWHERE",
   heading: [
     {

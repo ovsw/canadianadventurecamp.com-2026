@@ -1,5 +1,6 @@
 import { CalendarDays } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const defaultCamperNames = ["Maya", "Leo", "Sadie", "Finn", "Ava", "Theo"];
 
@@ -40,6 +41,7 @@ export default defineType({
     camperNames: defaultCamperNames,
   },
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "heading",
       title: "Heading",
@@ -53,14 +55,6 @@ export default defineType({
       type: "text",
       rows: 4,
       validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "aside",
-      title: "Parent aside",
-      type: "text",
-      rows: 3,
-      description:
-        "Optional. One or two factual lines for parents, shown quieter under the description. Leave empty to show nothing.",
     }),
     defineField({
       name: "camperNames",

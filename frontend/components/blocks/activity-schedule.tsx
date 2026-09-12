@@ -1,8 +1,8 @@
+import { sectionThemeClass } from "./section-theme";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
-import { ParentAside } from "@/components/parent-aside";
 import ActivityScheduleBuilder from "./activity-schedule-builder";
 import styles from "./activity-schedule.module.css";
 
@@ -29,7 +29,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="mt-2 block font-accent text-[clamp(2.125rem,3vw,3.4rem)] font-semibold not-italic leading-none text-campfire-amber">
+      <em className="mt-2 block font-accent text-[clamp(2.125rem,3vw,3.4rem)] font-semibold not-italic leading-none text-[var(--section-accent)]">
         {children}
       </em>
     ),
@@ -50,9 +50,9 @@ const headingToPlainText = (
 
 export default function ActivitySchedule({
   _key,
+  background,
   activityCount,
   activityDataAttribute,
-  aside,
   camperNames,
   dataAttribute,
   description,
@@ -61,7 +61,6 @@ export default function ActivitySchedule({
 }: ActivityScheduleProps) {
   const plainHeading = headingToPlainText(heading);
   const cleanDescription = stegaClean(description)?.trim();
-  const cleanAside = stegaClean(aside)?.trim();
   const cleanCamperNames = (camperNames ?? [])
     .map((name) => stegaClean(name)?.trim())
     .filter((name): name is string => Boolean(name));
@@ -101,11 +100,11 @@ export default function ActivitySchedule({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-forest-floor pb-section text-birch-bark"
+      className={`${sectionThemeClass(background ?? "green")} pb-section`}
       id={`activities-${stegaClean(_key)}`}
     >
       <div className="container-content">
-        <div className="border-t border-birch-bark/15 pt-section">
+        <div className="border-t border-current/20 pt-section">
           {/* Header band: count + heading left, description right */}
           <div
             className={`grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-14 ${styles.reveal}`}
@@ -118,7 +117,7 @@ export default function ActivitySchedule({
                 {total}
               </p>
               <h2
-                className="text-balance font-display text-display-page font-extrabold text-birch-bark"
+                className="text-balance font-display text-display-page font-extrabold"
                 data-sanity={dataAttribute?.("heading")}
                 id={headingId}
               >
@@ -128,16 +127,12 @@ export default function ActivitySchedule({
 
             <div className="grid gap-6 lg:col-span-4 lg:pb-2">
               <p
-                className="max-w-xl text-pretty text-lg/relaxed text-birch-bark/75"
+                className="max-w-xl text-pretty text-lg/relaxed opacity-80"
                 data-sanity={dataAttribute?.("description")}
               >
                 {description}
               </p>
-              {cleanAside ? (
-                <ParentAside dataSanity={dataAttribute?.("aside")}>
-                  {aside}
-                </ParentAside>
-              ) : null}
+
             </div>
           </div>
 
@@ -145,7 +140,7 @@ export default function ActivitySchedule({
             activities={activities}
             activitiesLink={
               <Link
-                className="focus-ring w-fit rounded-pill border border-dashed border-birch-bark/35 px-5 py-3 text-sm font-semibold text-birch-bark/65 transition-colors hover:border-campfire-amber hover:text-campfire-amber motion-reduce:transition-none"
+                className="focus-ring w-fit rounded-pill border border-dashed border-current/35 px-5 py-3 text-sm font-semibold transition-colors hover:border-campfire-amber hover:text-campfire-amber motion-reduce:transition-none"
                 href="/summer-camp-activities"
                 key="activities-link"
               >

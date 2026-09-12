@@ -5,6 +5,7 @@ import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
 import styles from "./large-slides.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -35,7 +36,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">{children}</em>
+      <em className="font-accent text-[var(--section-accent)] not-italic">{children}</em>
     ),
   },
 };
@@ -46,6 +47,7 @@ function hasText(value?: string | null) {
 
 export default function LargeSlides({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   intro,
@@ -110,14 +112,14 @@ export default function LargeSlides({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("bg-forest-floor text-birch-bark", styles.section)}
+      className={cn(sectionThemeClass(background), styles.section)}
       id={sectionId}
     >
       <header className={cn("container-content", styles.header)}>
         <div>
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-campfire-amber"
+              className="mb-5 text-eyebrow text-[var(--section-accent)]"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -133,7 +135,7 @@ export default function LargeSlides({
         </div>
         {hasText(intro) ? (
           <p
-            className="max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-birch-bark/72 lg:mb-1.5"
+            className="max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-current/75 lg:mb-1.5"
             data-sanity={dataAttribute?.("intro")}
           >
             {intro}

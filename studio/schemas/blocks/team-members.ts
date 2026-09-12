@@ -1,5 +1,6 @@
 import { UsersRound } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 export default defineType({
   name: "teamMembers",
@@ -9,14 +10,7 @@ export default defineType({
   description:
     "A team section that displays selected Team Member documents.",
   fields: [
-    defineField({
-      name: "useCreamBackground",
-      title: "Use Alternate Background",
-      type: "boolean",
-      description:
-        "Turn on to separate this section from the surrounding page content.",
-      initialValue: false,
-    }),
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

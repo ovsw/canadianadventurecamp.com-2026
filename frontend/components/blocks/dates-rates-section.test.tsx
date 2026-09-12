@@ -62,6 +62,7 @@ const introduction = [
 const section = {
   _key: "dates-test",
   _type: "datesRatesSection" as const,
+  background: "cream" as const,
   activeSeason: {
     _id: "season-2027",
     name: "2027 Season",

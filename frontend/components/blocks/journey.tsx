@@ -4,6 +4,7 @@ import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Image from "next/image";
 import { stegaClean } from "next-sanity";
+import { sectionThemeClass } from "./section-theme";
 import type { CSSProperties } from "react";
 import styles from "./journey.module.css";
 
@@ -22,7 +23,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">
+      <em className="font-accent text-[var(--section-accent)] not-italic">
         {children}
       </em>
     ),
@@ -50,6 +51,7 @@ export function getRenderableStops(stops: JourneyProps["stops"]) {
 
 export default function Journey({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   intro,
@@ -68,14 +70,14 @@ export default function Journey({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-forest-floor py-section text-birch-bark"
+      className={cn("py-section", sectionThemeClass(background))}
       id={`journey-${sectionKey}`}
     >
       <div className="container-content">
         <header className="max-w-3xl">
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-campfire-amber"
+              className="mb-5 text-eyebrow text-[var(--section-accent)]"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -90,7 +92,7 @@ export default function Journey({
           </h2>
           {hasText(intro) ? (
             <p
-              className="mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-birch-bark/72"
+            className="mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-current/75"
               data-sanity={dataAttribute?.("intro")}
             >
               {intro}
@@ -131,7 +133,7 @@ export default function Journey({
                 </span>
 
                 <div className={styles.body}>
-                  <p className="flex items-center gap-2 text-label text-birch-bark/60">
+                  <p className="flex items-center gap-2 text-label text-current/75">
                     <span>{number}</span>
                     {time ? (
                       <>
@@ -150,7 +152,7 @@ export default function Journey({
                     {stop.label}
                   </h3>
                   <p
-                    className="mt-2 text-pretty text-[15px] leading-[1.55] text-birch-bark/72"
+                    className="mt-2 text-pretty text-[15px] leading-[1.55] text-current/75"
                     data-sanity={dataAttribute?.(`${stopPath}.text`)}
                     id={textId}
                   >
@@ -187,7 +189,7 @@ export default function Journey({
                     )}
                     data-sanity={dataAttribute?.(`${stopPath}.image`)}
                   >
-                    <span className="font-display text-[3.5rem] font-extrabold leading-none tracking-[-0.03em] text-birch-bark/20">
+                    <span className="font-display text-[3.5rem] font-extrabold leading-none tracking-[-0.03em] text-current/20">
                       {number}
                     </span>
                   </div>

@@ -48,7 +48,7 @@ const items: TimelineItem[] = [
 const block: ComponentProps<typeof StackedTimeline> = {
   _key: "trip",
   _type: "stackedTimeline",
-  useCreamBackground: null,
+  background: "green",
   eyebrow: "Getting there",
   title: [
     {

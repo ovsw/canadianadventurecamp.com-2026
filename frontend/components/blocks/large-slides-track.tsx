@@ -154,14 +154,14 @@ export default function LargeSlidesTrack({
                 ) : (
                   <span
                     aria-hidden="true"
-                    className="absolute inset-0 flex items-center justify-center font-display text-6xl text-birch-bark/20"
+                    className="absolute inset-0 flex items-center justify-center font-display text-6xl text-current/20"
                   >
                     {slide.number}
                   </span>
                 )}
               </figure>
               <div className="min-w-0">
-                <p className="mb-3.5 text-step-number text-birch-bark/55">
+                <p className="mb-3.5 text-step-number text-current/55">
                   {slide.number}
                 </p>
                 <p className={styles.time} data-sanity={slide.sanity.time}>
@@ -176,7 +176,7 @@ export default function LargeSlidesTrack({
                   {slide.label}
                 </h3>
                 <p
-                  className="mt-2.5 max-w-[30rem] text-pretty text-[15px] leading-[1.55] text-birch-bark/72 wrap-break-word"
+                  className="mt-2.5 max-w-[30rem] text-pretty text-[15px] leading-[1.55] text-current/75 wrap-break-word"
                   data-sanity={slide.sanity.text}
                   id={slide.textId}
                 >

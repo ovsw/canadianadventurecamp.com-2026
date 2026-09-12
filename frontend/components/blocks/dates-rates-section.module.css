@@ -39,7 +39,7 @@
 
   .tab:not([aria-selected="true"]):hover {
     transform: translateY(-2px);
-    border-color: var(--color-cedar);
+    border-color: var(--section-accent);
   }
 }
 
@@ -76,7 +76,7 @@
   top: 5px;
   bottom: 5px;
   border-radius: var(--radius-pill);
-  background: var(--color-cedar);
+  background: var(--section-accent);
   color: var(--color-birch-bark);
 }
 

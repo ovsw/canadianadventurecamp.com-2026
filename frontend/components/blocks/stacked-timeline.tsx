@@ -9,6 +9,7 @@ import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import type { ComponentProps } from "react";
 import styles from "./stacked-timeline.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -23,7 +24,7 @@ type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
 
 const fields = {
   dark: {
-    section: "bg-forest-floor text-birch-bark",
+    section: "text-birch-bark",
     accent: "text-campfire-amber",
     body: "text-birch-bark/72",
     label: "text-birch-bark/60",
@@ -33,7 +34,7 @@ const fields = {
     onDark: true,
   },
   cream: {
-    section: "bg-birch-bark text-pine-night",
+    section: "text-pine-night",
     accent: "text-cedar",
     body: "text-pine-night/70",
     label: "text-pine-night/60",
@@ -132,9 +133,9 @@ export default function StackedTimeline({
   intro,
   items,
   title,
-  useCreamBackground,
+  background,
 }: StackedTimelineProps) {
-  const field = stegaClean(useCreamBackground) ? fields.cream : fields.dark;
+  const field = stegaClean(background) === "green" ? fields.dark : fields.cream;
   const renderableItems = getRenderableItems(items);
 
   if (!title?.length || renderableItems.length < 2) return null;
@@ -146,7 +147,7 @@ export default function StackedTimeline({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("py-section", field.section)}
+      className={cn("py-section", field.section, sectionThemeClass(background))}
       id={`stacked-timeline-${sectionKey}`}
     >
       <div className="container-content">

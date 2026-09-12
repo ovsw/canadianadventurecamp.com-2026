@@ -8,6 +8,7 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
+import { sectionThemeClass } from "./section-theme";
 import styles from "./image-collage-feature.module.css";
 
 type PageBlock =
@@ -47,13 +48,14 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent not-italic text-cedar">{children}</em>
+      <em className="font-accent not-italic text-[var(--section-accent)]">{children}</em>
     ),
   },
 };
 
 export default function ImageCollageFeature({
   _key,
+  background,
   body,
   cta,
   dataAttribute,
@@ -74,14 +76,14 @@ export default function ImageCollageFeature({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-background py-section"
+      className={cn("py-section", sectionThemeClass(background))}
       id={`image-collage-${stegaClean(_key)}`}
     >
       <div className="container-content grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)] lg:gap-20">
         <div className={styles.reveal}>
           {cleanEyebrow ? (
             <p
-              className="mb-5 text-eyebrow text-cedar"
+              className="mb-5 text-eyebrow text-[var(--section-accent)]"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {cleanEyebrow}
@@ -89,7 +91,7 @@ export default function ImageCollageFeature({
           ) : null}
 
           <h2
-            className="max-w-2xl text-balance font-display text-headline text-foreground"
+            className="max-w-2xl text-balance font-display text-headline"
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
@@ -98,7 +100,7 @@ export default function ImageCollageFeature({
 
           {cleanBody ? (
             <p
-              className="mt-6 max-w-xl text-pretty text-lg/relaxed text-muted-foreground"
+            className="mt-6 max-w-xl text-pretty text-lg/relaxed text-current/75"
               data-sanity={dataAttribute?.("body")}
             >
               {cleanBody}
@@ -139,7 +141,7 @@ export default function ImageCollageFeature({
             <div className="mt-8 w-fit" data-sanity={dataAttribute?.("cta")}>
               <Button
                 asChild
-                className="text-cedar hover:text-cedar-deep"
+                    className="text-[var(--section-accent)] hover:opacity-80"
                 variant="link"
               >
                 <Link

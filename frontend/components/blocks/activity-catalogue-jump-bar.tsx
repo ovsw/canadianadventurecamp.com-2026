@@ -9,10 +9,10 @@ export type JumpBarGroup = { id: string; title: string };
 /*
  * Sticky jump bar for the Activity Catalogue.
  *
- * A list of in-page links, one chip per place. The chip whose group currently
+ * A list of in-page links, one text link per place. The link whose group currently
  * fills the reading band (roughly the upper-middle of the viewport) carries
- * aria-current="location" and the amber outline. On phones the row scrolls
- * sideways and the current chip is nudged into view without moving the page.
+ * aria-current="location" and an underline. On phones the row scrolls
+ * sideways and the current link is nudged into view without moving the page.
  */
 export default function ActivityCatalogueJumpBar({
   dataSanity,
@@ -70,14 +70,14 @@ export default function ActivityCatalogueJumpBar({
     <nav
       aria-label="Jump to a place on the island"
       className={cn(
-        "sticky z-40 -mx-(--gutter) border-y border-birch-bark/12 bg-pine-night/85 px-(--gutter) py-3 backdrop-blur-md",
+        "sticky z-40 -mx-(--gutter) border-y border-pine-night/20 bg-navigation-yellow px-(--gutter) py-3",
         styles.jumpBar,
       )}
       data-sanity={dataSanity}
     >
       <ul
         className={cn(
-          "m-0 flex list-none gap-2 overflow-x-auto p-0",
+          "m-0 flex list-none gap-6 overflow-x-auto p-0",
           styles.jumpBarTrack,
         )}
         ref={trackRef}
@@ -89,10 +89,10 @@ export default function ActivityCatalogueJumpBar({
               <a
                 aria-current={current ? "location" : undefined}
                 className={cn(
-                  "focus-ring inline-flex items-center whitespace-nowrap rounded-pill border px-3.5 py-2.5 text-label transition-colors motion-base",
+                  "focus-ring inline-flex min-h-11 items-center whitespace-nowrap py-2 text-base font-semibold text-pine-night underline-offset-4 transition-colors motion-base",
                   current
-                    ? "border-campfire-amber text-campfire-amber"
-                    : "border-birch-bark/22 text-birch-bark/80 hover:border-birch-bark/50 hover:text-birch-bark",
+                    ? "underline decoration-2"
+                    : "hover:underline",
                 )}
                 data-group-id={group.id}
                 href={`#${group.id}`}

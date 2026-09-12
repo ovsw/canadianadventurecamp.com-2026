@@ -5,6 +5,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { ArrowUpRight, Check, Plus } from "lucide-react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
+import { sectionThemeClass } from "./section-theme";
 import styles from "./included-extras.module.css";
 
 type PageBlock =
@@ -28,7 +29,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-cedar not-italic">{children}</em>
+      <em className="font-accent text-[var(--section-accent)] not-italic">{children}</em>
     ),
   },
 };
@@ -39,6 +40,7 @@ function hasText(value?: string | null) {
 
 export default function IncludedExtras({
   _key,
+  background,
   dataAttribute,
   extras,
   eyebrow,
@@ -72,14 +74,14 @@ export default function IncludedExtras({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-birch-bark py-section text-pine-night"
+      className={cn("py-section", sectionThemeClass(background))}
       id={`included-extras-${sectionKey}`}
     >
       <div className="container-content">
         <header className={cn("max-w-3xl", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-cedar"
+              className="mb-5 text-eyebrow text-[var(--section-accent)]"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -94,7 +96,7 @@ export default function IncludedExtras({
           </h2>
           {hasText(intro) ? (
             <p
-              className="mt-6 max-w-xl text-pretty text-[17px] leading-[1.6] text-pine-night/70"
+            className="mt-6 max-w-xl text-pretty text-[17px] leading-[1.6] text-current/75"
               data-sanity={dataAttribute?.("intro")}
             >
               {intro}
@@ -170,7 +172,7 @@ export default function IncludedExtras({
             )}
             data-sanity={dataAttribute?.("extras")}
           >
-            <p className="text-label text-pine-night/55">Extra</p>
+            <p className="text-label text-pine-night/75">Extra</p>
             <h3
               className="mt-4 font-display text-[1.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2rem]"
               data-sanity={dataAttribute?.("extras.heading")}
@@ -245,7 +247,7 @@ export default function IncludedExtras({
                       ) : null}
                     </span>
                     <span
-                      className="whitespace-nowrap pt-1 text-right font-mono text-[12px] font-bold uppercase tracking-[0.1em] text-pine-night/85"
+                      className="whitespace-nowrap pt-1 text-right font-mono text-[14px] font-bold tracking-[0.01em] text-pine-night/85"
                       data-sanity={dataAttribute?.(`${itemPath}.price`)}
                     >
                       {item.price}
@@ -259,7 +261,7 @@ export default function IncludedExtras({
 
         {hasText(footnote) ? (
           <p
-            className="mt-6 max-w-3xl text-sm leading-relaxed text-pine-night/60"
+            className="mt-6 max-w-3xl text-sm leading-relaxed text-current/70"
             data-sanity={dataAttribute?.("footnote")}
           >
             {footnote}

@@ -12,6 +12,7 @@ import { ArrowUpRight, Check } from "lucide-react";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import styles from "./stacked-feature-rows.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -29,7 +30,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-cedar not-italic">
+      <em className="font-accent text-[var(--section-accent)] not-italic">
         {children}
       </em>
     ),
@@ -41,7 +42,7 @@ const rowItemComponents: PortableTextComponents = {
   marks: {
     ...simpleRichTextComponents?.marks,
     customLink: createCustomLinkMarkRenderer(
-      "font-medium text-cedar underline decoration-cedar/30 underline-offset-4 hover:text-cedar-deep hover:decoration-cedar-deep",
+      "font-medium text-[var(--section-accent)] underline decoration-current/30 underline-offset-4 hover:opacity-75",
     ),
   },
 };
@@ -52,6 +53,7 @@ function hasText(value?: string | null) {
 
 export default function StackedFeatureRows({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   rows,
@@ -81,14 +83,14 @@ export default function StackedFeatureRows({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-birch-bark py-section text-pine-night"
+      className={`py-section ${sectionThemeClass(background)}`}
       id={`stacked-features-${stegaClean(_key)}`}
     >
       <div className="container-content">
         <header className="grid max-w-4xl gap-4">
           {hasText(eyebrow) ? (
             <p
-              className="text-eyebrow text-pine-night/55"
+              className="text-eyebrow text-current/70"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -105,7 +107,7 @@ export default function StackedFeatureRows({
         </header>
 
         <ol
-          className="mt-8 grid list-none divide-y divide-pine-night/15 border-y border-pine-night/15 p-0 md:mt-10"
+          className="mt-8 grid list-none divide-y divide-current/20 border-y border-current/20 p-0 md:mt-10"
           data-sanity={dataAttribute?.("rows")}
         >
           {renderableRows.map(({ items, link, row }) => {
@@ -122,7 +124,7 @@ export default function StackedFeatureRows({
                   {iconName && iconSvg ? (
                     <span
                       aria-hidden="true"
-                      className="mt-1 flex size-6 shrink-0 items-center justify-center text-cedar [&_svg]:size-6"
+                      className="mt-1 flex size-6 shrink-0 items-center justify-center text-[var(--section-accent)] [&_svg]:size-6"
                       data-sanity={dataAttribute?.(`${rowPath}.icon`)}
                     >
                       <NavigationIcon icon={{ name: iconName, svg: iconSvg }} />
@@ -148,7 +150,7 @@ export default function StackedFeatureRows({
                         <li className="flex items-start gap-3" key={item._key}>
                           <Check
                             aria-hidden="true"
-                            className="mt-0.5 size-5 shrink-0 text-cedar"
+                            className="mt-0.5 size-5 shrink-0 text-[var(--section-accent)]"
                           />
                           <div
                             className="grid min-w-0 gap-2 wrap-break-word"
@@ -166,7 +168,7 @@ export default function StackedFeatureRows({
 
                   {link ? (
                     <Link
-                      className="focus-ring mt-6 ms-8 inline-flex w-fit items-center gap-2 font-semibold text-cedar hover:text-cedar-deep"
+                      className="focus-ring mt-6 ms-8 inline-flex w-fit items-center gap-2 font-semibold text-[var(--section-accent)] hover:opacity-75"
                       data-sanity={dataAttribute?.(`${rowPath}.link`)}
                       href={link.href}
                       rel={

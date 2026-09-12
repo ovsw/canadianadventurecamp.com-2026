@@ -36,6 +36,7 @@ class FakeIntersectionObserver {
 const catalogue: ComponentProps<typeof ActivityCatalogue> = {
   _key: "catalogue-test",
   _type: "activityCatalogue",
+  background: null,
   eyebrow: "Every activity",
   heading: [
     {
@@ -55,14 +56,14 @@ const catalogue: ComponentProps<typeof ActivityCatalogue> = {
       _key: "water",
       title: "On the water",
       blurb: "Sandy bottom, shallow entry.",
-      aside: "Certified lifeguards on every dock.",
+
       activities: [
         {
           _key: "ref-tubing",
           _id: "activity-tubing",
           title: "Tubing",
           line: "Hold on.",
-          beginnerFriendly: true,
+
           image: null,
           programTitle: null,
           programHref: null,
@@ -72,7 +73,7 @@ const catalogue: ComponentProps<typeof ActivityCatalogue> = {
           _id: "activity-waterski",
           title: "Waterskiing",
           line: "First stand-up by Friday.",
-          beginnerFriendly: true,
+
           image: null,
           programTitle: "Specialty Waterski & Wakeboard Program",
           programHref: "/programs/water-ski-and-wake-boarding-specialty-program",
@@ -83,14 +84,13 @@ const catalogue: ComponentProps<typeof ActivityCatalogue> = {
       _key: "bigtop",
       title: "In the Big Top",
       blurb: null,
-      aside: null,
       activities: [
         {
           _key: "ref-trampoline",
           _id: "activity-trampoline",
           title: "Trampoline",
           line: null,
-          beginnerFriendly: false,
+
           image: null,
           programTitle: null,
           programHref: null,
@@ -161,9 +161,9 @@ describe("ActivityCatalogue", () => {
       "href",
       "/programs/water-ski-and-wake-boarding-specialty-program",
     );
-    expect(screen.getAllByText("Beginners welcome")).toHaveLength(2);
+    expect(screen.queryByText("Beginners welcome")).toBeNull();
     expect(
-      screen.getByRole("note", { name: "For parents" }),
-    ).toHaveTextContent("Certified lifeguards on every dock.");
+      screen.queryByRole("note", { name: "For parents" }),
+    ).toBeNull();
   });
 });

@@ -30,6 +30,7 @@ export const pageBuilderQuery = `
   blocks[]{
     _key,
     _type,
+    !(_type in ["hero", "homeHero", "innerHero", "facilitiesMapSection", "internationalCampersSection"]) => {background},
     ${latestArticlesQuery},
     ${faqAccordionQuery},
     ${storyFeatureQuery},

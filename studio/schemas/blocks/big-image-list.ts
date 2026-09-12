@@ -1,5 +1,6 @@
 import { Clock } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const richTextToPlainText = (value: unknown): string => {
   if (!Array.isArray(value)) return "";
@@ -74,6 +75,7 @@ export default defineType({
   icon: Clock,
   description: "An ordered list with large times and photos beside each story.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

@@ -17,6 +17,7 @@ const quote = (key: string, text: string) => [
 const block: ComponentProps<typeof Testimonials> = {
   _key: "island-testimonials",
   _type: "testimonials",
+  background: "white",
   eyebrow: "07 · FROM FAMILIES",
   heading: [
     {
@@ -127,7 +128,7 @@ describe("Testimonials", () => {
     expect(
       screen.getByRole("heading", { name: "What families say about the island" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("about the island")).toHaveClass("text-cedar");
+    expect(screen.getByText("about the island")).toHaveClass("text-[var(--section-accent)]");
     expect(screen.getAllByRole("group", { name: /of 3$/ })).toHaveLength(3);
     expect(document.querySelectorAll("figure")).toHaveLength(3);
     expect(screen.getByText("The lake was the whole summer.")).toBeInTheDocument();

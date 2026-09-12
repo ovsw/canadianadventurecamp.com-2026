@@ -47,7 +47,7 @@ export function CallDirectorsAction({
         </strong>
         <span
           className={cn(
-            "font-mono text-[13px] leading-none font-bold tracking-[0.04em]",
+            "font-mono text-[14px] leading-snug font-bold tracking-[0.01em]",
             dark ? "text-campfire-amber" : "text-cedar",
           )}
         >

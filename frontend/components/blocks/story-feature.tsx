@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ComponentProps } from "react";
 import styles from "./story-feature.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type StoryFeatureBlock = Extract<
   NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number],
@@ -39,7 +40,7 @@ type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
 /** Field-dependent colour recipes so the two variants stay in one component. */
 const fields = {
   dark: {
-    section: "bg-forest-floor text-birch-bark",
+    section: "text-birch-bark",
     eyebrow: "text-campfire-amber",
     accent: "text-campfire-amber",
     body: "text-birch-bark/72",
@@ -52,7 +53,7 @@ const fields = {
     onDark: true,
   },
   cream: {
-    section: "bg-birch-bark text-pine-night",
+    section: "text-pine-night",
     eyebrow: "text-cedar",
     accent: "text-cedar",
     body: "text-pine-night/70",
@@ -102,7 +103,7 @@ function richTextComponents(field: Field): Partial<PortableTextComponents> {
         </ul>
       ),
       number: ({ children }) => (
-        <ol className="list-decimal space-y-2 pl-6 marker:font-mono marker:text-[13px]">
+        <ol className="list-decimal space-y-2 pl-6 marker:font-mono marker:text-[14px]">
           {children}
         </ol>
       ),
@@ -225,11 +226,11 @@ export default function StoryFeature({
   keyDetails,
   richText,
   title,
-  useCreamBackground,
+  background,
 }: StoryFeatureProps) {
   if (!title?.length) return null;
 
-  const field = stegaClean(useCreamBackground) ? fields.cream : fields.dark;
+  const field = stegaClean(background) === "green" ? fields.dark : fields.cream;
   const displayEyebrow = stegaClean(eyebrow)?.trim();
   const sectionKey = stegaClean(_key);
   const headingId = `story-feature-${sectionKey}-title`;
@@ -238,7 +239,7 @@ export default function StoryFeature({
   return (
     <section
       aria-labelledby={headingId}
-      className={field.section}
+      className={cn(field.section, sectionThemeClass(background))}
       id={`story-feature-${sectionKey}`}
     >
       <div className={cn(styles.grid, styles.reveal)}>

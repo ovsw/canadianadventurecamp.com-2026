@@ -9,7 +9,8 @@ const iconSvg =
 const block: ComponentProps<typeof StackedFeatureRows> = {
   _key: "parent-details",
   _type: "stackedFeatureRows",
-  eyebrow: "04 · FOR PARENTS",
+  background: "cream",
+  eyebrow: "Camp details",
   title: [
     {
       _key: "heading",

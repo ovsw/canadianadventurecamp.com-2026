@@ -1,5 +1,6 @@
 import { GalleryVertical } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const richTextToPlainText = (value: unknown): string => {
   if (!Array.isArray(value)) return "";
@@ -76,6 +77,7 @@ export default defineType({
   description:
     "An ordered list where one large photo pins beside the copy and changes as each slide scrolls into view.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

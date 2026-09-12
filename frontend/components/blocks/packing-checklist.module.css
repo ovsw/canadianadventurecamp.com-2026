@@ -16,7 +16,7 @@
   width: 22px;
   height: 22px;
   margin-top: 1px;
-  border: 1.5px solid rgba(243, 239, 226, 0.35);
+  border: 1.5px solid color-mix(in oklch, currentColor 80%, transparent);
   border-radius: var(--radius-xs);
   background-color: transparent;
   background-position: center;
@@ -29,12 +29,12 @@
 }
 
 .box:hover {
-  border-color: rgba(243, 239, 226, 0.6);
+  border-color: color-mix(in oklch, currentColor 90%, transparent);
 }
 
 .box:checked {
-  border-color: var(--color-sunlit-moss);
-  background-color: var(--color-sunlit-moss);
+  border-color: var(--section-accent, var(--color-sunlit-moss));
+  background-color: var(--section-accent, var(--color-sunlit-moss));
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316200F' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
 }
 

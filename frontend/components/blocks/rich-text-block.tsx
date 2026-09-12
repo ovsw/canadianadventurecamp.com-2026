@@ -2,6 +2,7 @@ import RichTextContent from "@/components/rich-text-content";
 import type { PAGE_QUERY_RESULT } from "@/sanity.types";
 import type { PortableTextProps } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
+import { sectionThemeClass } from "./section-theme";
 
 type RichTextBlockData = Extract<
   NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number],
@@ -14,6 +15,7 @@ type RichTextBlockProps = RichTextBlockData & {
 
 export default function RichTextBlock({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   richText,
@@ -28,7 +30,7 @@ export default function RichTextBlock({
   if (!(displayEyebrow || displayTitle || richText?.length)) return null;
 
   return (
-    <section aria-labelledby={headingId}>
+    <section aria-labelledby={headingId} className={sectionThemeClass(background)}>
       <div>
         {displayEyebrow || displayTitle ? (
           <header>

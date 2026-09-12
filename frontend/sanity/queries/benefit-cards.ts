@@ -5,7 +5,6 @@ import { simpleRichTextQuery } from "./shared/simple-rich-text";
 // @sanity-typegen-ignore
 export const benefitCardsQuery = groq`
   _type == "benefitCards" => {
-    useCreamBackground,
     eyebrow,
     title[]{
       ${minimalRichTextQuery}

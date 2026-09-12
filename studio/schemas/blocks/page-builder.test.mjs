@@ -32,3 +32,12 @@ test("counts the inner hero as a hero: one per page, first position", () => {
     "Add no more than one Hero section",
   );
 });
+
+
+test("keeps a light final section between content and footer", () => {
+  assert.equal(validateBlocks([{ _type: "testimonials", background: "green" }]),
+    "Choose White or Cream for the final section above the footer.");
+  assert.equal(validateBlocks([{ _type: "facilitiesMapSection" }]),
+    "Add a White or Cream section after the map or globe, before the footer.");
+  assert.equal(validateBlocks([{ _type: "facilitiesMapSection" }, { _type: "directorCta", background: "cream" }]), true);
+});

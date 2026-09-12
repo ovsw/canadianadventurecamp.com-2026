@@ -14,6 +14,7 @@ import { ArrowUpRight, Plus } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import Link from "next/link";
 import styles from "./faq-accordion.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -44,13 +45,13 @@ export default function FaqAccordion({
   link,
   subtitle,
   title,
-  useCreamBackground,
+  background,
 }: FaqAccordionProps) {
   const visibleFaqs =
     faqs?.filter((faq) => stegaClean(faq.title)?.trim()) ?? [];
   if (!title?.length || !visibleFaqs.length) return null;
 
-  const cream = stegaClean(useCreamBackground) !== false;
+  const cream = stegaClean(background) !== "green";
   const sectionKey = stegaClean(_key);
   const headingId = `faq-accordion-${sectionKey}-title`;
   const defaultValue = visibleFaqs[0]?._key || visibleFaqs[0]?._id || undefined;
@@ -94,9 +95,9 @@ export default function FaqAccordion({
       aria-labelledby={headingId}
       className={cn(
         "scroll-mt-24 py-section",
-        cream ? "bg-birch-bark text-pine-night" : "bg-forest-floor text-birch-bark",
+        sectionThemeClass(background),
       )}
-      data-sanity={dataAttribute?.("useCreamBackground")}
+      data-sanity={dataAttribute?.("background")}
       id={`faq-${sectionKey}`}
     >
       <div className="container-content">

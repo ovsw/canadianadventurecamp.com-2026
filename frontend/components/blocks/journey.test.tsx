@@ -46,6 +46,7 @@ const stops: JourneyStop[] = [
 const block: ComponentProps<typeof Journey> = {
   _key: "trip",
   _type: "journey",
+  background: "green",
   eyebrow: "Getting there",
   title: [
     {

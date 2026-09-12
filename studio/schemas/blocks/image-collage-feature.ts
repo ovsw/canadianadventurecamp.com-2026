@@ -1,5 +1,6 @@
 import { Images } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const imageCollagePoint = defineArrayMember({
   name: "imageCollageFeaturePoint",
@@ -54,6 +55,7 @@ export default defineType({
   description:
     "A reusable story section with supporting points and two overlapping photos.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

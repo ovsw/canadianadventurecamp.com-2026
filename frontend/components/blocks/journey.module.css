@@ -10,7 +10,7 @@
   --journey-gap-x: 26px;
   --journey-rail: 2rem;
   --journey-dot: 12px;
-  --journey-line: rgba(243, 239, 226, 0.18);
+  --journey-line: color-mix(in oklch, currentColor 22%, transparent);
 
   display: grid;
   row-gap: var(--journey-gap-y);
@@ -52,7 +52,7 @@
   height: var(--journey-dot);
   border-radius: 999px;
   background: var(--color-moss);
-  box-shadow: 0 0 0 4px var(--color-forest-floor);
+  box-shadow: 0 0 0 4px color-mix(in oklch, currentColor 85%, transparent);
   transition: background-color 0.2s ease, transform 0.35s var(--ease-overshoot);
 }
 

@@ -89,7 +89,7 @@ export function getPageBuilderPreviewImageUrl(schemaTypeName: string) {
 export const heroBlockTypes = new Set(["hero", "homeHero", "innerHero"]);
 
 export function validateBlocks(
-  blocks: Array<{ _type?: string }> | undefined,
+  blocks: Array<{ _type?: string; background?: string }> | undefined,
 ): true | string {
   const heroTypes = heroBlockTypes;
   const heroIndexes = (blocks ?? []).flatMap((block, index) =>
@@ -105,6 +105,11 @@ export function validateBlocks(
   const teamCount =
     blocks?.filter((block) => block?._type === "teamMembers").length ?? 0;
   if (teamCount > 1) return "Add no more than one Team Members section";
+  const final = blocks?.at(-1);
+  if (final?.background === "green") return "Choose White or Cream for the final section above the footer.";
+  if (["facilitiesMapSection", "internationalCampersSection"].includes(final?._type ?? "")) {
+    return "Add a White or Cream section after the map or globe, before the footer.";
+  }
   return true;
 }
 

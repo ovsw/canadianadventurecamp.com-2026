@@ -245,7 +245,7 @@ export default function ActivityScheduleBuilder({
             return (
               <button
                 aria-pressed={selected}
-                className="focus-ring rounded-pill border border-birch-bark/30 px-5 py-3 text-sm font-semibold text-birch-bark transition-[background-color,border-color,color] duration-150 hover:border-campfire-amber hover:bg-birch-bark/[0.06] motion-reduce:transition-none data-[selected=true]:border-campfire-amber data-[selected=true]:bg-campfire-amber data-[selected=true]:text-pine-night"
+                className="focus-ring rounded-pill border border-current/30 px-5 py-3 text-sm font-semibold transition-[background-color,border-color,color] duration-150 hover:border-campfire-amber hover:bg-birch-bark/[0.06] motion-reduce:transition-none data-[selected=true]:border-campfire-amber data-[selected=true]:bg-campfire-amber data-[selected=true]:text-pine-night"
                 data-sanity={activity.titleDataAttribute}
                 data-selected={selected}
                 key={activity._key}
@@ -258,7 +258,7 @@ export default function ActivityScheduleBuilder({
           })}
         </div>
 
-        <p className="font-mono text-xs uppercase tracking-[0.16em] text-birch-bark/50">
+        <p className="font-body text-sm leading-snug font-medium tracking-normal opacity-80">
           Psst, tap an Activity to add it to the day
         </p>
 
@@ -271,7 +271,7 @@ export default function ActivityScheduleBuilder({
       <div className="relative w-full max-w-[26rem] self-center justify-self-center md:max-w-none lg:col-span-5">
         <div className="relative -rotate-1 rounded-2xl bg-birch-bark-bright p-7 text-pine-night shadow-2xl motion-reduce:rotate-0">
           {fullDay ? (
-            <span className="absolute -right-2 -top-4 rounded-pill bg-campfire-amber px-4 py-2 font-mono text-[0.6875rem] font-bold tracking-[0.14em] text-pine-night shadow-lg">
+            <span className="absolute -right-2 -top-4 rounded-pill bg-campfire-amber px-4 py-2 font-body text-sm leading-snug font-bold tracking-normal text-pine-night shadow-lg">
               Full day ✓
             </span>
           ) : null}
@@ -282,7 +282,7 @@ export default function ActivityScheduleBuilder({
                 aria-hidden="true"
                 className="size-2 rounded-full bg-campfire-amber"
               />
-              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-pine-night/55">
+              <span className="font-body text-sm leading-snug font-medium tracking-normal text-pine-night/75">
                 {scheduleStatus}
               </span>
             </div>
@@ -290,7 +290,7 @@ export default function ActivityScheduleBuilder({
               <button
                 aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
                 aria-pressed={isAutomationPaused}
-                className="focus-ring rounded-pill border border-pine-night/20 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-[0.12em] text-pine-night/65 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
+                className="focus-ring rounded-pill border border-pine-night/20 px-2.5 py-1 font-body text-sm leading-snug font-bold tracking-normal text-pine-night/75 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
                 onClick={toggleAutomation}
                 type="button"
               >
@@ -322,7 +322,7 @@ export default function ActivityScheduleBuilder({
                   className="flex min-h-12 items-center gap-4 border-b border-dashed border-pine-night/20 py-2"
                   key={time}
                 >
-                  <span className="w-12 shrink-0 font-mono text-[0.6875rem] tracking-[0.08em] text-pine-night/50">
+                  <span className="w-12 shrink-0 font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
                     {time}
                   </span>
                   <span
@@ -335,7 +335,7 @@ export default function ActivityScheduleBuilder({
             })}
           </ol>
 
-          <p className="mt-4 font-mono text-[0.65625rem] uppercase tracking-[0.12em] text-pine-night/45">
+          <p className="mt-4 font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
             Rebuilt fresh every morning
           </p>
         </div>

@@ -27,6 +27,7 @@ function group(
 const block: ComponentProps<typeof PackingChecklist> = {
   _key: "kit",
   _type: "packingChecklist",
+  background: "green",
   eyebrow: "What to pack",
   title: [
     {

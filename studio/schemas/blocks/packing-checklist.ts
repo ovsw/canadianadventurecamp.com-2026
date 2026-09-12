@@ -1,5 +1,6 @@
 import { ListChecks } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const richTextToPlainText = (value: unknown): string => {
   if (!Array.isArray(value)) return "";
@@ -100,6 +101,7 @@ export default defineType({
   type: "object",
   icon: ListChecks,
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

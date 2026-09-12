@@ -6,6 +6,7 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Image from "next/image";
 import { stegaClean } from "next-sanity";
 import styles from "./big-image-list.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -31,6 +32,7 @@ function hasText(value?: string | null) {
 
 export default function BigImageList({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   intro,
@@ -51,7 +53,7 @@ export default function BigImageList({
 
   return (
     <section aria-labelledby={headingId} id={sectionId}>
-      <SectionContainer className="bg-forest-floor py-section text-birch-bark [&>div]:container-content">
+      <SectionContainer className={`py-section [&>div]:container-content ${sectionThemeClass(background)}`}>
         <header className={styles.header}>
           <div>
             {hasText(eyebrow) ? (
@@ -72,7 +74,7 @@ export default function BigImageList({
           </div>
           {hasText(intro) ? (
             <p
-              className="max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-birch-bark/72 lg:mb-1.5"
+              className="max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-current/80 lg:mb-1.5"
               data-sanity={dataAttribute?.("intro")}
             >
               {intro}
@@ -82,7 +84,7 @@ export default function BigImageList({
         <ol
           role="list"
           aria-label="Stops, in order"
-          className="mt-14 list-none border-t border-birch-bark/15 p-0"
+          className="mt-14 list-none border-t border-current/20 p-0"
           data-sanity={dataAttribute?.("stops")}
         >
           {renderableStops.map((stop, index) => {
@@ -99,13 +101,13 @@ export default function BigImageList({
                 aria-labelledby={labelId}
                 aria-describedby={textId}
                 className={cn(
-                  "border-b border-birch-bark/15",
+                  "border-b border-current/20",
                   styles.row,
                   styles.reveal,
                 )}
               >
                 <div className="min-w-0">
-                  <p className="mb-3.5 text-step-number text-birch-bark/55">
+                  <p className="mb-3.5 text-step-number text-current/70">
                     {number}
                   </p>
                   <p
@@ -129,7 +131,7 @@ export default function BigImageList({
                     {stop.label}
                   </h3>
                   <p
-                    className="mt-2.5 max-w-[30rem] text-pretty text-[15px] leading-[1.55] text-birch-bark/72 wrap-break-word"
+                    className="mt-2.5 max-w-[30rem] text-pretty text-[15px] leading-[1.55] text-current/80 wrap-break-word"
                     data-sanity={dataAttribute?.(`${stopPath}.text`)}
                     id={textId}
                   >

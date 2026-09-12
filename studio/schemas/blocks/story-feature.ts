@@ -1,5 +1,6 @@
 import { BookOpenText } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const richTextToPlainText = (value: unknown): string => {
   if (!Array.isArray(value)) return "";
@@ -57,14 +58,7 @@ export default defineType({
   description:
     "A reusable image-and-text section for a story, service, or point of view.",
   fields: [
-    defineField({
-      name: "useCreamBackground",
-      title: "Use Alternate Background",
-      type: "boolean",
-      description:
-        "Turn on for a cream field instead of the default forest field. Alternate with the sections around it.",
-      initialValue: false,
-    }),
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

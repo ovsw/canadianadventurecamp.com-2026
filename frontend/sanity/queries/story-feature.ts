@@ -7,7 +7,6 @@ import { minimalRichTextQuery } from "./shared/minimal-rich-text";
 // @sanity-typegen-ignore
 export const storyFeatureQuery = groq`
   _type == "storyFeature" => {
-    useCreamBackground,
     eyebrow,
     title[]{
       ${minimalRichTextQuery}

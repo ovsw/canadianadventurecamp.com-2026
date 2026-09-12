@@ -1,3 +1,4 @@
+import { sectionThemeClass } from "./section-theme";
 import { Button } from "@/components/ui/button";
 import SectionContainer from "@/components/ui/section-container";
 import { getSafeLinkHref } from "@/lib/safe-href";
@@ -23,7 +24,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[1.08em] font-semibold leading-none not-italic text-campfire-amber">
+      <em className="font-accent text-[1.08em] font-semibold leading-none not-italic text-[var(--section-accent)]">
         {children}
       </em>
     ),
@@ -32,6 +33,7 @@ const headingComponents: PortableTextComponents = {
 
 export default function DirectorCta({
   _key,
+  background,
   buttons,
   dataAttribute,
   description,
@@ -55,7 +57,7 @@ export default function DirectorCta({
 
   return (
     <section aria-labelledby={headingId} id={`director-cta-${sectionKey}`}>
-      <SectionContainer className="overflow-hidden rounded-t-section bg-forest-floor text-birch-bark [&>div]:container-content">
+      <SectionContainer className={`${sectionThemeClass(background ?? "green")} overflow-hidden rounded-t-section [&>div]:container-content`}>
         <div
           className={`grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-10 ${styles.reveal}`}
         >
@@ -69,7 +71,7 @@ export default function DirectorCta({
             </h2>
             {message ? (
               <p
-                className="mx-auto mt-[18px] max-w-[32rem] text-pretty text-base/[1.6] text-birch-bark/75 lg:mx-0 lg:mt-6 lg:text-[17px]"
+                className="mx-auto mt-[18px] max-w-[32rem] text-pretty text-base/[1.6] opacity-80 lg:mx-0 lg:mt-6 lg:text-[17px]"
                 data-sanity={dataAttribute?.("description")}
               >
                 {message}
@@ -87,7 +89,7 @@ export default function DirectorCta({
                       asChild
                       className="w-full lg:w-auto"
                       key={button._key ?? `${href}-${index}`}
-                      onDark
+                      onDark={(background ?? "green") === "green"}
                       variant={index === 0 ? "default" : "outline"}
                     >
                       <Link
@@ -130,7 +132,7 @@ export default function DirectorCta({
             ) : null}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-30 bg-gradient-to-b from-transparent to-forest-floor lg:hidden"
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-30 bg-gradient-to-b from-transparent to-[var(--section-surface)] lg:hidden"
             />
           </div>
         </div>
