@@ -74,7 +74,9 @@
   --radius-pill: 999px;
 
   /* ---- Spacing ---- */
-  --spacing-section: 120px;
+  /* No `--spacing-section` token: it would make Tailwind's built-in
+     `py-section` win over the `@utility py-section` below, and the seam
+     padding from section-boundaries.ts would never apply. */
   --spacing-gutter: 56px;
 
   /* ---- Shadows ---- */
@@ -121,6 +123,13 @@
   --seam-factor: 0.5;
   --section-pad-top: var(--section-pad);
   --section-pad-bottom: var(--section-pad);
+  /* Dark band surface: a warm glow near the top, a shadow settling at the
+     bottom, and a grain over both. Tune here. */
+  --band-glow: color-mix(in oklch, var(--color-campfire-amber) 14%, transparent);
+  --band-shade: color-mix(in oklch, var(--color-pine-night) 45%, transparent);
+  --grain-size: 180px;
+  --grain-opacity: 0.45;
+  --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 
@@ -187,6 +196,60 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   position: relative;
   z-index: 1;
   margin-top: calc(-1 * var(--section-overlap));
+}
+
+/* Band surface. The dispatcher wraps each run of seam-joined sections in a
+   band (see resolveSectionBands). Dark bands carry one grain overlay that
+   spans the whole run, so the texture never restarts at a seam. The band
+   does not paint a background: sections keep their own colour, the overlay
+   sits above them and blends in. flow-root stops a leading tucker's
+   negative margin from collapsing through the band, so the band box starts
+   at the boundary and the tucker overflows above it; the overlay reaches
+   up by the same overlap and rounds its corners to the tucker's shape.
+   z-index 1 matches the tuck wrapper, so DOM order still decides which
+   neighbour paints on top. */
+[data-band="green"],
+[data-band="night"] {
+  display: flow-root;
+  position: relative;
+  z-index: 1;
+}
+
+[data-band="green"]::before,
+[data-band="night"]::before,
+[data-band="green"]::after,
+[data-band="night"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Tonal variation: two large warm glows, top-left and bottom-right, with a
+   shadow in the top-right corner between them. Sized to the band, so a long
+   run gets one slow sweep rather than a glow per section. */
+[data-band="green"]::before,
+[data-band="night"]::before {
+  background-image:
+    radial-gradient(170% 95% at 8% 0%, var(--band-glow), transparent 70%),
+    radial-gradient(170% 95% at 96% 100%, var(--band-glow), transparent 70%),
+    radial-gradient(120% 60% at 100% 0%, var(--band-shade), transparent 70%);
+}
+
+[data-band="green"]::after,
+[data-band="night"]::after {
+  background-image: var(--grain-image);
+  background-size: var(--grain-size);
+  mix-blend-mode: soft-light;
+  opacity: var(--grain-opacity);
+}
+
+[data-band-tuck]::before,
+[data-band-tuck]::after {
+  top: calc(-1 * var(--section-overlap));
+  border-top-left-radius: var(--radius-section);
+  border-top-right-radius: var(--radius-section);
 }
 
 /* ------------------------------------------------------------------ */
