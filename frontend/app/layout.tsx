@@ -68,10 +68,7 @@ export default function RootLayout({
       <body>
         {children}
         <Toaster position="top-center" richColors />
-      {/* impeccable-live-start */}
-<script src="http://localhost:8400/live.js?token=302ffa25-50d6-4365-8c30-c521b17817b3"></script>
-{/* impeccable-live-end */}
-</body>
+      </body>
     </html>
   );
 }

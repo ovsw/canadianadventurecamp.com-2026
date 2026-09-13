@@ -19,10 +19,27 @@
    header is visible and rises to the top edge when the header hides on
    scroll. --site-header-offset is set by the header shell. */
 .jumpBar {
+  --jump-pad: 1.25rem;
+  --jump-reach: 0px;
   top: var(--site-header-offset, 0px);
+  margin-inline: calc(-1 * var(--jump-reach));
+  padding-inline: calc(var(--jump-reach) + var(--jump-pad));
   transition:
     top 300ms var(--ease-reveal),
-    border-radius 200ms var(--ease-reveal);
+    border-radius 200ms var(--ease-reveal),
+    margin 360ms var(--ease-reveal),
+    padding 360ms var(--ease-reveal);
+}
+
+@media (min-width: 640px) {
+  .jumpBar {
+    --jump-pad: 1.5rem;
+  }
+}
+
+/* Stuck: reach from the content column out to the viewport edges. */
+.jumpBar[data-stuck] {
+  --jump-reach: calc(50vw - 50%);
 }
 
 .jumpBarTrack {

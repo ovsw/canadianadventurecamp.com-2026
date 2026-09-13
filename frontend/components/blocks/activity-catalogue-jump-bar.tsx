@@ -9,7 +9,7 @@ export type JumpBarGroup = { id: string; title: string };
 /*
  * Sticky jump bar for the Activity Catalogue.
  *
- * A short legend ("Activities by place") then one text link per place. The link
+ * A short legend ("Activity Categories") then one text link per place. The link
  * whose group currently fills the reading band (roughly the upper-middle of the
  * viewport) carries aria-current="location" and an underline. On phones the row
  * scrolls sideways and the current link is nudged into view without moving the
@@ -108,7 +108,7 @@ export default function ActivityCatalogueJumpBar({
       <nav
         aria-labelledby="activity-catalogue-jump-bar-label"
         className={cn(
-          "sticky z-40 flex items-center gap-4 border border-pine-night/15 bg-navigation-yellow px-5 py-3 sm:gap-5 sm:px-6",
+          "sticky z-40 flex items-center gap-4 border border-pine-night/15 bg-navigation-yellow py-3 sm:gap-5",
           stuck ? "rounded-b-lg rounded-t-none" : "rounded-lg",
           styles.jumpBar,
         )}
@@ -120,7 +120,7 @@ export default function ActivityCatalogueJumpBar({
           className="shrink-0 border-r border-pine-night/20 pr-4 text-label font-semibold text-pine-night/70 sm:pr-5"
           id="activity-catalogue-jump-bar-label"
         >
-          Activities by place
+          Activity Categories
         </span>
         <ul
           className={cn(

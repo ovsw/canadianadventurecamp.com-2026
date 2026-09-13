@@ -323,4 +323,4 @@ Every section opens the same way: mono eyebrow (0.24em, amber or cedar), 20px, B
 - **Don't** hide the Enroll pill on any viewport or while the mobile menu is open.
 - **Don't** show form errors as a summary box or only on submit.
 
-Activity catalogue navigation uses solid Navigation Yellow (`oklch(84% 0.095 92)`, a muted straw yellow) with normal 16px text links and a 14px "Activities by place" legend. It is a rounded slab at rest and squares its top corners while stuck under the header. This is a specific navigation accent, not the main button colour.
+Activity catalogue navigation uses solid Navigation Yellow (`oklch(84% 0.095 92)`, a muted straw yellow) with normal 16px text links and a 14px "Activity Categories" legend. It is a rounded slab at rest; while stuck under the header it squares its top corners and grows to the viewport edges. This is a specific navigation accent, not the main button colour.

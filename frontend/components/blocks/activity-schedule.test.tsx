@@ -311,9 +311,8 @@ describe("ActivitySchedule", () => {
     });
     expect(schedule).toHaveTextContent("Activity 1");
     expect(schedule).toHaveTextContent("Activity 4");
-    expect(screen.getByText("Sample day")).toBeInTheDocument();
     expect(screen.queryByText("Building a day…")).not.toBeInTheDocument();
-    expect(screen.getByText("Full day ✓")).toBeInTheDocument();
+    expect(screen.getByText("Full day!")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /automatic schedule/ }),
     ).not.toBeInTheDocument();

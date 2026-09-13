@@ -1,5 +1,6 @@
 "use client";
 
+import { Pause, Play } from "lucide-react";
 import { useInView, useReducedMotion } from "motion/react";
 import {
   type ReactNode,
@@ -223,11 +224,6 @@ export default function ActivityScheduleBuilder({
   const camperName = camperNames[camperIndex % camperNames.length];
   const day = scheduleDays[dayIndex];
   const scheduleOwner = hasManualSelection ? "Your" : `${camperName}'s`;
-  const scheduleStatus = prefersReducedMotion
-    ? "Sample day"
-    : isAutomationPaused
-      ? "Day paused"
-      : "Building a day…";
 
   return (
     <div
@@ -265,53 +261,28 @@ export default function ActivityScheduleBuilder({
         {activitiesLink}
       </div>
 
-      {/* In the single-column layout the card would stretch to the full
-          content width; cap it so the four-row schedule still reads as a
-          note card. */}
       <div className="relative w-full max-w-[26rem] self-center justify-self-center md:max-w-none lg:col-span-5">
         <div className="relative -rotate-1 rounded-2xl bg-birch-bark-bright p-7 text-pine-night shadow-2xl motion-reduce:rotate-0">
-          {fullDay ? (
-            <span className="absolute -right-2 -top-4 rounded-pill bg-campfire-amber px-4 py-2 font-body text-sm leading-snug font-bold tracking-normal text-pine-night shadow-lg">
-              Full day ✓
-            </span>
-          ) : null}
-
-          <div className="mb-1 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className="size-2 rounded-full bg-campfire-amber"
-              />
-              <span className="font-body text-sm leading-snug font-medium tracking-normal text-pine-night/75">
-                {scheduleStatus}
+          <div className="mb-3 flex items-start justify-between gap-4">
+            <p
+              className="font-accent text-4xl font-semibold"
+              data-sanity={camperNamesDataAttribute}
+            >
+              {hasManualSelection ? (
+                <span className="text-ember-red underline decoration-2 underline-offset-4">
+                  Your
+                </span>
+              ) : (
+                `${camperName}'s`
+              )}{" "}
+              {day}
+            </p>
+            {fullDay ? (
+              <span className="mt-1 shrink-0 -rotate-6 font-accent text-2xl font-semibold leading-none text-ember-red">
+                Full day!
               </span>
-            </div>
-            {hasMounted && prefersReducedMotion === false ? (
-              <button
-                aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
-                aria-pressed={isAutomationPaused}
-                className="focus-ring rounded-pill border border-pine-night/20 px-2.5 py-1 font-body text-sm leading-snug font-bold tracking-normal text-pine-night/75 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
-                onClick={toggleAutomation}
-                type="button"
-              >
-                {isAutomationPaused ? "Play" : "Pause"}
-              </button>
             ) : null}
           </div>
-
-          <p
-            className="mb-3 font-accent text-4xl font-semibold"
-            data-sanity={camperNamesDataAttribute}
-          >
-            {hasManualSelection ? (
-              <span className="text-ember-red underline decoration-2 underline-offset-4">
-                Your
-              </span>
-            ) : (
-              `${camperName}'s`
-            )}{" "}
-            {day}
-          </p>
 
           <ol aria-label={`${scheduleOwner} ${day} schedule`}>
             {scheduleTimes.map((time, index) => {
@@ -335,9 +306,26 @@ export default function ActivityScheduleBuilder({
             })}
           </ol>
 
-          <p className="mt-4 font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
-            Rebuilt fresh every morning
-          </p>
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <p className="font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
+              Rebuilt fresh every morning
+            </p>
+            {hasMounted && prefersReducedMotion === false ? (
+              <button
+                aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
+                aria-pressed={isAutomationPaused}
+                className="focus-ring grid size-9 shrink-0 place-items-center rounded-full border border-pine-night/20 text-pine-night/70 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
+                onClick={toggleAutomation}
+                type="button"
+              >
+                {isAutomationPaused ? (
+                  <Play aria-hidden="true" className="size-4 translate-x-px" fill="currentColor" strokeWidth={0} />
+                ) : (
+                  <Pause aria-hidden="true" className="size-4" fill="currentColor" strokeWidth={0} />
+                )}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

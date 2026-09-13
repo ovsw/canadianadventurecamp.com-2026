@@ -116,7 +116,7 @@ describe("ActivityCatalogue", () => {
     render(<ActivityCatalogue {...catalogue} />);
 
     const nav = screen.getByRole("navigation", {
-      name: "Jump to a place on the island",
+      name: "Activity Categories",
     });
     const chips = within(nav).getAllByRole("link");
     expect(chips.map((chip) => chip.textContent)).toEqual([
