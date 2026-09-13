@@ -110,8 +110,8 @@ export default function DatesRatesBrowser({
                 aria-selected={selected}
                 className={
                   selected
-                    ? `focus-ring rounded-pill border border-cedar bg-cedar px-5 py-3 text-sm font-bold uppercase tracking-[0.06em] text-birch-bark ${styles.tab}`
-                    : `focus-ring rounded-pill border border-pine-night/18 bg-transparent px-5 py-3 text-sm font-bold uppercase tracking-[0.06em] text-pine-night/70 motion-reduce:transition-none ${styles.tab}`
+                    ? `focus-ring rounded-pill border border-cedar bg-cedar px-5 py-3 text-sm font-bold tracking-normal text-birch-bark ${styles.tab}`
+                    : `focus-ring rounded-pill border border-pine-night/18 bg-transparent px-5 py-3 text-sm font-bold tracking-normal text-pine-night/70 motion-reduce:transition-none ${styles.tab}`
                 }
                 key={length.key}
                 onClick={() => setSelectedKey(length.key)}
@@ -143,7 +143,7 @@ export default function DatesRatesBrowser({
 
       <div className="max-lg:contents lg:grid lg:grid-cols-[320px_1fr] lg:gap-14">
         <aside className="order-1 lg:order-none">
-          <p className="text-label text-pine-night/50">
+          <p className="text-label text-pine-night/70">
             Per camper &middot; session rate
           </p>
           <div className="mt-3 flex items-baseline gap-2.5">
@@ -153,7 +153,7 @@ export default function DatesRatesBrowser({
             >
               {formatRate(animatedRate)}
             </span>
-            <span className="font-mono text-[13px] font-bold uppercase tracking-[0.08em] text-pine-night/75">
+            <span className="font-mono text-[14px] font-bold tracking-[0.01em] text-pine-night/85">
               +tax
             </span>
           </div>
@@ -167,13 +167,13 @@ export default function DatesRatesBrowser({
 
         <div className="order-3 mt-6 flex flex-col lg:order-none lg:mt-0">
           <div className="mb-3 hidden gap-3 md:grid md:grid-cols-[7.5rem_1fr] md:gap-3.5">
-            <span className="text-label hidden self-end text-pine-night/45 md:block">
+                <span className="text-label hidden self-end text-pine-night/75 md:block">
               Session dates
             </span>
             <span className="relative hidden h-[15px] md:block">
               {ticks.map((tick, index) => (
                 <span
-                  className={`absolute bottom-0 font-mono text-[10px] uppercase tracking-[0.12em] text-pine-night/45 ${index % 2 === 1 ? "hidden xl:inline" : ""}`}
+                  className={`absolute bottom-0 font-mono text-[14px] leading-snug tracking-[0.01em] text-pine-night/70 ${index % 2 === 1 ? "hidden xl:inline" : ""}`}
                   key={tick.date}
                   style={
                     index === 0
@@ -232,12 +232,12 @@ export default function DatesRatesBrowser({
                   >
                     <span className="flex items-baseline gap-x-3 md:flex-col md:items-start md:gap-y-1">
                       <span
-                        className={`${styles.dates} font-mono text-xs uppercase tracking-[0.08em]`}
+                        className={`${styles.dates} font-mono text-[14px] leading-snug tracking-[0.01em]`}
                         data-sanity={row.startDateAttribute}
                       >
                         {row.dates}
                       </span>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-pine-night/45">
+                      <span className="font-mono text-[14px] leading-snug tracking-[0.01em] text-pine-night/70">
                         {row.weeksLabel}
                       </span>
                     </span>
@@ -249,14 +249,14 @@ export default function DatesRatesBrowser({
                         <span aria-hidden="true" className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14 md:hidden" />
                         <span aria-hidden="true" className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14 md:hidden" />
                         <span
-                          className={`${styles.bar} inline-flex items-center justify-center font-mono text-[11px] font-bold uppercase tracking-[0.12em] ${isFull ? styles.barFull : ""} ${row.status === "limited" ? styles.barLimited : ""}`}
+                          className={`${styles.bar} inline-flex items-center justify-center font-mono text-[14px] font-bold tracking-[0.01em] ${isFull ? styles.barFull : ""} ${row.status === "limited" ? styles.barLimited : ""}`}
                           data-sanity={row.availabilityStatusAttribute}
                           style={{ left: `${row.left}%`, width: `${row.width}%` }}
                         >
                           {interactive ? <>Enroll&nbsp;&rarr;</> : null}
                         </span>
                         <span
-                          className={`absolute inset-y-0 inline-flex items-center whitespace-nowrap font-mono text-[11px] font-bold uppercase tracking-[0.1em] ${availabilityClass(row.status)}`}
+                          className={`absolute inset-y-0 inline-flex items-center whitespace-nowrap font-mono text-[14px] font-bold tracking-[0.01em] ${availabilityClass(row.status)}`}
                           data-sanity={row.availabilityNoteAttribute}
                           style={
                             labelOnLeft

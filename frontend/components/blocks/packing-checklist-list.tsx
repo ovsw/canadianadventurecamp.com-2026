@@ -209,8 +209,8 @@ export default function PackingChecklistList({
           styles.toolbar,
         )}
       >
-        <p aria-live="polite" className="text-label text-birch-bark/60" role="status">
-          <span className="text-birch-bark">{packedCount}</span> of {tickable.length}{" "}
+        <p aria-live="polite" className="text-label text-current/80" role="status">
+          <span className="text-current">{packedCount}</span> of {tickable.length}{" "}
           packed
         </p>
         <div className="flex flex-wrap gap-3">
@@ -246,7 +246,7 @@ export default function PackingChecklistList({
           return (
             <details
               className={cn(
-                "group/card rounded-xl border bg-forest-panel",
+                "group/card rounded-xl border bg-forest-panel text-birch-bark",
                 leaveAtHome
                   ? "border-dashed border-birch-bark/25"
                   : "border-birch-bark/12",

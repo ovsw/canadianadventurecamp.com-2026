@@ -1,5 +1,6 @@
 import { BadgeDollarSign } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const defaultHeading = [
   {
@@ -152,6 +153,7 @@ export default defineType({
     ],
   },
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

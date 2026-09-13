@@ -581,7 +581,7 @@ export default function InternationalCampersGlobe({
                   {/* Cloned per-line strips, matching the camp map markers: the
                       outer span is the block holder, the inner one repeats its
                       background on each line. */}
-                  <span className="block text-center font-mono text-[10px] font-bold leading-[1.5] tracking-[.12em] [filter:drop-shadow(0_6px_18px_rgba(0,0,0,.4))]">
+                  <span className="block text-center font-mono text-[14px] font-bold leading-[1.35] tracking-[.01em] [filter:drop-shadow(0_6px_18px_rgba(0,0,0,.4))]">
                     <span className="bg-campfire-amber px-[11px] py-1 text-pine-night [-webkit-box-decoration-break:clone] [box-decoration-break:clone]">
                       ADVENTURE ISLAND<br />LAKE TEMAGAMI
                     </span>
@@ -592,7 +592,7 @@ export default function InternationalCampersGlobe({
             </div>
           </div>
           <noscript>
-            <p className="mt-2 text-center font-mono text-[11px] tracking-[.14em] text-birch-bark/40">
+            <p className="mt-2 text-center font-mono text-[14px] leading-snug tracking-[.01em] text-birch-bark/65">
               Enable JavaScript to interact with the globe.
             </p>
           </noscript>

@@ -4,6 +4,7 @@ import { stegaClean } from "next-sanity";
 import Image from "next/image";
 import Link from "next/link";
 import { categoryPath, postPath } from "@/lib/routes";
+import { sectionThemeClass } from "./section-theme";
 
 type LatestArticlesProps = Extract<
   NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number],
@@ -111,6 +112,7 @@ function SectionLink({ button }: Readonly<{ button?: NonNullable<LatestArticlesP
 
 export default function LatestArticles({
   articles,
+  background,
   buttons,
   description,
   eyebrow,
@@ -120,7 +122,7 @@ export default function LatestArticles({
   if (!articles?.length) return null;
 
   return (
-    <section id="latest-posts">
+    <section className={sectionThemeClass(background)} id="latest-posts">
       <header>
         {eyebrow ? <p>{eyebrow}</p> : null}
         {title ? <h2>{title}</h2> : null}

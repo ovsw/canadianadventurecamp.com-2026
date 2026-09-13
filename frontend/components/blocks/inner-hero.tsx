@@ -195,7 +195,7 @@ export default function InnerHero({
                   {/* dt/dd keep source order for assistive tech; the value
                       is shown above its label with flex order */}
                   <dt
-                    className="order-2 text-[13px] leading-snug text-birch-bark/65"
+                    className="order-2 text-[14px] leading-snug text-birch-bark/75"
                     data-sanity={dataAttribute?.(`${factPath}.label`)}
                   >
                     {fact.label}

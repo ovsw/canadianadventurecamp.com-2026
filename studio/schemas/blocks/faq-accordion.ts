@@ -1,5 +1,6 @@
 import { MessageCircle } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const richTextToPlainText = (value: unknown): string => {
   if (!Array.isArray(value)) return "";
@@ -19,21 +20,14 @@ export default defineType({
   type: "object",
   icon: MessageCircle,
   description:
-    "Intro and a side link beside an accordion of selected FAQ documents. Cream by default; switch to the dark field when the section before it is cream.",
+    "Intro and a side link beside an accordion of selected FAQ documents.",
   initialValue: {
-    useCreamBackground: true,
+    background: "cream",
     eyebrow: "FAQ",
     subtitle: "Replace this sample with the questions visitors ask most often.",
   },
   fields: [
-    defineField({
-      name: "useCreamBackground",
-      title: "Cream background",
-      type: "boolean",
-      description:
-        "On: cream field (Birch Bark). Off: dark forest field. Alternate with the sections around it.",
-      initialValue: true,
-    }),
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

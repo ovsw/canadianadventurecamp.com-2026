@@ -26,8 +26,8 @@ const featuredActivities = Array.from({ length: 18 }, (_, index) => ({
 const activitySchedule: ComponentProps<typeof ActivitySchedule> = {
   _key: "schedule-test",
   _type: "activitySchedule",
+  background: "green",
   activityCount: 19,
-  aside: null,
   camperNames: ["Maya", "Leo"],
   description: "Choose a different day every morning.",
   featuredActivities,
@@ -311,38 +311,11 @@ describe("ActivitySchedule", () => {
     });
     expect(schedule).toHaveTextContent("Activity 1");
     expect(schedule).toHaveTextContent("Activity 4");
-    expect(screen.getByText("Sample day")).toBeInTheDocument();
     expect(screen.queryByText("Building a day…")).not.toBeInTheDocument();
-    expect(screen.getByText("Full day ✓")).toBeInTheDocument();
+    expect(screen.getByText("Full day!")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /automatic schedule/ }),
     ).not.toBeInTheDocument();
-  });
-
-  it("renders the parent aside under the description only when present", () => {
-    const { container, rerender } = render(
-      <ActivitySchedule {...activitySchedule} />,
-    );
-
-    expect(screen.queryByRole("note", { name: "For parents" })).toBeNull();
-    expect(container.querySelector('[data-sanity="section:aside"]')).toBeNull();
-
-    rerender(
-      <ActivitySchedule
-        {...activitySchedule}
-        aside="Twinkies do many activities with their cabin group."
-      />,
-    );
-
-    const aside = screen.getByRole("note", { name: "For parents" });
-    expect(aside).toHaveTextContent(
-      "Twinkies do many activities with their cabin group.",
-    );
-    expect(aside).toHaveAttribute("data-sanity", "section:aside");
-    expect(
-      container.querySelector('[data-sanity="section:description"]')
-        ?.compareDocumentPosition(aside),
-    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
   it("links section fields and Activity titles back to Studio", () => {

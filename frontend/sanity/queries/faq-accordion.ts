@@ -5,7 +5,6 @@ import { urlInternalHref } from "./shared/internal-href";
 // @sanity-typegen-ignore
 export const faqAccordionQuery = groq`
   _type == "faqAccordion" => {
-    useCreamBackground,
     eyebrow,
     title[]{
       ...

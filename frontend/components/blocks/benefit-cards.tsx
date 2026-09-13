@@ -6,6 +6,7 @@ import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
 import styles from "./benefit-cards.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -74,11 +75,11 @@ export default function BenefitCards({
   eyebrow,
   intro,
   title,
-  useCreamBackground,
+  background,
 }: BenefitCardsProps) {
   if (!title?.length || !cards?.length) return null;
 
-  const cream = stegaClean(useCreamBackground) === true;
+  const cream = stegaClean(background) !== "green";
   const cleanKey = stegaClean(_key);
   const headingId = `benefit-cards-${cleanKey}-title`;
   const columnCount = getBenefitCardColumnCount(cards.length);
@@ -88,7 +89,7 @@ export default function BenefitCards({
       aria-labelledby={headingId}
       className={cn(
         "scroll-mt-24 py-section",
-        cream ? "bg-birch-bark text-pine-night" : "bg-forest-floor text-birch-bark",
+        sectionThemeClass(background),
       )}
       id={`benefits-${cleanKey}`}
     >

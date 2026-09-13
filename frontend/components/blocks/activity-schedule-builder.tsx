@@ -1,5 +1,6 @@
 "use client";
 
+import { Pause, Play } from "lucide-react";
 import { useInView, useReducedMotion } from "motion/react";
 import {
   type ReactNode,
@@ -35,6 +36,7 @@ type ActivityScheduleBuilderProps = {
   camperNamesDataAttribute?: string;
   featuredActivitiesDataAttribute?: string;
   activitiesLink: ReactNode;
+  description: ReactNode;
 };
 
 const emptySchedule = (): Array<Activity | null> =>
@@ -48,6 +50,7 @@ export default function ActivityScheduleBuilder({
   activitiesLink,
   camperNames,
   camperNamesDataAttribute,
+  description,
   featuredActivitiesDataAttribute,
 }: ActivityScheduleBuilderProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -223,19 +226,16 @@ export default function ActivityScheduleBuilder({
   const camperName = camperNames[camperIndex % camperNames.length];
   const day = scheduleDays[dayIndex];
   const scheduleOwner = hasManualSelection ? "Your" : `${camperName}'s`;
-  const scheduleStatus = prefersReducedMotion
-    ? "Sample day"
-    : isAutomationPaused
-      ? "Day paused"
-      : "Building a day…";
 
   return (
     <div
-      className={`mt-12 grid gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-14 ${styles.reveal}`}
+      className={`mt-13 grid gap-13 md:grid-cols-2 md:items-start lg:grid-cols-[23rem_minmax(0,1fr)] lg:gap-x-15 ${styles.reveal}`}
       data-sanity={featuredActivitiesDataAttribute}
       ref={sectionRef}
     >
-      <div className="flex flex-col gap-7 lg:col-span-7">
+      <div className="flex min-w-0 flex-col gap-7 md:order-2">
+        {description}
+
         <div className="flex flex-wrap gap-3" role="group" aria-label="Build a sample day">
           {activities.map((activity) => {
             const selected = displayedSlots.some(
@@ -245,7 +245,7 @@ export default function ActivityScheduleBuilder({
             return (
               <button
                 aria-pressed={selected}
-                className="focus-ring rounded-pill border border-birch-bark/30 px-5 py-3 text-sm font-semibold text-birch-bark transition-[background-color,border-color,color] duration-150 hover:border-campfire-amber hover:bg-birch-bark/[0.06] motion-reduce:transition-none data-[selected=true]:border-campfire-amber data-[selected=true]:bg-campfire-amber data-[selected=true]:text-pine-night"
+                className="focus-ring rounded-pill border border-current/30 px-5 py-3 text-sm font-semibold transition-[background-color,border-color,color] duration-150 hover:border-campfire-amber hover:bg-birch-bark/[0.06] motion-reduce:transition-none data-[selected=true]:border-campfire-amber data-[selected=true]:bg-campfire-amber data-[selected=true]:text-pine-night"
                 data-sanity={activity.titleDataAttribute}
                 data-selected={selected}
                 key={activity._key}
@@ -258,60 +258,35 @@ export default function ActivityScheduleBuilder({
           })}
         </div>
 
-        <p className="font-mono text-xs uppercase tracking-[0.16em] text-birch-bark/50">
+        <p className="font-body text-sm leading-snug font-medium tracking-normal opacity-80">
           Psst, tap an Activity to add it to the day
         </p>
 
         {activitiesLink}
       </div>
 
-      {/* In the single-column layout the card would stretch to the full
-          content width; cap it so the four-row schedule still reads as a
-          note card. */}
-      <div className="relative w-full max-w-[26rem] self-center justify-self-center md:max-w-none lg:col-span-5">
+      <div className="relative w-full max-w-[22rem] justify-self-center md:order-1 md:self-start md:justify-self-start lg:max-w-none lg:justify-self-stretch">
         <div className="relative -rotate-1 rounded-2xl bg-birch-bark-bright p-7 text-pine-night shadow-2xl motion-reduce:rotate-0">
-          {fullDay ? (
-            <span className="absolute -right-2 -top-4 rounded-pill bg-campfire-amber px-4 py-2 font-mono text-[0.6875rem] font-bold tracking-[0.14em] text-pine-night shadow-lg">
-              Full day ✓
-            </span>
-          ) : null}
-
-          <div className="mb-1 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className="size-2 rounded-full bg-campfire-amber"
-              />
-              <span className="font-mono text-[0.6875rem] uppercase tracking-[0.22em] text-pine-night/55">
-                {scheduleStatus}
+          <div className="mb-3 flex items-start justify-between gap-4">
+            <p
+              className="font-accent text-4xl font-semibold"
+              data-sanity={camperNamesDataAttribute}
+            >
+              {hasManualSelection ? (
+                <span className="text-ember-red underline decoration-2 underline-offset-4">
+                  Your
+                </span>
+              ) : (
+                `${camperName}'s`
+              )}{" "}
+              {day}
+            </p>
+            {fullDay ? (
+              <span className="mt-1 shrink-0 -rotate-6 font-accent text-2xl font-semibold leading-none text-ember-red">
+                Full day!
               </span>
-            </div>
-            {hasMounted && prefersReducedMotion === false ? (
-              <button
-                aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
-                aria-pressed={isAutomationPaused}
-                className="focus-ring rounded-pill border border-pine-night/20 px-2.5 py-1 font-mono text-[0.625rem] font-bold uppercase tracking-[0.12em] text-pine-night/65 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
-                onClick={toggleAutomation}
-                type="button"
-              >
-                {isAutomationPaused ? "Play" : "Pause"}
-              </button>
             ) : null}
           </div>
-
-          <p
-            className="mb-3 font-accent text-4xl font-semibold"
-            data-sanity={camperNamesDataAttribute}
-          >
-            {hasManualSelection ? (
-              <span className="text-ember-red underline decoration-2 underline-offset-4">
-                Your
-              </span>
-            ) : (
-              `${camperName}'s`
-            )}{" "}
-            {day}
-          </p>
 
           <ol aria-label={`${scheduleOwner} ${day} schedule`}>
             {scheduleTimes.map((time, index) => {
@@ -322,7 +297,7 @@ export default function ActivityScheduleBuilder({
                   className="flex min-h-12 items-center gap-4 border-b border-dashed border-pine-night/20 py-2"
                   key={time}
                 >
-                  <span className="w-12 shrink-0 font-mono text-[0.6875rem] tracking-[0.08em] text-pine-night/50">
+                  <span className="w-12 shrink-0 font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
                     {time}
                   </span>
                   <span
@@ -335,9 +310,26 @@ export default function ActivityScheduleBuilder({
             })}
           </ol>
 
-          <p className="mt-4 font-mono text-[0.65625rem] uppercase tracking-[0.12em] text-pine-night/45">
-            Rebuilt fresh every morning
-          </p>
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <p className="font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
+              Rebuilt fresh every morning
+            </p>
+            {hasMounted && prefersReducedMotion === false ? (
+              <button
+                aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
+                aria-pressed={isAutomationPaused}
+                className="focus-ring grid size-9 shrink-0 place-items-center rounded-full border border-pine-night/20 text-pine-night/70 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
+                onClick={toggleAutomation}
+                type="button"
+              >
+                {isAutomationPaused ? (
+                  <Play aria-hidden="true" className="size-4 translate-x-px" fill="currentColor" strokeWidth={0} />
+                ) : (
+                  <Pause aria-hidden="true" className="size-4" fill="currentColor" strokeWidth={0} />
+                )}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

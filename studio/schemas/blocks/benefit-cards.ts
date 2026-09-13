@@ -1,5 +1,6 @@
 import { LayoutGrid } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 import NavigationIconInput, {
   createNavigationIconPreview,
 } from "../inputs/navigation-icon-input";
@@ -82,14 +83,7 @@ export default defineType({
   description:
     "A reusable grid for features, services, reasons, or benefits.",
   fields: [
-    defineField({
-      name: "useCreamBackground",
-      title: "Use Alternate Background",
-      type: "boolean",
-      description:
-        "Turn on for a cream field instead of the default forest field. Alternate with the sections around it.",
-      initialValue: false,
-    }),
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

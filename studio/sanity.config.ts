@@ -1,9 +1,8 @@
 import { visionTool } from "@sanity/vision";
-import { rasterPlugin } from "@raster-app/sanity-plugin-raster";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { presentationTool } from "sanity/presentation";
-import { media } from "sanity-plugin-media";
+import { media, mediaAssetSource } from "sanity-plugin-media";
 import { requireStudioEnvironmentValue } from "./environment";
 import { schemaTypes } from "./schema-types";
 import { resolve } from "./presentation/resolve";
@@ -37,13 +36,6 @@ const SANITY_STUDIO_PREVIEW_URL = requireStudioEnvironmentValue(
   process.env.SANITY_STUDIO_PREVIEW_URL,
 );
 
-const rasterApiKey = process.env.SANITY_STUDIO_RASTER_API_KEY?.trim();
-const rasterOrgId = process.env.SANITY_STUDIO_RASTER_ORG_ID?.trim();
-const rasterPlugins =
-  rasterApiKey && rasterOrgId
-    ? [rasterPlugin({ apiKey: rasterApiKey, orgId: rasterOrgId })]
-    : [];
-
 export default defineConfig({
   title,
   projectId,
@@ -54,6 +46,14 @@ export default defineConfig({
     // Filter singletons and read-only compatibility types from global creation.
     templates: (templates) =>
       templates.filter(({ schemaType }) => !nonCreatableTypes.has(schemaType)),
+  },
+  form: {
+    // The media library is the only asset source for image fields. This
+    // replaces the default "Uploaded images" source, so every image is picked
+    // from, or uploaded through, the same tagged library.
+    image: {
+      assetSources: () => [mediaAssetSource],
+    },
   },
   document: {
     // For singleton types, filter out actions that are not explicitly included
@@ -84,6 +84,5 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
     media(),
-    ...rasterPlugins,
   ],
 });

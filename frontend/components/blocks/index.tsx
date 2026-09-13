@@ -1,3 +1,4 @@
+import { stegaClean } from "next-sanity";
 import { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { type LivePerspective } from "next-sanity/live";
 import { createDataAttribute } from "next-sanity";
@@ -58,6 +59,55 @@ type BlockEditingProps = {
     path: string,
   ) => string | undefined;
 };
+
+type SectionBackground = "white" | "cream" | "green";
+
+function resolveSectionBackground(block: Block, isFinal: boolean): SectionBackground {
+  const background = "background" in block ? stegaClean(block.background) : undefined;
+  if (background === "cream" || background === "green" || background === "white") {
+    return isFinal && background === "green" ? "cream" : background;
+  }
+
+  const legacyBlock = block as Block & { useCreamBackground?: boolean | null; variant?: string | null };
+  const cream = legacyBlock.useCreamBackground === true;
+  const legacyBackground: SectionBackground =
+    block._type === "teamMembers"
+      ? cream
+        ? "cream"
+        : "white"
+      : block._type === "faqAccordion"
+        ? legacyBlock.useCreamBackground === false
+          ? "green"
+          : "cream"
+        : ["benefitCards", "storyFeature", "featureCards", "stackedTimeline"].includes(block._type)
+          ? cream
+            ? "cream"
+            : "green"
+          : block._type === "ctaBanner"
+            ? stegaClean(legacyBlock.variant) === "nudge"
+              ? "white"
+              : "green"
+            : [
+                  "activitySchedule",
+                  "activityCatalogue",
+                  "bigImageList",
+                  "directorCta",
+                  "journey",
+                  "largeSlides",
+                  "packingChecklist",
+                ].includes(block._type)
+              ? "green"
+              : [
+                    "datesRatesSection",
+                    "imageCollageFeature",
+                    "includedExtras",
+                    "stackedFeatureRows",
+                  ].includes(block._type)
+                ? "cream"
+                : "white";
+
+  return isFinal && legacyBackground === "green" ? "cream" : legacyBackground;
+}
 
 const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "faqAccordion",
@@ -136,7 +186,7 @@ export default function Blocks({
 }) {
   return (
     <>
-      {blocks?.map((block) => {
+      {blocks?.map((block, index) => {
         const Component = componentMap[block._type] as
           | React.ComponentType<Block & BlockEditingProps>
           | undefined;
@@ -164,6 +214,13 @@ export default function Blocks({
                 type: documentType,
               }).toString()
           : undefined;
+        const background = resolveSectionBackground(block, index === blocks.length - 1);
+        const themedBlock: Block =
+          block._type === "hero" || block._type === "homeHero" ||
+          block._type === "innerHero" || block._type === "facilitiesMapSection" ||
+          block._type === "internationalCampersSection"
+            ? block
+            : { ...block, background };
         const editingProps: BlockEditingProps =
           block._type === "teamMembers"
               ? {
@@ -273,7 +330,7 @@ export default function Blocks({
             data-sanity={dataSanity}
             key={block._key}
           >
-            <Component {...block} {...editingProps} />
+            <Component {...themedBlock} {...editingProps} />
           </div>
         );
       })}

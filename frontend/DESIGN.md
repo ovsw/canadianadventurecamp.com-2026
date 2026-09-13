@@ -55,16 +55,16 @@ typography:
     letterSpacing: "normal"
   label:
     fontFamily: "ui-monospace, Menlo, monospace"
-    fontSize: "11px"
-    fontWeight: 400
-    lineHeight: 1
-    letterSpacing: "0.12em"
+    fontSize: "14px"
+    fontWeight: 500
+    lineHeight: 1.35
+    letterSpacing: "0.01em"
   eyebrow:
     fontFamily: "ui-monospace, Menlo, monospace"
-    fontSize: "12px"
-    fontWeight: 400
-    lineHeight: 1
-    letterSpacing: "0.24em"
+    fontSize: "14px"
+    fontWeight: 600
+    lineHeight: 1.35
+    letterSpacing: "0.02em"
 rounded:
   xs: "3px"
   sm: "8px"
@@ -135,7 +135,7 @@ components:
 
 **Creative North Star: "The Island Field Guide"**
 
-The site reads like a trail map of Adventure Island that a parent can trust and a kid wants to read. Deep forest greens are the paper; small monospace labels are the map legend; a handwritten Campfire Amber script is the note scrawled in the margin by someone who has actually been there. Photos are the terrain. The voice is bold, warm, and confident: big type that says the thing plainly, then a wink in amber.
+The site reads like a trail map of Adventure Island that a parent can trust and a kid wants to read. Deep forest greens are the paper; readable annotations are the map legend; a handwritten Campfire Amber script is the note scrawled in the margin by someone who has actually been there. Photos are the terrain. The voice is bold, warm, and confident: big type that says the thing plainly, then a wink in amber.
 
 Density is high but never cramped. Sections are full-bleed colour fields (dark green, pine black, birch cream) that alternate like day and night on the lake, with content sitting on a wide 1320px measure. Inside those fields, information is packed tight: hairline-divided grids, pill chips, session bars, numbered programs. Every interactive thing moves a little when touched. Nothing is decorative for its own sake; the map legend, the stamp, the script all carry meaning.
 
@@ -144,8 +144,8 @@ Confirmed rejections: no soft pastel "summer camp" palette, no rounded-bubbly ki
 **Key Characteristics:**
 - Forest-dark fields as the default canvas; cream fields for money, trust, and forms.
 - One accent, Campfire Amber, reserved for action, emphasis, and handwritten notes.
-- Three voices of type: Bricolage display, Archivo body, monospace legend, plus Caveat script for the human aside.
-- Pills everywhere (buttons, chips, stamps); large soft radii on media and cards; hairline borders in translucent cream.
+- Three voices of type: Bricolage display, Archivo body, optional monospace for data, plus Caveat script for the human aside.
+- Pills are reserved for controls and compact tags; large soft radii belong to media and cards; hairline borders use translucent cream.
 - Tonal layering for depth; shadows appear only on lift or under hero media.
 - Motion on scroll and hover is constant but short and eased; it reveals, never loops.
 
@@ -173,7 +173,7 @@ Translucent neutrals do the quiet work: secondary text is Birch Bark at 66-75% o
 ### Named Rules
 **The One Fire Rule.** Campfire Amber touches at most a few elements per viewport: one button, one script word, one label. Its scarcity is what makes it read as "act here."
 
-**The Dusk Alternation Rule.** Sections alternate dark field (Forest Floor or Pine Night) and cream field (Birch Bark). Two dark fields may touch; two cream fields never do.
+**Section backgrounds.** Editors choose White (Birch Bark Bright), Cream (Birch Bark), or Green (Forest Floor) with a compact select. Use adjacent backgrounds to separate content where needed. The final section above the dark footer must be White or Cream. Maps, globes, and media heroes keep their fixed backgrounds; maps and globes must be followed by a light section.
 
 **The Translucent Ink Rule.** Secondary text, borders, and dividers are never a new grey. They are the field's text colour at reduced alpha.
 
@@ -184,7 +184,7 @@ Translucent neutrals do the quiet work: secondary text is Birch Bark at 66-75% o
 **Label/Mono Font:** ui-monospace, Menlo, monospace (system; no webfont)
 **Script Font:** Caveat (500, 600; fallback cursive)
 
-**Character:** Bricolage at 800 with tight tracking is loud and a little quirky, like a hand-painted camp sign. Archivo underneath is plain and legible, the parent-facing voice. The system monospace is the map legend: small, wide-tracked, uppercase. Caveat is one human hand writing over all of it.
+**Character:** Bricolage at 800 with tight tracking is loud and a little quirky, like a hand-painted camp sign. Archivo underneath is plain and legible, the parent-facing voice. Annotations stay readable and sentence case; system monospace is reserved for data where it improves scanning. Caveat is one human hand writing over all of it.
 
 ### Hierarchy
 - **Display** (800, clamp 3rem to 6.5rem, line-height 0.96, tracking -0.025em): hero headline only. One word or phrase of it is swapped to Script in Campfire Amber.
@@ -192,11 +192,11 @@ Translucent neutrals do the quiet work: secondary text is Birch Bark at 66-75% o
 - **Title** (700, 19-30px, line-height 1-1.1): card and program titles, stat numbers, nav wordmark at 15px with +0.04em tracking. Use `text-title` at 22px, or `text-title-lg` at 28px for row headings that can wrap. Both tokens use line-height 1.1 and tracking -0.01em.
 - **Script** (Caveat 600, roughly 1.15x the surrounding headline size, up to 118px in the hero): the aside inside a headline, a pull quote signature, a margin note. Always Campfire Amber on dark, Cedar on cream.
 - **Body** (Archivo 400, 16-17px, line-height 1.6): paragraphs, max 520-620px wide. Secondary body at 15px / 1.55 and reduced alpha.
-- **Eyebrow** (mono, 12px, tracking 0.24em, uppercase): the small line above a headline, Campfire Amber on dark, Cedar on cream, 20px below it.
-- **Label** (mono, 10-11px, tracking 0.1-0.14em, uppercase): chips, map markers, stamps, metadata, nav sub-line.
+- **Eyebrow** (Archivo, 14px, 600 weight, tracking 0.02em): supporting context above a headline, Campfire Amber on dark, Cedar on cream, 20px below it.
+- **Label** (Archivo, 14px, 500 weight, tracking 0.01em): chips, map markers, stamps, metadata, and nav sub-lines.
 
 ### Named Rules
-**The Legend Rule.** Anything that annotates (labels, metadata, coordinates, prices in tables, session dates) is set in the monospace at 10-12px, uppercase, wide-tracked. Never in Archivo.
+**The Annotation Rule.** Supporting text stays at least 14px, uses normal case and modest tracking, and keeps enough contrast against its field. Use monospace only for coordinates, codes, and other data where alignment helps.
 
 **The One Hand Rule.** Caveat appears at most once per section, as one phrase, never a full sentence and never for UI text.
 
@@ -251,7 +251,7 @@ Tactile and confident. Everything that can be touched answers: pills lift, arrow
 - **Arrow trailing:** "Enroll →" style arrows are text glyphs; in cards the arrow is a 26px circle outline that fills amber and rotates -45deg on hover.
 
 ### Chips / Labels
-- **Style:** mono 11px, 0.12em tracking, uppercase, pill, 7px 12px padding.
+- **Style:** Archivo 14px, normal case, modest tracking, pill, 7px 12px padding.
 - **Glass (on media):** Birch Bark text on 55% Pine Night fill, blur(8px), 1px Birch Bark at 22% border.
 - **Outline (on cream):** Pine Night at 70% text, 1px Pine Night at 18% border; hover border to Campfire Amber at 85% with -2px lift.
 - **Stamp:** Campfire Amber fill, Pine Night text, 700 weight, 0.14em, rotated -7deg, pops in with a scale-down from 1.7.
@@ -280,14 +280,11 @@ Tactile and confident. Everything that can be touched answers: pills lift, arrow
 ### Session Rows (signature)
 A horizontal calendar: 150px date column in mono, a 1fr track with a positioned bar (3px radius) per session, and a 138px CTA column. Open sessions carry a Moss bar that turns amber on hover while a hidden Enroll link slides in from the left (overshoot ease). Full sessions carry an Ember Red marker and an amber "FULL" stamp. Availability copy comes from the CMS.
 
-### Parent Aside (signature)
-Camper-voice sections carry one factual line for the parent reading over the kid's shoulder. It never gets its own section: a 2px translucent-cream hairline on the left, a mono "FOR PARENTS" legend, then Archivo 15px at 72% alpha, max 520px wide. No amber, no Caveat. Shared component `components/parent-aside.tsx`; used under the build-a-day description and after each Activity Catalogue place.
-
 ### CTA Banner (handoff)
-Two weights of one block. **Closing band:** Forest Floor field with the 44px tucked top corners, headline left on an 8/4 grid, actions right: one amber primary with a trailing arrow, one ghost. **Nudge:** a Light card on the cream field, title-sized heading, actions inline on desktop. Buttons stack full-width below 640px in both weights.
+Two weights of one block. **Closing band:** an editor-selected field with the 44px tucked top corners, headline left on an 8/4 grid, actions right: one amber primary with a trailing arrow, one ghost. **Nudge:** a Light card on the cream field, title-sized heading, actions inline on desktop. Buttons stack full-width below 640px in both weights.
 
 ### Eyebrow + Headline + Script (signature)
-Every section opens the same way: mono eyebrow (0.24em, amber or cedar), 20px, Bricolage 800 headline at 58px, with one phrase swapped into Caveat in the accent colour. This is the most recognisable pattern on the site; reuse it on every inner page.
+Every section opens the same way: Archivo eyebrow (14px, 600 weight, amber or cedar), 20px, Bricolage 800 headline at 58px, with one phrase swapped into Caveat in the accent colour. This is the most recognisable pattern on the site; reuse it on every inner page.
 
 ### Motion grammar
 - **Reveal:** `riseUp` (46px translate, fade) driven by `animation-timeline: view()` over entry 0-45%; hero uses `heroRise` (34px) with .9s `cubic-bezier(.2,.7,.2,1)` and staggered delays.
@@ -301,10 +298,10 @@ Every section opens the same way: mono eyebrow (0.24em, amber or cedar), 20px, B
 - **Do** open every section with the eyebrow, headline, script triad; it is the brand's signature.
 - **Do** keep Campfire Amber scarce: one button, one script phrase, one label per viewport (The One Fire Rule).
 - **Do** derive every secondary text, border, and divider from the field's text colour at reduced alpha (The Translucent Ink Rule).
-- **Do** set all annotation in the system monospace, 10-12px, uppercase, 0.1-0.24em (The Legend Rule).
-- **Do** use pills for anything tappable and 22-26px slabs for anything that frames media or content.
+- **Do** set annotations at 14px or larger, in normal case with modest tracking and clear contrast (The Annotation Rule).
+- **Do** use pills for compact controls and tags, and 22-26px slabs for anything that frames media or content.
 - **Do** keep cards flat at rest and lift them only on hover or focus (The Flat-Until-Touched Rule).
-- **Do** alternate dark and cream fields section to section (The Dusk Alternation Rule); put money, trust, and forms on cream.
+- **Do** choose white, cream, or green per section for clear separation, and end with a light section before the footer.
 - **Do** drive scroll reveals with `animation-timeline: view()` and provide a no-motion path under `prefers-reduced-motion`.
 - **Do** ship real island, Big Top, and camper photography; the terrain is the design.
 - **Do** stack below 1024px and keep every section and interaction (The Stack, Don't Shrink Rule).
@@ -314,7 +311,7 @@ Every section opens the same way: mono eyebrow (0.24em, amber or cedar), 20px, B
 ### Don't:
 - **Don't** introduce a second accent or a new grey; the palette is thirteen named colours and their alphas.
 - **Don't** use Caveat for more than one phrase per section or for any UI text.
-- **Don't** set annotation, prices, dates, or chips in Archivo.
+- **Don't** drop annotation, prices, dates, or chips below 14px or into uppercase wide tracking.
 - **Don't** place resting drop shadows on cards or tiles; only media frames and lifted states carry shadow.
 - **Don't** use solid grey borders, square corners on tappable elements, or radii between 3px and 14px except the 8px thumbnail.
 - **Don't** add looping animations beyond the ticker, globe, and map trail; no pulse, shimmer, or spinner loops.
@@ -322,3 +319,5 @@ Every section opens the same way: mono eyebrow (0.24em, amber or cedar), 20px, B
 - **Don't** reintroduce the old site's logo or colours.
 - **Don't** hide the Enroll pill on any viewport or while the mobile menu is open.
 - **Don't** show form errors as a summary box or only on submit.
+
+Activity catalogue navigation uses solid Navigation Yellow (`oklch(84% 0.095 92)`, a muted straw yellow) with normal 16px text links and a 14px "Activity Categories" legend. It is a rounded slab at rest; while stuck under the header it squares its top corners and grows to the viewport edges. This is a specific navigation accent, not the main button colour.

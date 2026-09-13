@@ -170,13 +170,13 @@ function TeamMemberProfile({
 
 export default function TeamMembers({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   memberDataAttribute,
   members,
   richText,
   title,
-  useCreamBackground,
 }: TeamMembersProps) {
   const resolvedMembers =
     members?.filter(
@@ -199,9 +199,13 @@ export default function TeamMembers({
       aria-labelledby={displayTitle ? titleId : undefined}
       className={cn(
         "section-pad-lg",
-        stegaClean(useCreamBackground) ? "surface-cream" : "surface-white",
+        stegaClean(background) === "green"
+          ? "bg-forest-floor text-birch-bark [&_.text-foreground]:!text-birch-bark [&_.text-muted-foreground]:!text-birch-bark/72"
+          : stegaClean(background) === "cream"
+            ? "bg-birch-bark"
+            : "bg-birch-bark-bright",
       )}
-      data-sanity={dataAttribute?.("useCreamBackground")}
+      data-sanity={dataAttribute?.("background")}
       id="team"
     >
       <div className="container grid gap-(--space-header-gap)">

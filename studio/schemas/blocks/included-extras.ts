@@ -1,5 +1,6 @@
 import { Scale } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 const richTextToPlainText = (value: unknown): string => {
   if (!Array.isArray(value)) return "";
@@ -77,6 +78,7 @@ export default defineType({
   description:
     "Two columns on a cream field: a check list of what the price includes beside a priced list of what is extra.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

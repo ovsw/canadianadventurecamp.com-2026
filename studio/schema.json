@@ -897,6 +897,14 @@
             "value": "largeSlides"
           }
         },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
+        },
         "eyebrow": {
           "type": "objectAttribute",
           "value": {
@@ -993,6 +1001,14 @@
             "type": "string",
             "value": "directorCta"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "title": {
           "type": "objectAttribute",
@@ -1100,6 +1116,14 @@
             "type": "string",
             "value": "bigImageList"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "eyebrow": {
           "type": "objectAttribute",
@@ -1227,6 +1251,14 @@
             "type": "string",
             "value": "packingChecklist"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "eyebrow": {
           "type": "objectAttribute",
@@ -1457,6 +1489,14 @@
             "value": "includedExtras"
           }
         },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
+        },
         "eyebrow": {
           "type": "objectAttribute",
           "value": {
@@ -1548,6 +1588,14 @@
             "value": "activityCatalogue"
           }
         },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
+        },
         "eyebrow": {
           "type": "objectAttribute",
           "value": {
@@ -1585,13 +1633,6 @@
                   "optional": true
                 },
                 "blurb": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  },
-                  "optional": true
-                },
-                "aside": {
                   "type": "objectAttribute",
                   "value": {
                     "type": "string"
@@ -1659,10 +1700,11 @@
             "value": "stackedTimeline"
           }
         },
-        "useCreamBackground": {
+        "background": {
           "type": "objectAttribute",
           "value": {
-            "type": "boolean"
+            "type": "inline",
+            "name": "sectionBackground"
           },
           "optional": true
         },
@@ -1784,6 +1826,14 @@
             "type": "string",
             "value": "journey"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "eyebrow": {
           "type": "objectAttribute",
@@ -1911,6 +1961,14 @@
             "type": "string",
             "value": "testimonials"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "eyebrow": {
           "type": "objectAttribute",
@@ -2123,6 +2181,14 @@
             "value": "stackedFeatureRows"
           }
         },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
+        },
         "eyebrow": {
           "type": "objectAttribute",
           "value": {
@@ -2244,6 +2310,14 @@
             "type": "string",
             "value": "datesRatesSection"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "eyebrow": {
           "type": "objectAttribute",
@@ -2657,6 +2731,14 @@
             "value": "activitySchedule"
           }
         },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
+        },
         "heading": {
           "type": "objectAttribute",
           "value": {
@@ -2666,13 +2748,6 @@
           "optional": true
         },
         "description": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "aside": {
           "type": "objectAttribute",
           "value": {
             "type": "string"
@@ -2727,10 +2802,11 @@
             "value": "featureCards"
           }
         },
-        "useCreamBackground": {
+        "background": {
           "type": "objectAttribute",
           "value": {
-            "type": "boolean"
+            "type": "inline",
+            "name": "sectionBackground"
           },
           "optional": true
         },
@@ -2882,6 +2958,14 @@
             "type": "string",
             "value": "imageCollageFeature"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "eyebrow": {
           "type": "objectAttribute",
@@ -3269,10 +3353,11 @@
             "value": "benefitCards"
           }
         },
-        "useCreamBackground": {
+        "background": {
           "type": "objectAttribute",
           "value": {
-            "type": "boolean"
+            "type": "inline",
+            "name": "sectionBackground"
           },
           "optional": true
         },
@@ -3367,6 +3452,14 @@
             "value": "ctaBanner"
           }
         },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
+        },
         "variant": {
           "type": "objectAttribute",
           "value": {
@@ -3436,6 +3529,14 @@
             "value": "richTextBlock"
           }
         },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
+        },
         "eyebrow": {
           "type": "objectAttribute",
           "value": {
@@ -3504,10 +3605,11 @@
             "value": "teamMembers"
           }
         },
-        "useCreamBackground": {
+        "background": {
           "type": "objectAttribute",
           "value": {
-            "type": "boolean"
+            "type": "inline",
+            "name": "sectionBackground"
           },
           "optional": true
         },
@@ -3742,10 +3844,11 @@
             "value": "storyFeature"
           }
         },
-        "useCreamBackground": {
+        "background": {
           "type": "objectAttribute",
           "value": {
-            "type": "boolean"
+            "type": "inline",
+            "name": "sectionBackground"
           },
           "optional": true
         },
@@ -4034,10 +4137,11 @@
             "value": "faqAccordion"
           }
         },
-        "useCreamBackground": {
+        "background": {
           "type": "objectAttribute",
           "value": {
-            "type": "boolean"
+            "type": "inline",
+            "name": "sectionBackground"
           },
           "optional": true
         },
@@ -4108,6 +4212,14 @@
             "type": "string",
             "value": "latestArticles"
           }
+        },
+        "background": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "sectionBackground"
+          },
+          "optional": true
         },
         "eyebrow": {
           "type": "objectAttribute",
@@ -6021,6 +6133,27 @@
     }
   },
   {
+    "name": "sectionBackground",
+    "type": "type",
+    "value": {
+      "type": "union",
+      "of": [
+        {
+          "type": "string",
+          "value": "white"
+        },
+        {
+          "type": "string",
+          "value": "cream"
+        },
+        {
+          "type": "string",
+          "value": "green"
+        }
+      ]
+    }
+  },
+  {
     "name": "color-variant",
     "type": "type",
     "value": {
@@ -7109,13 +7242,6 @@
         "type": "objectAttribute",
         "value": {
           "type": "string"
-        },
-        "optional": true
-      },
-      "beginnerFriendly": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "boolean"
         },
         "optional": true
       },

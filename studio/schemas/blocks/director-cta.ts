@@ -1,5 +1,6 @@
 import { ImageIcon } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 export default defineType({
   name: "directorCta",
@@ -9,6 +10,7 @@ export default defineType({
   description:
     "A closing invitation to speak with the camp directors, with their portrait beside the copy.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "title",
       title: "Heading",

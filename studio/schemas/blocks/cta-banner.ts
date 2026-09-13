@@ -1,5 +1,6 @@
 import { Megaphone } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 export default defineType({
   name: "ctaBanner",
@@ -9,6 +10,7 @@ export default defineType({
   description:
     "A clear invitation with a heading, supporting line, and up to two actions. Closing bands end a page; nudges sit quietly between sections.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "variant",
       title: "Weight",

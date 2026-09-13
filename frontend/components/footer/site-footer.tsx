@@ -18,7 +18,7 @@ function LinkList({ links }: { links: FooterLinkModel[] }) {
             link={link}
             dataSanity={undefined}
           >
-            <span className="text-[14.5px] text-birch-bark/70 transition-colors duration-200 hover:text-campfire-amber">
+            <span className="text-[14.5px] text-birch-bark/75 transition-colors duration-200 hover:text-campfire-amber">
               {link.label}
             </span>
           </FooterLink>
@@ -33,7 +33,7 @@ function FooterColumn({ column }: { column: FooterColumnModel }) {
   return (
     <section aria-labelledby={headingId}>
       <h2
-        className="mb-[19px] font-display text-[15px] font-bold uppercase tracking-[0.08em] text-birch-bark"
+        className="mb-[19px] font-display text-[15px] font-bold tracking-[0.02em] text-birch-bark"
         id={headingId}
       >
         {column.heading}
@@ -81,7 +81,7 @@ export function SiteFooter({
         <div className="flex flex-wrap items-end justify-between gap-[34px] pb-[70px]">
           <div>
             <p
-              className="mb-5 font-mono text-xs uppercase tracking-[0.24em] text-campfire-amber"
+              className="text-eyebrow mb-5 text-campfire-amber"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {model.eyebrow}
@@ -148,7 +148,7 @@ export function SiteFooter({
                     strokeWidth={1.8}
                   />
                   <FooterLink link={link}>
-                    <span className="whitespace-pre-line font-mono text-[12.5px] leading-6 tracking-[0.02em] text-birch-bark/70 transition-colors duration-200 hover:text-campfire-amber">
+                    <span className="whitespace-pre-line font-mono text-sm leading-6 tracking-[0.02em] text-birch-bark/75 transition-colors duration-200 hover:text-campfire-amber">
                       <span className="sr-only">
                         {icon === "pin"
                           ? "Address: "
@@ -170,7 +170,7 @@ export function SiteFooter({
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-[26px] gap-y-3 pt-7 text-[13px] text-birch-bark/55">
+        <div className="flex flex-wrap items-center gap-x-[26px] gap-y-3 pt-7 text-[14px] text-birch-bark/75">
           <p className="desktop:mr-auto">
             ©
             <span data-sanity={dataAttribute?.("copyrightStartYear")}>

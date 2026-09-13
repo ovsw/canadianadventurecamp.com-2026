@@ -46,6 +46,7 @@ const stops: JourneyStop[] = [
 const block: ComponentProps<typeof Journey> = {
   _key: "trip",
   _type: "journey",
+  background: "green",
   eyebrow: "Getting there",
   title: [
     {
@@ -146,7 +147,7 @@ describe("Journey", () => {
       manito.querySelector('[data-sanity="section:stops[_key==\\"manito-landing\\"].image"]'),
     ).toHaveAttribute("aria-hidden", "true");
 
-    expect(screen.getByText("island")).toHaveClass("text-campfire-amber");
+    expect(screen.getByText("island")).toHaveClass("text-[var(--section-accent)]");
   });
 
   it("drops stops missing a label or line and renders nothing below two stops", () => {

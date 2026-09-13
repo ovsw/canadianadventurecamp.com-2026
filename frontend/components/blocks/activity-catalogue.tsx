@@ -1,4 +1,4 @@
-import { ParentAside } from "@/components/parent-aside";
+import { sectionThemeClass } from "./section-theme";
 import { cn } from "@/lib/utils";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
@@ -44,7 +44,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent not-italic text-campfire-amber">{children}</em>
+      <em className="font-accent not-italic text-[var(--section-accent)]">{children}</em>
     ),
   },
 };
@@ -67,14 +67,13 @@ function ActivityCard({
   const programHref = getSafeLinkHref(activity.programHref);
   const programTitle = stegaClean(activity.programTitle)?.trim();
   const image = activity.image?.asset?._id ? activity.image : null;
-  const beginnerFriendly = stegaClean(activity.beginnerFriendly) !== false;
 
   return (
     <li
       className="group/card min-w-0"
       data-sanity={referenceDataAttribute}
     >
-      <div className="flex h-full flex-col overflow-hidden rounded-lg border border-birch-bark/12 bg-forest-panel transition-[transform,box-shadow] motion-base group-hover/card:-translate-y-2 group-hover/card:shadow-interactive-lift group-focus-within/card:-translate-y-2 group-focus-within/card:shadow-interactive-lift motion-reduce:transition-none motion-reduce:group-hover/card:translate-y-0 motion-reduce:group-focus-within/card:translate-y-0">
+      <div className={cn("flex h-full flex-col overflow-hidden rounded-lg border bg-forest-panel", styles.card)}>
       <div
         className="relative aspect-[4/3] overflow-hidden bg-forest-floor"
         data-sanity={activityDataAttribute?.(activity._id, "image")}
@@ -101,7 +100,7 @@ function ActivityCard({
              still need a photo. Never an empty or broken image. */
           <div
             aria-label="Photo to come"
-            className="absolute inset-0 grid place-items-center border-b border-dashed border-birch-bark/25 text-birch-bark/45"
+            className="absolute inset-0 grid place-items-center border-b border-dotted border-birch-bark/18 text-birch-bark/60"
             role="img"
           >
             <span className="flex flex-col items-center gap-2">
@@ -112,7 +111,7 @@ function ActivityCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4 sm:p-5">
+      <div className="flex flex-1 flex-col gap-1.5 px-5 pt-4.5 pb-5">
         <h4
           className="font-display text-[17px] font-bold leading-tight tracking-[-0.01em] text-birch-bark sm:text-xl"
           data-sanity={activityDataAttribute?.(activity._id, "title")}
@@ -128,19 +127,10 @@ function ActivityCard({
           </p>
         ) : null}
 
-        <div className="mt-auto flex flex-col gap-2 pt-2">
-          {beginnerFriendly ? (
-            <span
-              className="inline-flex items-center gap-2 text-label text-birch-bark/65"
-              data-sanity={activityDataAttribute?.(activity._id, "beginnerFriendly")}
-            >
-              <span aria-hidden="true" className="size-1.5 rounded-full bg-moss" />
-              Beginners welcome
-            </span>
-          ) : null}
-          {programHref ? (
+        {programHref ? (
+          <div className="mt-auto pt-2">
             <Link
-              className="focus-ring inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-sunlit-moss transition-colors motion-base hover:text-birch-bark"
+              className="focus-ring inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-sunlit-moss underline-offset-[0.2em] transition-colors motion-base hover:text-birch-bark hover:underline"
               data-sanity={activityDataAttribute?.(activity._id, "program")}
               href={programHref}
             >
@@ -151,8 +141,8 @@ function ActivityCard({
                 className="size-4 transition-transform duration-200 group-hover/card:translate-x-1 motion-reduce:transition-none"
               />
             </Link>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
       </div>
     </li>
@@ -161,6 +151,7 @@ function ActivityCard({
 
 export default function ActivityCatalogue({
   _key,
+  background,
   activityDataAttribute,
   dataAttribute,
   eyebrow,
@@ -195,14 +186,14 @@ export default function ActivityCatalogue({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-pine-night py-section text-birch-bark"
+      className={`${sectionThemeClass(background ?? "green")} py-section`}
       id={sectionId}
     >
       <div className="container-content">
         <header className={cn("mb-10 max-w-3xl lg:mb-14", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-campfire-amber"
+              className="mb-5 text-eyebrow text-[var(--section-accent)]"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -217,7 +208,7 @@ export default function ActivityCatalogue({
           </h2>
           {hasText(intro) ? (
             <p
-              className="mt-5 max-w-xl text-pretty text-lg/relaxed text-birch-bark/70"
+              className="mt-5 max-w-xl text-pretty text-lg/relaxed opacity-80"
               data-sanity={dataAttribute?.("intro")}
             >
               {intro}
@@ -248,7 +239,7 @@ export default function ActivityCatalogue({
               >
                 <header className="mb-6 grid gap-3 lg:mb-8 lg:grid-cols-12 lg:items-end">
                   <div className="lg:col-span-7">
-                    <p className="mb-3 text-label text-birch-bark/45">
+                    <p className="mb-3 text-label opacity-80">
                       <span aria-hidden="true">{number}</span>
                       <span className="sr-only">Place {index + 1}.</span>
                       {" · "}
@@ -265,7 +256,7 @@ export default function ActivityCatalogue({
                   </div>
                   {hasText(group.blurb) ? (
                     <p
-                      className="text-pretty text-base/relaxed text-birch-bark/70 lg:col-span-5 lg:pb-1"
+                      className="text-pretty text-base/relaxed opacity-80 lg:col-span-5 lg:pb-1"
                       data-sanity={dataAttribute?.(`${groupPath}.blurb`)}
                     >
                       {group.blurb}
@@ -274,7 +265,7 @@ export default function ActivityCatalogue({
                 </header>
 
                 <ul
-                  className="m-0 grid list-none grid-cols-2 gap-3 p-0 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+                  className="m-0 grid list-none grid-cols-2 gap-4 p-0 md:grid-cols-3 lg:grid-cols-4"
                   data-sanity={dataAttribute?.(`${groupPath}.activities`)}
                 >
                   {activities.map((activity) => (
@@ -289,14 +280,7 @@ export default function ActivityCatalogue({
                   ))}
                 </ul>
 
-                {hasText(group.aside) ? (
-                  <ParentAside
-                    className="mt-8 lg:mt-10"
-                    dataSanity={dataAttribute?.(`${groupPath}.aside`)}
-                  >
-                    {group.aside}
-                  </ParentAside>
-                ) : null}
+
               </section>
             );
           })}

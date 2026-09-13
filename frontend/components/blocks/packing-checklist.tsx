@@ -16,6 +16,7 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { stegaClean } from "next-sanity";
 import styles from "./packing-checklist.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 /*
  * Packing checklist: the kit list as a tick-off list, written to the camper.
@@ -43,7 +44,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">{children}</em>
+      <em className="font-accent text-[var(--section-accent)] not-italic">{children}</em>
     ),
   },
 };
@@ -53,7 +54,7 @@ const noteComponents: PortableTextComponents = {
   marks: {
     ...simpleRichTextComponents?.marks,
     customLink: createCustomLinkMarkRenderer(
-      "font-medium text-birch-bark underline decoration-birch-bark/40 underline-offset-4 hover:decoration-birch-bark",
+      "font-medium text-current underline decoration-current/40 underline-offset-4 hover:decoration-current",
     ),
   },
 };
@@ -102,6 +103,7 @@ export function getRenderableGroups(
 
 export default function PackingChecklist({
   _key,
+  background,
   dataAttribute,
   eyebrow,
   groups,
@@ -126,7 +128,7 @@ export default function PackingChecklist({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("bg-pine-night py-section text-birch-bark", styles.section)}
+      className={cn("py-section", sectionThemeClass(background), styles.section)}
       id={sectionId}
     >
       <div className={cn("container-content", styles.inner)}>
@@ -139,7 +141,7 @@ export default function PackingChecklist({
           <header className="max-w-[38rem]">
             {hasText(eyebrow) ? (
               <p
-                className="mb-5 text-eyebrow text-campfire-amber"
+                className="mb-5 text-eyebrow text-[var(--section-accent)]"
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {eyebrow}
@@ -154,7 +156,7 @@ export default function PackingChecklist({
             </h2>
             {hasText(intro) ? (
               <p
-                className="mt-6 max-w-[34rem] text-pretty text-[17px] leading-[1.6] text-birch-bark/72"
+              className="mt-6 max-w-[34rem] text-pretty text-[17px] leading-[1.6] text-current/75"
                 data-sanity={dataAttribute?.("intro")}
               >
                 {intro}
@@ -209,7 +211,7 @@ export default function PackingChecklist({
         {pdfHref ? (
           <p className={cn("mt-8", styles.pdf)} data-sanity={dataAttribute?.("pdf")}>
             <a
-              className="focus-ring inline-flex items-center gap-2 font-semibold text-birch-bark underline decoration-birch-bark/40 underline-offset-4 hover:decoration-birch-bark"
+              className="focus-ring inline-flex items-center gap-2 font-semibold text-current underline decoration-current/40 underline-offset-4 hover:decoration-current"
               download={pdfName || undefined}
               href={pdfHref}
               rel="noopener noreferrer"

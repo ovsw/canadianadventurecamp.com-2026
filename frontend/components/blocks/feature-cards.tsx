@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import styles from "./feature-cards.module.css";
+import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -20,7 +21,7 @@ type FeatureCardsProps = Extract<PageBlock, { _type: "featureCards" }> & {
 /** Field-dependent colour recipes so the two variants stay in one component. */
 const fields = {
   dark: {
-    section: "rounded-t-section bg-forest-floor text-birch-bark",
+    section: "rounded-t-section text-birch-bark",
     eyebrow: "text-campfire-amber",
     accent: "text-campfire-amber",
     description: "text-birch-bark/70",
@@ -31,7 +32,7 @@ const fields = {
     link: "text-moss hover:text-sunlit-moss",
   },
   cream: {
-    section: "bg-birch-bark text-pine-night",
+    section: "text-pine-night",
     eyebrow: "text-cedar",
     accent: "text-cedar",
     description: "text-pine-night/70",
@@ -84,11 +85,11 @@ export default function FeatureCards({
   eyebrow,
   groups,
   title,
-  useCreamBackground,
+  background,
 }: FeatureCardsProps) {
   if (!title?.length || !groups?.length) return null;
 
-  const field = stegaClean(useCreamBackground) ? fields.cream : fields.dark;
+  const field = stegaClean(background) === "green" ? fields.dark : fields.cream;
   const headingId = `feature-cards-${stegaClean(_key)}`;
   const renderableGroups = groups.flatMap((group) => {
     if (!hasText(group.heading)) return [];
@@ -132,7 +133,7 @@ export default function FeatureCards({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("py-section", field.section)}
+      className={cn("py-section", field.section, sectionThemeClass(background))}
       id={`features-${stegaClean(_key)}`}
     >
       <div className="container-content">
@@ -259,7 +260,7 @@ export default function FeatureCards({
                           ) : null}
                           <span
                             aria-hidden="true"
-                            className="absolute left-5 top-5 rounded-pill bg-pine-night/80 px-3 py-1.5 font-mono text-xs tracking-[0.2em] text-birch-bark transition-colors duration-300 group-hover/card:text-campfire-amber"
+                            className="absolute left-5 top-5 rounded-pill bg-pine-night/80 px-3 py-1.5 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-birch-bark transition-colors duration-300 group-hover/card:text-campfire-amber"
                           >
                             {number}
                           </span>

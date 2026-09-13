@@ -7,7 +7,7 @@ export default defineType({
   type: "document",
   icon: CircleDot,
   description:
-    "A daily choice that campers can add to their schedule. The photo, camper line, beginner mark, and program link feed the Activity Catalogue cards.",
+    "A daily choice that campers can add to their schedule. The photo, camper line, and program link feed the Activity Catalogue cards.",
   fields: [
     defineField({
       name: "title",
@@ -26,13 +26,6 @@ export default defineType({
           name: "alt",
           title: "Alternative text",
           type: "string",
-          validation: (rule) =>
-            rule.custom((value, context) => {
-              const image = context.parent as { asset?: unknown } | undefined;
-              return image?.asset && !value?.trim()
-                ? "Describe the photo for visitors who cannot see it"
-                : true;
-            }),
         }),
       ],
     }),
@@ -43,13 +36,6 @@ export default defineType({
       description:
         'One line to the camper, in second person. E.g. "Hold tight, swing wide, let go."',
       validation: (rule) => rule.max(140).warning("Keep it to one line."),
-    }),
-    defineField({
-      name: "beginnerFriendly",
-      title: "Beginners welcome",
-      type: "boolean",
-      description: "Shows the beginner mark on the catalogue card.",
-      initialValue: true,
     }),
     defineField({
       name: "program",

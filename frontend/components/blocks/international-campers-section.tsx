@@ -124,7 +124,7 @@ export default function InternationalCampersSection({
               {/* List header */}
               <div className="-mx-3.5 flex items-center gap-[9px] border-b border-birch-bark/[.22] px-3.5 pb-3">
                 <span className="h-[7px] w-[7px] rounded-full bg-campfire-amber" />
-                <span className="font-mono text-[11px] uppercase tracking-[.2em] text-birch-bark/55">
+                <span className="font-mono text-[14px] leading-snug font-medium tracking-[.01em] text-birch-bark/75">
                   Campers join us from
                 </span>
               </div>
@@ -140,7 +140,7 @@ export default function InternationalCampersSection({
                     aria-label={`${route.city}, ${route.country}${route.pickup ? " - pickup hub" : ""}`}
                   >
                     {/* Airport code badge */}
-                    <span className={`shrink-0 rounded-lg border px-0 py-1.5 text-center font-mono text-[11.5px] font-bold tracking-[.1em] w-[58px] transition-colors ${
+                    <span className={`shrink-0 rounded-lg border px-0 py-1.5 text-center font-mono text-[14px] font-bold tracking-[.01em] w-[58px] transition-colors ${
                       route.pickup
                         ? "border-campfire-amber/60 bg-campfire-amber/15 text-campfire-amber"
                         : "border-birch-bark/20 bg-birch-bark/[.06] text-birch-bark/70 group-hover:border-birch-bark/40"
@@ -153,13 +153,13 @@ export default function InternationalCampersSection({
                       <span className="font-display text-[18.5px] font-bold text-birch-bark">
                         {route.city}
                       </span>
-                      <span className="text-[13px] text-birch-bark/50">
+                      <span className="text-[14px] leading-snug text-birch-bark/75">
                         {route.country}
                       </span>
                     </span>
 
                     {/* EN ROUTE indicator - hidden when list is narrow */}
-                    <span className={`ml-auto font-mono text-[10.5px] tracking-[.14em] text-campfire-amber opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${styles.enRouteLabel}`}>
+                    <span className={`ml-auto font-mono text-[14px] leading-snug font-medium tracking-[.01em] text-campfire-amber opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${styles.enRouteLabel}`}>
                       EN ROUTE ✦
                     </span>
                   </button>

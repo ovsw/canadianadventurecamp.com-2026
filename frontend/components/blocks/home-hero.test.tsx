@@ -7,6 +7,7 @@ import { getHomeHeroVideoEmbedUrl } from "./home-hero-video";
 const loneVideoButtonHero: ComponentProps<typeof HomeHero> = {
   _key: "hero-test",
   _type: "homeHero",
+  background: null,
   badge: null,
   body: null,
   buttons: null,

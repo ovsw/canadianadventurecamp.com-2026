@@ -1,5 +1,6 @@
 import { LayoutGrid } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 /** Flatten a minimalRichText value into plain text for the Studio preview. */
 const richTextToPlainText = (value: unknown): string => {
@@ -24,7 +25,7 @@ const activityCatalogueGroup = defineArrayMember({
       title: "Place",
       type: "string",
       description:
-        'Where these activities happen, e.g. "On the water". Becomes a chip in the jump bar.',
+        'Where these activities happen, e.g. "On the water". Becomes a link in the jump bar.',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -32,14 +33,6 @@ const activityCatalogueGroup = defineArrayMember({
       title: "One line",
       type: "string",
       description: "One line to the camper under the place name.",
-    }),
-    defineField({
-      name: "aside",
-      title: "Parent aside",
-      type: "text",
-      rows: 3,
-      description:
-        "Optional. One factual line for parents on supervision and fit, shown quieter after the cards.",
     }),
     defineField({
       name: "activities",
@@ -73,8 +66,9 @@ export default defineType({
   type: "object",
   icon: LayoutGrid,
   description:
-    "Every Activity as a photo card, grouped by where it happens on the island, with a sticky jump bar and one parent line per place.",
+    "Every Activity as a photo card, grouped by where it happens on the island, with a sticky jump bar.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

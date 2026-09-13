@@ -5,7 +5,6 @@ import { urlInternalHref } from "./shared/internal-href";
 // @sanity-typegen-ignore
 export const featureCardsQuery = groq`
   _type == "featureCards" => {
-    useCreamBackground,
     eyebrow,
     title[]{
       ...

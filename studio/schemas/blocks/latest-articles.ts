@@ -1,5 +1,6 @@
 import { Newspaper } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 
 export default defineType({
   name: "latestArticles",
@@ -8,6 +9,7 @@ export default defineType({
   icon: Newspaper,
   description: "Displays the latest published Blog Posts.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

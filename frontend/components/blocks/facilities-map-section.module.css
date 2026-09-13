@@ -37,8 +37,9 @@
   margin-bottom: 20px;
   color: var(--color-campfire-amber);
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.24em;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .title {
@@ -130,7 +131,7 @@
   background: rgb(13 18 8 / 72%);
   color: var(--color-birch-bark);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14px;
   white-space: nowrap;
 }
 
@@ -565,7 +566,7 @@
   background: rgb(13 18 8 / 72%);
   color: var(--color-birch-bark);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 1;
 }
@@ -574,7 +575,7 @@
   display: block;
   margin-bottom: 2px;
   color: var(--color-campfire-amber);
-  font-size: 9px;
+  font-size: 14px;
 }
 
 .facilityCard {
@@ -596,8 +597,9 @@
   margin-bottom: 10px;
   color: rgb(243 239 226 / 55%);
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .facilityNumber {
@@ -627,11 +629,10 @@
   background: rgb(13 18 8 / 82%);
   color: var(--color-birch-bark);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
   cursor: pointer;
   transition:
     border-color 0.2s ease,
@@ -664,7 +665,7 @@
 .facilityDescription {
   margin: 9px 0 0;
   color: rgb(243 239 226 / 78%);
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.55;
 }
 
@@ -696,8 +697,9 @@
   padding: 11px 4px;
   color: rgb(22 32 15 / 65%);
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
 }
 
 @media (max-width: 1023px) {

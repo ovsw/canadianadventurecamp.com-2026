@@ -1,3 +1,4 @@
+import { sectionThemeClass } from "./section-theme";
 import { Button } from "@/components/ui/button";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { cn } from "@/lib/utils";
@@ -116,6 +117,7 @@ function CtaButtons({
 
 export default function CtaBanner({
   _key,
+  background,
   buttons,
   dataAttribute,
   description,
@@ -128,18 +130,19 @@ export default function CtaBanner({
   const titleId = `cta-banner-${cleanKey}-title`;
   const cleanDescription = stegaClean(description)?.trim();
   const weight = resolveCtaBannerVariant(variant);
+  const theme = background ?? (weight === "nudge" ? "white" : "green");
 
   if (weight === "nudge") {
     return (
       <section
         aria-labelledby={titleId}
-        className="bg-background py-10 text-pine-night sm:py-14"
+        className={`${sectionThemeClass(theme)} py-10 sm:py-14`}
         id={`cta-banner-${cleanKey}`}
       >
         <div className="container-content">
           <div
             className={cn(
-              "grid gap-6 rounded-lg border border-pine-night/10 bg-birch-bark-bright px-6 py-7 sm:px-[30px] sm:py-[34px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10",
+              "grid gap-6 rounded-lg border border-pine-night/10 bg-birch-bark-bright text-pine-night px-6 py-7 sm:px-[30px] sm:py-[34px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10",
               styles.reveal,
             )}
           >
@@ -171,7 +174,7 @@ export default function CtaBanner({
     <section
       aria-labelledby={titleId}
       className={cn(
-        "rounded-t-section bg-forest-floor py-section text-birch-bark",
+        "rounded-t-section py-section", sectionThemeClass(theme),
       )}
       id={`cta-banner-${cleanKey}`}
     >
@@ -191,7 +194,7 @@ export default function CtaBanner({
           </h2>
           {cleanDescription ? (
             <p
-              className="mt-6 max-w-xl text-pretty text-lg/relaxed text-birch-bark/75"
+              className="mt-6 max-w-xl text-pretty text-lg/relaxed opacity-80"
               data-sanity={dataAttribute?.("description")}
             >
               {description}
@@ -199,7 +202,7 @@ export default function CtaBanner({
           ) : null}
         </div>
         <div className="lg:col-span-4 lg:flex lg:justify-end">
-          <CtaButtons buttons={buttons} dataAttribute={dataAttribute} onDark />
+          <CtaButtons buttons={buttons} dataAttribute={dataAttribute} onDark={theme === "green"} />
         </div>
       </div>
     </section>

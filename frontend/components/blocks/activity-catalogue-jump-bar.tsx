@@ -9,10 +9,14 @@ export type JumpBarGroup = { id: string; title: string };
 /*
  * Sticky jump bar for the Activity Catalogue.
  *
- * A list of in-page links, one chip per place. The chip whose group currently
- * fills the reading band (roughly the upper-middle of the viewport) carries
- * aria-current="location" and the amber outline. On phones the row scrolls
- * sideways and the current chip is nudged into view without moving the page.
+ * A short legend ("Activity Categories") then one text link per place. The link
+ * whose group currently fills the reading band (roughly the upper-middle of the
+ * viewport) carries aria-current="location" and an underline. On phones the row
+ * scrolls sideways and the current link is nudged into view without moving the
+ * page.
+ *
+ * At rest the bar is a rounded slab. Once it sticks under the site header it
+ * squares its top corners so it hangs from the header like a tab.
  */
 export default function ActivityCatalogueJumpBar({
   dataSanity,
@@ -22,7 +26,39 @@ export default function ActivityCatalogueJumpBar({
   groups: JumpBarGroup[];
 }>) {
   const [currentId, setCurrentId] = useState<string | null>(null);
+  const [stuck, setStuck] = useState(false);
   const trackRef = useRef<HTMLUListElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    const sentinel = sentinelRef.current;
+    if (!nav || !sentinel) return;
+
+    // The sentinel marks the bar's natural position. While stuck, sticky
+    // positioning holds the bar below that point regardless of how far the
+    // site header offset is animating.
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const navTop = nav.getBoundingClientRect().top;
+      const restTop = sentinel.getBoundingClientRect().bottom;
+      setStuck(navTop - restTop > 1);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof IntersectionObserver === "undefined") return;
@@ -67,42 +103,54 @@ export default function ActivityCatalogueJumpBar({
   }, [currentId]);
 
   return (
-    <nav
-      aria-label="Jump to a place on the island"
-      className={cn(
-        "sticky z-40 -mx-(--gutter) border-y border-birch-bark/12 bg-pine-night/85 px-(--gutter) py-3 backdrop-blur-md",
-        styles.jumpBar,
-      )}
-      data-sanity={dataSanity}
-    >
-      <ul
+    <>
+      <div aria-hidden="true" ref={sentinelRef} />
+      <nav
+        aria-labelledby="activity-catalogue-jump-bar-label"
         className={cn(
-          "m-0 flex list-none gap-2 overflow-x-auto p-0",
-          styles.jumpBarTrack,
+          "sticky z-40 flex items-center gap-4 border border-pine-night/15 bg-navigation-yellow py-3 sm:gap-5",
+          stuck ? "rounded-b-lg rounded-t-none" : "rounded-lg",
+          styles.jumpBar,
         )}
-        ref={trackRef}
+        data-sanity={dataSanity}
+        data-stuck={stuck || undefined}
+        ref={navRef}
       >
-        {groups.map((group) => {
-          const current = group.id === currentId;
-          return (
-            <li className="shrink-0" key={group.id}>
-              <a
-                aria-current={current ? "location" : undefined}
-                className={cn(
-                  "focus-ring inline-flex items-center whitespace-nowrap rounded-pill border px-3.5 py-2.5 text-label transition-colors motion-base",
-                  current
-                    ? "border-campfire-amber text-campfire-amber"
-                    : "border-birch-bark/22 text-birch-bark/80 hover:border-birch-bark/50 hover:text-birch-bark",
-                )}
-                data-group-id={group.id}
-                href={`#${group.id}`}
-              >
-                {group.title}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+        <span
+          className="shrink-0 border-r border-pine-night/20 pr-4 text-label font-semibold text-pine-night/70 sm:pr-5"
+          id="activity-catalogue-jump-bar-label"
+        >
+          Activity Categories
+        </span>
+        <ul
+          className={cn(
+            "m-0 flex min-w-0 flex-1 list-none gap-6 overflow-x-auto p-0",
+            styles.jumpBarTrack,
+          )}
+          ref={trackRef}
+        >
+          {groups.map((group) => {
+            const current = group.id === currentId;
+            return (
+              <li className="shrink-0" key={group.id}>
+                <a
+                  aria-current={current ? "location" : undefined}
+                  className={cn(
+                    "focus-ring inline-flex min-h-11 items-center whitespace-nowrap py-2 text-base font-semibold text-pine-night underline-offset-4 transition-colors motion-base",
+                    current
+                      ? "underline decoration-2"
+                      : "hover:underline",
+                  )}
+                  data-group-id={group.id}
+                  href={`#${group.id}`}
+                >
+                  {group.title}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </>
   );
 }

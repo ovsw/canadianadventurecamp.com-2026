@@ -27,6 +27,7 @@ import seasonsConfig from "./schemas/documents/seasons-config";
 import blockContent from "./schemas/blocks/shared/block-content";
 import link from "./schemas/blocks/shared/link";
 import { colorVariant } from "./schemas/blocks/shared/color-variant";
+import { sectionBackground } from "./schemas/blocks/shared/section-background";
 import { buttonVariant } from "./schemas/blocks/shared/button-variant";
 import sectionPadding from "./schemas/blocks/shared/section-padding";
 import customUrl from "./schemas/blocks/shared/custom-url";
@@ -100,6 +101,7 @@ export const schemaTypes = [
   blockContent,
   link,
   colorVariant,
+  sectionBackground,
   buttonVariant,
   sectionPadding,
   customUrl,

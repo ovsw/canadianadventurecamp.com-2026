@@ -1,3 +1,4 @@
+import { sectionThemeClass } from "./section-theme";
 import { Button } from "@/components/ui/button";
 import SectionContainer from "@/components/ui/section-container";
 import { getSafeLinkHref } from "@/lib/safe-href";
@@ -23,7 +24,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[1.08em] font-semibold leading-none not-italic text-campfire-amber">
+      <em className="font-accent text-[1.08em] font-semibold leading-none not-italic text-[var(--section-accent)]">
         {children}
       </em>
     ),
@@ -32,6 +33,7 @@ const headingComponents: PortableTextComponents = {
 
 export default function DirectorCta({
   _key,
+  background,
   buttons,
   dataAttribute,
   description,
@@ -40,6 +42,8 @@ export default function DirectorCta({
 }: DirectorCtaProps) {
   if (!title?.length) return null;
 
+  const theme = background ?? "green";
+  const onDark = theme === "green";
   const sectionKey = stegaClean(_key);
   const headingId = `director-cta-${sectionKey}-title`;
   const message = stegaClean(description)?.trim();
@@ -55,7 +59,7 @@ export default function DirectorCta({
 
   return (
     <section aria-labelledby={headingId} id={`director-cta-${sectionKey}`}>
-      <SectionContainer className="overflow-hidden rounded-t-section bg-forest-floor text-birch-bark [&>div]:container-content">
+      <SectionContainer className={`${sectionThemeClass(theme)} overflow-hidden rounded-t-section [&>div]:container-content`}>
         <div
           className={`grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-10 ${styles.reveal}`}
         >
@@ -69,7 +73,7 @@ export default function DirectorCta({
             </h2>
             {message ? (
               <p
-                className="mx-auto mt-[18px] max-w-[32rem] text-pretty text-base/[1.6] text-birch-bark/75 lg:mx-0 lg:mt-6 lg:text-[17px]"
+                className="mx-auto mt-[18px] max-w-[32rem] text-pretty text-base/[1.6] opacity-80 lg:mx-0 lg:mt-6 lg:text-[17px]"
                 data-sanity={dataAttribute?.("description")}
               >
                 {message}
@@ -87,7 +91,7 @@ export default function DirectorCta({
                       asChild
                       className="w-full lg:w-auto"
                       key={button._key ?? `${href}-${index}`}
-                      onDark
+                      onDark={onDark}
                       variant={index === 0 ? "default" : "outline"}
                     >
                       <Link
@@ -116,12 +120,20 @@ export default function DirectorCta({
           >
             <div
               aria-hidden="true"
-              className="absolute left-1/2 top-[70px] size-[330px] -translate-x-1/2 rounded-full border border-birch-bark/18 bg-forest-panel after:absolute after:inset-0 after:rounded-full after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_16%,transparent),transparent_70%)] lg:left-[calc(50%_-_40px)] lg:top-auto lg:bottom-[-110px] lg:size-[600px]"
+              className={`absolute left-1/2 top-[70px] size-[330px] -translate-x-1/2 rounded-full after:absolute after:inset-0 after:rounded-full lg:left-[calc(50%_-_40px)] lg:top-auto lg:bottom-[-110px] lg:size-[600px] ${
+                onDark
+                  ? "bg-forest-panel after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_16%,transparent),transparent_70%)]"
+                  : "bg-[color-mix(in_oklab,var(--color-sunlit-moss)_45%,var(--section-surface))] after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_14%,transparent),transparent_70%)]"
+              }`}
             />
             {portrait ? (
               <Image
                 alt={stegaClean(portrait.alt)?.trim() || ""}
-                className="absolute bottom-0 left-1/2 z-10 h-[300px] w-auto max-w-none -translate-x-[47%] drop-shadow-[0_34px_38px_rgba(13,18,8,0.55)] lg:h-[580px] lg:-translate-x-1/2"
+                className={`absolute bottom-0 left-1/2 z-10 h-[300px] w-auto max-w-none -translate-x-[47%] lg:h-[580px] lg:-translate-x-1/2 ${
+                  onDark
+                    ? "drop-shadow-[0_34px_38px_rgba(13,18,8,0.55)]"
+                    : "drop-shadow-[0_28px_34px_rgba(13,18,8,0.22)]"
+                }`}
                 height={portraitHeight}
                 sizes="(max-width: 1023px) 400px, 827px"
                 src={urlFor(portrait).width(1400).url()}
@@ -130,7 +142,7 @@ export default function DirectorCta({
             ) : null}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-30 bg-gradient-to-b from-transparent to-forest-floor lg:hidden"
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-30 bg-gradient-to-b from-transparent to-[var(--section-surface)] lg:hidden"
             />
           </div>
         </div>

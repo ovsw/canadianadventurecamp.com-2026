@@ -1,5 +1,6 @@
 import { Rows3 } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { sectionBackgroundField } from "./shared/section-background";
 import NavigationIconInput, {
   createNavigationIconPreview,
 } from "../inputs/navigation-icon-input";
@@ -129,6 +130,7 @@ export default defineType({
   description:
     "An introduction followed by full-width rows with supporting points and links.",
   fields: [
+    sectionBackgroundField,
     defineField({
       name: "eyebrow",
       type: "string",

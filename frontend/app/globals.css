@@ -19,6 +19,7 @@
 @theme {
   /* ---- Colours ---- */
   --color-campfire-amber: oklch(76.3% 0.141 73);
+  --color-navigation-yellow: oklch(84% 0.095 92);
   --color-campfire-amber-deep: oklch(67.3% 0.135 71);
 
   --color-cedar: oklch(50.7% 0.095 131);
@@ -113,6 +114,7 @@
   --section-pad: 120px;
   --header-height: 80px;
 }
+
 
 @media (max-width: 1023px) {
   :root {
@@ -244,24 +246,24 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   letter-spacing: -0.01em;
 }
 
-/* Eyebrow — small label above headlines */
+/* Eyebrow — supporting context for a heading. Keep it readable in sentence case. */
 @utility text-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  min-height: 1.35em;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
 }
 
-/* Label — chips, map markers, stamps, metadata */
+/* Label — chips, map markers, stamps, and metadata. It must remain legible at a glance. */
 @utility text-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  min-height: 1.35em;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
 }
 
 /* ------------------------------------------------------------------ */
