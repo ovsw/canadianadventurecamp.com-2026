@@ -80,13 +80,19 @@ describe("SiteFooter", () => {
       "/about",
     );
     expect(
-      within(footer).getByRole("link", { name: "Instagram" }).querySelector("svg"),
+      within(footer)
+        .getByRole("link", { name: "Instagram" })
+        .querySelector('[data-footer-icon="instagram"]'),
     ).toBeInTheDocument();
     expect(
-      within(footer).getByRole("link", { name: "YouTube" }).querySelector("svg"),
+      within(footer)
+        .getByRole("link", { name: "YouTube" })
+        .querySelector('[data-footer-icon="youtube"]'),
     ).toBeInTheDocument();
     expect(
-      within(footer).getByRole("link", { name: "Facebook" }).querySelector("svg"),
+      within(footer)
+        .getByRole("link", { name: "Facebook" })
+        .querySelector('[data-footer-icon="facebook"]'),
     ).toBeInTheDocument();
     expect(
       within(footer).getByRole("link", { name: "About" }).querySelector("svg"),
