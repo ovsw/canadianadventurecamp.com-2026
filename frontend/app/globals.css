@@ -113,6 +113,14 @@
   --gutter: 56px;
   --section-pad: 120px;
   --header-height: 80px;
+  /* Tuck overlap: how far a rounded-top section reaches up over the section
+     above. Equal to the section radius so the curve starts at the seam. */
+  --section-overlap: var(--radius-section);
+  /* Section boundary padding. Defaults are the full rhythm (an edge); the
+     mapping rule below halves a seam side and pads an edge before a tucker. */
+  --seam-factor: 0.5;
+  --section-pad-top: var(--section-pad);
+  --section-pad-bottom: var(--section-pad);
 }
 
 
@@ -145,6 +153,28 @@ body:has([data-header-overlay]) header[data-site-header] {
 body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   background-color: transparent;
   border-color: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* Section boundaries                                                  */
+/* ------------------------------------------------------------------ */
+
+/* The block dispatcher resolves each section's boundaries on the server and
+   marks the wrapper with boolean attributes (see section-boundaries.ts). This
+   rule turns them into the two padding properties that `py-section` reads.
+   Set on the wrapper, they inherit into the section. A seam is half the
+   rhythm; an edge is the full rhythm; an edge before a tucker adds the
+   overlap back so the tucker's curve does not eat the padding. */
+[data-seam-top] {
+  --section-pad-top: calc(var(--section-pad) * var(--seam-factor));
+}
+
+[data-seam-bottom] {
+  --section-pad-bottom: calc(var(--section-pad) * var(--seam-factor));
+}
+
+[data-tuck-below] {
+  --section-pad-bottom: calc(var(--section-pad) + var(--section-overlap));
 }
 
 /* ------------------------------------------------------------------ */
@@ -190,9 +220,9 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   padding-inline: var(--gutter);
 }
 
-/* Section vertical padding */
+/* Section vertical padding, resolved per boundary by the block dispatcher */
 @utility py-section {
-  padding-block: var(--section-pad);
+  padding-block: var(--section-pad-top) var(--section-pad-bottom);
 }
 
 /* Content container */

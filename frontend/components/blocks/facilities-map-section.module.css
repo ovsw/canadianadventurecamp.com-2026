@@ -1,7 +1,7 @@
 .section {
   position: relative;
   z-index: 2;
-  margin-top: -44px;
+  margin-top: calc(-1 * var(--section-overlap));
   overflow: hidden;
   border-radius: var(--radius-section) var(--radius-section) 0 0;
   background: var(--color-pine-night);
