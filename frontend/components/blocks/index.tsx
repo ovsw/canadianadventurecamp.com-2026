@@ -84,7 +84,7 @@ function resolveSectionBackground(block: Block, isFinal: boolean): SectionBackgr
             ? "cream"
             : "green"
           : block._type === "ctaBanner"
-            ? legacyBlock.variant === "nudge"
+            ? stegaClean(legacyBlock.variant) === "nudge"
               ? "white"
               : "green"
             : [

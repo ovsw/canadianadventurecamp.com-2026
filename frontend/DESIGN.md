@@ -280,14 +280,11 @@ Tactile and confident. Everything that can be touched answers: pills lift, arrow
 ### Session Rows (signature)
 A horizontal calendar: 150px date column in mono, a 1fr track with a positioned bar (3px radius) per session, and a 138px CTA column. Open sessions carry a Moss bar that turns amber on hover while a hidden Enroll link slides in from the left (overshoot ease). Full sessions carry an Ember Red marker and an amber "FULL" stamp. Availability copy comes from the CMS.
 
-### Parent Aside (signature)
-Camper-voice sections carry one factual line for the parent reading over the kid's shoulder. It never gets its own section: a 2px translucent-cream hairline on the left, a mono "FOR PARENTS" legend, then Archivo 15px at 72% alpha, max 520px wide. No amber, no Caveat. Shared component `components/parent-aside.tsx`; used under the build-a-day description and after each Activity Catalogue place.
-
 ### CTA Banner (handoff)
 Two weights of one block. **Closing band:** an editor-selected field with the 44px tucked top corners, headline left on an 8/4 grid, actions right: one amber primary with a trailing arrow, one ghost. **Nudge:** a Light card on the cream field, title-sized heading, actions inline on desktop. Buttons stack full-width below 640px in both weights.
 
 ### Eyebrow + Headline + Script (signature)
-Every section opens the same way: mono eyebrow (0.24em, amber or cedar), 20px, Bricolage 800 headline at 58px, with one phrase swapped into Caveat in the accent colour. This is the most recognisable pattern on the site; reuse it on every inner page.
+Every section opens the same way: Archivo eyebrow (14px, 600 weight, amber or cedar), 20px, Bricolage 800 headline at 58px, with one phrase swapped into Caveat in the accent colour. This is the most recognisable pattern on the site; reuse it on every inner page.
 
 ### Motion grammar
 - **Reveal:** `riseUp` (46px translate, fade) driven by `animation-timeline: view()` over entry 0-45%; hero uses `heroRise` (34px) with .9s `cubic-bezier(.2,.7,.2,1)` and staggered delays.
@@ -314,7 +311,7 @@ Every section opens the same way: mono eyebrow (0.24em, amber or cedar), 20px, B
 ### Don't:
 - **Don't** introduce a second accent or a new grey; the palette is thirteen named colours and their alphas.
 - **Don't** use Caveat for more than one phrase per section or for any UI text.
-- **Don't** set annotation, prices, dates, or chips in Archivo.
+- **Don't** drop annotation, prices, dates, or chips below 14px or into uppercase wide tracking.
 - **Don't** place resting drop shadows on cards or tiles; only media frames and lifted states carry shadow.
 - **Don't** use solid grey borders, square corners on tappable elements, or radii between 3px and 14px except the 8px thumbnail.
 - **Don't** add looping animations beyond the ticker, globe, and map trail; no pulse, shimmer, or spinner loops.

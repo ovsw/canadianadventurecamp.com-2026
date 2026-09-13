@@ -44,6 +44,6 @@ export const sectionBackground = defineType({
   name: "sectionBackground",
   title: "Section Background",
   type: "string",
-  options: { list: [...SECTION_BACKGROUNDS] },
+  options: { list: [...SECTION_BACKGROUNDS], layout: "radio" },
   initialValue: "white" satisfies SectionBackground,
 });

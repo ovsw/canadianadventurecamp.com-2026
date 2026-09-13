@@ -124,7 +124,7 @@ export default function ImageCollageFeature({
                     aria-hidden="true"
                     className="relative top-px size-2.5 shrink-0 rotate-45 rounded-xs bg-campfire-amber"
                   />
-                  <p className="text-base/relaxed text-foreground">
+                  <p className="text-base/relaxed text-current">
                     <strong className="mb-1 block" data-sanity={dataAttribute?.(`${pointPath}.title`)}>
                       {pointTitle}
                     </strong>
