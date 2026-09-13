@@ -88,7 +88,7 @@ describe("StackedFeatureRows", () => {
         name: "Built for kids. Trusted by parents.",
       }),
     ).toHaveClass("text-headline");
-    expect(screen.getByText("Trusted by parents.")).toHaveClass("text-cedar");
+    expect(screen.getByText("Trusted by parents.")).toHaveClass("text-[var(--section-accent)]");
     const rowHeading = screen.getByText("Accredited & inspected");
     expect(rowHeading).toHaveAttribute(
       "data-sanity",
@@ -110,11 +110,11 @@ describe("StackedFeatureRows", () => {
       "href",
       "https://ontariocampsassociation.ca/",
     );
-    expect(ocaLink).toHaveClass("text-cedar", "hover:text-cedar-deep");
+    expect(ocaLink).toHaveClass("text-[var(--section-accent)]", "hover:opacity-75");
     expect(document.querySelector('[data-sanity$=".icon"]')).toHaveClass(
-      "text-cedar",
+      "text-[var(--section-accent)]",
     );
-    expect(document.querySelector(".lucide-check")).toHaveClass("text-cedar");
+    expect(document.querySelector(".lucide-check")).toHaveClass("text-[var(--section-accent)]");
     expect(
       document.querySelector('[data-sanity="section:rows"]'),
     ).toHaveClass("divide-y");
@@ -126,7 +126,7 @@ describe("StackedFeatureRows", () => {
       "href",
       "/accreditations",
     );
-    expect(rowLink).toHaveClass("text-cedar", "hover:text-cedar-deep", "ms-8");
+    expect(rowLink).toHaveClass("text-[var(--section-accent)]", "hover:opacity-75", "ms-8");
   });
 
   it("omits rows without points", () => {
