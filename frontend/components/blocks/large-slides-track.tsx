@@ -110,7 +110,9 @@ export default function LargeSlidesTrack({
                       : undefined
                   }
                 />
-              ) : null}
+              ) : (
+                <span className={styles.placeholderNumber}>{slide.number}</span>
+              )}
             </div>
           ))}
         </div>
@@ -150,10 +152,7 @@ export default function LargeSlidesTrack({
                     src={slide.image.stackedSrc}
                   />
                 ) : (
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-0 flex items-center justify-center font-display text-6xl text-current/20"
-                  >
+                  <span aria-hidden="true" className={styles.placeholderNumber}>
                     {slide.number}
                   </span>
                 )}
