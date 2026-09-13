@@ -105,36 +105,24 @@ export default function ActivitySchedule({
     >
       <div className="container-content">
         <div className="border-t border-current/20 pt-section">
-          {/* Header band: count + heading left, description right */}
-          <div
-            className={`grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-14 ${styles.reveal}`}
+          {/* Header row: count and heading read as one line */}
+          <header
+            className={`flex flex-col gap-6 md:flex-row md:items-center md:gap-5 ${styles.reveal}`}
           >
-            <header className="flex flex-col gap-6 md:flex-row md:items-center md:gap-10 lg:col-span-8">
-              <p
-                aria-label={`${total} ${plainHeading}`}
-                className={styles.activityCount}
-              >
-                {total}
-              </p>
-              <h2
-                className="text-balance font-display text-display-page font-extrabold"
-                data-sanity={dataAttribute?.("heading")}
-                id={headingId}
-              >
-                <PortableText components={headingComponents} value={heading} />
-              </h2>
-            </header>
-
-            <div className="grid gap-6 lg:col-span-4 lg:pb-2">
-              <p
-                className="max-w-xl text-pretty text-lg/relaxed opacity-80"
-                data-sanity={dataAttribute?.("description")}
-              >
-                {description}
-              </p>
-
-            </div>
-          </div>
+            <p
+              aria-label={`${total} ${plainHeading}`}
+              className={styles.activityCount}
+            >
+              {total}
+            </p>
+            <h2
+              className="text-balance font-display text-display-page font-extrabold"
+              data-sanity={dataAttribute?.("heading")}
+              id={headingId}
+            >
+              <PortableText components={headingComponents} value={heading} />
+            </h2>
+          </header>
 
           <ActivityScheduleBuilder
             activities={activities}
@@ -149,6 +137,14 @@ export default function ActivitySchedule({
             }
             camperNames={cleanCamperNames}
             camperNamesDataAttribute={dataAttribute?.("camperNames")}
+            description={
+              <p
+                className="max-w-xl text-pretty text-lg/relaxed opacity-80"
+                data-sanity={dataAttribute?.("description")}
+              >
+                {description}
+              </p>
+            }
             featuredActivitiesDataAttribute={dataAttribute?.(
               "featuredActivities",
             )}

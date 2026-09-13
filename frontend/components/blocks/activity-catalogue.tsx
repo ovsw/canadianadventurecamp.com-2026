@@ -73,7 +73,7 @@ function ActivityCard({
       className="group/card min-w-0"
       data-sanity={referenceDataAttribute}
     >
-      <div className="flex h-full flex-col overflow-hidden rounded-lg border border-birch-bark/12 bg-forest-panel transition-[transform,box-shadow] motion-base group-hover/card:-translate-y-2 group-hover/card:shadow-interactive-lift group-focus-within/card:-translate-y-2 group-focus-within/card:shadow-interactive-lift motion-reduce:transition-none motion-reduce:group-hover/card:translate-y-0 motion-reduce:group-focus-within/card:translate-y-0">
+      <div className={cn("flex h-full flex-col overflow-hidden rounded-lg border bg-forest-panel", styles.card)}>
       <div
         className="relative aspect-[4/3] overflow-hidden bg-forest-floor"
         data-sanity={activityDataAttribute?.(activity._id, "image")}
@@ -100,7 +100,7 @@ function ActivityCard({
              still need a photo. Never an empty or broken image. */
           <div
             aria-label="Photo to come"
-            className="absolute inset-0 grid place-items-center border-b border-dashed border-birch-bark/25 text-birch-bark/75"
+            className="absolute inset-0 grid place-items-center border-b border-dotted border-birch-bark/18 text-birch-bark/60"
             role="img"
           >
             <span className="flex flex-col items-center gap-2">
@@ -111,7 +111,7 @@ function ActivityCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-4 sm:p-5">
+      <div className="flex flex-1 flex-col gap-1.5 px-5 pt-4.5 pb-5">
         <h4
           className="font-display text-[17px] font-bold leading-tight tracking-[-0.01em] text-birch-bark sm:text-xl"
           data-sanity={activityDataAttribute?.(activity._id, "title")}
@@ -127,11 +127,10 @@ function ActivityCard({
           </p>
         ) : null}
 
-        <div className="mt-auto flex flex-col gap-2 pt-2">
-
-          {programHref ? (
+        {programHref ? (
+          <div className="mt-auto pt-2">
             <Link
-              className="focus-ring inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-sunlit-moss transition-colors motion-base hover:text-birch-bark"
+              className="focus-ring inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-sunlit-moss underline-offset-[0.2em] transition-colors motion-base hover:text-birch-bark hover:underline"
               data-sanity={activityDataAttribute?.(activity._id, "program")}
               href={programHref}
             >
@@ -142,8 +141,8 @@ function ActivityCard({
                 className="size-4 transition-transform duration-200 group-hover/card:translate-x-1 motion-reduce:transition-none"
               />
             </Link>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
       </div>
     </li>
@@ -266,7 +265,7 @@ export default function ActivityCatalogue({
                 </header>
 
                 <ul
-                  className="m-0 grid list-none grid-cols-2 gap-3 p-0 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+                  className="m-0 grid list-none grid-cols-2 gap-4 p-0 md:grid-cols-3 lg:grid-cols-4"
                   data-sanity={dataAttribute?.(`${groupPath}.activities`)}
                 >
                   {activities.map((activity) => (

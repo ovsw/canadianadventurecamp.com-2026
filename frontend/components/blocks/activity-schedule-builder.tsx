@@ -36,6 +36,7 @@ type ActivityScheduleBuilderProps = {
   camperNamesDataAttribute?: string;
   featuredActivitiesDataAttribute?: string;
   activitiesLink: ReactNode;
+  description: ReactNode;
 };
 
 const emptySchedule = (): Array<Activity | null> =>
@@ -49,6 +50,7 @@ export default function ActivityScheduleBuilder({
   activitiesLink,
   camperNames,
   camperNamesDataAttribute,
+  description,
   featuredActivitiesDataAttribute,
 }: ActivityScheduleBuilderProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -227,11 +229,13 @@ export default function ActivityScheduleBuilder({
 
   return (
     <div
-      className={`mt-12 grid gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-14 ${styles.reveal}`}
+      className={`mt-13 grid gap-13 md:grid-cols-2 md:items-start lg:grid-cols-[23rem_minmax(0,1fr)] lg:gap-x-15 ${styles.reveal}`}
       data-sanity={featuredActivitiesDataAttribute}
       ref={sectionRef}
     >
-      <div className="flex flex-col gap-7 lg:col-span-7">
+      <div className="flex min-w-0 flex-col gap-7 md:order-2">
+        {description}
+
         <div className="flex flex-wrap gap-3" role="group" aria-label="Build a sample day">
           {activities.map((activity) => {
             const selected = displayedSlots.some(
@@ -261,7 +265,7 @@ export default function ActivityScheduleBuilder({
         {activitiesLink}
       </div>
 
-      <div className="relative w-full max-w-[26rem] self-center justify-self-center md:max-w-none lg:col-span-5">
+      <div className="relative w-full max-w-[22rem] justify-self-center md:order-1 md:self-start md:justify-self-start lg:max-w-none lg:justify-self-stretch">
         <div className="relative -rotate-1 rounded-2xl bg-birch-bark-bright p-7 text-pine-night shadow-2xl motion-reduce:rotate-0">
           <div className="mb-3 flex items-start justify-between gap-4">
             <p
