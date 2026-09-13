@@ -22,8 +22,8 @@ type CtaBannerProps = CtaBannerBlock & {
 /*
  * CTA Banner — the handoff block, in two weights.
  *
- * Closing band: the last thing before the footer. Forest Floor field with the
- * 44px tucked top corners, headline left, the two actions right, one amber
+ * Closing band: the last thing before the footer. Forest Floor field with
+ * rounded top corners tucked under the section above, headline left, the two actions right, one amber
  * primary and one ghost. Nudge: a quiet Light card between sections on the
  * cream field, title-sized, for "not sure yet?" moments. Buttons stack on
  * phones in both weights. Both reveal on scroll; reduced motion skips it.

@@ -1,6 +1,5 @@
 import { sectionThemeClass } from "./section-theme";
 import { Button } from "@/components/ui/button";
-import SectionContainer from "@/components/ui/section-container";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
@@ -58,12 +57,16 @@ export default function DirectorCta({
   });
 
   return (
-    <section aria-labelledby={headingId} id={`director-cta-${sectionKey}`}>
-      <SectionContainer className={`${sectionThemeClass(theme)} overflow-hidden rounded-t-section [&>div]:container-content`}>
+    <section
+      aria-labelledby={headingId}
+      className={`${sectionThemeClass(theme)} relative overflow-hidden rounded-t-section py-section`}
+      id={`director-cta-${sectionKey}`}
+    >
+      <div className="container-content">
         <div
           className={`grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end lg:gap-10 ${styles.reveal}`}
         >
-          <div className="order-2 pb-[var(--section-pad)] pt-[26px] text-center lg:order-1 lg:pt-0 lg:text-left">
+          <div className="order-2 pt-[26px] text-center lg:order-1 lg:pt-0 lg:text-left">
             <h2
               className="text-balance font-display text-[34px] font-extrabold leading-[1.02] tracking-[-0.02em] lg:text-headline"
               data-sanity={dataAttribute?.("title")}
@@ -114,8 +117,11 @@ export default function DirectorCta({
             ) : null}
           </div>
 
+          {/* One-sided bleed: the portrait column is the top edge on phones and
+              the bottom edge on desktop, so it cancels the section padding on
+              that side only. The copy honours the padding. */}
           <div
-            className="relative order-1 -mx-5 h-80 overflow-hidden lg:order-2 lg:mx-0 lg:h-160 lg:overflow-visible"
+            className="relative order-1 -mx-5 -mt-(--section-pad-top) h-80 overflow-hidden lg:order-2 lg:mx-0 lg:mt-0 lg:-mb-(--section-pad-bottom) lg:h-160 lg:overflow-visible"
             data-sanity={dataAttribute?.("image")}
           >
             <div
@@ -146,7 +152,7 @@ export default function DirectorCta({
             />
           </div>
         </div>
-      </SectionContainer>
+      </div>
     </section>
   );
 }

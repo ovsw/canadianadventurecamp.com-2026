@@ -152,8 +152,11 @@ export default function HomeHero({
         ) : null}
       </div>
 
-      {/* Copy — solid plate below the poster on phones, overlay on desktop */}
-      <div className="relative z-10 flex flex-1 flex-col px-content-x pb-6 pt-7 lg:min-h-dvh lg:flex-none lg:justify-end lg:pb-40 lg:pt-32">
+      {/* Copy — solid plate below the poster on phones, overlay on desktop.
+          Bottom padding is the resolved `--section-pad-bottom`, so the last row
+          (the CTA plate on phones, the body + CTAs row on desktop) clears a
+          tucked section below like any other section's last row. */}
+      <div className="relative z-10 flex flex-1 flex-col px-content-x pb-(--section-pad-bottom) pt-7 lg:min-h-dvh lg:flex-none lg:justify-end lg:pt-32">
         {/* Badge — dropped on phones; the poster + headline carry the opening */}
         {stegaClean(badge)?.trim() ? (
           <p

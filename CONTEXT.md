@@ -26,6 +26,18 @@ The ordered section editor used to compose a page.
 
 One reusable Page Builder content and layout unit.
 
+**Seam**
+
+A boundary where two neighbouring sections share a background and meet with half the section rhythm on each side.
+
+**Edge**
+
+A boundary where a section meets a different background, a hero, or a tucking section, and keeps the full section rhythm.
+
+**Tuck**
+
+A rounded-top section, or the footer, that overlaps the bottom of the section above by the section radius.
+
 **Draft**
 
 Content visible to an authorized editor through preview before publication.

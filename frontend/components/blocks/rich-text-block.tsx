@@ -30,7 +30,7 @@ export default function RichTextBlock({
   if (!(displayEyebrow || displayTitle || richText?.length)) return null;
 
   return (
-    <section aria-labelledby={headingId} className={sectionThemeClass(background)}>
+    <section aria-labelledby={headingId} className={`${sectionThemeClass(background)} py-section`}>
       <div>
         {displayEyebrow || displayTitle ? (
           <header>

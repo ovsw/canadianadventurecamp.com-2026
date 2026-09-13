@@ -122,7 +122,7 @@ export default function LatestArticles({
   if (!articles?.length) return null;
 
   return (
-    <section className={sectionThemeClass(background)} id="latest-posts">
+    <section className={`${sectionThemeClass(background)} py-section`} id="latest-posts">
       <header>
         {eyebrow ? <p>{eyebrow}</p> : null}
         {title ? <h2>{title}</h2> : null}

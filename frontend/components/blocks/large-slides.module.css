@@ -12,15 +12,16 @@
  * the section scrolls out. Photos are stacked layers; the active one is
  * opaque and the rest crossfade out. Nothing above this block may clip
  * overflow, or the sticky frame stops pinning.
+ *
+ * The section element carries no vertical padding. The header reads the
+ * resolved top padding and the list reads the resolved bottom padding, so
+ * the sticky photo can bleed to the section's bottom edge on desktop while
+ * the copy still clears the next section.
  */
-.section {
-  padding-block: var(--section-pad) 0;
-}
-
 .header {
   display: grid;
   gap: 1.5rem;
-  padding-bottom: 3.5rem;
+  padding-block: var(--section-pad-top) 3.5rem;
 }
 
 .grid {
@@ -35,7 +36,7 @@
 .list {
   padding-inline: var(--gutter);
   border-top: 1px solid color-mix(in oklch, currentColor 18%, transparent);
-  padding-bottom: var(--section-pad);
+  padding-bottom: var(--section-pad-bottom);
 }
 
 .slide {
@@ -126,7 +127,6 @@
   .list {
     grid-column: 3 / 4;
     padding-inline: clamp(2.5rem, 5vw, 5.5rem) 0;
-    padding-bottom: 0;
     border-top: 0;
   }
 

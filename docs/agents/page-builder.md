@@ -21,6 +21,67 @@ A top-level section passes through this flow:
 
 The section's Sanity `_type` is the shared identifier across every step. Keep it exact and use the existing camelCase naming convention.
 
+## Section spacing
+
+The block dispatcher decides the vertical padding of every section. A section
+does not decide its own padding.
+
+**Seam and edge rule.** Each section has a top boundary and a bottom boundary.
+A boundary is a seam or an edge. Two neighbours meet at a seam when they
+resolve to the same background, the lower one does not tuck, and the upper one
+is not a hero. Every other boundary is an edge. The first section's top is an
+edge. The last section's bottom is an edge, and the footer tucks under it.
+
+**Values.** A seam gets half the section rhythm: `--section-pad` multiplied
+by `--seam-factor` (0.5). An edge gets the full rhythm. An edge above a tucker
+gets the full rhythm plus `--section-overlap`, so the tucker's curve does not
+eat the padding. These values live in `frontend/app/globals.css` next to the
+rhythm tokens. Change them there. Do not change the resolver for a pixel
+change.
+
+**Wrapper attributes.** The resolver in
+`frontend/components/blocks/section-boundaries.ts` runs once per page on the
+server. The dispatcher in `frontend/components/blocks/index.tsx` writes its
+result on the wrapper element as four boolean data attributes:
+
+- `data-seam-top`: the top boundary is a seam.
+- `data-seam-bottom`: the bottom boundary is a seam.
+- `data-tuck`: this section overlaps the section above.
+- `data-tuck-below`: the next section, or the footer, tucks under this one.
+
+One stylesheet rule maps the attributes to `--section-pad-top` and
+`--section-pad-bottom`. The `py-section` utility reads those two properties.
+Put `py-section` on the section element. Put content in a `container-content`
+div inside it.
+
+**Trait table.** `sectionTraits` in `section-boundaries.ts` is a `Record`
+keyed by every block `_type`. A new section type without an entry fails
+typecheck. Declare traits like this:
+
+- `{}`: a normal section. The editor picks the background.
+- `{ tuck: true }`: a rounded-top section that overlaps the section above.
+  Add `rounded-t-section` on the section element. Do not add a negative margin
+  or a z-index; the wrapper applies both.
+- `{ background: "night", tuck: true }`: a fixed background. The editor field
+  is ignored. Also add the `_type` to `FixedBackgroundType` in the same file,
+  and omit `background` from its GROQ projection.
+- `{ background: "photo", hero: true }`: a full-bleed hero. The boundary
+  below a hero is always an edge.
+
+**Overlap token.** `--section-overlap` is the distance a tucker reaches up
+over the section above. It equals `--radius-section`, so the curve starts at
+the boundary. The footer is not in the section list. It applies the same
+token itself in `frontend/components/footer/site-footer.tsx`.
+
+**Bleeds.** A section may ignore the computed padding on one side only. Do
+this only where the edge element on that side is a full-bleed image. The
+bleed must not depend on the neighbour. Text and buttons always keep the
+computed padding.
+
+**Module constraint.** A section's CSS module never sets vertical padding on
+the section element. Modules keep layout mechanisms that do not fit
+utilities: grid tracks, sticky frames, scroll-driven animation, keyframes.
+
 ## Add a top-level section
 
 Create the vertical slice with the generator, then shape its three files together:
@@ -60,10 +121,11 @@ queries, and renderers.
 5. Add its preview image at `studio/static/images/preview/<type>.jpg`. The Page schema resolves this path by `_type`.
 6. Create its GROQ projection in `frontend/sanity/queries/` and interpolate it into `frontend/sanity/queries/page.ts`.
 7. Create its React renderer in `frontend/components/blocks/` and register it in the `componentMap` in `frontend/components/blocks/index.tsx`.
-8. Run TypeGen once after the schema and query settle. Do not edit
+8. Declare its spacing traits in `frontend/components/blocks/section-boundaries.ts`. See "Section spacing".
+9. Run TypeGen once after the schema and query settle. Do not edit
    `studio/schema.json` or `frontend/sanity.types.ts` by hand.
-9. Back up the dataset, add the section to the intended draft page, and fill its
-   final content shape.
+10. Back up the dataset, add the section to the intended draft page, and fill its
+    final content shape.
 
 ## Add a nested block
 
@@ -92,7 +154,7 @@ Preserve each document's draft or published state.
 For visual changes, treat the existing design system as the default:
 
 - Reuse tokens from `frontend/app/globals.css`.
-- Reuse `SectionContainer`, shared buttons, and nearby block patterns before adding a new primitive.
+- Reuse the section shell (`sectionThemeClass`, `py-section`, `container-content`), shared buttons, and nearby block patterns before adding a new primitive.
 - Check the full page and mobile layout, not only the section in isolation.
 - Introduce a one-off value or variant only when the design intentionally requires it.
 
@@ -100,6 +162,8 @@ For visual changes, treat the existing design system as the default:
 
 - The same `_type` is present at every required top-level registration point.
 - The GROQ projection returns every field the renderer uses.
+- The section has an entry in the trait table, and its module sets no vertical
+  padding on the section element.
 - The section exists on the intended Sanity draft with complete content in the
   final schema shape.
 - Every affected existing document has been migrated; Ovi is not left with

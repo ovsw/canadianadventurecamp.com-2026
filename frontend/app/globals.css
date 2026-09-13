@@ -177,6 +177,18 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   --section-pad-bottom: calc(var(--section-pad) + var(--section-overlap));
 }
 
+/* Tuck geometry. The wrapper, not the section, pulls a tucker up over the
+   section above and stacks it on top; the section draws only its shape
+   (`rounded-t-section`). z-index 1 sits under the sticky header (z-60) and
+   the catalogue jump bar (z-40). No overflow clipping here: the story feature
+   and large slides pin sticky frames that stop working under a clipping
+   ancestor. */
+[data-tuck] {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-1 * var(--section-overlap));
+}
+
 /* ------------------------------------------------------------------ */
 /* Keyframes                                                           */
 /* ------------------------------------------------------------------ */

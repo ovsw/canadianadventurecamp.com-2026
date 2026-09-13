@@ -100,11 +100,11 @@ export default function ActivitySchedule({
   return (
     <section
       aria-labelledby={headingId}
-      className={`${sectionThemeClass(background ?? "green")} pb-section`}
+      className={`${sectionThemeClass(background ?? "green")} py-section`}
       id={`activities-${stegaClean(_key)}`}
     >
       <div className="container-content">
-        <div className="border-t border-current/20 pt-section">
+        <div className="border-t border-current/20">
           {/* Header row: count and heading read as one line */}
           <header
             className={`flex flex-col gap-6 md:flex-row md:items-center md:gap-5 ${styles.reveal}`}
