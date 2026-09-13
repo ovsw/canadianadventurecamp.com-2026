@@ -226,14 +226,15 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   pointer-events: none;
 }
 
-/* Tonal variation: light falls in from the top-left, the surface darkens
-   toward the bottom-right. Sized to the band, so a long run gets one slow
-   sweep rather than a glow per section. */
+/* Tonal variation: two large warm glows, top-left and bottom-right, with a
+   shadow in the top-right corner between them. Sized to the band, so a long
+   run gets one slow sweep rather than a glow per section. */
 [data-band="green"]::before,
 [data-band="night"]::before {
   background-image:
-    radial-gradient(110% 55% at 12% 0%, var(--band-glow), transparent 65%),
-    radial-gradient(95% 50% at 100% 100%, var(--band-shade), transparent 65%);
+    radial-gradient(170% 95% at 8% 0%, var(--band-glow), transparent 70%),
+    radial-gradient(170% 95% at 96% 100%, var(--band-glow), transparent 70%),
+    radial-gradient(120% 60% at 100% 0%, var(--band-shade), transparent 70%);
 }
 
 [data-band="green"]::after,
