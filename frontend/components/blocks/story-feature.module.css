@@ -30,10 +30,11 @@
 
 .copy {
   padding-inline: var(--gutter);
-  /* Stacked: the photo sits flush against the section above, a short gap
-     separates it from the copy, and the next section's own top padding is
-     the only space after the buttons. */
-  padding-block: 2.5rem 0;
+  /* Stacked: the photo sits flush against the section above (a one-sided
+     bleed), a short gap separates it from the copy, and the copy and buttons
+     honour the resolved bottom padding so they clear the next section's
+     edge. */
+  padding-block: 2.5rem var(--section-pad-bottom);
 }
 
 @media (min-width: 1024px) {
@@ -66,7 +67,7 @@
   .copy {
     grid-column: 3 / 4;
     padding-inline: clamp(2.5rem, 5vw, 5.5rem) 0;
-    padding-block: var(--section-pad);
+    padding-block: var(--section-pad-top) var(--section-pad-bottom);
   }
 
   /* No photo: the copy takes both content halves instead of leaving the

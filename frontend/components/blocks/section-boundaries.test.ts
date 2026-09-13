@@ -1,0 +1,83 @@
+import { describe, expect, it } from "vitest";
+import { resolveSectionBoundaries, type Block } from "./section-boundaries";
+
+function block(_type: Block["_type"], background?: "white" | "cream" | "green"): Block {
+  return { _type, _key: `${_type}-${background ?? "fixed"}`, background } as unknown as Block;
+}
+
+function booleans(blocks: Block[]) {
+  return resolveSectionBoundaries(blocks).map(({ seamTop, seamBottom, tuck, tuckBelow }) => ({
+    seamTop,
+    seamBottom,
+    tuck,
+    tuckBelow,
+  }));
+}
+
+describe("resolveSectionBoundaries", () => {
+  it("gives a single section two edges and a tucking footer", () => {
+    expect(booleans([block("benefitCards", "cream")])).toEqual([
+      { seamTop: false, seamBottom: false, tuck: false, tuckBelow: true },
+    ]);
+  });
+
+  it("joins two same-background sections at a seam", () => {
+    expect(booleans([block("benefitCards", "cream"), block("faqAccordion", "cream")])).toEqual([
+      { seamTop: false, seamBottom: true, tuck: false, tuckBelow: false },
+      { seamTop: true, seamBottom: false, tuck: false, tuckBelow: true },
+    ]);
+  });
+
+  it("keeps an edge between two different backgrounds", () => {
+    expect(booleans([block("benefitCards", "cream"), block("faqAccordion", "white")])).toEqual([
+      { seamTop: false, seamBottom: false, tuck: false, tuckBelow: false },
+      { seamTop: false, seamBottom: false, tuck: false, tuckBelow: true },
+    ]);
+  });
+
+  it("keeps an edge above a tucker even when the backgrounds match", () => {
+    expect(booleans([block("benefitCards", "green"), block("ctaBanner", "green")])).toEqual([
+      { seamTop: false, seamBottom: false, tuck: false, tuckBelow: true },
+      { seamTop: false, seamBottom: false, tuck: true, tuckBelow: true },
+    ]);
+  });
+
+  it("puts an edge after a hero and lets the tucker tuck", () => {
+    expect(booleans([block("innerHero"), block("datesRatesSection", "cream")])).toEqual([
+      { seamTop: false, seamBottom: false, tuck: false, tuckBelow: true },
+      { seamTop: false, seamBottom: false, tuck: true, tuckBelow: true },
+    ]);
+  });
+
+  it("treats the end of the list as an edge before the tucking footer", () => {
+    const result = resolveSectionBoundaries([
+      block("benefitCards", "white"),
+      block("faqAccordion", "white"),
+    ]);
+    expect(result[1].seamBottom).toBe(false);
+    expect(result[1].tuckBelow).toBe(true);
+  });
+
+  it("resolves a final Green section to Cream so it no longer seams with green above", () => {
+    const result = resolveSectionBoundaries([
+      block("benefitCards", "green"),
+      block("faqAccordion", "green"),
+    ]);
+    expect(result[1].background).toBe("cream");
+    expect(result[0].seamBottom).toBe(false);
+    expect(result[1].seamTop).toBe(false);
+  });
+
+  it("compares a fixed-background section by its trait, not the editor field", () => {
+    const result = resolveSectionBoundaries([
+      block("facilitiesMapSection"),
+      block("internationalCampersSection"),
+    ]);
+    expect(result[0].background).toBe("night");
+    expect(result[1].background).toBe("night");
+    // Same colour, but the lower section tucks, so the boundary stays an edge.
+    expect(result[0].seamBottom).toBe(false);
+    expect(result[1].seamTop).toBe(false);
+    expect(result[0].tuckBelow).toBe(true);
+  });
+});

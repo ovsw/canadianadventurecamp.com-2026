@@ -1,5 +1,9 @@
-import { stegaClean } from "next-sanity";
-import { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
+import {
+  type Block,
+  hasEditorBackground,
+  isEditorBackground,
+  resolveSectionBoundaries,
+} from "@/components/blocks/section-boundaries";
 import { type LivePerspective } from "next-sanity/live";
 import { createDataAttribute } from "next-sanity";
 import LatestArticles from "@/components/blocks/latest-articles";
@@ -31,10 +35,6 @@ import LargeSlides from "@/components/blocks/large-slides";
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
 
-type Block =
-  | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
-  | NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number];
-
 type BlockEditingProps = {
   dataAttribute?: (path: string) => string | undefined;
   memberDataAttribute?: (
@@ -59,55 +59,6 @@ type BlockEditingProps = {
     path: string,
   ) => string | undefined;
 };
-
-type SectionBackground = "white" | "cream" | "green";
-
-function resolveSectionBackground(block: Block, isFinal: boolean): SectionBackground {
-  const background = "background" in block ? stegaClean(block.background) : undefined;
-  if (background === "cream" || background === "green" || background === "white") {
-    return isFinal && background === "green" ? "cream" : background;
-  }
-
-  const legacyBlock = block as Block & { useCreamBackground?: boolean | null; variant?: string | null };
-  const cream = legacyBlock.useCreamBackground === true;
-  const legacyBackground: SectionBackground =
-    block._type === "teamMembers"
-      ? cream
-        ? "cream"
-        : "white"
-      : block._type === "faqAccordion"
-        ? legacyBlock.useCreamBackground === false
-          ? "green"
-          : "cream"
-        : ["benefitCards", "storyFeature", "featureCards", "stackedTimeline"].includes(block._type)
-          ? cream
-            ? "cream"
-            : "green"
-          : block._type === "ctaBanner"
-            ? stegaClean(legacyBlock.variant) === "nudge"
-              ? "white"
-              : "green"
-            : [
-                  "activitySchedule",
-                  "activityCatalogue",
-                  "bigImageList",
-                  "directorCta",
-                  "journey",
-                  "largeSlides",
-                  "packingChecklist",
-                ].includes(block._type)
-              ? "green"
-              : [
-                    "datesRatesSection",
-                    "imageCollageFeature",
-                    "includedExtras",
-                    "stackedFeatureRows",
-                  ].includes(block._type)
-                ? "cream"
-                : "white";
-
-  return isFinal && legacyBackground === "green" ? "cream" : legacyBackground;
-}
 
 const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "faqAccordion",
@@ -184,6 +135,8 @@ export default function Blocks({
   perspective: LivePerspective;
   stega: boolean;
 }) {
+  const boundaries = resolveSectionBoundaries(blocks ?? []);
+
   return (
     <>
       {blocks?.map((block, index) => {
@@ -214,13 +167,14 @@ export default function Blocks({
                 type: documentType,
               }).toString()
           : undefined;
-        const background = resolveSectionBackground(block, index === blocks.length - 1);
+        const boundary = boundaries[index];
+        // Fixed-background sections (heroes, night sections) render their own
+        // colour and the query does not project `background` for them; every
+        // other section receives the resolved editor background.
         const themedBlock: Block =
-          block._type === "hero" || block._type === "homeHero" ||
-          block._type === "innerHero" || block._type === "facilitiesMapSection" ||
-          block._type === "internationalCampersSection"
-            ? block
-            : { ...block, background };
+          hasEditorBackground(block) && isEditorBackground(boundary.background)
+            ? { ...block, background: boundary.background }
+            : block;
         const editingProps: BlockEditingProps =
           block._type === "teamMembers"
               ? {
@@ -328,6 +282,10 @@ export default function Blocks({
         return (
           <div
             data-sanity={dataSanity}
+            data-seam-top={boundary.seamTop ? "" : undefined}
+            data-seam-bottom={boundary.seamBottom ? "" : undefined}
+            data-tuck={boundary.tuck ? "" : undefined}
+            data-tuck-below={boundary.tuckBelow ? "" : undefined}
             key={block._key}
           >
             <Component {...themedBlock} {...editingProps} />
