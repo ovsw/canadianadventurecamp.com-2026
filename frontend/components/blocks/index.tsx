@@ -135,15 +135,18 @@ export default function Blocks({
   perspective: LivePerspective;
   stega: boolean;
 }) {
-  const boundaries = resolveSectionBoundaries(blocks ?? []);
+  // A stored block whose type has no renderer (a removed section type) is
+  // skipped. Drop it before resolving boundaries so its neighbours meet
+  // as if it were not there and the trait table is never read for it.
+  const sections = (blocks ?? []).filter((block) => block._type in componentMap);
+  const boundaries = resolveSectionBoundaries(sections);
 
   return (
     <>
-      {blocks?.map((block, index) => {
-        const Component = componentMap[block._type] as
-          | React.ComponentType<Block & BlockEditingProps>
-          | undefined;
-        if (!Component) return null;
+      {sections.map((block, index) => {
+        const Component = componentMap[block._type] as React.ComponentType<
+          Block & BlockEditingProps
+        >;
 
         const blockPath = `blocks[_key=="${block._key}"]`;
         const dataSanity = stega
