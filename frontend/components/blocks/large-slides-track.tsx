@@ -84,8 +84,6 @@ export default function LargeSlidesTrack({
     return () => observer.disconnect();
   }, [slideKeys]);
 
-  const active = slides[activeIndex] ?? slides[0];
-
   return (
     <div className={styles.grid}>
       <div aria-hidden="true" className={styles.photo}>
@@ -94,6 +92,7 @@ export default function LargeSlidesTrack({
             <div
               className={styles.layer}
               data-active={index === activeIndex ? "" : undefined}
+              data-sanity={slide.sanity.image}
               key={slide.key}
             >
               {slide.image ? (
@@ -111,10 +110,11 @@ export default function LargeSlidesTrack({
                       : undefined
                   }
                 />
-              ) : null}
+              ) : (
+                <span className={styles.placeholderNumber}>{slide.number}</span>
+              )}
             </div>
           ))}
-          <p className={styles.counter}>{active?.number}</p>
         </div>
       </div>
       <ol
@@ -152,10 +152,7 @@ export default function LargeSlidesTrack({
                     src={slide.image.stackedSrc}
                   />
                 ) : (
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-0 flex items-center justify-center font-display text-6xl text-current/20"
-                  >
+                  <span aria-hidden="true" className={styles.placeholderNumber}>
                     {slide.number}
                   </span>
                 )}
