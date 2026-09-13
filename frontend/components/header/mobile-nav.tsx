@@ -20,7 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { CallDirectorsAction } from "./call-directors-action";
+import { CallDirectorsCard } from "./call-directors-card";
 import { HeaderLink } from "./header-link";
 import type { HeaderNavigationModel } from "./model";
 import { NavigationIcon } from "./navigation-icon";
@@ -105,75 +105,83 @@ export function MobileNav({
             <span className="sr-only">Close</span>
           </SheetClose>
         </SheetHeader>
-        <nav
-          aria-label="Mobile navigation"
-          className="grid flex-1 content-start gap-1 overflow-y-auto px-3 py-4"
-        >
-          <Accordion collapsible type="single">
-            {navigation.items.map((item) =>
-              item.kind === "link" ? (
-                <HeaderLink
-                  className={linkClassName}
-                  key={item.key}
-                  link={item.link}
-                  onClick={close}
-                />
-              ) : (
-                <AccordionItem className="border-b-0" key={item.key} value={item.key}>
-                  <AccordionTrigger
-                    className={cn(
-                      "min-h-11 items-center rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold hover:no-underline [&>svg]:translate-y-0",
-                      dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
-                    )}
-                  >
-                    {item.label}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid gap-1">
-                      {item.links.map((child) => (
-                        <HeaderLink
-                          className={cn(
-                            "flex min-h-11 items-start gap-3 rounded-[var(--radius-md)] p-3 transition-colors motion-fast focus-ring",
-                            dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
-                          )}
-                          key={child.key}
-                          link={child.link}
-                          onClick={close}
-                        >
-                          {child.icon ? (
-                            <span
-                              className={cn(
-                                "flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] [&_svg]:size-4",
-                                dark
-                                  ? "bg-forest-panel text-campfire-amber"
-                                  : "bg-cedar/10 text-cedar",
-                              )}
-                            >
-                              <NavigationIcon icon={child.icon} />
-                            </span>
-                          ) : null}
-                          <span className="grid gap-1">
-                            <span className="font-semibold leading-tight">{child.label}</span>
-                            {child.description ? (
+        <div className="flex flex-1 flex-col overflow-y-auto">
+          <nav
+            aria-label="Mobile navigation"
+            className="grid content-start gap-1 px-3 py-4"
+          >
+            <Accordion collapsible type="single">
+              {navigation.items.map((item) =>
+                item.kind === "link" ? (
+                  <HeaderLink
+                    className={linkClassName}
+                    key={item.key}
+                    link={item.link}
+                    onClick={close}
+                  />
+                ) : (
+                  <AccordionItem className="border-b-0" key={item.key} value={item.key}>
+                    <AccordionTrigger
+                      className={cn(
+                        // The shared accordion tints its chevron with the cream-surface
+                        // "muted" token, which disappears on the dark sheet. Retint it
+                        // from the sheet's own ink and give it a tap-sized footprint.
+                        "min-h-11 items-center rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold hover:no-underline [&>svg]:size-5 [&>svg]:translate-y-0 [&>svg]:stroke-[2.25]",
+                        dark
+                          ? "hover:bg-birch-bark/6 [&>svg]:text-birch-bark/85"
+                          : "hover:bg-cedar/8 [&>svg]:text-pine-night/70",
+                      )}
+                    >
+                      {item.label}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="grid gap-1">
+                        {item.links.map((child) => (
+                          <HeaderLink
+                            className={cn(
+                              "flex min-h-11 items-start gap-3 rounded-[var(--radius-md)] p-3 transition-colors motion-fast focus-ring",
+                              dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
+                            )}
+                            key={child.key}
+                            link={child.link}
+                            onClick={close}
+                          >
+                            {child.icon ? (
                               <span
                                 className={cn(
-                                  "text-[15px] leading-tight",
-                                  dark ? "text-birch-bark/65" : "text-pine-night/65",
+                                  "flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] [&_svg]:size-4",
+                                  dark
+                                    ? "bg-forest-panel text-campfire-amber"
+                                    : "bg-cedar/10 text-cedar",
                                 )}
                               >
-                                {child.description}
+                                <NavigationIcon icon={child.icon} />
                               </span>
                             ) : null}
-                          </span>
-                        </HeaderLink>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ),
-            )}
-          </Accordion>
-        </nav>
+                            <span className="grid gap-1">
+                              <span className="font-semibold leading-tight">{child.label}</span>
+                              {child.description ? (
+                                <span
+                                  className={cn(
+                                    "text-[15px] leading-tight",
+                                    dark ? "text-birch-bark/65" : "text-pine-night/65",
+                                  )}
+                                >
+                                  {child.description}
+                                </span>
+                              ) : null}
+                            </span>
+                          </HeaderLink>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ),
+              )}
+            </Accordion>
+          </nav>
+          <CallDirectorsCard className="mx-4 mt-auto mb-4" onClick={close} theme={theme} />
+        </div>
         <SheetFooter
           className={cn(
             "gap-4 border-t p-4",
@@ -193,7 +201,6 @@ export function MobileNav({
               onClick={close}
             />
           ))}
-          <CallDirectorsAction className="justify-self-start" onClick={close} theme={theme} />
         </SheetFooter>
       </SheetContent>
     </Sheet>
