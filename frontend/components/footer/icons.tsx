@@ -33,7 +33,13 @@ export function FooterIcon({
   name: FooterIconName;
 }) {
   return (
-    <svg aria-hidden className={className} fill="currentColor" viewBox="0 0 24 24">
+    <svg
+      aria-hidden
+      className={className}
+      data-footer-icon={name}
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
       <path d={paths[name]} />
     </svg>
   );
