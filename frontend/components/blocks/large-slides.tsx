@@ -112,7 +112,7 @@ export default function LargeSlides({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn(sectionThemeClass(background), styles.section)}
+      className={sectionThemeClass(background)}
       id={sectionId}
     >
       <header className={cn("container-content", styles.header)}>

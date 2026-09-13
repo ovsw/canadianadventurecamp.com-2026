@@ -23,8 +23,8 @@ type InnerHeroProps = InnerHeroBlock & {
  *
  * Desktop: the photo fills the section, the nav sits over it
  * (data-header-overlay), copy is left-aligned at the bottom, and the facts run
- * along the bottom under a hairline, clear of the next section's 44px
- * rounded tuck. Phones: the photo is a poster block,
+ * along the bottom under a hairline. The bottom padding is the resolved
+ * `--section-pad-bottom`, which already clears a tucked section below. Phones: the photo is a poster block,
  * the copy sits on a solid pine plate under it, and the facts become a 2x2
  * hairline grid. No video, no film button.
  */
@@ -110,7 +110,7 @@ export default function InnerHero({
       </div>
 
       {/* Copy: solid plate under the poster on phones, overlay on desktop */}
-      <div className="container-content relative z-10 flex flex-col pb-20 pt-8 lg:min-h-[min(88svh,52rem)] lg:justify-end lg:pb-24 lg:pt-40">
+      <div className="container-content relative z-10 flex flex-col pb-(--section-pad-bottom) pt-8 lg:min-h-[min(88svh,52rem)] lg:justify-end lg:pt-40">
         <div className="lg:pb-12">
           {stegaClean(eyebrow)?.trim() ? (
             <p

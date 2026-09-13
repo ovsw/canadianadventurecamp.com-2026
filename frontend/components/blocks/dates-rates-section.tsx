@@ -128,7 +128,7 @@ export default function DatesRatesSection({
   return (
     <section
       aria-labelledby={sectionId}
-      className={`relative z-0 -mt-(--section-overlap) rounded-t-section px-content-x py-section ${sectionThemeClass(background)}`}
+      className={`rounded-t-section px-content-x py-section ${sectionThemeClass(background)}`}
       id={`dates-rates-${stegaClean(_key)}`}
     >
       <div className="mx-auto max-w-[1320px]">

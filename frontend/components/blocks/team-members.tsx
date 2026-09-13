@@ -198,7 +198,7 @@ export default function TeamMembers({
     <section
       aria-labelledby={displayTitle ? titleId : undefined}
       className={cn(
-        "section-pad-lg",
+        "py-section",
         stegaClean(background) === "green"
           ? "bg-forest-floor text-birch-bark [&_.text-foreground]:!text-birch-bark [&_.text-muted-foreground]:!text-birch-bark/72"
           : stegaClean(background) === "cream"

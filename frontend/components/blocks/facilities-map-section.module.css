@@ -1,12 +1,11 @@
+/* Tuck geometry and padding come from the dispatcher wrapper and the
+   `py-section` / `px-content-x` utilities in the renderer. `position` only
+   anchors the absolute glow. */
 .section {
   position: relative;
-  z-index: 2;
-  margin-top: calc(-1 * var(--section-overlap));
   overflow: hidden;
-  border-radius: var(--radius-section) var(--radius-section) 0 0;
   background: var(--color-pine-night);
   color: var(--color-birch-bark);
-  padding: var(--section-pad) var(--gutter);
 }
 
 .glow {
@@ -703,7 +702,6 @@
 }
 
 @media (max-width: 1023px) {
-  .section { padding: var(--section-pad) var(--gutter); }
   .sectionHeader { align-items: flex-start; flex-direction: column; gap: 22px; margin-bottom: 48px; }
   .introduction { max-width: 520px; margin: 0; }
   .title { font-size: 46px; }
@@ -731,7 +729,6 @@
 }
 
 @media (max-width: 639px) {
-  .section { padding: var(--section-pad) var(--gutter); }
   .title { font-size: 36px; line-height: 1.08; }
   .title em { font-size: 42px; }
   .carousel { aspect-ratio: 1; }

@@ -69,7 +69,7 @@ export default function InternationalCampersSection({
   return (
     <section
       aria-labelledby={headingId}
-      className="relative z-[1] overflow-hidden rounded-t-section -mt-(--section-overlap) bg-pine-night text-birch-bark"
+      className="relative overflow-hidden rounded-t-section bg-pine-night text-birch-bark"
       id={`international-${stegaClean(_key)}`}
     >
       {/* Subtle green radial glow */}

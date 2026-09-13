@@ -74,7 +74,7 @@ export function SiteFooter({
 }) {
   return (
     <footer
-      className="rounded-t-[28px] bg-pine-night px-content-x pb-8 pt-16 text-birch-bark/75 phone:rounded-t-[44px] phone:pb-10 phone:pt-[100px]"
+      className="relative z-[1] -mt-(--section-overlap) rounded-t-section bg-pine-night px-content-x pb-8 pt-16 text-birch-bark/75 phone:pb-10 phone:pt-[100px]"
       data-footer-state="ready"
     >
       <div className="mx-auto max-w-[1320px]">

@@ -89,7 +89,7 @@ export default function Hero({
         className={`absolute inset-0 ${PINE_FADE_STACKED} ${PINE_FADE_DESKTOP}`}
       />
 
-      <div className="container-content relative z-10 flex min-h-[clamp(24rem,50svh,40rem)] flex-col justify-end pb-14 pt-28">
+      <div className="container-content relative z-10 flex min-h-[clamp(24rem,50svh,40rem)] flex-col justify-end pb-(--section-pad-bottom) pt-28">
         {stegaClean(eyebrow)?.trim() ? (
           <p
             className="text-eyebrow mb-5 animate-hero-rise text-accent motion-reduce:animate-none"
