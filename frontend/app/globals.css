@@ -123,7 +123,10 @@
   --seam-factor: 0.5;
   --section-pad-top: var(--section-pad);
   --section-pad-bottom: var(--section-pad);
-  /* Grain overlay for dark bands. Tune here. */
+  /* Dark band surface: a warm glow near the top, a shadow settling at the
+     bottom, and a grain over both. Tune here. */
+  --band-glow: color-mix(in oklch, var(--color-campfire-amber) 14%, transparent);
+  --band-shade: color-mix(in oklch, var(--color-pine-night) 45%, transparent);
   --grain-size: 180px;
   --grain-opacity: 0.45;
   --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
@@ -212,6 +215,8 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   z-index: 1;
 }
 
+[data-band="green"]::before,
+[data-band="night"]::before,
 [data-band="green"]::after,
 [data-band="night"]::after {
   content: "";
@@ -219,12 +224,27 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   inset: 0;
   z-index: 1;
   pointer-events: none;
+}
+
+/* Tonal variation: light falls in from the top-left, the surface darkens
+   toward the bottom-right. Sized to the band, so a long run gets one slow
+   sweep rather than a glow per section. */
+[data-band="green"]::before,
+[data-band="night"]::before {
+  background-image:
+    radial-gradient(110% 55% at 12% 0%, var(--band-glow), transparent 65%),
+    radial-gradient(95% 50% at 100% 100%, var(--band-shade), transparent 65%);
+}
+
+[data-band="green"]::after,
+[data-band="night"]::after {
   background-image: var(--grain-image);
   background-size: var(--grain-size);
   mix-blend-mode: soft-light;
   opacity: var(--grain-opacity);
 }
 
+[data-band-tuck]::before,
 [data-band-tuck]::after {
   top: calc(-1 * var(--section-overlap));
   border-top-left-radius: var(--radius-section);
