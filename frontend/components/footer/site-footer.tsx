@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { FooterLink } from "./footer-link";
+import { FooterIcon, socialIconFor } from "./icons";
 import type {
   FooterColumnModel,
   FooterLinkModel,
@@ -12,18 +13,22 @@ const contactIcons = { email: Mail, phone: Phone, pin: MapPin } as const;
 function LinkList({ links }: { links: FooterLinkModel[] }) {
   return (
     <ul className="flex flex-col items-start gap-[13px]">
-      {links.map((link) => (
-        <li key={link.key}>
-          <FooterLink
-            link={link}
-            dataSanity={undefined}
-          >
-            <span className="text-[14.5px] text-birch-bark/75 transition-colors duration-200 hover:text-campfire-amber">
-              {link.label}
-            </span>
-          </FooterLink>
-        </li>
-      ))}
+      {links.map((link) => {
+        const socialIcon = socialIconFor(link.href);
+
+        return (
+          <li key={link.key}>
+            <FooterLink link={link} dataSanity={undefined}>
+              <span className="flex items-center gap-2.5 text-[14.5px] text-birch-bark/75 transition-colors duration-200 hover:text-campfire-amber">
+                {socialIcon ? (
+                  <FooterIcon className="size-4 shrink-0" name={socialIcon} />
+                ) : null}
+                {link.label}
+              </span>
+            </FooterLink>
+          </li>
+        );
+      })}
     </ul>
   );
 }

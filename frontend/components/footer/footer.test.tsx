@@ -46,7 +46,12 @@ const model: FooterModel = {
     {
       key: "company",
       heading: "Company",
-      links: [link("about", "About", "/about")],
+      links: [
+        link("about", "About", "/about"),
+        link("instagram", "Instagram", "https://www.instagram.com/camp"),
+        link("youtube", "YouTube", "https://youtube.com/@camp"),
+        link("facebook", "Facebook", "https://m.facebook.com/camp"),
+      ],
     },
   ],
   legalLinks: [link("privacy", "Privacy", "/privacy")],
@@ -74,6 +79,18 @@ describe("SiteFooter", () => {
       "href",
       "/about",
     );
+    expect(
+      within(footer).getByRole("link", { name: "Instagram" }).querySelector("svg"),
+    ).toBeInTheDocument();
+    expect(
+      within(footer).getByRole("link", { name: "YouTube" }).querySelector("svg"),
+    ).toBeInTheDocument();
+    expect(
+      within(footer).getByRole("link", { name: "Facebook" }).querySelector("svg"),
+    ).toBeInTheDocument();
+    expect(
+      within(footer).getByRole("link", { name: "About" }).querySelector("svg"),
+    ).not.toBeInTheDocument();
     expect(
       within(footer).getByRole("link", { name: /10 Main Street/ }),
     ).toHaveAttribute("href", "https://maps.example.com");
