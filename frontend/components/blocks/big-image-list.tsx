@@ -1,4 +1,3 @@
-import SectionContainer from "@/components/ui/section-container";
 import { cn } from "@/lib/utils";
 import { urlFor } from "@/sanity/lib/image";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
@@ -52,8 +51,12 @@ export default function BigImageList({
   const headingId = `${sectionId}-title`;
 
   return (
-    <section aria-labelledby={headingId} id={sectionId}>
-      <SectionContainer className={`py-section [&>div]:container-content ${sectionThemeClass(background)}`}>
+    <section
+      aria-labelledby={headingId}
+      className={cn(sectionThemeClass(background), "py-section")}
+      id={sectionId}
+    >
+      <div className="container-content">
         <header className={styles.header}>
           <div>
             {hasText(eyebrow) ? (
@@ -167,7 +170,7 @@ export default function BigImageList({
             );
           })}
         </ol>
-      </SectionContainer>
+      </div>
     </section>
   );
 }

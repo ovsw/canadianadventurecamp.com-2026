@@ -991,12 +991,6 @@ export type CustomUrl = {
   href?: string;
 };
 
-export type SectionPadding = {
-  _type: "section-padding";
-  top?: boolean;
-  bottom?: boolean;
-};
-
 export type ButtonVariant =
   "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 
@@ -1984,7 +1978,6 @@ export type AllSanitySchemaTypes =
   | PageReference
   | PostReference
   | CustomUrl
-  | SectionPadding
   | ButtonVariant
   | SectionBackground
   | ColorVariant
