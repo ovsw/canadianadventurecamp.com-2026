@@ -35,10 +35,23 @@ describe("resolveSectionBoundaries", () => {
     ]);
   });
 
-  it("keeps an edge above a tucker even when the backgrounds match", () => {
-    expect(booleans([block("benefitCards", "green"), block("ctaBanner", "green")])).toEqual([
+  it("seams a tucker onto a matching background instead of tucking", () => {
+    expect(booleans([block("faqAccordion", "cream"), block("featureCards", "cream")])).toEqual([
+      { seamTop: false, seamBottom: true, tuck: false, tuckBelow: false },
+      { seamTop: true, seamBottom: false, tuck: false, tuckBelow: true },
+    ]);
+  });
+
+  it("lets a tucker tuck under a different background", () => {
+    expect(booleans([block("benefitCards", "green"), block("ctaBanner", "cream")])).toEqual([
       { seamTop: false, seamBottom: false, tuck: false, tuckBelow: true },
       { seamTop: false, seamBottom: false, tuck: true, tuckBelow: true },
+    ]);
+  });
+
+  it("does not tuck a first section under nothing", () => {
+    expect(booleans([block("ctaBanner", "green")])).toEqual([
+      { seamTop: false, seamBottom: false, tuck: false, tuckBelow: true },
     ]);
   });
 
@@ -75,9 +88,10 @@ describe("resolveSectionBoundaries", () => {
     ]);
     expect(result[0].background).toBe("night");
     expect(result[1].background).toBe("night");
-    // Same colour, but the lower section tucks, so the boundary stays an edge.
-    expect(result[0].seamBottom).toBe(false);
-    expect(result[1].seamTop).toBe(false);
-    expect(result[0].tuckBelow).toBe(true);
+    // Same colour: the lower tucker has nothing to curve against, so it seams.
+    expect(result[0].seamBottom).toBe(true);
+    expect(result[1].seamTop).toBe(true);
+    expect(result[1].tuck).toBe(false);
+    expect(result[0].tuckBelow).toBe(false);
   });
 });

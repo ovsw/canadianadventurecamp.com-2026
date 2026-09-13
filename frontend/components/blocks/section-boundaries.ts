@@ -25,7 +25,12 @@ export type SectionBackground = EditorBackground | "night" | "photo";
 export type SectionTrait = {
   /** Fixed background. When set, the editor field is ignored for this type. */
   background?: SectionBackground;
-  /** Rounded-top section that overlaps the section above by `--section-overlap`. */
+  /**
+   * Rounded-top section that overlaps the section above by
+   * `--section-overlap`. It only tucks when its background differs from the
+   * section above; on a matching background the curve is invisible, so the
+   * two meet at a seam instead.
+   */
   tuck?: boolean;
   /** Full-bleed hero. The boundary below a hero is always an edge. */
   hero?: boolean;
@@ -166,8 +171,9 @@ export function resolveSectionBackground(block: Block, isFinal: boolean): Sectio
 /**
  * Rules:
  * - the first section's top is an edge;
- * - two neighbours meet at a seam when they resolve to the same background,
- *   the lower one does not tuck, and the upper one is not a hero;
+ * - a tucker tucks only when its background differs from the section above;
+ * - two neighbours meet at a seam when they resolve to the same background
+ *   and the upper one is not a hero;
  * - the last section's bottom is an edge, and the footer tucks under it.
  */
 export function resolveSectionBoundaries(blocks: readonly Block[]): SectionBoundary[] {
@@ -175,30 +181,28 @@ export function resolveSectionBoundaries(blocks: readonly Block[]): SectionBound
     const trait = sectionTraits[block._type];
     return {
       background: resolveSectionBackground(block, index === blocks.length - 1),
-      tuck: trait.tuck === true,
+      tucker: trait.tuck === true,
       hero: trait.hero === true,
     };
   });
+  const tucks = sections.map(
+    (section, index) =>
+      section.tucker && index > 0 && sections[index - 1].background !== section.background,
+  );
 
   return sections.map((section, index) => {
     const above = sections[index - 1];
     const below = sections[index + 1];
     const seamTop =
-      above !== undefined &&
-      !above.hero &&
-      !section.tuck &&
-      above.background === section.background;
+      above !== undefined && !above.hero && above.background === section.background;
     const seamBottom =
-      below !== undefined &&
-      !section.hero &&
-      !below.tuck &&
-      below.background === section.background;
+      below !== undefined && !section.hero && below.background === section.background;
     return {
       background: section.background,
       seamTop,
       seamBottom,
-      tuck: section.tuck,
-      tuckBelow: below === undefined || below.tuck,
+      tuck: tucks[index],
+      tuckBelow: below === undefined || tucks[index + 1],
     };
   });
 }

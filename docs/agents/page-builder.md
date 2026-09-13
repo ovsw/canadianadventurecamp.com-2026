@@ -28,9 +28,11 @@ does not decide its own padding.
 
 **Seam and edge rule.** Each section has a top boundary and a bottom boundary.
 A boundary is a seam or an edge. Two neighbours meet at a seam when they
-resolve to the same background, the lower one does not tuck, and the upper one
-is not a hero. Every other boundary is an edge. The first section's top is an
-edge. The last section's bottom is an edge, and the footer tucks under it.
+resolve to the same background and the upper one is not a hero. Every other
+boundary is an edge. A tucker tucks only when its background differs from the
+section above; on a matching background its curve would be invisible, so it
+seams like a normal section. The first section's top is an edge. The last
+section's bottom is an edge, and the footer tucks under it.
 
 **Values.** A seam gets half the section rhythm: `--section-pad` multiplied
 by `--seam-factor` (0.5). An edge gets the full rhythm. An edge above a tucker
@@ -59,8 +61,8 @@ keyed by every block `_type`. A new section type without an entry fails
 typecheck. Declare traits like this:
 
 - `{}`: a normal section. The editor picks the background.
-- `{ tuck: true }`: a rounded-top section that overlaps the section above.
-  Add `rounded-t-section` on the section element. Do not add a negative margin
+- `{ tuck: true }`: a rounded-top section that overlaps the section above
+  when their backgrounds differ. Add `rounded-t-section` on the section element. Do not add a negative margin
   or a z-index; the wrapper applies both.
 - `{ background: "night", tuck: true }`: a fixed background. The editor field
   is ignored. Also add the `_type` to `FixedBackgroundType` in the same file,
