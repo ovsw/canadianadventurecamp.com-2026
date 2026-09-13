@@ -74,7 +74,9 @@
   --radius-pill: 999px;
 
   /* ---- Spacing ---- */
-  --spacing-section: 120px;
+  /* No `--spacing-section` token: it would make Tailwind's built-in
+     `py-section` win over the `@utility py-section` below, and the seam
+     padding from section-boundaries.ts would never apply. */
   --spacing-gutter: 56px;
 
   /* ---- Shadows ---- */
