@@ -2,6 +2,7 @@ import {
   type Block,
   hasEditorBackground,
   isEditorBackground,
+  resolveSectionBands,
   resolveSectionBoundaries,
 } from "@/components/blocks/section-boundaries";
 import { type LivePerspective } from "next-sanity/live";
@@ -140,10 +141,9 @@ export default function Blocks({
   // as if it were not there and the trait table is never read for it.
   const sections = (blocks ?? []).filter((block) => block._type in componentMap);
   const boundaries = resolveSectionBoundaries(sections);
+  const bands = resolveSectionBands(boundaries);
 
-  return (
-    <>
-      {sections.map((block, index) => {
+  const wrappers = sections.map((block, index) => {
         const Component = componentMap[block._type] as React.ComponentType<
           Block & BlockEditingProps
         >;
@@ -294,7 +294,22 @@ export default function Blocks({
             <Component {...themedBlock} {...editingProps} />
           </div>
         );
-      })}
+      });
+
+  // A band is a run of sections joined by seams: one continuous surface.
+  // The stylesheet paints the surface texture on the band, so the texture
+  // does not restart at every seam.
+  return (
+    <>
+      {bands.map((band) => (
+        <div
+          data-band={band.background}
+          data-band-tuck={band.tuck ? "" : undefined}
+          key={sections[band.start]._key}
+        >
+          {wrappers.slice(band.start, band.end)}
+        </div>
+      ))}
     </>
   );
 }

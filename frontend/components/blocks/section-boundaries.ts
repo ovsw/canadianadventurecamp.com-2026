@@ -206,3 +206,37 @@ export function resolveSectionBoundaries(blocks: readonly Block[]): SectionBound
     };
   });
 }
+
+export type SectionBand = {
+  background: SectionBackground;
+  /** Index of the first section in the band. */
+  start: number;
+  /** Index after the last section in the band. */
+  end: number;
+  /** The first section tucks over the section above, so the band's top is rounded. */
+  tuck: boolean;
+};
+
+/**
+ * Groups consecutive sections joined by seams into bands. Sections in one
+ * band share a resolved background and read as one continuous surface, so
+ * the stylesheet paints surface texture once per band rather than once per
+ * section. A boundary that is an edge always starts a new band.
+ */
+export function resolveSectionBands(boundaries: readonly SectionBoundary[]): SectionBand[] {
+  const bands: SectionBand[] = [];
+  boundaries.forEach((boundary, index) => {
+    const current = bands[bands.length - 1];
+    if (current !== undefined && boundary.seamTop) {
+      current.end = index + 1;
+      return;
+    }
+    bands.push({
+      background: boundary.background,
+      start: index,
+      end: index + 1,
+      tuck: boundary.tuck,
+    });
+  });
+  return bands;
+}
