@@ -56,6 +56,15 @@ One stylesheet rule maps the attributes to `--section-pad-top` and
 Put `py-section` on the section element. Put content in a `container-content`
 div inside it.
 
+**Bands.** `resolveSectionBands` in the same file groups seam-joined
+sections into bands, and the dispatcher wraps each band in a div with
+`data-band="<background>"` and `data-band-tuck` when its first section
+tucks. Green and night bands carry a warm glow sweep and a grain overlay
+that span the whole run, so the texture does not restart at a seam. The
+band paints no background; sections keep their own colour. The glow, shade,
+and grain tokens live in `frontend/app/globals.css` next to the rhythm
+tokens.
+
 **Trait table.** `sectionTraits` in `section-boundaries.ts` is a `Record`
 keyed by every block `_type`. A new section type without an entry fails
 typecheck. Declare traits like this:
