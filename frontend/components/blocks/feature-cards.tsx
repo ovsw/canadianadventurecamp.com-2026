@@ -21,7 +21,7 @@ type FeatureCardsProps = Extract<PageBlock, { _type: "featureCards" }> & {
 /** Field-dependent colour recipes so the two variants stay in one component. */
 const fields = {
   dark: {
-    section: "rounded-t-section text-birch-bark",
+    section: "text-birch-bark",
     eyebrow: "text-campfire-amber",
     accent: "text-campfire-amber",
     description: "text-birch-bark/70",

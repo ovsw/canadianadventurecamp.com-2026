@@ -71,8 +71,9 @@ typecheck. Declare traits like this:
 
 - `{}`: a normal section. The editor picks the background.
 - `{ tuck: true }`: a rounded-top section that overlaps the section above
-  when their backgrounds differ. Add `rounded-t-section` on the section element. Do not add a negative margin
-  or a z-index; the wrapper applies both.
+  when their backgrounds differ. Do not add `rounded-t-section`, a negative
+  margin, or a z-index on the section; the wrapper applies all three, and
+  only while the section tucks.
 - `{ background: "night", tuck: true }`: a fixed background. The editor field
   is ignored. Also add the `_type` to `FixedBackgroundType` in the same file,
   and omit `background` from its GROQ projection.
