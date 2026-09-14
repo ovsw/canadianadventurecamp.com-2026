@@ -1,4 +1,4 @@
-import { sectionThemeClass } from "./section-theme";
+import { sectionThemeClass, type SectionTheme } from "./section-theme";
 import { Button } from "@/components/ui/button";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { cn } from "@/lib/utils";
@@ -24,9 +24,12 @@ type CtaBannerProps = CtaBannerBlock & {
  *
  * Closing band: the last thing before the footer. Forest Floor field with
  * rounded top corners tucked under the section above, headline left, the two actions right, one amber
- * primary and one ghost. Nudge: a quiet Light card between sections on the
- * cream field, title-sized, for "not sure yet?" moments. Buttons stack on
- * phones in both weights. Both reveal on scroll; reduced motion skips it.
+ * primary and one ghost. Nudge: a quiet card between sections for "not sure
+ * yet?" moments; the card takes the surface one step off its field (cream on
+ * white, white on cream, Forest Panel on green) and a hairline divides copy
+ * from action on desktop. Both weights use the section rhythm and tuck like
+ * every other section. Buttons stack on phones in both weights. Both reveal
+ * on scroll; reduced motion skips it.
  */
 
 type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
@@ -115,6 +118,16 @@ function CtaButtons({
   );
 }
 
+/**
+ * The nudge card must contrast with the field it sits on: a cream card on
+ * the white field, a white card on cream, a Forest Panel on green.
+ */
+function nudgeCardClass(theme: SectionTheme) {
+  if (theme === "green") return "bg-forest-panel text-birch-bark border-birch-bark/12";
+  if (theme === "cream") return "bg-birch-bark-bright text-pine-night border-pine-night/10";
+  return "bg-birch-bark text-pine-night border-pine-night/10";
+}
+
 export default function CtaBanner({
   _key,
   background,
@@ -136,19 +149,20 @@ export default function CtaBanner({
     return (
       <section
         aria-labelledby={titleId}
-        className={`${sectionThemeClass(theme)} py-10 sm:py-14`}
+        className={`${sectionThemeClass(theme)} py-section`}
         id={`cta-banner-${cleanKey}`}
       >
         <div className="container-content">
           <div
             className={cn(
-              "grid gap-6 rounded-lg border border-pine-night/10 bg-birch-bark-bright text-pine-night px-6 py-7 sm:px-[30px] sm:py-[34px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-10",
+              "grid gap-7 rounded-xl border px-6 py-7 sm:px-[38px] sm:py-[34px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-0",
+              nudgeCardClass(theme),
               styles.reveal,
             )}
           >
-            <div className="grid gap-2">
+            <div className="grid gap-3 lg:pr-12">
               <h2
-                className="text-balance font-display text-2xl font-extrabold leading-tight tracking-[-0.01em] sm:text-3xl"
+                className="text-balance font-display text-title-lg leading-[1.05] tracking-[-0.02em] font-extrabold sm:text-[34px]"
                 data-sanity={dataAttribute?.("title")}
                 id={titleId}
               >
@@ -156,14 +170,20 @@ export default function CtaBanner({
               </h2>
               {cleanDescription ? (
                 <p
-                  className="max-w-xl text-pretty text-base/relaxed text-pine-night/70"
+                  className="max-w-[36rem] text-pretty text-[17px]/[1.6] opacity-75"
                   data-sanity={dataAttribute?.("description")}
                 >
                   {description}
                 </p>
               ) : null}
             </div>
-            <CtaButtons buttons={buttons} dataAttribute={dataAttribute} onDark={false} />
+            <div className="border-current/15 lg:border-l lg:pl-12">
+              <CtaButtons
+                buttons={buttons}
+                dataAttribute={dataAttribute}
+                onDark={theme === "green"}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -173,9 +193,7 @@ export default function CtaBanner({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(
-        "rounded-t-section py-section", sectionThemeClass(theme),
-      )}
+      className={cn("py-section", sectionThemeClass(theme))}
       id={`cta-banner-${cleanKey}`}
     >
       <div

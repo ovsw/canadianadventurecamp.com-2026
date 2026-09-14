@@ -59,7 +59,7 @@ export default function DirectorCta({
   return (
     <section
       aria-labelledby={headingId}
-      className={`${sectionThemeClass(theme)} relative overflow-hidden rounded-t-section py-section`}
+      className={`${sectionThemeClass(theme)} relative overflow-hidden py-section`}
       id={`director-cta-${sectionKey}`}
     >
       <div className="container-content">

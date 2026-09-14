@@ -187,15 +187,23 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
 }
 
 /* Tuck geometry. The wrapper, not the section, pulls a tucker up over the
-   section above and stacks it on top; the section draws only its shape
-   (`rounded-t-section`). z-index 1 sits under the sticky header (z-60) and
-   the catalogue jump bar (z-40). No overflow clipping here: the story feature
-   and large slides pin sticky frames that stop working under a clipping
-   ancestor. */
+   section above and stacks it on top. z-index 1 sits under the sticky header
+   (z-60) and the catalogue jump bar (z-40). No overflow clipping here: the
+   story feature and large slides pin sticky frames that stop working under a
+   clipping ancestor. */
 [data-tuck] {
   position: relative;
   z-index: 1;
   margin-top: calc(-1 * var(--section-overlap));
+}
+
+/* The curve belongs to the tuck, not to the block. A tucker that meets a
+   matching background sits flush at a seam; rounding it there would cut
+   notches that show the page background. The radius goes on the section
+   element, so a section with overflow clipping still clips to the curve. */
+[data-tuck] > * {
+  border-top-left-radius: var(--radius-section);
+  border-top-right-radius: var(--radius-section);
 }
 
 /* Band surface. The dispatcher wraps each run of seam-joined sections in a
