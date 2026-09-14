@@ -1791,6 +1791,23 @@ export type Page = {
   meta?: Meta;
 };
 
+export type MediaFolderReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "media.folder";
+};
+
+export type MediaFolder = {
+  _id: string;
+  _type: "media.folder";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  parent?: MediaFolderReference;
+};
+
 export type MediaTag = {
   _id: string;
   _type: "media.tag";
@@ -2009,6 +2026,8 @@ export type AllSanitySchemaTypes =
   | Category
   | Author
   | Page
+  | MediaFolderReference
+  | MediaFolder
   | MediaTag
   | SanityImagePaletteSwatch
   | SanityImagePalette
@@ -5400,6 +5419,14 @@ export type BLOG_INDEX_QUERY_RESULT =
           _type: "image";
         } | null;
       } | null;
+    }
+  | {
+      _id: "blogIndex";
+      _type: "media.folder";
+      title: null;
+      description: null;
+      blocks: null;
+      meta: null;
     }
   | {
       _id: "blogIndex";

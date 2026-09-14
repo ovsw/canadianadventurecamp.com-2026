@@ -12,4 +12,4 @@ allowBuilds:
   unrs-resolver: true
 
 patchedDependencies:
-  sanity-plugin-media@6.1.8: patches/sanity-plugin-media@6.1.8.patch
+  sanity-plugin-media@6.1.6: patches/sanity-plugin-media@6.1.6.patch
