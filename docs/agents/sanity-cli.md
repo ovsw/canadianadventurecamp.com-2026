@@ -2,7 +2,7 @@
 
 The root Studio deployment command uses Sanity's production mode. Sanity loads
 credentials from `studio/.env.local` and deployment settings from
-`studio/.env.production`:
+`studio/.env.production`, including the existing Studio app ID:
 
 ```bash
 pnpm deploy:studio

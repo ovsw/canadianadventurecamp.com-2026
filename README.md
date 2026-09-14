@@ -22,7 +22,8 @@ install -m 600 studio/.env.local.example studio/.env.local
 
 The read token powers Sanity Presentation draft previews. The auth token powers Studio-side CLI jobs and repository-scoped Sanity MCP access in Codex. Add optional integration credentials to the local env files only when the matching feature needs them. The committed `.env.local.example` files list the supported names.
 The Studio uses `studio/.env.local` for the local Website preview and the
-committed `studio/.env.production` for the deployed Website preview.
+committed `studio/.env.production` for the deployed Website preview and Studio
+app ID.
 
 Install dependencies and start both apps:
 
