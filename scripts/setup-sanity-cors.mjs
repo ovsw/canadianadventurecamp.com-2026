@@ -59,9 +59,14 @@ async function main() {
     );
   }
 
-  const desired = desiredSanityOrigins();
+  const previewUrl = process.env.SANITY_STUDIO_PREVIEW_URL?.trim();
+  if (!previewUrl) {
+    throw new Error("Missing SANITY_STUDIO_PREVIEW_URL in studio/.env.production.");
+  }
+  const productionOrigin = new URL(previewUrl).origin;
+  const desired = desiredSanityOrigins({ productionOrigin });
   console.log(`Sanity project: ${projectId}`);
-  console.log("Desired local origins (credentials enabled for website and Studio):");
+  console.log("Desired origins (credentials enabled for Website and Studio):");
   for (const entry of desired) {
     console.log(`  ${entry.origin}  credentials=${entry.credentials ? "yes" : "no"}`);
   }

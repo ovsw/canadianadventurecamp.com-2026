@@ -1,9 +1,18 @@
 # Sanity CLI
 
-The Sanity CLI does not automatically read `studio/.env.local`. Always prefix CLI commands with the auth token:
+The root Studio deployment command uses Sanity's production mode. Sanity loads
+credentials from `studio/.env.local` and deployment settings from
+`studio/.env.production`, including the existing Studio app ID:
 
 ```bash
-cd studio && SANITY_AUTH_TOKEN=$(grep SANITY_AUTH_TOKEN .env.local | cut -d= -f2) npx sanity <command>
+pnpm deploy:studio
+```
+
+The current Sanity CLI also loads `studio/.env.local` for direct commands. Run
+them from the Studio workspace so it can resolve the correct environment:
+
+```bash
+pnpm --dir studio exec sanity <command>
 ```
 
 This applies to all CLI operations: `dataset import`, `dataset export`, `deploy`, `schema extract`, etc.

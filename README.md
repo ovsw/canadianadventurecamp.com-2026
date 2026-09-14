@@ -21,6 +21,9 @@ install -m 600 studio/.env.local.example studio/.env.local
 ```
 
 The read token powers Sanity Presentation draft previews. The auth token powers Studio-side CLI jobs and repository-scoped Sanity MCP access in Codex. Add optional integration credentials to the local env files only when the matching feature needs them. The committed `.env.local.example` files list the supported names.
+The Studio uses `studio/.env.local` for the local Website preview and the
+committed `studio/.env.production` for the deployed Website preview and Studio
+app ID.
 
 Install dependencies and start both apps:
 
@@ -41,6 +44,8 @@ pnpm dev
 pnpm dev:frontend
 pnpm dev:studio
 pnpm dev:stop
+pnpm deploy:studio
+pnpm setup:sanity-cors
 pnpm page-builder:new <name>
 pnpm legacy:page <slug>
 pnpm page:text <slug>
@@ -84,10 +89,12 @@ The Website and Studio deploy separately.
 
 The Vercel project uses `frontend` as its root directory. Keep its environment values in sync with `frontend/.env.local.example`.
 
-Deploy the Studio manually after configuring its hosted environment values:
+Deploy the Studio manually after confirming that `SANITY_STUDIO_PREVIEW_URL`
+in `studio/.env.production` contains the deployed Website origin:
 
 ```bash
-pnpm --dir studio deploy
+pnpm setup:sanity-cors
+pnpm deploy:studio
 ```
 
 See `docs/deployment.md` for the production gate and complete deployment checklist.
