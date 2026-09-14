@@ -20,7 +20,7 @@ export default defineType({
   type: "object",
   icon: MessageCircle,
   description:
-    "Intro and a side link beside an accordion of selected FAQ documents.",
+    "Intro beside an accordion of selected FAQ documents.",
   initialValue: {
     background: "cream",
     eyebrow: "FAQ",
@@ -46,32 +46,6 @@ export default defineType({
       rows: 2,
       title: "Intro line",
       description: "Optional. One or two sentences under the heading.",
-    }),
-    defineField({
-      name: "link",
-      title: "Side link",
-      type: "object",
-      description:
-        'Optional. A small label and a link under the intro, e.g. "Still unsure?" / "Talk to the Directors".',
-      fields: [
-        defineField({
-          name: "title",
-          type: "string",
-          title: "Label",
-          description: 'Small line above the link, e.g. "Still unsure?"',
-        }),
-        defineField({
-          name: "description",
-          type: "string",
-          title: "Link text",
-          description: 'The link itself, e.g. "Talk to the Directors".',
-        }),
-        defineField({
-          name: "url",
-          type: "customUrl",
-          title: "Destination",
-        }),
-      ],
     }),
     defineField({
       name: "faqs",

@@ -1,6 +1,5 @@
 import { groq } from "next-sanity";
 import { simpleRichTextQuery } from "./shared/simple-rich-text";
-import { urlInternalHref } from "./shared/internal-href";
 
 // @sanity-typegen-ignore
 export const faqAccordionQuery = groq`
@@ -18,16 +17,6 @@ export const faqAccordionQuery = groq`
       "answer": coalesce(@->.body, @->.richText)[]{
         ${simpleRichTextQuery}
       }
-    }),
-    link{
-      title,
-      description,
-      "openInNewTab": url.openInNewTab,
-      "href": select(
-        url.type == "internal" => ${urlInternalHref},
-        url.type == "external" => url.external,
-        url.href
-      )
-    }
+    })
   }
 `;
