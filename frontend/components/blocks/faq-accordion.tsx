@@ -6,13 +6,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { getSafeLinkHref } from "@/lib/safe-href";
 import { cn } from "@/lib/utils";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import { ArrowUpRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { stegaClean } from "next-sanity";
-import Link from "next/link";
 import styles from "./faq-accordion.module.css";
 import { sectionThemeClass } from "./section-theme";
 
@@ -25,10 +23,11 @@ type FaqAccordionProps = Extract<PageBlock, { _type: "faqAccordion" }> & {
 };
 
 /*
- * FAQ accordion — intro and side link beside the questions.
+ * FAQ accordion — intro beside the questions.
  *
- * Desktop: 0.4fr sidebar (eyebrow, headline with the script aside, intro,
- * side link) and a 1fr accordion. Phones: intro, accordion, then the link.
+ * Desktop: 0.4fr sidebar (eyebrow, headline with the script aside, intro)
+ * and a 1fr accordion. Phones: intro, then accordion. A follow-up prompt
+ * belongs in a CTA nudge section after this one, not inside it.
  * Cream field by default (trust content lives on cream); the dark field is
  * for pages where the section before it is already cream.
  */
@@ -42,7 +41,6 @@ export default function FaqAccordion({
   dataAttribute,
   eyebrow,
   faqs,
-  link,
   subtitle,
   title,
   background,
@@ -55,11 +53,6 @@ export default function FaqAccordion({
   const sectionKey = stegaClean(_key);
   const headingId = `faq-accordion-${sectionKey}-title`;
   const defaultValue = visibleFaqs[0]?._key || visibleFaqs[0]?._id || undefined;
-
-  const linkHref = getSafeLinkHref(link?.href);
-  const linkText = stegaClean(link?.description)?.trim();
-  const linkLabel = stegaClean(link?.title)?.trim();
-  const sideLink = linkHref && linkText ? { href: linkHref, text: linkText } : null;
 
   const headingComponents: PortableTextComponents = {
     block: { normal: ({ children }) => <>{children}</> },
@@ -136,7 +129,7 @@ export default function FaqAccordion({
 
           <Accordion
             className={cn(
-              "w-full border-t lg:row-span-2",
+              "w-full border-t",
               cream ? "border-pine-night/14" : "border-birch-bark/16",
               styles.reveal,
             )}
@@ -189,37 +182,6 @@ export default function FaqAccordion({
             })}
           </Accordion>
 
-          {sideLink ? (
-            <div
-              className={cn("lg:col-start-1 lg:row-start-2 lg:self-start", styles.reveal)}
-              data-sanity={dataAttribute?.("link")}
-            >
-              {linkLabel ? (
-                <p
-                  className={cn(
-                    "text-label",
-                    cream ? "text-pine-night/50" : "text-birch-bark/55",
-                  )}
-                >
-                  {linkLabel}
-                </p>
-              ) : null}
-              <Link
-                className={cn(
-                  "focus-ring mt-3 inline-flex w-fit items-center gap-2 font-semibold transition-colors motion-base motion-reduce:transition-none",
-                  cream
-                    ? "text-cedar hover:text-cedar-deep"
-                    : "text-moss hover:text-sunlit-moss",
-                )}
-                href={sideLink.href}
-                rel={link?.openInNewTab ? "noopener noreferrer" : undefined}
-                target={link?.openInNewTab ? "_blank" : undefined}
-              >
-                {sideLink.text}
-                <ArrowUpRight aria-hidden="true" className="size-4" />
-              </Link>
-            </div>
-          ) : null}
         </div>
       </div>
     </section>
