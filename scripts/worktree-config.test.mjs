@@ -245,11 +245,11 @@ test("manual overrides must be complete, paired, and allowlisted", () => {
   );
 });
 
-test("Sanity origins cover local services and the production preview", () => {
+test("Sanity origins cover local services, hosted Studio, and the production preview", () => {
   const productionOrigin = "https://cacweb-2026.vercel.app";
   const origins = desiredSanityOrigins({ productionOrigin });
-  assert.equal(origins.length, SLOT_COUNT * 2 + 1);
-  assert.equal(new Set(origins.map(({ origin }) => origin)).size, SLOT_COUNT * 2 + 1);
+  assert.equal(origins.length, SLOT_COUNT * 2 + 2);
+  assert.equal(new Set(origins.map(({ origin }) => origin)).size, SLOT_COUNT * 2 + 2);
   for (let slot = 0; slot < SLOT_COUNT; slot += 1) {
     assert.deepEqual(origins[slot * 2], {
       origin: `http://localhost:${FRONTEND_BASE_PORT + slot}`,
@@ -260,6 +260,10 @@ test("Sanity origins cover local services and the production preview", () => {
       credentials: true,
     });
   }
+  assert.deepEqual(origins.at(-2), {
+    origin: "https://cac-2026.sanity.studio",
+    credentials: true,
+  });
   assert.deepEqual(origins.at(-1), {
     origin: productionOrigin,
     credentials: true,

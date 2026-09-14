@@ -370,7 +370,12 @@ export function desiredSanityOrigins({ productionOrigin } = {}) {
     ],
   );
 
+  // Presentation connects to the Live Content API from the hosted Studio too.
+  const origins = [
+    ...localOrigins,
+    { origin: "https://cac-2026.sanity.studio", credentials: true },
+  ];
   return productionOrigin
-    ? [...localOrigins, { origin: productionOrigin, credentials: true }]
-    : localOrigins;
+    ? [...origins, { origin: productionOrigin, credentials: true }]
+    : origins;
 }
