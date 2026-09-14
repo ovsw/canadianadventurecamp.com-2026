@@ -268,4 +268,11 @@ test("Sanity origins cover local services, hosted Studio, and the production pre
     origin: productionOrigin,
     credentials: true,
   });
+
+  const originsWithoutProduction = desiredSanityOrigins();
+  assert.equal(originsWithoutProduction.length, SLOT_COUNT * 2 + 1);
+  assert.deepEqual(originsWithoutProduction.at(-1), {
+    origin: "https://cac-2026.sanity.studio",
+    credentials: true,
+  });
 });
