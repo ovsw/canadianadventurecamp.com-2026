@@ -17,10 +17,12 @@ Vercel may create preview deployments for pull requests. Production deploys come
 
 ## Studio on Sanity
 
-Add the values from `studio/.env.local.example`, then deploy manually from the repository root:
+Add the local values from `studio/.env.local.example`. Confirm that the
+deployed Website origin in `studio/.env.production` is correct. Then deploy
+manually from the repository root:
 
 ```bash
-pnpm --dir studio deploy
+pnpm deploy:studio
 ```
 
 Studio deployment remains manual. Vercel deployment uses the existing project configuration and credentials.

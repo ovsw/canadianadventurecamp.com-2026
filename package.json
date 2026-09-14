@@ -8,6 +8,7 @@
     "dev": "pnpm --parallel -r run dev",
     "dev:frontend": "pnpm --dir frontend dev",
     "dev:studio": "pnpm --dir studio dev",
+    "deploy:studio": "pnpm --dir studio deploy",
     "setup:worktree": "node scripts/setup-worktree.mjs",
     "dev:worktree": "node scripts/dev-worktree.mjs",
     "dev:stop": "node scripts/dev-stop.mjs",
