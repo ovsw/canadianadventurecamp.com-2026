@@ -45,6 +45,7 @@ pnpm dev:frontend
 pnpm dev:studio
 pnpm dev:stop
 pnpm deploy:studio
+pnpm setup:sanity-cors
 pnpm page-builder:new <name>
 pnpm legacy:page <slug>
 pnpm page:text <slug>
@@ -92,6 +93,7 @@ Deploy the Studio manually after confirming that `SANITY_STUDIO_PREVIEW_URL`
 in `studio/.env.production` contains the deployed Website origin:
 
 ```bash
+pnpm setup:sanity-cors
 pnpm deploy:studio
 ```
 

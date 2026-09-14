@@ -22,6 +22,7 @@ deployed Website origin in `studio/.env.production` is correct. Then deploy
 manually from the repository root:
 
 ```bash
+pnpm setup:sanity-cors
 pnpm deploy:studio
 ```
 
@@ -30,7 +31,8 @@ Studio deployment remains manual. Vercel deployment uses the existing project co
 ## Before the first production deploy
 
 - Run `pnpm verify`.
-- Add the Website and Studio origins to the Sanity project's CORS settings.
+- Run `pnpm setup:sanity-cors` to add the Website and Studio origins to the
+  Sanity project's CORS settings.
 - Confirm the Vercel root directory is `frontend`.
 - Confirm the GitHub `Release gate` check is required on `main`.
 - Confirm the Studio hostname is correct.

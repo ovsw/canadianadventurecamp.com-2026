@@ -18,7 +18,7 @@
     "sanity:query": "pnpm --dir studio sanity:query",
     "page:seed": "pnpm --dir studio page:seed",
     "legacy:page": "pnpm --dir studio legacy:page",
-    "setup:sanity-cors": "node --env-file=studio/.env.local scripts/setup-sanity-cors.mjs",
+    "setup:sanity-cors": "node --env-file=studio/.env.local --env-file=studio/.env.production scripts/setup-sanity-cors.mjs",
     "page-builder:new": "node scripts/create-page-builder-block.mjs",
     "impeccable:live": "\"$HOME/.claude/skills/impeccable/scripts/impeccable\" live --target frontend",
     "impeccable:stop": "\"$HOME/.claude/skills/impeccable/scripts/impeccable\" live-server stop",
