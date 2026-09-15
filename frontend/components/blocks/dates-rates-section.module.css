@@ -69,12 +69,20 @@
   opacity: 1;
 }
 
+/* Calendar track: one gap value insets the bar on every side, so a bar that
+   ends mid-season looks the same as one that ends at a season edge. */
+.track {
+  --bar-gap: 5px;
+}
+
 /* Track bar: slides between lengths, turns amber on row hover.
-   The "Enroll" label inside inherits currentColor. */
+   The "Enroll" label inside inherits currentColor.
+   left/right place the bar on the date scale; the margin does the insetting,
+   so both edges keep the gap no matter where the session falls. */
 .bar {
   position: absolute;
-  top: 5px;
-  bottom: 5px;
+  inset-block: var(--bar-gap);
+  margin-inline: var(--bar-gap);
   border-radius: var(--radius-xs);
   background: var(--section-accent);
   color: var(--color-birch-bark);
@@ -84,7 +92,7 @@
   .bar {
     transition:
       left 0.65s cubic-bezier(0.2, 0.7, 0.2, 1),
-      width 0.65s cubic-bezier(0.2, 0.7, 0.2, 1),
+      right 0.65s cubic-bezier(0.2, 0.7, 0.2, 1),
       background 0.4s ease,
       color 0.4s ease;
   }
