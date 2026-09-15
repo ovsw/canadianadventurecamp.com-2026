@@ -142,6 +142,13 @@ on the card. No schema/frontend work, GitHub plan, dedicated worktree, seed
 file, or review agent belongs to content drafting. Code development is a
 separate task. Avatars live in `docs/avatars.md`.
 
+### Build flow
+
+Before `/to-spec`, `/to-tickets`, `/implement`, or `/tdd` runs, read
+`docs/agents/build-flow.md`. Its architectural flag, test policy, and closing
+steps replace the ones written inside those skills. `/implement` stops after
+the commit; it does not run the full suite or `/code-review`.
+
 ### Page Builder work
 
 Before adding or changing a Page Builder section, its fields, or its stored
