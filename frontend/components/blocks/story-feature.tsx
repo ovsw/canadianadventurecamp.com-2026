@@ -251,8 +251,9 @@ export default function StoryFeature({
             className={cn(styles.photo, "m-0 min-w-0")}
             data-sanity={dataAttribute?.("image")}
           >
-            <div className={cn(styles.frame, field.media)}>
-              <Image
+            <div className={styles.stage}>
+              <div className={cn(styles.frame, field.media)}>
+                <Image
                 alt={stegaClean(image?.alt)?.trim() || ""}
                 blurDataURL={image?.asset?.metadata?.lqip || undefined}
                 className="object-cover"
@@ -260,7 +261,8 @@ export default function StoryFeature({
                 placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
                 sizes="(min-width: 1024px) 60vw, 100vw"
                 src={urlFor(image!).width(1400).height(1600).url()}
-              />
+                />
+              </div>
             </div>
           </figure>
         ) : null}
