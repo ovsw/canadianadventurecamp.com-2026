@@ -120,14 +120,15 @@
   z-index: 2;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(0deg, rgb(13 18 8 / 62%), rgb(13 18 8 / 0%) 40%);
+  background: linear-gradient(0deg, rgb(13 18 8 / 74%), rgb(13 18 8 / 0%) 40%);
 }
 
+/* Markers and captions are chips, not buttons: a mark or a word on the
+   photo, with no border, fill, or radius (The Pill Is a Button Rule). The
+   shade gradients below carry their legibility. */
 .carouselCaption,
 .mapChip,
 .coordinateChip {
-  border: 1px solid rgb(243 239 226 / 22%);
-  background: rgb(13 18 8 / 72%);
   color: var(--color-birch-bark);
   font-family: var(--font-mono);
   font-size: 14px;
@@ -139,12 +140,7 @@
   z-index: 3;
   bottom: 18px;
   left: 18px;
-  border-radius: 999px;
-  padding: 8px 14px;
   letter-spacing: 0.14em;
-  /* No backdrop blur (it repaints constantly over moving slides); the
-     near-opaque background keeps the text readable instead. */
-  background: rgb(13 18 8 / 85%);
 }
 
 .carouselButton {
@@ -317,7 +313,7 @@
   background:
     linear-gradient(
       180deg,
-      rgb(13 18 8 / 38%),
+      rgb(13 18 8 / 56%),
       rgb(13 18 8 / 4%) 26%,
       rgb(13 18 8 / 4%) 58%,
       rgb(13 18 8 / 50%)
@@ -534,14 +530,12 @@
   left: 22px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   pointer-events: none;
 }
 
 .mapChip,
 .coordinateChip {
-  border-radius: 999px;
-  padding: 8px 14px;
   letter-spacing: 0.16em;
 }
 

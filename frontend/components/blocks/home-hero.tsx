@@ -164,7 +164,7 @@ export default function HomeHero({
         {/* Badge — dropped on phones; the poster + headline carry the opening */}
         {stegaClean(badge)?.trim() ? (
           <p
-            className="mb-6 hidden w-fit items-center gap-2.5 rounded-full border border-white/35 bg-pine-night/60 px-5 py-2 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-white/95 lg:flex"
+            className="mb-6 hidden w-fit items-center gap-2.5 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-white/85 lg:flex"
             data-sanity={dataAttribute?.("badge")}
           >
             <span

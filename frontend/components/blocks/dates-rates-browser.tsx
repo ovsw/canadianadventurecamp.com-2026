@@ -241,7 +241,7 @@ export default function DatesRatesBrowser({
                         {row.weeksLabel}
                       </span>
                     </span>
-                    <span className="relative block h-10 overflow-hidden rounded-pill bg-pine-night/5">
+                    <span className="relative block h-10 overflow-hidden rounded-xs bg-pine-night/5">
                       {/* Padded coordinate system: bars at 0%/100% keep a 5px gap from the track ends. */}
                       <span className="absolute inset-y-0 left-[5px] right-[5px] block">
                         {/* Mobile dividers: the desktop overlay grid is hidden below md. */}
