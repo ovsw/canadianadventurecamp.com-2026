@@ -109,8 +109,8 @@ components:
     backgroundColor: "transparent"
     textColor: "{colors.birch-bark}"
     typography: "{typography.label}"
-    rounded: "{rounded.pill}"
-    padding: "7px 12px"
+    rounded: "0"
+    padding: "0"
   card-light:
     backgroundColor: "{colors.birch-bark}"
     textColor: "{colors.pine-night}"
@@ -137,7 +137,7 @@ components:
 
 The site reads like a trail map of Adventure Island that a parent can trust and a kid wants to read. Deep forest greens are the paper; readable annotations are the map legend; a handwritten Campfire Amber script is the note scrawled in the margin by someone who has actually been there. Photos are the terrain. The voice is bold, warm, and confident: big type that says the thing plainly, then a wink in amber.
 
-Density is high but never cramped. Sections are full-bleed colour fields (dark green, pine black, birch cream) that alternate like day and night on the lake, with content sitting on a wide 1320px measure. Inside those fields, information is packed tight: hairline-divided grids, pill chips, session bars, numbered programs. Every interactive thing moves a little when touched. Nothing is decorative for its own sake; the map legend, the stamp, the script all carry meaning.
+Density is high but never cramped. Sections are full-bleed colour fields (dark green, pine black, birch cream) that alternate like day and night on the lake, with content sitting on a wide 1320px measure. Inside those fields, information is packed tight: hairline-divided grids, marked chips, session bars, numbered programs. Every interactive thing moves a little when touched. Nothing is decorative for its own sake; the map legend, the stamp, the script all carry meaning.
 
 Confirmed rejections: no soft pastel "summer camp" palette, no rounded-bubbly kid branding, no stock-photo hero with a gradient overlay and centred text. The old site's logo and colours are not binding.
 
@@ -145,7 +145,7 @@ Confirmed rejections: no soft pastel "summer camp" palette, no rounded-bubbly ki
 - Forest-dark fields as the default canvas; cream fields for money, trust, and forms.
 - One accent, Campfire Amber, reserved for action, emphasis, and handwritten notes.
 - Three voices of type: Bricolage display, Archivo body, optional monospace for data, plus Caveat script for the human aside.
-- Pills are reserved for controls and compact tags; large soft radii belong to media and cards; hairline borders use translucent cream.
+- Pills are reserved for buttons and nothing else; a label is a mark and a word, with no container; large soft radii belong to media and cards; hairline borders use translucent cream.
 - Tonal layering for depth; shadows appear only on lift or under hero media.
 - Motion on scroll and hover is constant but short and eased; it reveals, never loops.
 
@@ -233,7 +233,11 @@ Depth is tonal. Forest Panel sits on Forest Floor; Forest Floor sits on Pine Nig
 
 ## Shapes
 
-Two silhouettes: the pill and the soft slab. Every button, chip, label, stamp, and marker is a full pill (999px). Every media frame, card, and panel is a soft slab at 22-26px, with 14px for inputs and 8px for small inner thumbnails, 3px for bars and ticks. Circles (50%) are reserved for dots, avatars, and the 26px arrow button. The footer and the final CTA band round only their top corners at 44px, like the page being tucked into an envelope.
+Two silhouettes: the pill and the soft slab. Every button is a full pill (999px). Every media frame, card, and panel is a soft slab at 22-26px, with 14px for inputs and 8px for small inner thumbnails, 3px for bars and ticks. Circles (50%) are reserved for dots, avatars, and icon buttons. The footer and the final CTA band round only their top corners at 44px, like the page being tucked into an envelope.
+
+**The Pill Is a Button Rule.** The pill silhouette means "press me". A chip, label, tag, marker, or badge is never a pill and never carries a border or a fill, because a bordered pill of text is indistinguishable from a ghost button. A label is a small mark (a dot, a check, a number) followed by a word in the label face. Decided 2026-09-15; the retrofit of existing pill labels is tracked as its own task.
+
+A slab is a rectangle with soft corners that sits on a field, so its corners have a surface to rest against. A field is a full-bleed colour or photo that runs to the viewport edge; it has no corners of its own. A photo that bleeds to a section boundary is a field at that boundary and stays square there; it may round a corner only where the boundary is a seam, because the same colour continues past it.
 
 Borders are 1px (1.5px on buttons and inputs) and always translucent: cream at 12-22% on dark, pine at 10-18% on cream. No solid grey borders. Media is always clipped to its slab; images inside a slab may scale on hover but never escape it.
 
@@ -251,9 +255,9 @@ Tactile and confident. Everything that can be touched answers: pills lift, arrow
 - **Arrow trailing:** "Enroll →" style arrows are text glyphs; in cards the arrow is a 26px circle outline that fills amber and rotates -45deg on hover.
 
 ### Chips / Labels
-- **Style:** Archivo 14px, normal case, modest tracking, pill, 7px 12px padding.
-- **Glass (on media):** Birch Bark text on 55% Pine Night fill, blur(8px), 1px Birch Bark at 22% border.
-- **Outline (on cream):** Pine Night at 70% text, 1px Pine Night at 18% border; hover border to Campfire Amber at 85% with -2px lift.
+- **Style:** a mark then a word. Archivo 14px, normal case, modest tracking, no container, no border, no fill, no radius. The mark is a 6-8px dot, a 16px check, or a mono number, in the field's accent (Campfire Amber on dark, Cedar on cream); the word is the field's text colour at 70-85%. Chips in a row sit 20px apart with no dividers.
+- **On media:** the same, set over a soft Pine Night gradient at the image edge rather than inside a glass capsule.
+- **Legacy pill chips** (bordered, 7px 12px, 999px) are retired; see The Pill Is a Button Rule.
 - **Stamp:** Campfire Amber fill, Pine Night text, 700 weight, 0.14em, rotated -7deg, pops in with a scale-down from 1.7.
 
 ### Cards / Containers
@@ -299,7 +303,7 @@ Every section opens the same way: Archivo eyebrow (14px, 600 weight, amber or ce
 - **Do** keep Campfire Amber scarce: one button, one script phrase, one label per viewport (The One Fire Rule).
 - **Do** derive every secondary text, border, and divider from the field's text colour at reduced alpha (The Translucent Ink Rule).
 - **Do** set annotations at 14px or larger, in normal case with modest tracking and clear contrast (The Annotation Rule).
-- **Do** use pills for compact controls and tags, and 22-26px slabs for anything that frames media or content.
+- **Do** use pills for buttons only, marks-plus-words for labels, and 22-26px slabs for anything that frames media or content.
 - **Do** keep cards flat at rest and lift them only on hover or focus (The Flat-Until-Touched Rule).
 - **Do** choose white, cream, or green per section for clear separation, and end with a light section before the footer.
 - **Do** drive scroll reveals with `animation-timeline: view()` and provide a no-motion path under `prefers-reduced-motion`.
