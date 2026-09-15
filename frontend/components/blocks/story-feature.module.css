@@ -47,8 +47,14 @@
       minmax(var(--gutter), 1fr);
   }
 
+  /* Both items name their row. Auto-placement would otherwise push the copy
+     to a second row whenever the photo starts in a later column than the
+     copy (the mirrored case), and the photo's row would then collapse: the
+     figure has no intrinsic height here, because the image inside it is
+     absolutely positioned. */
   .photo {
     grid-column: 1 / 3;
+    grid-row: 1;
     aspect-ratio: auto;
     min-height: 100%;
   }
@@ -81,6 +87,7 @@
 
   .copy {
     grid-column: 3 / 4;
+    grid-row: 1;
     padding-inline: clamp(2.5rem, 5vw, 5.5rem) 0;
     padding-block: var(--section-pad-top) var(--section-pad-bottom);
   }
