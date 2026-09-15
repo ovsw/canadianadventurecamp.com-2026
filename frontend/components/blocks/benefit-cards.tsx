@@ -159,7 +159,7 @@ export default function BenefitCards({
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "flex size-11 items-center justify-center rounded-pill border [&_svg]:size-5",
+                      "flex size-11 items-center justify-center rounded-full border [&_svg]:size-5",
                       cream
                         ? "border-pine-night/18 text-cedar"
                         : "border-birch-bark/22 text-moss",

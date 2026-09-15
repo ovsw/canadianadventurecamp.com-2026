@@ -258,9 +258,16 @@ export default function FeatureCards({
                               src={getFeatureCardImageUrl(card.image)}
                             />
                           ) : null}
+                          {/* The number is a chip mark, so it sits on a soft
+                              Pine Night gradient at the image edge rather than
+                              inside a glass capsule (The Pill Is a Button Rule). */}
                           <span
                             aria-hidden="true"
-                            className="absolute left-5 top-5 rounded-pill bg-pine-night/80 px-3 py-1.5 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-birch-bark transition-colors duration-300 group-hover/card:text-campfire-amber"
+                            className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pine-night/70 to-transparent"
+                          />
+                          <span
+                            aria-hidden="true"
+                            className="absolute left-6 top-5 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-birch-bark transition-colors duration-300 group-hover/card:text-campfire-amber"
                           >
                             {number}
                           </span>

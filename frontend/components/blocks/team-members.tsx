@@ -37,9 +37,13 @@ function ProfileMeta({
   return (
     <div className="flex flex-wrap items-center gap-2.5">
       <span
-        className="rounded-full bg-primary px-3 py-1.5 typo-meta-label text-primary-foreground"
+        className="inline-flex items-center gap-2.5 text-label text-foreground/75"
         data-sanity={memberDataAttribute?.(member._id, "role")}
       >
+        <span
+          aria-hidden="true"
+          className="size-[7px] shrink-0 rounded-full bg-primary"
+        />
         {member.role}
       </span>
     </div>
