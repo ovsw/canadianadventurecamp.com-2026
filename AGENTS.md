@@ -92,8 +92,7 @@ Add or run focused tests only when Ovi asks, or when the change involves:
 - subtle pure logic that is hard to verify manually; or
 - a regression that is expensive to reproduce.
 
-`pnpm verify` is a release and pull-request gate. Run it only when Ovi asks for
-that gate, not during implementation.
+`pnpm verify` is a release and pull-request gate. Always runn it on a PR.
 
 ## Review agents
 
