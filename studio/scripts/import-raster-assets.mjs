@@ -24,8 +24,8 @@ const requiredEnvironment = [
   "SANITY_STUDIO_PROJECT_ID",
   "SANITY_STUDIO_DATASET",
   "SANITY_AUTH_TOKEN",
-  "SANITY_STUDIO_RASTER_API_KEY",
-  "SANITY_STUDIO_RASTER_ORG_ID",
+  "RASTER_API_KEY",
+  "RASTER_ORG_ID",
 ];
 
 for (const name of requiredEnvironment) {
@@ -37,8 +37,8 @@ for (const name of requiredEnvironment) {
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID.trim();
 const dataset = process.env.SANITY_STUDIO_DATASET.trim();
 const sanityToken = process.env.SANITY_AUTH_TOKEN.trim();
-const rasterApiKey = process.env.SANITY_STUDIO_RASTER_API_KEY.trim();
-const rasterOrgId = process.env.SANITY_STUDIO_RASTER_ORG_ID.trim();
+const rasterApiKey = process.env.RASTER_API_KEY.trim();
+const rasterOrgId = process.env.RASTER_ORG_ID.trim();
 
 if (projectId !== "bf76qlx9" || dataset !== "production") {
   throw new Error(

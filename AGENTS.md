@@ -158,6 +158,12 @@ content shape, read `docs/agents/page-builder.md`.
 
 Always pass `SANITY_AUTH_TOKEN` from `studio/.env.local` when invoking the Sanity CLI. See `docs/agents/sanity-cli.md`.
 
+### Raster image descriptions
+
+New images get their searchable `description` from Raster's AI. After uploading
+images to Sanity, upload the same files to a Raster library and run
+`pnpm raster:sync --library <id> --apply`. See `docs/agents/raster-descriptions.md`.
+
 ### Development workflow
 
 Before changing workspace dependencies, Sanity schemas, GROQ queries, or development scripts, consult the relevant section of `README.md`.
