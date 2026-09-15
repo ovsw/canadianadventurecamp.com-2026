@@ -162,7 +162,7 @@ Always pass `SANITY_AUTH_TOKEN` from `studio/.env.local` when invoking the Sanit
 
 New images get their searchable `description` from Raster's AI. After uploading
 images to Sanity, upload the same files to a Raster library and run
-`pnpm raster:sync --library <id> --apply`. See `docs/agents/raster-descriptions.md`.
+`pnpm raster:sync --apply` (defaults to the library with the newest upload). See `docs/agents/raster-descriptions.md`.
 
 ### Development workflow
 

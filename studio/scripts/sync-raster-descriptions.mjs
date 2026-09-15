@@ -8,11 +8,13 @@
 // case-insensitively against the Raster asset `name` (Raster strips extensions
 // on upload). Raster names that map to more than one description are skipped.
 //
-// Dry-run by default. `--apply` writes. Only `description` is written, and only
-// where Sanity has none, unless `--overwrite` is passed.
+// `--library <id>` picks the Raster library. Without it, the library holding the
+// most recently uploaded asset is used. Dry-run by default. `--apply` writes.
+// Only `description` is written, and only where Sanity has none, unless
+// `--overwrite` is passed.
 //
-//   node --env-file=.env.local scripts/sync-raster-descriptions.mjs --library latest
-//   node --env-file=.env.local scripts/sync-raster-descriptions.mjs --library latest --apply
+//   node --env-file=.env.local scripts/sync-raster-descriptions.mjs
+//   node --env-file=.env.local scripts/sync-raster-descriptions.mjs --library old --apply
 import { createClient } from "@sanity/client";
 import { assertCacProductionTarget } from "./assert-cac-production-target.mjs";
 
@@ -24,9 +26,9 @@ const args = process.argv.slice(2);
 const APPLY = args.includes("--apply");
 const OVERWRITE = args.includes("--overwrite");
 const libraryIndex = args.indexOf("--library");
-const RASTER_LIBRARY_ID = libraryIndex === -1 ? "" : (args[libraryIndex + 1] ?? "");
-if (!RASTER_LIBRARY_ID) {
-  throw new Error("Usage: sync-raster-descriptions.mjs --library <raster-library-id> [--apply] [--overwrite]");
+const requestedLibraryId = libraryIndex === -1 ? "" : (args[libraryIndex + 1] ?? "");
+if (libraryIndex !== -1 && !requestedLibraryId) {
+  throw new Error("Usage: sync-raster-descriptions.mjs [--library <raster-library-id>] [--apply] [--overwrite]");
 }
 
 for (const name of [
@@ -53,34 +55,56 @@ const sanity = createClient({
   useCdn: false,
 });
 
+const rasterBase = `https://api.raster.app/organizations/${encodeURIComponent(rasterOrgId)}`;
+const rasterHeaders = {
+  Authorization: `Bearer ${rasterApiKey}`,
+  "Api-Version": RASTER_API_VERSION,
+};
+
+async function rasterGet(path) {
+  const response = await fetch(`${rasterBase}${path}`, { headers: rasterHeaders });
+  if (!response.ok) throw new Error(`Raster ${response.status} ${path}: ${await response.text()}`);
+  const { data } = await response.json();
+  return Array.isArray(data) ? data : [];
+}
+
+async function listRasterAssets(libraryId) {
+  const assets = [];
+  for (let page = 1; ; page += 1) {
+    const data = await rasterGet(
+      `/libraries/${encodeURIComponent(libraryId)}/assets?page=${page}&pageSize=${PAGE_SIZE}`,
+    );
+    assets.push(...data);
+    if (data.length < PAGE_SIZE) break;
+  }
+  return assets;
+}
+
+// Libraries carry no creation date, so the default library is the one whose
+// newest asset was uploaded most recently. The list order is not documented,
+// so every page is read.
+async function findMostRecentlyUploadedLibrary() {
+  let best = null;
+  for (const library of await rasterGet("/libraries")) {
+    const assets = await listRasterAssets(library.id);
+    const newest = Math.max(0, ...assets.map((asset) => Number(asset.created) || 0));
+    if (!best || newest > best.newest) best = { id: library.id, newest, assets };
+  }
+  if (!best) throw new Error("No Raster libraries visible to this API key");
+  return best;
+}
+
 const stem = (filename) =>
   filename
     .replace(/\.[a-z0-9]+$/i, "")
     .trim()
     .toLowerCase();
 
-async function listRasterAssets() {
-  const assets = [];
-  for (let page = 1; ; page += 1) {
-    const params = new URLSearchParams({ page: String(page), pageSize: String(PAGE_SIZE) });
-    const response = await fetch(
-      `https://api.raster.app/organizations/${encodeURIComponent(rasterOrgId)}/libraries/${encodeURIComponent(RASTER_LIBRARY_ID)}/assets?${params}`,
-      {
-        headers: {
-          Authorization: `Bearer ${rasterApiKey}`,
-          "Api-Version": RASTER_API_VERSION,
-        },
-      },
-    );
-    if (!response.ok) throw new Error(`Raster ${response.status}: ${await response.text()}`);
-    const { data } = await response.json();
-    assets.push(...(Array.isArray(data) ? data : []));
-    if (!Array.isArray(data) || data.length < PAGE_SIZE) break;
-  }
-  return assets;
-}
-
-const rasterAssets = await listRasterAssets();
+const selected = requestedLibraryId
+  ? { id: requestedLibraryId, assets: await listRasterAssets(requestedLibraryId) }
+  : await findMostRecentlyUploadedLibrary();
+const RASTER_LIBRARY_ID = selected.id;
+const rasterAssets = selected.assets;
 const descriptionByStem = new Map();
 const ambiguousStems = new Set();
 let undescribedInRaster = 0;
@@ -119,7 +143,7 @@ for (const asset of sanityAssets) {
 }
 const unmatchedRaster = [...descriptionByStem.keys()].filter((key) => !matchedStems.has(key));
 
-console.log(`Mode: ${APPLY ? "apply" : "dry-run"} (${projectId}/${dataset}, Raster library "${RASTER_LIBRARY_ID}")`);
+console.log(`Mode: ${APPLY ? "apply" : "dry-run"} (${projectId}/${dataset}, Raster library "${RASTER_LIBRARY_ID}"${requestedLibraryId ? "" : ", most recently uploaded"})`);
 console.log(`Raster assets: ${rasterAssets.length} (${descriptionByStem.size} described, ${undescribedInRaster} still undescribed, ${ambiguousStems.size} ambiguous names skipped)`);
 console.log(`Sanity image assets: ${sanityAssets.length}`);
 console.log(`To patch: ${patches.length}`);
