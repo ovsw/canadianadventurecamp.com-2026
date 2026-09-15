@@ -50,6 +50,10 @@ result on the wrapper element as four boolean data attributes:
 - `data-seam-bottom`: the bottom boundary is a seam.
 - `data-tuck`: this section overlaps the section above.
 - `data-tuck-below`: the next section, or the footer, tucks under this one.
+- `data-mirror`: this section holds an odd position in a run, so it flips.
+
+A section reads these attributes from its wrapper in CSS. It never receives
+them as a prop, and it never reads the DOM or its neighbours.
 
 One stylesheet rule maps the attributes to `--section-pad-top` and
 `--section-pad-bottom`. The `py-section` utility reads those two properties.
@@ -79,6 +83,11 @@ typecheck. Declare traits like this:
   and omit `background` from its GROQ projection.
 - `{ background: "photo", hero: true }`: a full-bleed hero. The boundary
   below a hero is always an edge.
+- `{ alternate: true }`: a section that flips its photo to the other side
+  when it follows one of its own kind. Neighbouring sections of the same
+  alternating type that each carry a photo form a **run**; odd positions in
+  the run get `data-mirror`. A section without a photo, or of a different
+  type, ends the run. Background never affects run membership.
 
 **Overlap token.** `--section-overlap` is the distance a tucker reaches up
 over the section above. It equals `--radius-section`, so the curve starts at

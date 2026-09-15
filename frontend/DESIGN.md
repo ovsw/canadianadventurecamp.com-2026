@@ -217,6 +217,8 @@ Three breakpoints: phone below 640px, tablet 640-1023px, desktop 1024px and up. 
 
 **The Stack, Don't Shrink Rule.** Below 1024px, layouts stack and type steps down one size; no section is removed, no interaction is removed.
 
+**The Mirror Rule.** Neighbouring sections of one photo-and-copy type form a run, and odd positions in that run flip on desktop: photo on the far side, copy on the near side. No editor control decides this; the page order does. A bleeding photo in such a section rounds its copy-side corner only where that boundary is a seam and stays square at an edge (see Shapes).
+
 ## Elevation & Depth
 
 Depth is tonal. Forest Panel sits on Forest Floor; Forest Floor sits on Pine Night; Birch Bark cards sit on Birch Bark Bright. Hairlines (translucent cream or translucent pine) separate rather than shadows. Shadows exist for two reasons only: something is media-heavy and meant to feel physical (the island map, the globe, the hero video frame), or something has been lifted by the cursor.

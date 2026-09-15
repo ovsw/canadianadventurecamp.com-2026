@@ -34,6 +34,13 @@ export type SectionTrait = {
   tuck?: boolean;
   /** Full-bleed hero. The boundary below a hero is always an edge. */
   hero?: boolean;
+  /**
+   * The section flips its photo to the other side when it follows another
+   * section of the same type that also has a photo. Consecutive sections of
+   * one alternating type, each with a photo, form a run; odd positions in the
+   * run render mirrored. See `resolveSectionBoundaries`.
+   */
+  alternate?: boolean;
 };
 
 /**
@@ -69,7 +76,7 @@ export const sectionTraits: Record<Block["_type"], SectionTrait> = {
   richTextBlock: {},
   stackedFeatureRows: {},
   stackedTimeline: {},
-  storyFeature: {},
+  storyFeature: { alternate: true },
   teamMembers: {},
   testimonials: {},
 
@@ -85,6 +92,8 @@ export type SectionBoundary = {
   tuck: boolean;
   /** The next section (or the footer) tucks under this one's bottom edge. */
   tuckBelow: boolean;
+  /** Odd position in a run of alternating sections: photo on the other side. */
+  mirror: boolean;
 };
 
 /**
@@ -169,12 +178,26 @@ export function resolveSectionBackground(block: Block, isFinal: boolean): Sectio
 }
 
 /**
+ * A block takes part in a run only when it carries a photo. An alternating
+ * section without one has nothing to flip, so it ends the run rather than
+ * taking a position in it.
+ */
+function hasPhoto(block: Block): boolean {
+  const image = (block as Block & { image?: { asset?: { _id?: string } | null } | null }).image;
+  return Boolean(image?.asset?._id);
+}
+
+/**
  * Rules:
  * - the first section's top is an edge;
  * - a tucker tucks only when its background differs from the section above;
  * - two neighbours meet at a seam when they resolve to the same background
  *   and the upper one is not a hero;
- * - the last section's bottom is an edge, and the footer tucks under it.
+ * - the last section's bottom is an edge, and the footer tucks under it;
+ * - consecutive sections of one alternating type, each with a photo, form a
+ *   run, and odd positions in that run render mirrored. Background never
+ *   affects run membership: an editor may alternate cream and green inside a
+ *   run and still get the flip.
  */
 export function resolveSectionBoundaries(blocks: readonly Block[]): SectionBoundary[] {
   const sections = blocks.map((block, index) => {
@@ -183,7 +206,19 @@ export function resolveSectionBoundaries(blocks: readonly Block[]): SectionBound
       background: resolveSectionBackground(block, index === blocks.length - 1),
       tucker: trait.tuck === true,
       hero: trait.hero === true,
+      type: block._type,
+      alternating: trait.alternate === true && hasPhoto(block),
     };
+  });
+
+  // Zero-based position in the current run; -1 outside one.
+  let runPosition = -1;
+  const mirrors = sections.map((section, index) => {
+    const above = sections[index - 1];
+    const continues =
+      section.alternating && above?.alternating === true && above.type === section.type;
+    runPosition = section.alternating ? (continues ? runPosition + 1 : 0) : -1;
+    return runPosition % 2 === 1;
   });
   const tucks = sections.map(
     (section, index) =>
@@ -203,6 +238,7 @@ export function resolveSectionBoundaries(blocks: readonly Block[]): SectionBound
       seamBottom,
       tuck: tucks[index],
       tuckBelow: below === undefined || tucks[index + 1],
+      mirror: mirrors[index],
     };
   });
 }

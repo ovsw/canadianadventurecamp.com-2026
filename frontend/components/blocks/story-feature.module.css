@@ -4,7 +4,8 @@
  * grid: [edge gutter] [left content half] [right content half] [edge gutter].
  * The photo spans the edge gutter and the left half, so it bleeds to the
  * viewport's left edge; the copy sits in the right half, aligned with the
- * site's content container.
+ * site's content container. A wrapper marked `data-mirror` swaps the two
+ * halves; see the mirror rules below. Phones never mirror.
  *
  * The photo never grows taller than one screen. Its frame is sticky at the
  * top of the viewport and capped at the viewport height, so when the copy
@@ -52,22 +53,58 @@
     min-height: 100%;
   }
 
-  /* The frame, not the figure, carries the placeholder colour and the soft
-     slab corners on the side that faces the copy, so the notches show the
-     section field. */
+  /* The frame, not the figure, carries the placeholder colour and the corners
+     on the side that faces the copy, so a notch would show the section field.
+     A corner softens only where that boundary is a seam: the same background
+     continues past it, so the curve rests on a continuous surface. At an edge
+     the photo is a field and stays square. The wrapper carries the boundary
+     attributes (see section-boundaries.ts). */
   .frame {
     position: sticky;
     top: 0;
     height: min(100vh, 100%);
     height: min(100dvh, 100%);
     overflow: hidden;
-    border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
+    --story-corner-top: 0px;
+    --story-corner-bottom: 0px;
+    border-top-right-radius: var(--story-corner-top);
+    border-bottom-right-radius: var(--story-corner-bottom);
+  }
+
+  [data-seam-top] .frame {
+    --story-corner-top: var(--radius-section);
+  }
+
+  [data-seam-bottom] .frame {
+    --story-corner-bottom: var(--radius-section);
   }
 
   .copy {
     grid-column: 3 / 4;
     padding-inline: clamp(2.5rem, 5vw, 5.5rem) 0;
     padding-block: var(--section-pad-top) var(--section-pad-bottom);
+  }
+
+  /* Mirror: the odd section in a run of story features flips, so the page
+     does not say the same thing twice. The photo takes the right content
+     half plus the right edge gutter and bleeds to the viewport's right edge;
+     the copy takes the left half with its inner padding on the side facing
+     the photo. Text stays left-aligned, and the copy-side corners move to
+     the left. */
+  [data-mirror] .photo {
+    grid-column: 3 / 5;
+  }
+
+  [data-mirror] .frame {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--story-corner-top);
+    border-bottom-left-radius: var(--story-corner-bottom);
+  }
+
+  [data-mirror] .copy {
+    grid-column: 2 / 3;
+    padding-inline: 0 clamp(2.5rem, 5vw, 5.5rem);
   }
 
   /* No photo: the copy takes both content halves instead of leaving the

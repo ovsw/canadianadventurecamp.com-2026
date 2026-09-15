@@ -38,6 +38,14 @@ A boundary where a section meets a different background, a hero, or a tucking se
 
 A rounded-top section, or the footer, that overlaps the bottom of the section above by the section radius.
 
+**Run**
+
+A maximal sequence of neighbouring sections of one alternating type that each carry a photo.
+
+**Mirror**
+
+The flipped desktop layout given to odd positions in a run: photo on the right, copy on the left.
+
 **Draft**
 
 Content visible to an authorized editor through preview before publication.

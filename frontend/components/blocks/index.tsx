@@ -287,6 +287,7 @@ export default function Blocks({
             data-sanity={dataSanity}
             data-seam-top={boundary.seamTop ? "" : undefined}
             data-seam-bottom={boundary.seamBottom ? "" : undefined}
+            data-mirror={boundary.mirror ? "" : undefined}
             data-tuck={boundary.tuck ? "" : undefined}
             data-tuck-below={boundary.tuckBelow ? "" : undefined}
             key={block._key}
