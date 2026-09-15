@@ -198,8 +198,8 @@ export default function DatesRatesBrowser({
               className="pointer-events-none absolute inset-0 hidden md:grid md:grid-cols-[7.5rem_1fr] md:gap-3.5"
             >
               <span />
-              {/* Inset matches the bar track padding so dividers align with bar edges. */}
-              <span className="relative mx-[5px] block">
+              {/* Dividers mark the true date positions; bars inset from them. */}
+              <span className="relative block">
                 <span className="absolute inset-y-0 left-1/4 border-l border-dashed border-pine-night/14" />
                 <span className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14" />
                 <span className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14" />
@@ -241,31 +241,38 @@ export default function DatesRatesBrowser({
                         {row.weeksLabel}
                       </span>
                     </span>
-                    <span className="relative block h-10 overflow-hidden rounded-xs bg-pine-night/5">
-                      {/* Padded coordinate system: bars at 0%/100% keep a 5px gap from the track ends. */}
-                      <span className="absolute inset-y-0 left-[5px] right-[5px] block">
-                        {/* Mobile dividers: the desktop overlay grid is hidden below md. */}
-                        <span aria-hidden="true" className="absolute inset-y-0 left-1/4 border-l border-dashed border-pine-night/14 md:hidden" />
-                        <span aria-hidden="true" className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14 md:hidden" />
-                        <span aria-hidden="true" className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14 md:hidden" />
-                        <span
-                          className={`${styles.bar} inline-flex items-center justify-center font-mono text-[14px] font-bold tracking-[0.01em] ${isFull ? styles.barFull : ""} ${row.status === "limited" ? styles.barLimited : ""}`}
-                          data-sanity={row.availabilityStatusAttribute}
-                          style={{ left: `${row.left}%`, width: `${row.width}%` }}
-                        >
-                          {interactive ? <>Enroll&nbsp;&rarr;</> : null}
-                        </span>
-                        <span
-                          className={`absolute inset-y-0 inline-flex items-center whitespace-nowrap font-mono text-[14px] font-bold tracking-[0.01em] ${availabilityClass(row.status)}`}
-                          data-sanity={row.availabilityNoteAttribute}
-                          style={
-                            labelOnLeft
-                              ? { right: `calc(${100 - row.left}% + 12px)` }
-                              : { left: `calc(${row.left + row.width}% + 12px)` }
-                          }
-                        >
-                          {row.label}
-                        </span>
+                    <span
+                      className={`${styles.track} relative block h-10 overflow-hidden rounded-xs bg-pine-night/5`}
+                    >
+                      {/* Mobile dividers: the desktop overlay grid is hidden below md. */}
+                      <span aria-hidden="true" className="absolute inset-y-0 left-1/4 border-l border-dashed border-pine-night/14 md:hidden" />
+                      <span aria-hidden="true" className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14 md:hidden" />
+                      <span aria-hidden="true" className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14 md:hidden" />
+                      <span
+                        className={`${styles.bar} inline-flex items-center justify-center font-mono text-[14px] font-bold tracking-[0.01em] ${isFull ? styles.barFull : ""} ${row.status === "limited" ? styles.barLimited : ""}`}
+                        data-sanity={row.availabilityStatusAttribute}
+                        style={{
+                          left: `${row.left}%`,
+                          right: `${100 - row.left - row.width}%`,
+                        }}
+                      >
+                        {interactive ? <>Enroll&nbsp;&rarr;</> : null}
+                      </span>
+                      {/* Gap is measured from the bar edge, which the bar's own margin insets. */}
+                      <span
+                        className={`absolute inset-y-0 inline-flex items-center whitespace-nowrap font-mono text-[14px] font-bold tracking-[0.01em] ${availabilityClass(row.status)}`}
+                        data-sanity={row.availabilityNoteAttribute}
+                        style={
+                          labelOnLeft
+                            ? {
+                                right: `calc(${100 - row.left}% + var(--bar-gap) + 12px)`,
+                              }
+                            : {
+                                left: `calc(${row.left + row.width}% + var(--bar-gap) + 12px)`,
+                              }
+                        }
+                      >
+                        {row.label}
                       </span>
                     </span>
                   </RowElement>
