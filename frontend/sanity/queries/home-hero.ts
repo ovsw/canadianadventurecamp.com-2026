@@ -6,7 +6,6 @@ import { urlInternalHref } from "./shared/internal-href";
 // @sanity-typegen-ignore
 export const homeHeroQuery = groq`
   _type == "homeHero" => {
-    badge,
     title[]{
       ...
     },

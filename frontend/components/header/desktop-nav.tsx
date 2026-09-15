@@ -237,6 +237,11 @@ export function DesktopNav({
     ? { damping: 30, mass: 0.6, stiffness: 380, type: "spring" as const }
     : { duration: 0 };
   const fade = { duration: prefersReducedMotion ? 0 : 0.14 };
+  // The open trigger and its panel are one surface, so they share a colour.
+  // The 90% alpha lets the photo behind the header tint both alike.
+  const panelSurfaceClassName = dark
+    ? "bg-forest-panel/90 text-birch-bark"
+    : "bg-birch-bark-bright/90 text-pine-night";
   const primaryLinkClassName = cn(
     // px-2 -mx-1 keeps the same flow width as the old px-1 while giving the
     // hover pill room around the label.
@@ -274,10 +279,10 @@ export function DesktopNav({
             className={cn(
               primaryLinkClassName,
               "mx-0 gap-1.5 px-2.5",
-              isActive &&
-                (dark
-                  ? "bg-birch-bark/8 text-birch-bark hover:text-birch-bark"
-                  : "bg-cedar/10 text-pine-night hover:text-pine-night"),
+              isActive && [
+                panelSurfaceClassName,
+                dark ? "hover:text-birch-bark" : "hover:text-pine-night",
+              ],
             )}
             key={item.key}
             onClick={(event) => {
@@ -324,9 +329,10 @@ export function DesktopNav({
               animate={{ height: placement?.height ?? "auto" }}
               className={cn(
                 "relative overflow-hidden rounded-[var(--radius-md)] border",
+                panelSurfaceClassName,
                 dark
-                  ? "border-birch-bark/15 bg-forest-panel text-birch-bark shadow-lift"
-                  : "border-pine-night/12 bg-birch-bark-bright text-pine-night shadow-card-rest-cream",
+                  ? "border-birch-bark/15 shadow-lift"
+                  : "border-pine-night/12 shadow-card-rest-cream",
               )}
               initial={false}
               transition={morph}

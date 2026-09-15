@@ -33,13 +33,6 @@ export default defineType({
     "Full-viewport hero with background video, heading, stats bar, and call-to-action buttons. Designed for the home page.",
   fields: [
     defineField({
-      name: "badge",
-      title: "Badge Text",
-      type: "string",
-      description:
-        'Short context shown in a pill above the heading, e.g. "OVERNIGHT CAMP · PRIVATE ISLAND".',
-    }),
-    defineField({
       name: "title",
       title: "Heading",
       type: "minimalRichText",
