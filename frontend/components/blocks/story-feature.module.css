@@ -13,6 +13,12 @@
  * and releases when the section scrolls out. When the section is shorter
  * than a screen the frame is simply the section's height. Nothing above this
  * block may clip overflow, or the sticky frame stops pinning.
+ *
+ * The stage between the figure and the frame exists because a percentage
+ * height inside a stretched grid item does not resolve against the stretched
+ * size in Chrome; the frame came out shorter than both the screen and the
+ * figure. The stage is absolutely positioned to the figure's box, so its
+ * height is definite and the frame's `100%` means the figure's height.
  */
 .grid {
   display: grid;
@@ -22,6 +28,11 @@
 .photo {
   position: relative;
   aspect-ratio: 4 / 3;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
 }
 
 .frame {

@@ -254,7 +254,7 @@ export function DesktopNav({
   return (
     <nav
       aria-label="Main navigation"
-      className="relative hidden items-center gap-3 lg:flex xl:gap-5"
+      className="relative hidden items-center gap-3 xl:flex 2xl:gap-5"
       onBlur={onBlur}
       onKeyDown={onKeyDown}
       onMouseLeave={scheduleClose}

@@ -21,7 +21,7 @@ export function Header({
 
   return (
     <SiteHeaderShell theme={theme}>
-      <div className="container-content flex h-(--header-height) items-center justify-between gap-3 lg:gap-5">
+      <div className="container-content flex h-(--header-height) items-center justify-between gap-3 xl:gap-5">
         <Link
           aria-label={`${model.brand.label} home page`}
           className="flex shrink-0 items-center rounded-control font-display text-[15px] font-extrabold tracking-[0.035em] focus-ring"
@@ -30,7 +30,7 @@ export function Header({
           {brand}
         </Link>
         <DesktopNav navigation={model.navigation} theme={theme} />
-        <div className="hidden shrink-0 items-center gap-4 lg:flex">
+        <div className="hidden shrink-0 items-center gap-4 xl:flex">
           {model.navigation.actions.map((action) => {
             return (
               <HeaderLink
@@ -49,7 +49,7 @@ export function Header({
           })}
           <CallDirectorsAction theme={theme} />
         </div>
-        <div className="flex shrink-0 items-center lg:hidden">
+        <div className="flex shrink-0 items-center xl:hidden">
           <MobileNav brand={brand} navigation={model.navigation} theme={theme} />
         </div>
       </div>
