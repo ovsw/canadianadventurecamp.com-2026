@@ -26,8 +26,10 @@ grant the key access to that library in Raster.
 
 1. Upload the image files to the Sanity media library as usual, either in the
    Studio Media tab or from an image field. Keep the original file names.
-2. Upload the same files to a Raster library. Any library works. Use one
-   library per batch, for example `latest`, so the sync stays small.
+2. Upload the same files to the Raster library `latest`. Any library works,
+   and reusing one is fine: the sync skips assets whose description already
+   matches. A new library only shortens the dry-run report, and the API key
+   must be granted access to it in Raster first.
 3. Wait until Raster shows a description on each asset. This takes seconds to
    a minute.
 4. Dry-run the sync from the repo root:
