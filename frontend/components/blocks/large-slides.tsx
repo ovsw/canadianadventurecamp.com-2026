@@ -58,8 +58,7 @@ export default function LargeSlides({
     (slide) =>
       slide?._key &&
       hasText(slide.label) &&
-      hasText(slide.text) &&
-      hasText(slide.time),
+      hasText(slide.text),
   );
   if (!title?.length || renderableSlides.length < 2) return null;
 

@@ -21,25 +21,25 @@ const slide = defineArrayMember({
   fields: [
     defineField({
       name: "label",
-      title: "What happens",
+      title: "Title",
       type: "string",
-      description: "What happens at this point in the list.",
+      description: "The name of this slide: a place, a moment, or a step.",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "time",
       title: "Time",
       type: "string",
-      description: "Shown as written, e.g. 7:15 am.",
-      validation: (rule) => rule.required(),
+      description:
+        "Optional. For a timeline, the time shown large above the title, as written, e.g. 7:15 am. Leave empty for slides that are not moments in a day.",
     }),
     defineField({
       name: "text",
       title: "One line",
       type: "string",
       description:
-        "One sentence on what happens here and who is with the camper. Explain any camp jargon.",
-      validation: (rule) => rule.required().max(180),
+        "One or two sentences about this slide. Explain any camp jargon.",
+      validation: (rule) => rule.required().max(260),
     }),
     defineField({
       name: "image",
@@ -75,7 +75,7 @@ export default defineType({
   type: "object",
   icon: GalleryVertical,
   description:
-    "An ordered list where one large photo pins beside the copy and changes as each slide scrolls into view.",
+    "A slideshow: one large photo pins beside the copy and changes as each slide scrolls into view. Works for places, moments, or steps.",
   fields: [
     sectionBackgroundField,
     defineField({

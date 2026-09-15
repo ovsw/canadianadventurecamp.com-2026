@@ -22,7 +22,7 @@ export type LargeSlide = Readonly<{
   textId: string;
   /** Two-digit slide number, e.g. "03". */
   number: string;
-  /** Shown as written, e.g. "7:15 am". */
+  /** Shown as written, e.g. "7:15 am"; empty when the slide has no time. */
   time: string;
   label: string;
   text: string;
@@ -161,10 +161,12 @@ export default function LargeSlidesTrack({
                 <p className="mb-3.5 text-step-number text-current/55">
                   {slide.number}
                 </p>
-                <p className={styles.time} data-sanity={slide.sanity.time}>
-                  {time}
-                  {suffix ? <small>{suffix}</small> : null}
-                </p>
+                {time ? (
+                  <p className={styles.time} data-sanity={slide.sanity.time}>
+                    {time}
+                    {suffix ? <small>{suffix}</small> : null}
+                  </p>
+                ) : null}
                 <h3
                   className="max-w-[30rem] font-display text-[30px] leading-[1.1] font-bold tracking-[-0.01em] wrap-break-word"
                   data-sanity={slide.sanity.label}
