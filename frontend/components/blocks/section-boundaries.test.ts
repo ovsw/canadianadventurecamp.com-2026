@@ -5,6 +5,23 @@ function block(_type: Block["_type"], background?: "white" | "cream" | "green"):
   return { _type, _key: `${_type}-${background ?? "fixed"}`, background } as unknown as Block;
 }
 
+let keySeed = 0;
+
+/** A story feature, with or without a photo: only a photo joins a run. */
+function story(background: "white" | "cream" | "green" = "cream", photo = true): Block {
+  keySeed += 1;
+  return {
+    _type: "storyFeature",
+    _key: `story-${keySeed}`,
+    background,
+    image: photo ? { asset: { _id: `image-${keySeed}` } } : null,
+  } as unknown as Block;
+}
+
+function mirrors(blocks: Block[]) {
+  return resolveSectionBoundaries(blocks).map((boundary) => boundary.mirror);
+}
+
 function booleans(blocks: Block[]) {
   return resolveSectionBoundaries(blocks).map(({ seamTop, seamBottom, tuck, tuckBelow }) => ({
     seamTop,
@@ -93,5 +110,54 @@ describe("resolveSectionBoundaries", () => {
     expect(result[1].seamTop).toBe(true);
     expect(result[1].tuck).toBe(false);
     expect(result[0].tuckBelow).toBe(false);
+  });
+});
+
+describe("resolveSectionBoundaries mirror", () => {
+  it("leaves a lone story feature unmirrored", () => {
+    expect(mirrors([story()])).toEqual([false]);
+  });
+
+  it("mirrors the second of two consecutive story features", () => {
+    expect(mirrors([story(), story()])).toEqual([false, true]);
+  });
+
+  it("mirrors only the middle of three", () => {
+    expect(mirrors([story(), story(), story()])).toEqual([false, true, false]);
+  });
+
+  it("ends the run at a story feature without a photo", () => {
+    expect(mirrors([story("cream", true), story("cream", false), story("cream", true)])).toEqual([
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  it("ends the run at a section of a different type", () => {
+    expect(mirrors([story(), block("benefitCards", "cream"), story()])).toEqual([
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  it("ignores background when counting positions in a run", () => {
+    expect(mirrors([story("cream"), story("green"), story("cream")])).toEqual([
+      false,
+      true,
+      false,
+    ]);
+  });
+
+  it("starts a fresh run after a hero", () => {
+    expect(mirrors([block("innerHero"), story(), story()])).toEqual([false, false, true]);
+  });
+
+  it("does not mirror a section type without the alternate trait", () => {
+    expect(mirrors([block("benefitCards", "cream"), block("benefitCards", "cream")])).toEqual([
+      false,
+      false,
+    ]);
   });
 });

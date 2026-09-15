@@ -31,7 +31,10 @@ type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
  * edge to the container midline and pins to the viewport, one screen tall,
  * while longer copy scrolls past it; the
  * eyebrow, heading, narrative, "at a glance" checklist and buttons sit in the
- * right half (grid in story-feature.module.css). Default field is Forest
+ * right half (grid in story-feature.module.css). When this section follows
+ * another story feature with a photo, the dispatcher marks the wrapper
+ * `data-mirror` and the module flips the two halves; the component itself
+ * knows nothing about its neighbours. Default field is Forest
  * Floor (the site's default dark field); `useCreamBackground` swaps to Birch
  * Bark so the block can alternate with its neighbours (The Dusk Alternation
  * Rule). Phones stack: photo first at 4:3, then the copy.
