@@ -42,13 +42,25 @@ export function CallDirectorsAction({
         width={40}
       />
       <span className="grid gap-1.5 text-left">
-        <strong className="text-sm leading-none font-bold">
+        {/* Both lines take the field's text colour. The number is the payload
+            a parent dials, so it carries the weight; amber only answers hover.
+            An amber number sat mid-luminance over hero photos and dropped
+            below 2.5:1 on bright areas, so the accent stays on the portrait
+            ring and the hover state instead. */}
+        <strong
+          className={cn(
+            "text-sm leading-none font-semibold",
+            dark ? "text-birch-bark/85" : "text-pine-night/85",
+          )}
+        >
           {CALL_DIRECTORS_LABEL}
         </strong>
         <span
           className={cn(
-            "font-mono text-[14px] leading-snug font-bold tracking-[0.01em]",
-            dark ? "text-campfire-amber" : "text-cedar",
+            "font-mono text-[15px] leading-none font-bold tracking-[0.01em] transition-colors motion-fast motion-reduce:transition-none",
+            dark
+              ? "text-birch-bark group-hover:text-campfire-amber"
+              : "text-pine-night group-hover:text-cedar",
           )}
         >
           {CALL_DIRECTORS_PHONE}

@@ -93,7 +93,7 @@ export default function HomeHero({
   return (
     <section
       aria-labelledby={headingId}
-      className="relative flex min-h-dvh flex-col overflow-hidden bg-forest-900 lg:block"
+      className="relative flex min-h-dvh flex-col overflow-hidden bg-forest-900 lg:min-h-[min(85svh,60rem)]"
       data-header-overlay
       id={`hero-${stegaClean(_key)}`}
     >
@@ -153,10 +153,14 @@ export default function HomeHero({
       </div>
 
       {/* Copy — solid plate below the poster on phones, overlay on desktop.
-          Bottom padding is the resolved `--section-pad-bottom`, so the last row
-          (the CTA plate on phones, the body + CTAs row on desktop) clears a
-          tucked section below like any other section's last row. */}
-      <div className="relative z-10 flex flex-1 flex-col px-content-x pb-(--section-pad-bottom) pt-7 lg:min-h-dvh lg:flex-none lg:justify-end lg:pt-32">
+          On phones the bottom padding is the resolved `--section-pad-bottom`,
+          so the CTA plate clears a tucked section below like any other
+          section's last row. On desktop the hero stops short of the fold
+          (85svh, capped at 60rem) so the next section shows and tells the
+          visitor there is more; the stats bar sits flush at its bottom edge.
+          The copy must not claim a full viewport of its own or the stats
+          push the hero past the fold. */}
+      <div className="relative z-10 flex flex-1 flex-col px-content-x pb-(--section-pad-bottom) pt-7 lg:justify-end lg:pt-32 lg:pb-10">
         {/* Badge — dropped on phones; the poster + headline carry the opening */}
         {stegaClean(badge)?.trim() ? (
           <p
@@ -323,10 +327,13 @@ export default function HomeHero({
         </div>
       </div>
 
-      {/* Stats bar */}
+      {/* Stats bar — the hero's last row on desktop, sitting at its bottom
+          edge with a 2rem margin. The resolved `--section-pad-bottom` minus
+          the base rhythm is zero at an edge and the tuck overlap when a
+          rounded section follows, so the row still clears a tucker. */}
       {stats?.length ? (
         <div
-          className="relative z-10 grid grid-cols-2 border-t border-white/20 px-content-x md:flex md:gap-0"
+          className="relative z-10 grid grid-cols-2 border-t border-white/20 px-content-x md:flex md:gap-0 lg:pb-[calc(var(--section-pad-bottom)_-_var(--section-pad)_+_2rem)]"
           data-sanity={dataAttribute?.("stats")}
         >
           {stats.map((stat) => {

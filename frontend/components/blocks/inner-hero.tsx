@@ -103,6 +103,16 @@ export default function InnerHero({
           aria-hidden="true"
           className="absolute inset-0 hidden lg:block lg:bg-[linear-gradient(90deg,rgba(22,32,15,0.9)_0%,rgba(22,32,15,0.55)_45%,rgba(22,32,15,0.12)_100%)]"
         />
+        {/* Header band on desktop: the side wash thins out to 12% at the
+            right edge, which is where the call action and Enroll sit. The
+            see-through header (data-header-overlay) relies on the hero for its
+            contrast floor, so this band carries the top of the photo down to
+            pine-night at about 60% across the header row, then fades before
+            the copy. The home hero has the same band in its top wash. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 hidden h-56 lg:block lg:bg-[linear-gradient(180deg,rgba(22,32,15,0.82)_0%,rgba(22,32,15,0.45)_45%,rgba(22,32,15,0)_100%)]"
+        />
         <div
           aria-hidden="true"
           className="absolute inset-x-0 bottom-0 hidden h-1/2 lg:block lg:bg-[linear-gradient(0deg,rgba(22,32,15,0.92)_0%,rgba(22,32,15,0)_100%)]"
