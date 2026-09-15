@@ -59,9 +59,10 @@ therefore compares the Sanity `originalFilename` without its extension against
 the Raster asset name, case-insensitively. Two consequences:
 
 - Rename nothing between the two uploads.
-- Two files with the same name and different extensions collide. If two Raster
-  assets share a name but have different descriptions, the script skips that
-  name and reports it as ambiguous.
+- Two files with the same name and different extensions collide. The script
+  patches a name only when it is unambiguous on both sides: one Raster
+  description, and one Sanity asset. It skips the rest and reports them, so a
+  description never lands on an unrelated image.
 
 The script only fills empty descriptions. Pass `--overwrite` to replace
 existing ones, for example after re-describing a batch in Raster.

@@ -6,7 +6,8 @@
 //
 // Match key: the Sanity asset `originalFilename` without its extension, compared
 // case-insensitively against the Raster asset `name` (Raster strips extensions
-// on upload). Raster names that map to more than one description are skipped.
+// on upload). A stem is patched only when it is unambiguous on both sides: one
+// Raster description, and one Sanity asset.
 //
 // `--library <id>` picks the Raster library. Without it, the library holding the
 // most recently uploaded asset is used. Dry-run by default. `--apply` writes.
@@ -81,8 +82,9 @@ async function listRasterAssets(libraryId) {
 }
 
 // Libraries carry no creation date, so the default library is the one whose
-// newest asset was uploaded most recently. The list order is not documented,
-// so every page is read.
+// newest asset was uploaded most recently. Unlike the assets endpoint,
+// `/libraries` is not paginated: it returns every library in one call, and
+// returns an empty list if `page` is passed. Do not add paging here.
 async function findMostRecentlyUploadedLibrary() {
   let best = null;
   for (const library of await rasterGet("/libraries")) {
@@ -126,14 +128,30 @@ const sanityAssets = await sanity.fetch(
   `*[_type == "sanity.imageAsset"]{_id, originalFilename, description}`,
 );
 
-const patches = [];
-const skippedDescribed = [];
-const matchedStems = new Set();
+// Two Sanity assets can share one stem, for example `cabin.jpg` and
+// `cabin.png`. That is a one-to-many match, so the description could land on an
+// unrelated image. Group first, then patch only the stems that hold one asset.
+const sanityAssetsByStem = new Map();
 for (const asset of sanityAssets) {
   const key = asset.originalFilename ? stem(asset.originalFilename) : "";
-  const description = key && !ambiguousStems.has(key) ? descriptionByStem.get(key) : undefined;
+  if (!key) continue;
+  if (!sanityAssetsByStem.has(key)) sanityAssetsByStem.set(key, []);
+  sanityAssetsByStem.get(key).push(asset);
+}
+
+const patches = [];
+const skippedDescribed = [];
+const duplicateStems = [];
+const matchedStems = new Set();
+for (const [key, assets] of sanityAssetsByStem) {
+  const description = ambiguousStems.has(key) ? undefined : descriptionByStem.get(key);
   if (!description) continue;
   matchedStems.add(key);
+  if (assets.length > 1) {
+    duplicateStems.push(`${key} (${assets.length} Sanity assets)`);
+    continue;
+  }
+  const [asset] = assets;
   if (asset.description?.trim() && !OVERWRITE) {
     skippedDescribed.push(asset.originalFilename);
     continue;
@@ -149,6 +167,8 @@ console.log(`Sanity image assets: ${sanityAssets.length}`);
 console.log(`To patch: ${patches.length}`);
 if (patches.length) console.log(patches.map((patch) => `  - ${patch.filename}`).join("\n"));
 console.log(`Matched but already described (kept): ${skippedDescribed.length}`);
+console.log(`Duplicate Sanity filenames skipped: ${duplicateStems.length}`);
+if (duplicateStems.length) console.log(duplicateStems.map((name) => `  - ${name}`).join("\n"));
 console.log(`Raster assets with no Sanity match: ${unmatchedRaster.length}`);
 if (unmatchedRaster.length) console.log(unmatchedRaster.map((name) => `  - ${name}`).join("\n"));
 
