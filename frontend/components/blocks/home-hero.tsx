@@ -64,7 +64,6 @@ const playIcon = {
 
 export default function HomeHero({
   _key,
-  badge,
   body,
   buttons,
   dataAttribute,
@@ -161,20 +160,6 @@ export default function HomeHero({
           The copy must not claim a full viewport of its own or the stats
           push the hero past the fold. */}
       <div className="relative z-10 flex flex-1 flex-col px-content-x pb-(--section-pad-bottom) pt-7 lg:justify-end lg:pt-32 lg:pb-10">
-        {/* Badge — dropped on phones; the poster + headline carry the opening */}
-        {stegaClean(badge)?.trim() ? (
-          <p
-            className="mb-6 hidden w-fit items-center gap-2.5 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-white/85 lg:flex"
-            data-sanity={dataAttribute?.("badge")}
-          >
-            <span
-              aria-hidden="true"
-              className="size-2 shrink-0 rounded-full bg-accent"
-            />
-            {badge}
-          </p>
-        ) : null}
-
         {/* Title */}
         <h1
           className="mb-6 max-w-[65rem] font-display text-display-hero leading-[0.96] tracking-tight text-cream max-lg:text-[2.875rem]"
