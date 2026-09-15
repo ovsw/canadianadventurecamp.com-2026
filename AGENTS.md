@@ -92,8 +92,7 @@ Add or run focused tests only when Ovi asks, or when the change involves:
 - subtle pure logic that is hard to verify manually; or
 - a regression that is expensive to reproduce.
 
-`pnpm verify` is a release and pull-request gate. Run it only when Ovi asks for
-that gate, not during implementation.
+`pnpm verify` is a release and pull-request gate. Always runn it on a PR.
 
 ## Review agents
 
@@ -157,6 +156,12 @@ content shape, read `docs/agents/page-builder.md`.
 ### Sanity CLI
 
 Always pass `SANITY_AUTH_TOKEN` from `studio/.env.local` when invoking the Sanity CLI. See `docs/agents/sanity-cli.md`.
+
+### Raster image descriptions
+
+New images get their searchable `description` from Raster's AI. After uploading
+images to Sanity, upload the same files to a Raster library and run
+`pnpm raster:sync --apply` (defaults to the library with the newest upload). See `docs/agents/raster-descriptions.md`.
 
 ### Development workflow
 
