@@ -147,6 +147,10 @@ _Avoid_: registration system, sign-up portal
 
 The external service where prospective staff apply. Currently CampBrain (`canadianadventurecamp.campbrainstaff.com`).
 
+**Staff roster**
+
+The camp team for a named season, shown primarily so prospective parents can learn who worked at camp. A Staff roster for one season does not confirm staffing for a later season.
+
 **Camper photo portal**
 
 The external platform where parents view daily photos and weekly videos during the season. The site links to it but does not host media.

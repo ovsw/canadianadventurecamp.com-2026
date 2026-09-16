@@ -64,6 +64,7 @@ export const sectionTraits: Record<Block["_type"], SectionTrait> = {
   faqAccordion: {},
   featureCards: { tuck: true },
   hero: { background: "photo", hero: true },
+  headingImage: {},
   homeHero: { background: "photo", hero: true },
   imageCollageFeature: {},
   includedExtras: {},

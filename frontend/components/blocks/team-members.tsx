@@ -172,6 +172,92 @@ function TeamMemberProfile({
   );
 }
 
+function TeamMemberRosterCard({
+  member,
+  memberDataAttribute,
+  referenceDataAttribute,
+}: Readonly<{
+  member: TeamMemberDocument;
+  memberDataAttribute?: TeamMembersProps["memberDataAttribute"];
+  referenceDataAttribute?: string;
+}>) {
+  const hasImage = Boolean(member.image?.asset?._id);
+  const hasName = Boolean(stegaClean(member.name)?.trim());
+  const hasRole = Boolean(stegaClean(member.role)?.trim());
+
+  const hasShortBio = Boolean(stegaClean(member.shortBio)?.trim());
+  const yearsAtCac = member.yearsAtCac;
+  const experience = yearsAtCac != null && yearsAtCac >= 1
+    ? `${yearsAtCac} ${yearsAtCac === 1 ? "year" : "years"} at CAC`
+    : "Years at CAC to confirm";
+
+  if (!(hasImage || hasName || hasRole || hasShortBio)) return null;
+
+  return (
+    <article
+      className={cn(
+        "grid min-w-0 overflow-hidden rounded-sm border border-current/15",
+        hasImage && "grid-cols-[minmax(0,1fr)_minmax(0,2fr)]",
+      )}
+      data-sanity={referenceDataAttribute}
+    >
+      {hasImage && member.image ? (
+        <div
+          className="relative min-h-48 bg-muted"
+          data-sanity={memberDataAttribute?.(member._id, "image")}
+        >
+          <Image
+            alt={stegaClean(member.image.alt) || ""}
+            blurDataURL={member.image.asset?.metadata?.lqip || undefined}
+            className="object-cover"
+            fill
+            loading="lazy"
+            placeholder={member.image.asset?.metadata?.lqip ? "blur" : undefined}
+            sizes="(min-width: 1280px) 128px, (min-width: 768px) 192px, 33vw"
+            src={urlFor(member.image).width(320).height(480).url()}
+          />
+        </div>
+      ) : null}
+      <div className="grid min-w-0 content-start gap-3 p-4">
+        {hasName || hasRole ? (
+          <div className="grid gap-1">
+            {hasName ? (
+              <h3
+                className="text-balance wrap-break-word font-display text-title text-foreground"
+                data-sanity={memberDataAttribute?.(member._id, "name")}
+              >
+                {member.name}
+              </h3>
+            ) : null}
+            {hasRole ? (
+              <p
+                className="wrap-break-word text-sm leading-snug text-muted-foreground"
+                data-sanity={memberDataAttribute?.(member._id, "role")}
+              >
+                {member.role}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+        <p
+          className="text-sm leading-snug font-medium text-foreground"
+          data-sanity={memberDataAttribute?.(member._id, "yearsAtCac")}
+        >
+          {experience}
+        </p>
+        {hasShortBio ? (
+          <p
+            className="text-pretty wrap-break-word text-sm leading-relaxed text-muted-foreground"
+            data-sanity={memberDataAttribute?.(member._id, "shortBio")}
+          >
+            {member.shortBio}
+          </p>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
 export default function TeamMembers({
   _key,
   background,
@@ -179,6 +265,7 @@ export default function TeamMembers({
   eyebrow,
   memberDataAttribute,
   members,
+  presentation,
   richText,
   title,
 }: TeamMembersProps) {
@@ -194,6 +281,7 @@ export default function TeamMembers({
 
   const displayEyebrow = stegaClean(eyebrow)?.trim();
   const displayTitle = stegaClean(title)?.trim();
+  const isRoster = stegaClean(presentation) === "roster";
   const titleId = _key
     ? `team-members-${stegaClean(_key)}-title`
     : undefined;
@@ -212,13 +300,13 @@ export default function TeamMembers({
       data-sanity={dataAttribute?.("background")}
       id="team"
     >
-      <div className="container grid gap-(--space-header-gap)">
-        <header className="mx-auto grid max-w-[47.5rem] justify-items-center gap-5 text-center">
+      <div className="container-content grid gap-8 sm:gap-10">
+        <header className="mx-auto grid w-full max-w-3xl justify-items-center gap-5 text-center">
           {displayEyebrow || displayTitle ? (
             <div>
               {displayEyebrow ? (
                 <p
-                  className="mb-3.5 typo-eyebrow text-primary"
+                  className="mb-3.5 text-eyebrow text-primary"
                   data-sanity={dataAttribute?.("eyebrow")}
                 >
                   {eyebrow}
@@ -226,7 +314,7 @@ export default function TeamMembers({
               ) : null}
               {displayTitle ? (
                 <h2
-                  className="text-balance typo-section-heading text-foreground"
+                  className="text-balance font-display text-headline text-foreground"
                   data-sanity={dataAttribute?.("title")}
                   id={titleId}
                 >
@@ -237,20 +325,35 @@ export default function TeamMembers({
           ) : null}
           {richText?.length ? (
             <div
-              className="text-pretty typo-body-editorial text-muted-foreground [&_p]:!my-0"
+              className="text-pretty text-base/relaxed text-muted-foreground sm:text-lg/relaxed [&_p]:!my-0"
               data-sanity={dataAttribute?.("richText")}
             >
               <PortableTextRenderer value={richText} />
             </div>
           ) : null}
         </header>
-        <div className="grid gap-16">
+        <div
+          className={cn(
+            "grid",
+            isRoster
+              ? "grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
+              : "gap-16",
+          )}
+          data-sanity={dataAttribute?.("members")}
+        >
           {resolvedMembers.map((member, index) => {
             const memberPath = member._key
               ? `members[_key=="${member._key}"]`
               : `members[${index}]`;
 
-            return (
+            return isRoster ? (
+              <TeamMemberRosterCard
+                key={member._key ?? member.document._id}
+                member={member.document}
+                memberDataAttribute={memberDataAttribute}
+                referenceDataAttribute={dataAttribute?.(memberPath)}
+              />
+            ) : (
               <TeamMemberProfile
                 index={index}
                 key={member._key ?? member.document._id}

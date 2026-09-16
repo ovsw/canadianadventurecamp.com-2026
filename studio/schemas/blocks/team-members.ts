@@ -12,6 +12,21 @@ export default defineType({
   fields: [
     sectionBackgroundField,
     defineField({
+      name: "presentation",
+      type: "string",
+      title: "Presentation",
+      description:
+        "Choose detailed profiles or roster cards with a portrait, name, role, years at CAC, and short introduction.",
+      initialValue: "profiles",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Detailed profiles", value: "profiles" },
+          { title: "Compact roster", value: "roster" },
+        ],
+      },
+    }),
+    defineField({
       name: "eyebrow",
       type: "string",
       title: "Eyebrow",
