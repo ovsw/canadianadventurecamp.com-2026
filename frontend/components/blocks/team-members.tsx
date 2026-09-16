@@ -189,11 +189,11 @@ function TeamMemberRosterCard({
 
   return (
     <article className="grid content-start gap-4" data-sanity={referenceDataAttribute}>
-      <div
-        className="aspect-[4/5] overflow-hidden rounded-card bg-muted shadow-ambient-feature"
-        data-sanity={memberDataAttribute?.(member._id, "image")}
-      >
-        {hasImage && member.image ? (
+      {hasImage && member.image ? (
+        <div
+          className="aspect-[4/5] overflow-hidden rounded-card bg-muted shadow-ambient-feature"
+          data-sanity={memberDataAttribute?.(member._id, "image")}
+        >
           <Image
             alt={stegaClean(member.image.alt) || ""}
             blurDataURL={member.image.asset?.metadata?.lqip || undefined}
@@ -205,8 +205,8 @@ function TeamMemberRosterCard({
             src={urlFor(member.image).width(480).height(600).url()}
             width={480}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
       {hasName || hasRole ? (
         <div className="grid gap-1.5">
           {hasName ? (
