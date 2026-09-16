@@ -63,7 +63,7 @@ test("the homepage alone offers the homepage hero", () => {
 test("the blocks insert menu offers list and grid views with known previews", () => {
   assert.deepEqual(
     blocksField.options.insertMenu.views.map(({ name }) => name),
-    ["list", "grid"],
+    ["grid", "list"],
   );
   assert.equal(
     getPageBuilderPreviewImageUrl("featureCards"),
@@ -81,7 +81,10 @@ test("the blocks insert menu offers list and grid views with known previews", ()
     getPageBuilderPreviewImageUrl("innerHero"),
     "/static/images/preview/innerHero.jpg",
   );
-  assert.equal(getPageBuilderPreviewImageUrl("hero"), undefined);
+  assert.equal(
+    getPageBuilderPreviewImageUrl("hero"),
+    "/static/images/preview/hero.jpg",
+  );
 });
 
 test("blogIndex uses the singleton configuration", () => {

@@ -55,6 +55,7 @@ type PageBuilderBlockType =
   | (typeof homePagePageBuilderBlockTypes)[number];
 
 const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
+  "hero",
   "homeHero",
   "innerHero",
   "richTextBlock",
@@ -66,16 +67,20 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "facilitiesMapSection",
   "datesRatesSection",
   "stackedFeatureRows",
+  "internationalCampersSection",
   "journey",
   "latestArticles",
   "faqAccordion",
   "teamMembers",
   "ctaBanner",
   "testimonials",
+  "stackedTimeline",
   "activityCatalogue",
+  "includedExtras",
   "packingChecklist",
   "bigImageList",
   "directorCta",
+  "largeSlides",
   // page-builder-generator:preview-types
 ]);
 
@@ -114,8 +119,70 @@ export function validateBlocks(
 }
 
 function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
-  const heroTypes = blockTypes.filter((type) => heroBlockTypes.has(type));
-  const contentTypes = blockTypes.filter((type) => !heroBlockTypes.has(type));
+  const groups: {
+    name: string;
+    title: string;
+    of: PageBuilderBlockType[];
+  }[] = [
+    {
+      name: "hero",
+      title: "Hero",
+      of: blockTypes.filter((type) => heroBlockTypes.has(type)),
+    },
+    {
+      name: "cta",
+      title: "CTA",
+      of: ["ctaBanner", "directorCta"],
+    },
+    {
+      name: "image-rich",
+      title: "Image Rich",
+      of: [
+        "storyFeature",
+        "imageCollageFeature",
+        "featureCards",
+        "bigImageList",
+        "largeSlides",
+        "latestArticles",
+        "activityCatalogue",
+        "teamMembers",
+        "directorCta",
+      ],
+    },
+    {
+      name: "text-lists",
+      title: "Text & Lists",
+      of: [
+        "richTextBlock",
+        "benefitCards",
+        "stackedFeatureRows",
+        "faqAccordion",
+        "journey",
+        "stackedTimeline",
+        "includedExtras",
+        "packingChecklist",
+      ],
+    },
+    {
+      name: "people-quotes",
+      title: "People & Quotes",
+      of: ["teamMembers", "testimonials", "directorCta"],
+    },
+    {
+      name: "camp-info",
+      title: "Camp Info",
+      of: [
+        "activitySchedule",
+        "activityCatalogue",
+        "facilitiesMapSection",
+        "datesRatesSection",
+        "internationalCampersSection",
+        "includedExtras",
+        "packingChecklist",
+        "journey",
+      ],
+    },
+  ];
 
   return defineField({
     name: "blocks",
@@ -126,16 +193,18 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
     validation: (rule) => rule.custom(validateBlocks),
     options: {
       insertMenu: {
-        groups: [
-          { name: "hero", title: "Hero", of: heroTypes },
-          { name: "content", title: "Content", of: contentTypes },
-        ],
+        groups: groups
+          .map((group) => ({
+            ...group,
+            of: group.of.filter((type) => blockTypes.includes(type)),
+          }))
+          .filter((group) => group.of.length > 0),
         views: [
-          { name: "list" },
           {
             name: "grid",
             previewImageUrl: getPageBuilderPreviewImageUrl,
           },
+          { name: "list" },
         ],
       },
     },
