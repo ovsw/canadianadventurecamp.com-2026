@@ -83,10 +83,18 @@ stable IDs. Publication used Sanity document actions with draft revisions.
 
 ## Ovi's visual check
 
-Open [Staff in local Studio Presentation](http://localhost:3340/presentation?preview=%2Fstaff%3Fsanity-preview-perspective%3Ddrafts&perspective=drafts).
+Open [Staff in local Studio Presentation](http://localhost:3340/presentation?preview=%2Fstaff%3Fsanity-preview-perspective%3Ddrafts).
 Use the drafts perspective. The “Good people. Great summers.” hero and
 22-name roster distinguish this draft from the published page.
 The preview Website runs on `http://localhost:3007`.
+
+Keep `sanity-preview-perspective=drafts` inside the encoded preview URL.
+Do not append `perspective=drafts` to the Studio URL. In Sanity 6.4, the
+editor's document-history code treats that explicit value as a release
+version and throws `Version can not be "published" or "drafts"` when an
+edit panel opens. Studio uses drafts by default when that outer parameter
+is absent. The installed editor's ID-selection code reproduced the error
+with the old link and selected `drafts.staff` with this corrected link.
 
 At **1440 × 1000** and **390 × 844**:
 
