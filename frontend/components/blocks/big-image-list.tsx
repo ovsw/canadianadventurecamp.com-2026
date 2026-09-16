@@ -53,10 +53,13 @@ export default function BigImageList({
 
   const sectionId = `big-image-list-${stegaClean(_key)}`;
   const sectionTitle = stegaClean(toPlainText(title)).replace(/\s+/g, " ").trim();
+  const sectionLabel = sectionTitle
+    ? `Schedule list: ${sectionTitle}`
+    : "Schedule list";
 
   return (
     <section
-      aria-label={`Schedule list: ${sectionTitle}`}
+      aria-label={sectionLabel}
       className={cn(sectionThemeClass(background), "py-section")}
       id={sectionId}
     >
