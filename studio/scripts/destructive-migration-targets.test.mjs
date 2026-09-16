@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 for (const script of [
+  "fix-blog-heading-accessibility.mjs",
   "remove-migrated-page-title-slug.mjs",
   "restore-legacy-page-images.mjs",
 ]) {
