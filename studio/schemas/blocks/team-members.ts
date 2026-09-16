@@ -12,6 +12,21 @@ export default defineType({
   fields: [
     sectionBackgroundField,
     defineField({
+      name: "presentation",
+      type: "string",
+      title: "Presentation",
+      description:
+        "Choose detailed profiles or a compact roster of portraits, names, and roles.",
+      initialValue: "profiles",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Detailed profiles", value: "profiles" },
+          { title: "Compact roster", value: "roster" },
+        ],
+      },
+    }),
+    defineField({
       name: "eyebrow",
       type: "string",
       title: "Eyebrow",

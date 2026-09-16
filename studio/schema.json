@@ -3575,6 +3575,23 @@
           },
           "optional": true
         },
+        "presentation": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "profiles"
+              },
+              {
+                "type": "string",
+                "value": "roster"
+              }
+            ]
+          },
+          "optional": true
+        },
         "eyebrow": {
           "type": "objectAttribute",
           "value": {

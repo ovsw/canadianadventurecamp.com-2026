@@ -172,6 +172,65 @@ function TeamMemberProfile({
   );
 }
 
+function TeamMemberRosterCard({
+  member,
+  memberDataAttribute,
+  referenceDataAttribute,
+}: Readonly<{
+  member: TeamMemberDocument;
+  memberDataAttribute?: TeamMembersProps["memberDataAttribute"];
+  referenceDataAttribute?: string;
+}>) {
+  const hasImage = Boolean(member.image?.asset?._id);
+  const hasName = Boolean(stegaClean(member.name)?.trim());
+  const hasRole = Boolean(stegaClean(member.role)?.trim());
+
+  if (!(hasImage || hasName || hasRole)) return null;
+
+  return (
+    <article className="grid content-start gap-4" data-sanity={referenceDataAttribute}>
+      <div
+        className="aspect-[4/5] overflow-hidden rounded-card bg-muted shadow-ambient-feature"
+        data-sanity={memberDataAttribute?.(member._id, "image")}
+      >
+        {hasImage && member.image ? (
+          <Image
+            alt={stegaClean(member.image.alt) || ""}
+            blurDataURL={member.image.asset?.metadata?.lqip || undefined}
+            className="h-full w-full object-cover"
+            height={600}
+            loading="lazy"
+            placeholder={member.image.asset?.metadata?.lqip ? "blur" : undefined}
+            sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 22vw, (min-width: 640px) 30vw, 46vw"
+            src={urlFor(member.image).width(480).height(600).url()}
+            width={480}
+          />
+        ) : null}
+      </div>
+      {hasName || hasRole ? (
+        <div className="grid gap-1.5">
+          {hasName ? (
+            <h3
+              className="text-balance text-xl font-bold text-foreground lg:text-2xl"
+              data-sanity={memberDataAttribute?.(member._id, "name")}
+            >
+              {member.name}
+            </h3>
+          ) : null}
+          {hasRole ? (
+            <p
+              className="text-label text-muted-foreground"
+              data-sanity={memberDataAttribute?.(member._id, "role")}
+            >
+              {member.role}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 export default function TeamMembers({
   _key,
   background,
@@ -179,6 +238,7 @@ export default function TeamMembers({
   eyebrow,
   memberDataAttribute,
   members,
+  presentation,
   richText,
   title,
 }: TeamMembersProps) {
@@ -194,6 +254,7 @@ export default function TeamMembers({
 
   const displayEyebrow = stegaClean(eyebrow)?.trim();
   const displayTitle = stegaClean(title)?.trim();
+  const isRoster = stegaClean(presentation) === "roster";
   const titleId = _key
     ? `team-members-${stegaClean(_key)}-title`
     : undefined;
@@ -244,13 +305,28 @@ export default function TeamMembers({
             </div>
           ) : null}
         </header>
-        <div className="grid gap-16">
+        <div
+          className={cn(
+            "grid",
+            isRoster
+              ? "grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:grid-cols-5"
+              : "gap-16",
+          )}
+          data-sanity={dataAttribute?.("members")}
+        >
           {resolvedMembers.map((member, index) => {
             const memberPath = member._key
               ? `members[_key=="${member._key}"]`
               : `members[${index}]`;
 
-            return (
+            return isRoster ? (
+              <TeamMemberRosterCard
+                key={member._key ?? member.document._id}
+                member={member.document}
+                memberDataAttribute={memberDataAttribute}
+                referenceDataAttribute={dataAttribute?.(memberPath)}
+              />
+            ) : (
               <TeamMemberProfile
                 index={index}
                 key={member._key ?? member.document._id}
