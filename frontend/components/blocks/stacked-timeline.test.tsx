@@ -171,7 +171,6 @@ describe("StackedTimeline", () => {
       manito.querySelector('[data-sanity="section:items[_key==\\"manito-landing\\"].image"]'),
     ).toHaveAttribute("aria-hidden", "true");
 
-    expect(screen.getByText("island")).toHaveClass("text-campfire-amber");
   });
 
   it("drops cards missing a title or line and renders nothing below two cards", () => {

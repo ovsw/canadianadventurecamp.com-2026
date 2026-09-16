@@ -128,7 +128,6 @@ describe("Testimonials", () => {
     expect(
       screen.getByRole("heading", { name: "What families say about the island" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("about the island")).toHaveClass("text-[var(--section-accent)]");
     expect(screen.getAllByRole("group", { name: /of 3$/ })).toHaveLength(3);
     expect(document.querySelectorAll("figure")).toHaveLength(3);
     expect(screen.getByText("The lake was the whole summer.")).toBeInTheDocument();

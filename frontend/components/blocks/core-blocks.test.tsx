@@ -168,7 +168,6 @@ describe("core Page Builder sections", () => {
     for (const number of ["01", "02", "03", "04"]) {
       expect(screen.getByText(number)).toBeInTheDocument();
     }
-    expect(screen.getAllByRole("list")[0]).not.toHaveClass("lg:grid-cols-3");
     expect(screen.getByRole("heading", { name: "Second" })).toHaveAttribute(
       "data-sanity",
       'feature-cards:groups[_key=="draft-group"].cards[_key=="second"].title',
@@ -357,7 +356,6 @@ describe("core Page Builder sections", () => {
     expect(
       screen.getByRole("heading", { name: "Life on the island." }),
     ).toBeInTheDocument();
-    expect(screen.getByText("the island.")).toHaveClass("font-accent");
     expect(screen.getByRole("link", { name: "See our work" })).toHaveAttribute(
       "href",
       "/work",

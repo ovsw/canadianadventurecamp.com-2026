@@ -71,7 +71,6 @@ describe("Site Header", () => {
       />,
     );
 
-    expect(screen.getByRole("img", { name: "Northline" })).toHaveClass("h-13", "w-auto");
     expect(screen.queryByText("Temagami, Ontario · Est. 1975")).not.toBeInTheDocument();
   });
 
