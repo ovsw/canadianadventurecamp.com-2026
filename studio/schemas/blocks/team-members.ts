@@ -16,7 +16,7 @@ export default defineType({
       type: "string",
       title: "Presentation",
       description:
-        "Choose detailed profiles or a compact roster of portraits, names, and roles.",
+        "Choose detailed profiles or roster cards with a portrait, name, role, years at CAC, and short introduction.",
       initialValue: "profiles",
       options: {
         layout: "radio",

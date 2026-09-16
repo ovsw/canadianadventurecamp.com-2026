@@ -185,48 +185,75 @@ function TeamMemberRosterCard({
   const hasName = Boolean(stegaClean(member.name)?.trim());
   const hasRole = Boolean(stegaClean(member.role)?.trim());
 
-  if (!(hasImage || hasName || hasRole)) return null;
+  const hasShortBio = Boolean(stegaClean(member.shortBio)?.trim());
+  const yearsAtCac = member.yearsAtCac;
+  const experience = yearsAtCac != null && yearsAtCac >= 1
+    ? `${yearsAtCac} ${yearsAtCac === 1 ? "year" : "years"} at CAC`
+    : "Years at CAC to confirm";
+
+  if (!(hasImage || hasName || hasRole || hasShortBio)) return null;
 
   return (
-    <article className="grid min-w-0 content-start gap-4" data-sanity={referenceDataAttribute}>
+    <article
+      className={cn(
+        "grid min-w-0 overflow-hidden rounded-sm border border-current/15",
+        hasImage && "grid-cols-[minmax(0,1fr)_minmax(0,2fr)]",
+      )}
+      data-sanity={referenceDataAttribute}
+    >
       {hasImage && member.image ? (
         <div
-          className="aspect-[4/5] overflow-hidden rounded-lg bg-muted"
+          className="relative min-h-48 bg-muted"
           data-sanity={memberDataAttribute?.(member._id, "image")}
         >
           <Image
             alt={stegaClean(member.image.alt) || ""}
             blurDataURL={member.image.asset?.metadata?.lqip || undefined}
-            className="h-full w-full object-cover"
-            height={600}
+            className="object-cover"
+            fill
             loading="lazy"
             placeholder={member.image.asset?.metadata?.lqip ? "blur" : undefined}
-            sizes="(min-width: 640px) 216px, calc((100vw - 56px) / 2)"
-            src={urlFor(member.image).width(480).height(600).url()}
-            width={480}
+            sizes="(min-width: 1280px) 128px, (min-width: 768px) 192px, 33vw"
+            src={urlFor(member.image).width(320).height(480).url()}
           />
         </div>
       ) : null}
-      {hasName || hasRole ? (
-        <div className="grid gap-1.5">
-          {hasName ? (
-            <h3
-              className="text-balance wrap-break-word font-display text-title text-foreground"
-              data-sanity={memberDataAttribute?.(member._id, "name")}
-            >
-              {member.name}
-            </h3>
-          ) : null}
-          {hasRole ? (
-            <p
-              className="text-label text-muted-foreground"
-              data-sanity={memberDataAttribute?.(member._id, "role")}
-            >
-              {member.role}
-            </p>
-          ) : null}
-        </div>
-      ) : null}
+      <div className="grid min-w-0 content-start gap-3 p-4">
+        {hasName || hasRole ? (
+          <div className="grid gap-1">
+            {hasName ? (
+              <h3
+                className="text-balance wrap-break-word font-display text-title text-foreground"
+                data-sanity={memberDataAttribute?.(member._id, "name")}
+              >
+                {member.name}
+              </h3>
+            ) : null}
+            {hasRole ? (
+              <p
+                className="wrap-break-word text-sm leading-snug text-muted-foreground"
+                data-sanity={memberDataAttribute?.(member._id, "role")}
+              >
+                {member.role}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+        <p
+          className="text-sm leading-snug font-medium text-foreground"
+          data-sanity={memberDataAttribute?.(member._id, "yearsAtCac")}
+        >
+          {experience}
+        </p>
+        {hasShortBio ? (
+          <p
+            className="text-pretty wrap-break-word text-sm leading-relaxed text-muted-foreground"
+            data-sanity={memberDataAttribute?.(member._id, "shortBio")}
+          >
+            {member.shortBio}
+          </p>
+        ) : null}
+      </div>
     </article>
   );
 }
@@ -309,7 +336,7 @@ export default function TeamMembers({
           className={cn(
             "grid",
             isRoster
-              ? "grid-cols-2 justify-center gap-x-4 gap-y-8 sm:grid-cols-[repeat(auto-fit,minmax(0,13.5rem))] sm:gap-x-6"
+              ? "grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
               : "gap-16",
           )}
           data-sanity={dataAttribute?.("members")}

@@ -28,6 +28,23 @@ export default defineType({
         "The team member's job title or public-facing responsibility.",
     }),
     defineField({
+      name: "yearsAtCac",
+      type: "number",
+      title: "Years at CAC",
+      description:
+        "Years on the CAC team, including the season shown in the roster. Leave blank until confirmed; the card will say ‘Years at CAC to confirm’.",
+      validation: (rule) => rule.integer().min(1),
+    }),
+    defineField({
+      name: "shortBio",
+      type: "text",
+      title: "Short Introduction",
+      rows: 2,
+      description:
+        "One short sentence that helps a parent get to know this person: a personal interest, how they welcome campers, or what they enjoy about camp. Confirm it with the person before launch.",
+      validation: (rule) => rule.max(160),
+    }),
+    defineField({
       name: "email",
       type: "string",
       title: "Email",

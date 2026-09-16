@@ -7653,6 +7653,20 @@
         },
         "optional": true
       },
+      "yearsAtCac": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": true
+      },
+      "shortBio": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "email": {
         "type": "objectAttribute",
         "value": {

@@ -20,6 +20,8 @@ export const teamMembersQuery = groq`
         _type,
         name,
         role,
+        yearsAtCac,
+        shortBio,
         email,
         phone,
         sortOrder,
