@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils";
 import { urlFor } from "@/sanity/lib/image";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
-import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import {
+  PortableText,
+  toPlainText,
+  type PortableTextComponents,
+} from "@portabletext/react";
 import Image from "next/image";
 import { stegaClean } from "next-sanity";
 import styles from "./big-image-list.module.css";
@@ -48,11 +52,11 @@ export default function BigImageList({
   if (!title?.length || renderableStops.length < 2) return null;
 
   const sectionId = `big-image-list-${stegaClean(_key)}`;
-  const headingId = `${sectionId}-title`;
+  const sectionTitle = stegaClean(toPlainText(title)).replace(/\s+/g, " ").trim();
 
   return (
     <section
-      aria-labelledby={headingId}
+      aria-label={`Schedule list: ${sectionTitle}`}
       className={cn(sectionThemeClass(background), "py-section")}
       id={sectionId}
     >
@@ -70,7 +74,6 @@ export default function BigImageList({
             <h2
               className="text-balance font-display text-headline"
               data-sanity={dataAttribute?.("title")}
-              id={headingId}
             >
               <PortableText components={headingComponents} value={title} />
             </h2>
