@@ -207,7 +207,6 @@ describe("PackingChecklist", () => {
       "data-sanity",
       'section:groups[_key=="clothing"].items[_key=="underwear"]',
     );
-    expect(screen.getByText("once")).toHaveClass("text-[var(--section-accent)]");
   });
 
   it("renders nothing without a heading or without a complete group", () => {

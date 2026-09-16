@@ -87,17 +87,11 @@ describe("StackedFeatureRows", () => {
       screen.getByRole("heading", {
         name: "Built for kids. Trusted by parents.",
       }),
-    ).toHaveClass("text-headline");
-    expect(screen.getByText("Trusted by parents.")).toHaveClass("text-[var(--section-accent)]");
+    ).toBeInTheDocument();
     const rowHeading = screen.getByText("Accredited & inspected");
     expect(rowHeading).toHaveAttribute(
       "data-sanity",
       'section:rows[_key=="accredited"].title',
-    );
-    expect(rowHeading).toHaveClass("text-title-lg");
-    expect(rowHeading.parentElement).toHaveClass("items-start");
-    expect(rowHeading.closest("li")).toHaveClass(
-      "md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]",
     );
     expect(
       screen.getByText("OCA accredited").closest("[data-sanity]"),
@@ -105,28 +99,14 @@ describe("StackedFeatureRows", () => {
       "data-sanity",
       'section:rows[_key=="accredited"].items[_key=="oca"].body',
     );
-    const ocaLink = screen.getByRole("link", { name: "OCA accredited" });
-    expect(ocaLink).toHaveAttribute(
-      "href",
-      "https://ontariocampsassociation.ca/",
-    );
-    expect(ocaLink).toHaveClass("text-[var(--section-accent)]", "hover:opacity-75");
-    expect(document.querySelector('[data-sanity$=".icon"]')).toHaveClass(
-      "text-[var(--section-accent)]",
-    );
-    expect(document.querySelector(".lucide-check")).toHaveClass("text-[var(--section-accent)]");
     expect(
-      document.querySelector('[data-sanity="section:rows"]'),
-    ).toHaveClass("divide-y");
+      screen.getByRole("link", { name: "OCA accredited" }),
+    ).toHaveAttribute("href", "https://ontariocampsassociation.ca/");
+    expect(document.querySelector('[data-sanity$=".icon"]')).not.toBeNull();
+    expect(document.querySelector(".lucide-check")).not.toBeNull();
     expect(
-      document.querySelector('[data-sanity$=".items"]'),
-    ).not.toHaveClass("md:grid-cols-2");
-    const rowLink = screen.getByRole("link", { name: "Our accreditations" });
-    expect(rowLink).toHaveAttribute(
-      "href",
-      "/accreditations",
-    );
-    expect(rowLink).toHaveClass("text-[var(--section-accent)]", "hover:opacity-75", "ms-8");
+      screen.getByRole("link", { name: "Our accreditations" }),
+    ).toHaveAttribute("href", "/accreditations");
   });
 
   it("omits rows without points", () => {

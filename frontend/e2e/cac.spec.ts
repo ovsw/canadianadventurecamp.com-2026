@@ -1,22 +1,35 @@
-import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import {
+  expect,
+  test,
+  type APIRequestContext,
+  type Page,
+} from "@playwright/test";
 
-const siteRoutes = [
-  "/",
-  "/contact",
-  "/blog",
-  "/blog/continuing-the-cac-traditions-for-the-next-generations",
-] as const;
+// The smoke runs against `next start` after `next build`. Every sitemap route
+// is prerendered, so these checks prove the built HTML, not a live Sanity
+// fetch. The card-image test below is the one request-time proof.
 
-async function gotoRoute(
-  page: import("@playwright/test").Page,
-  path: (typeof siteRoutes)[number],
-) {
+const desktop = { height: 720, width: 1280 };
+const mobile = { height: 844, width: 390 };
+
+async function sitemapRoutes(request: APIRequestContext) {
+  const response = await request.get("/sitemap.xml");
+  expect(response.ok(), "sitemap should respond successfully").toBe(true);
+  const routes = [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map(
+    (match) => new URL(match[1]).pathname,
+  );
+  expect(routes.length, "sitemap should list at least one route").toBeGreaterThan(0);
+  return routes;
+}
+
+async function gotoRoute(page: Page, path: string) {
   const response = await page.goto(path, { waitUntil: "domcontentloaded" });
   expect(response?.ok(), `${path} should respond successfully`).toBe(true);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 }
 
-async function expectAccessibleRoute(page: import("@playwright/test").Page) {
+async function expectAccessibleRoute(page: Page) {
   await expect(page.locator("main")).toHaveCount(1);
   await expect(page.locator("h1")).toHaveCount(1);
   await expect(
@@ -24,19 +37,131 @@ async function expectAccessibleRoute(page: import("@playwright/test").Page) {
   ).toBeVisible();
   await expect(page.getByRole("contentinfo")).toBeVisible();
   await expect(
-    page.getByRole("button", { name: /theme|color mode|dark|light/i }),
+    page.getByRole("button", {
+      name: /\b(theme|colou?r mode|dark mode|light mode)\b/i,
+    }),
   ).toHaveCount(0);
   await expect(
     page.locator("[aria-hidden='false'], [aria-hidden='true'][tabindex='0']"),
   ).toHaveCount(0);
+  await expect(page.locator("img:not([alt])")).toHaveCount(0);
 }
 
-for (const route of siteRoutes) {
-  test(`serves ${route} from Sanity`, async ({ page }) => {
-    await gotoRoute(page, route);
-    await expectAccessibleRoute(page);
-  });
+function horizontalOverflow(page: Page) {
+  return page
+    .locator("html")
+    .evaluate((element) => element.scrollWidth - element.clientWidth);
 }
+
+function motionViolations(page: Page) {
+  return page.locator("body *").evaluateAll((elements) =>
+    elements.filter((element) => {
+      const style = getComputedStyle(element);
+      const movingProperties = new Set([
+        "all",
+        "rotate",
+        "scale",
+        "transform",
+        "translate",
+      ]);
+      // Computed lists are comma-separated and a shorter duration list
+      // repeats, so pair each entry with its own duration by index.
+      const list = (value: string) => value.split(",").map((item) => item.trim());
+      const durations = list(style.transitionDuration);
+      const hasMovementTransition = list(style.transitionProperty).some(
+        (property, index) =>
+          movingProperties.has(property) &&
+          parseFloat(durations[index % durations.length]) > 0,
+      );
+      const animationDurations = list(style.animationDuration);
+      const hasAnimation = list(style.animationName).some(
+        (name, index) =>
+          name !== "none" &&
+          parseFloat(animationDurations[index % animationDurations.length]) > 0,
+      );
+
+      return hasAnimation || hasMovementTransition;
+    }).length,
+  );
+}
+
+test.describe("every prebuilt route", () => {
+  test.use({ contextOptions: { reducedMotion: "reduce" }, viewport: desktop });
+
+  test("renders with landmarks, no overflow, and no reduced-motion movement", async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(180_000);
+
+    for (const route of await sitemapRoutes(request)) {
+      await test.step(route, async () => {
+        await gotoRoute(page, route);
+        await expectAccessibleRoute(page);
+        expect(
+          await motionViolations(page),
+          `${route} moves for reduced-motion visitors`,
+        ).toBe(0);
+
+        // The main navigation only exists at desktop widths; overflow only
+        // shows at phone widths. Resize in place instead of loading twice.
+        await page.setViewportSize(mobile);
+        expect(await horizontalOverflow(page), `${route} overflows at ${mobile.width}px`).toBe(0);
+        await page.setViewportSize(desktop);
+      });
+    }
+  });
+
+  // One route per template. Scanning every content document turns editor
+  // mistakes (skipped heading levels in old posts) into red PRs, and the
+  // route loop above already covers every document for the cheap rules.
+  // color-contrast is disabled until the design tokens meet WCAG AA; that is
+  // a design task, tracked separately.
+  test("passes an axe accessibility scan on each template", async ({
+    page,
+    request,
+  }) => {
+    const routes = await sitemapRoutes(request);
+    const templates = [
+      "/",
+      "/contact",
+      "/blog",
+      routes.find((route) => /^\/blog\/(?!category\/)[^/]+$/.test(route)),
+      routes.find((route) => /^\/blog\/category\/[^/]+$/.test(route)),
+    ].filter((route): route is string => Boolean(route));
+    expect(templates).toHaveLength(5);
+    const violations: string[] = [];
+
+    for (const route of templates) {
+      await test.step(route, async () => {
+        await gotoRoute(page, route);
+        const results = await new AxeBuilder({ page })
+          .disableRules(["color-contrast"])
+          .analyze();
+        for (const violation of results.violations) {
+          violations.push(
+            `${route}: ${violation.id} (${violation.impact}) on ${violation.nodes.length} node(s) — ${violation.help}`,
+          );
+        }
+      });
+    }
+
+    expect(violations).toEqual([]);
+  });
+});
+
+test("serves the page card image at request time", async ({ page, request }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const ogImage = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute("content");
+  expect(ogImage, "home page should declare an og:image").toMatch(/\/api\/og\/page\//);
+
+  const { pathname, search } = new URL(ogImage!);
+  const response = await request.get(pathname + search);
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toMatch(/^image\//);
+});
 
 test("supports keyboard access on CAC routes", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -54,48 +179,18 @@ test("supports keyboard access on CAC routes", async ({ page }) => {
   ).toBeFocused();
 });
 
-test("removes movement for reduced-motion visitors", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-
-  const motionViolations = await page
-    .locator("body *")
-    .evaluateAll((elements) =>
-      elements.filter((element) => {
-        const style = getComputedStyle(element);
-        const movingProperties = new Set([
-          "all",
-          "rotate",
-          "scale",
-          "transform",
-          "translate",
-        ]);
-        const hasMovementTransition =
-          style.transitionDuration !== "0s" &&
-          style.transitionProperty
-            .split(",")
-            .some((property) => movingProperties.has(property.trim()));
-
-        return style.animationName !== "none" || hasMovementTransition;
-      }).length,
-    );
-
-  expect(motionViolations).toBe(0);
-});
-
-test("keeps content pages free of horizontal overflow", async ({ page }) => {
+test("keeps the home and contact pages free of horizontal overflow at every width", async ({
+  page,
+}) => {
   for (const viewport of [
-    { height: 844, width: 390 },
+    mobile,
     { height: 1024, width: 768 },
     { height: 1000, width: 1440 },
   ]) {
     await page.setViewportSize(viewport);
-    await gotoRoute(page, "/contact");
-
-    expect(
-      await page
-        .locator("html")
-        .evaluate((element) => element.scrollWidth - element.clientWidth),
-    ).toBe(0);
+    for (const route of ["/", "/contact"]) {
+      await gotoRoute(page, route);
+      expect(await horizontalOverflow(page), `${route} at ${viewport.width}px`).toBe(0);
+    }
   }
 });

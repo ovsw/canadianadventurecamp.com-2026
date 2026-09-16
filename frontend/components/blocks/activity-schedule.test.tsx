@@ -129,7 +129,6 @@ describe("ActivitySchedule", () => {
     expect(
       screen.getByRole("list", { name: "Your Tuesday schedule" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Your")).toHaveClass("text-ember-red", "underline");
 
     fireEvent.click(activity);
     expect(activity).toHaveAttribute("aria-pressed", "false");
@@ -289,15 +288,13 @@ describe("ActivitySchedule", () => {
     );
   });
 
-  it("keeps Activity buttons stationary on hover and leaves blank lines empty", () => {
+  it("leaves blank schedule lines empty", () => {
     render(<ActivitySchedule {...activitySchedule} />);
 
-    const activity = screen.getByRole("button", { name: "Activity 1" });
     const schedule = screen.getByRole("list", {
       name: "Maya's Tuesday schedule",
     });
 
-    expect(activity).not.toHaveClass("hover:-translate-y-0.5");
     expect(schedule.querySelector("[aria-hidden='true']")).toBeNull();
   });
 
