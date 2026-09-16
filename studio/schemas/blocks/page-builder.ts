@@ -24,6 +24,7 @@ export const contentPageBuilderBlockTypes = [
   "bigImageList",
   "directorCta",
   "largeSlides",
+  "headingImage",
   // page-builder-generator:content-types
 ] as const;
 
@@ -81,6 +82,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "bigImageList",
   "directorCta",
   "largeSlides",
+  "headingImage",
   // page-builder-generator:preview-types
 ]);
 
@@ -138,6 +140,7 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
       name: "image-rich",
       title: "Image Rich",
       of: [
+        "headingImage",
         "storyFeature",
         "imageCollageFeature",
         "featureCards",
