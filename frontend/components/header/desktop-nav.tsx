@@ -238,10 +238,9 @@ export function DesktopNav({
     : { duration: 0 };
   const fade = { duration: prefersReducedMotion ? 0 : 0.14 };
   // The open trigger and its panel are one surface, so they share a colour.
-  // The 90% alpha lets the photo behind the header tint both alike.
   const panelSurfaceClassName = dark
-    ? "bg-forest-panel/90 text-birch-bark"
-    : "bg-birch-bark-bright/90 text-pine-night";
+    ? "bg-forest-panel text-birch-bark"
+    : "bg-birch-bark-bright text-pine-night";
   const primaryLinkClassName = cn(
     // px-2 -mx-1 keeps the same flow width as the old px-1 while giving the
     // hover pill room around the label.

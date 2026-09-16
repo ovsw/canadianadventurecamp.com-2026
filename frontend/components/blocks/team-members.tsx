@@ -188,10 +188,10 @@ function TeamMemberRosterCard({
   if (!(hasImage || hasName || hasRole)) return null;
 
   return (
-    <article className="grid content-start gap-4" data-sanity={referenceDataAttribute}>
+    <article className="grid min-w-0 content-start gap-4" data-sanity={referenceDataAttribute}>
       {hasImage && member.image ? (
         <div
-          className="aspect-[4/5] overflow-hidden rounded-card bg-muted shadow-ambient-feature"
+          className="aspect-[4/5] overflow-hidden rounded-lg bg-muted"
           data-sanity={memberDataAttribute?.(member._id, "image")}
         >
           <Image
@@ -201,7 +201,7 @@ function TeamMemberRosterCard({
             height={600}
             loading="lazy"
             placeholder={member.image.asset?.metadata?.lqip ? "blur" : undefined}
-            sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 22vw, (min-width: 640px) 30vw, 46vw"
+            sizes="(min-width: 640px) 216px, calc((100vw - 56px) / 2)"
             src={urlFor(member.image).width(480).height(600).url()}
             width={480}
           />
@@ -211,7 +211,7 @@ function TeamMemberRosterCard({
         <div className="grid gap-1.5">
           {hasName ? (
             <h3
-              className="text-balance text-xl font-bold text-foreground lg:text-2xl"
+              className="text-balance wrap-break-word font-display text-title text-foreground"
               data-sanity={memberDataAttribute?.(member._id, "name")}
             >
               {member.name}
@@ -273,13 +273,13 @@ export default function TeamMembers({
       data-sanity={dataAttribute?.("background")}
       id="team"
     >
-      <div className="container grid gap-(--space-header-gap)">
-        <header className="mx-auto grid max-w-[47.5rem] justify-items-center gap-5 text-center">
+      <div className="container-content grid gap-8 sm:gap-10">
+        <header className="mx-auto grid w-full max-w-3xl justify-items-center gap-5 text-center">
           {displayEyebrow || displayTitle ? (
             <div>
               {displayEyebrow ? (
                 <p
-                  className="mb-3.5 typo-eyebrow text-primary"
+                  className="mb-3.5 text-eyebrow text-primary"
                   data-sanity={dataAttribute?.("eyebrow")}
                 >
                   {eyebrow}
@@ -287,7 +287,7 @@ export default function TeamMembers({
               ) : null}
               {displayTitle ? (
                 <h2
-                  className="text-balance typo-section-heading text-foreground"
+                  className="text-balance font-display text-headline text-foreground"
                   data-sanity={dataAttribute?.("title")}
                   id={titleId}
                 >
@@ -298,7 +298,7 @@ export default function TeamMembers({
           ) : null}
           {richText?.length ? (
             <div
-              className="text-pretty typo-body-editorial text-muted-foreground [&_p]:!my-0"
+              className="text-pretty text-base/relaxed text-muted-foreground sm:text-lg/relaxed [&_p]:!my-0"
               data-sanity={dataAttribute?.("richText")}
             >
               <PortableTextRenderer value={richText} />
@@ -309,7 +309,7 @@ export default function TeamMembers({
           className={cn(
             "grid",
             isRoster
-              ? "grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:grid-cols-5"
+              ? "grid-cols-2 justify-center gap-x-4 gap-y-8 sm:grid-cols-[repeat(auto-fit,minmax(0,13.5rem))] sm:gap-x-6"
               : "gap-16",
           )}
           data-sanity={dataAttribute?.("members")}
