@@ -118,7 +118,7 @@ export default function FaqAccordion({
               <p
                 className={cn(
                   "mt-6 text-pretty text-[17px] leading-[1.6]",
-                  cream ? "text-pine-night/70" : "text-birch-bark/72",
+                  cream ? "text-ink-muted" : "text-birch-bark/72",
                 )}
                 data-sanity={dataAttribute?.("subtitle")}
               >
@@ -166,7 +166,7 @@ export default function FaqAccordion({
                     <AccordionContent
                       className={cn(
                         "pb-7 text-base",
-                        cream ? "text-pine-night/72" : "text-birch-bark/72",
+                        cream ? "text-ink-muted" : "text-birch-bark/72",
                       )}
                     >
                       <div className="grid max-w-[38rem] gap-4 text-pretty leading-[1.6]">

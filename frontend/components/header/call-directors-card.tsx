@@ -64,7 +64,7 @@ export function CallDirectorsCard({
         <span
           className={cn(
             "text-[14px] leading-snug",
-            dark ? "text-birch-bark/70" : "text-pine-night/65",
+            dark ? "text-birch-bark/70" : "text-ink-muted",
           )}
         >
           Ask about fit, dates, or travel.

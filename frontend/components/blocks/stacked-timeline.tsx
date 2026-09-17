@@ -36,8 +36,8 @@ const fields = {
   cream: {
     section: "text-pine-night",
     accent: "text-cedar",
-    body: "text-pine-night/70",
-    label: "text-pine-night/60",
+    body: "text-ink-muted",
+    label: "text-ink-muted",
     number: "text-cedar",
     card: "border-pine-night/12 bg-birch-bark-bright",
     media: "bg-pine-night/10",

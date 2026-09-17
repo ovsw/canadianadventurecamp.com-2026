@@ -297,7 +297,7 @@ export default function ActivityScheduleBuilder({
                   className="flex min-h-12 items-center gap-4 border-b border-dashed border-pine-night/20 py-2"
                   key={time}
                 >
-                  <span className="w-12 shrink-0 font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
+                  <span className="w-12 shrink-0 font-body text-sm leading-snug font-medium tracking-normal text-ink-muted">
                     {time}
                   </span>
                   <span
@@ -311,14 +311,14 @@ export default function ActivityScheduleBuilder({
           </ol>
 
           <div className="mt-4 flex items-center justify-between gap-4">
-            <p className="font-body text-sm leading-snug font-medium tracking-normal text-pine-night/70">
+            <p className="font-body text-sm leading-snug font-medium tracking-normal text-ink-muted">
               Rebuilt fresh every morning
             </p>
             {hasMounted && prefersReducedMotion === false ? (
               <button
                 aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
                 aria-pressed={isAutomationPaused}
-                className="focus-ring grid size-9 shrink-0 place-items-center rounded-full border border-pine-night/20 text-pine-night/70 transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
+                className="focus-ring grid size-9 shrink-0 place-items-center rounded-full border border-pine-night/20 text-ink-muted transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
                 onClick={toggleAutomation}
                 type="button"
               >

@@ -50,7 +50,7 @@ export function CallDirectorsAction({
         <strong
           className={cn(
             "text-sm leading-none font-semibold",
-            dark ? "text-birch-bark/85" : "text-pine-night/85",
+            dark ? "text-birch-bark/85" : "text-ink-soft",
           )}
         >
           {CALL_DIRECTORS_LABEL}

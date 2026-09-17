@@ -117,7 +117,7 @@ export default function BenefitCards({
             <p
               className={cn(
                 "mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6]",
-                cream ? "text-pine-night/70" : "text-birch-bark/72",
+                cream ? "text-ink-muted" : "text-birch-bark/72",
               )}
               data-sanity={dataAttribute?.("intro")}
             >
@@ -174,7 +174,7 @@ export default function BenefitCards({
                     aria-hidden="true"
                     className={cn(
                       "text-label",
-                      cream ? "text-pine-night/45" : "text-birch-bark/45",
+                      cream ? "text-ink-muted" : "text-birch-bark/45",
                     )}
                   >
                     {String(index + 1).padStart(2, "0")}
@@ -195,7 +195,7 @@ export default function BenefitCards({
                   <div
                     className={cn(
                       "grid gap-3 text-pretty text-[15px] leading-[1.55]",
-                      cream ? "text-pine-night/70" : "text-birch-bark/72",
+                      cream ? "text-ink-muted" : "text-birch-bark/72",
                     )}
                     data-sanity={dataAttribute?.(`${cardPath}.body`)}
                   >

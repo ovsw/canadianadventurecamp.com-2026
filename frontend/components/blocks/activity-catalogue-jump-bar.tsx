@@ -117,7 +117,7 @@ export default function ActivityCatalogueJumpBar({
         ref={navRef}
       >
         <span
-          className="shrink-0 border-r border-pine-night/20 pr-4 text-label font-semibold text-pine-night/70 sm:pr-5"
+          className="shrink-0 border-r border-pine-night/20 pr-4 text-label font-semibold text-ink-muted sm:pr-5"
           id="activity-catalogue-jump-bar-label"
         >
           Activity Categories
