@@ -12,7 +12,8 @@ spec's Implementation Decisions, with one line:
 
 `Architectural: yes|no — <reason>`
 
-The answer is **yes** when any of these is true:
+The test for **yes** lives in the user-level instructions, under code review
+budget and routing. In this repository it reads as:
 
 - It changes a stored shape: a Sanity schema, a Page Builder section's fields,
   or the shape a GROQ query returns.
@@ -20,6 +21,8 @@ The answer is **yes** when any of these is true:
 - It adds a term to `CONTEXT.md`, or changes what an existing term means.
 - It adds a dependency, or is the first instance of a pattern others will copy.
 - If the implementer chose differently, other tickets would have to change.
+
+The same flag routes the review. Flag it once, and it answers both questions.
 
 When **yes**: the decision is made in the spec, and in an ADR if it is hard to
 reverse. The ticket points at the decision; it does not make it.
@@ -47,8 +50,8 @@ In this repo:
 
 - Run the typecheck and the single test files you touched. Do not run
   `pnpm verify` or the full suite.
-- Do not run `/code-review` or the `coderabbit` CLI. Review is a separate step
-  that Ovi triggers. See [Review policy](#review-policy).
+- Run the review that [Review policy](#review-policy) routes the ticket to.
+  Judge the route yourself; do not ask Ovi to trigger it.
 - Commit on the current branch. Then report: what changed, what was checked,
   and any open questions.
 
@@ -68,19 +71,20 @@ sitting.
 
 ## Review policy
 
-Ovi triggers every CodeRabbit review. One review per ticket, never two, and no
-second review after the fixes. Route by the ticket's risk:
+The budget and the routing table are in the user-level instructions and apply
+to every project. Read them there; they are not repeated here. You route the
+ticket and run the review yourself, without waiting for Ovi.
 
-| Ticket | CLI review (before the PR, same session) | PR review |
-| --- | --- | --- |
-| `Architectural: yes`, or touches data, auth, or migrations | no | yes, once |
-| Logic, not architectural | yes | no |
-| Looks, copy, or content only | no | no |
+Two things are specific to this repository:
 
-Architectural tickets use the PR quota: CodeRabbit sees the merged codebase
-and the GitHub thread is a record worth keeping. Other logic uses the CLI
-quota, so fixes land in the session that wrote the code. Looks-only tickets
-get Ovi's eyes; that is the only review that works for them.
+- **Auto-review is off.** `.coderabbit.yaml` sets `auto_review.enabled: false`,
+  so opening a PR starts nothing. A PR review means you post the
+  `@coderabbitai review` comment on the PR yourself.
+- **Why the split pays here.** Architectural tickets spend the PR quota so
+  CodeRabbit sees the merged codebase and the GitHub thread stays as a record.
+  Other logic spends the CLI quota, so fixes land in the session that wrote the
+  code. Looks-only tickets get Ovi's eyes, which is the only review that works
+  for them.
 
 Sequence in the implementing session: `/implement` → commit → CLI review if
 the table says so → fix → `/theo-file-pr` → PR review if the table says so →

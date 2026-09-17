@@ -96,9 +96,13 @@ Add or run focused tests only when Ovi asks, or when the change involves:
 
 ## Review agents
 
-Review agents are explicit opt-in. Do not invoke review subagents, review
-skills, CodeRabbit, or an adversarial review loop unless Ovi requests that
-review in the current task.
+CodeRabbit is not opt-in. Route it with the budget and routing rule in the
+user-level instructions, and run the route you pick without asking. One review
+for each pull request, never two.
+
+Review subagents, review skills, and adversarial review loops are different:
+they burn context and time rather than money, and they stay explicit opt-in.
+Do not invoke one unless Ovi asks for it in the current task.
 
 ## Repository scanning
 

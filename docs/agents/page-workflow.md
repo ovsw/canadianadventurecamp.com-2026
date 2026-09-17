@@ -20,6 +20,8 @@ The result is a complete Sanity draft, its Basecamp card in Ovi Polish,
 and a traceable confirmation checklist. A temporary layout limitation is
 acceptable when recorded. Missing content and failed writes are not.
 Ovi is the editorial reviewer; do not create a review agent or review loop.
+Content drafting is the content-only row of the review routing table, so it
+earns no CodeRabbit review either.
 
 Content work requires no dedicated branch or worktree. Read repository
 instructions and section definitions from an available checkout, including
