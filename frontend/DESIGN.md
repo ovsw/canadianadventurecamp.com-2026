@@ -168,14 +168,48 @@ A forest at dusk, lit by one fire.
 - **Lake Night** (`{colors.lake-night}`): the globe container only; near-black blue.
 - **Ember Red** (`{colors.ember-red}`): one use, the "Full" session marker. Error red if ever needed.
 
-Translucent neutrals do the quiet work: secondary text is Birch Bark at 66-75% on dark and Pine Night at 65-70% on cream; hairlines are Birch Bark at 12-22% on dark and Pine Night at 10-18% on cream; muted labels sit at 45%.
+### Ink tiers (secondary text on cream)
+
+Secondary text on cream is a solid ink tier, never Pine Night at reduced alpha.
+Each tier keeps Pine Night's hue and chroma and raises the lightness, so it
+reads the same on Birch Bark and on Birch Bark Bright.
+
+| Tier | Value | On Birch Bark | Use |
+| --- | --- | --- | --- |
+| **Ink** (`{colors.pine-night}`) | `oklch(22.8% 0.034 133)` | 14.6:1 | body text, headings, anything primary |
+| **Ink Soft** (`ink-soft`) | `oklch(44.5% 0.034 133)` | 6.5:1 | prices, dates, check items, near-primary supporting text |
+| **Ink Muted** (`ink-muted`) | `oklch(50% 0.034 133)` | 5.1:1 | card descriptions, labels, captions, nav sub-lines, FAQ answers |
+
+`--color-muted-foreground` is Ink Muted, so shadcn-derived components (card
+descriptions, placeholders, breadcrumbs, dialog descriptions) land on a tier
+without per-component edits.
+
+**Contrast margin.** Every piece of text on cream reaches at least 5:1 against
+Birch Bark, the darker of the two creams. WCAG 2.2 AA asks for 4.5:1; the extra
+margin means a small change to a cream or to an ink tier cannot quietly drop the
+site below the bar. Birch Bark Bright is lighter, so it always clears the same
+text by more.
+
+Translucent neutrals still do the quiet work everywhere text is not involved:
+hairlines are Birch Bark at 12-22% on dark and Pine Night at 10-18% on cream.
+Text on dark fields stays Birch Bark at 66-75%; it passes at those values.
 
 ### Named Rules
 **The One Fire Rule.** Campfire Amber touches at most a few elements per viewport: one button, one script word, one label. Its scarcity is what makes it read as "act here."
 
 **Section backgrounds.** Editors choose White (Birch Bark Bright), Cream (Birch Bark), or Green (Forest Floor) with a compact select. Use adjacent backgrounds to separate content where needed. The final section above the dark footer must be White or Cream. Maps, globes, and media heroes keep their fixed backgrounds; maps and globes must be followed by a light section.
 
-**The Translucent Ink Rule.** Secondary text, borders, and dividers are never a new grey. They are the field's text colour at reduced alpha.
+**The Translucent Ink Rule.** Borders, hairlines, and dividers are never a new
+grey. They are the field's text colour at reduced alpha. Text is not: secondary
+text on cream picks an ink tier from the table above, and secondary text on dark
+fields is Birch Bark at reduced alpha. Alpha on cream text depends on whatever
+sits behind it, which is how the site drifted below AA; see
+`docs/adr/0002-solid-ink-tiers-for-text-on-cream.md`.
+
+**The Amber-Is-Not-Text Rule.** Campfire Amber, either tint, is never text below
+large size (24px, or 19px bold) on cream. It may be a marker, an underline, a
+border, or a background with ink on top. Large amber headings on cream stay
+amber where they reach 3:1.
 
 ## Typography
 
@@ -191,7 +225,7 @@ Translucent neutrals do the quiet work: secondary text is Birch Bark at 66-75% o
 - **Headline** (800, 58px desktop, line-height 1.02, tracking -0.02em): section openers. Pine Night on cream, Birch Bark on dark.
 - **Title** (700, 19-30px, line-height 1-1.1): card and program titles, stat numbers, nav wordmark at 15px with +0.04em tracking. Use `text-title` at 22px, or `text-title-lg` at 28px for row headings that can wrap. Both tokens use line-height 1.1 and tracking -0.01em.
 - **Script** (Caveat 600, roughly 1.15x the surrounding headline size, up to 118px in the hero): the aside inside a headline, a pull quote signature, a margin note. Always Campfire Amber on dark, Cedar on cream.
-- **Body** (Archivo 400, 16-17px, line-height 1.6): paragraphs, max 520-620px wide. Secondary body at 15px / 1.55 and reduced alpha.
+- **Body** (Archivo 400, 16-17px, line-height 1.6): paragraphs, max 520-620px wide. Secondary body at 15px / 1.55 in `ink-muted` on cream, or Birch Bark at reduced alpha on dark.
 - **Eyebrow** (Archivo, 14px, 600 weight, tracking 0.02em): supporting context above a headline, Campfire Amber on dark, Cedar on cream, 20px below it.
 - **Label** (Archivo, 14px, 500 weight, tracking 0.01em): chips, map markers, stamps, metadata, and nav sub-lines.
 
@@ -303,7 +337,8 @@ Every section opens the same way: Archivo eyebrow (14px, 600 weight, amber or ce
 ### Do:
 - **Do** open every section with the eyebrow, headline, script triad; it is the brand's signature.
 - **Do** keep Campfire Amber scarce: one button, one script phrase, one label per viewport (The One Fire Rule).
-- **Do** derive every secondary text, border, and divider from the field's text colour at reduced alpha (The Translucent Ink Rule).
+- **Do** derive every border, hairline, and divider from the field's text colour at reduced alpha (The Translucent Ink Rule).
+- **Do** pick `ink-muted` or `ink-soft` for secondary text on cream, and keep every cream text at 5:1 or better.
 - **Do** set annotations at 14px or larger, in normal case with modest tracking and clear contrast (The Annotation Rule).
 - **Do** use pills for buttons only, marks-plus-words for labels, and 22-26px slabs for anything that frames media or content.
 - **Do** keep cards flat at rest and lift them only on hover or focus (The Flat-Until-Touched Rule).
@@ -315,7 +350,9 @@ Every section opens the same way: Archivo eyebrow (14px, 600 weight, amber or ce
 - **Do** validate form fields on blur with a plain-English mono message in Ember Red.
 
 ### Don't:
-- **Don't** introduce a second accent or a new grey; the palette is thirteen named colours and their alphas.
+- **Don't** introduce a second accent or a new grey; the palette is thirteen named colours, the two ink tiers derived from Pine Night, and their alphas.
+- **Don't** set cream text with an alpha (`text-pine-night/70` and friends); pick an ink tier instead.
+- **Don't** colour small text with Campfire Amber on cream (The Amber-Is-Not-Text Rule).
 - **Don't** use Caveat for more than one phrase per section or for any UI text.
 - **Don't** drop annotation, prices, dates, or chips below 14px or into uppercase wide tracking.
 - **Don't** place resting drop shadows on cards or tiles; only media frames and lifted states carry shadow.

@@ -129,7 +129,7 @@ export function MobileNav({
                         "min-h-11 items-center rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold hover:no-underline [&>svg]:size-5 [&>svg]:translate-y-0 [&>svg]:stroke-[2.25]",
                         dark
                           ? "hover:bg-birch-bark/6 [&>svg]:text-birch-bark/85"
-                          : "hover:bg-cedar/8 [&>svg]:text-pine-night/70",
+                          : "hover:bg-cedar/8 [&>svg]:text-ink-muted",
                       )}
                     >
                       {item.label}
@@ -164,7 +164,7 @@ export function MobileNav({
                                 <span
                                   className={cn(
                                     "text-[15px] leading-tight",
-                                    dark ? "text-birch-bark/65" : "text-pine-night/65",
+                                    dark ? "text-birch-bark/65" : "text-ink-muted",
                                   )}
                                 >
                                   {child.description}

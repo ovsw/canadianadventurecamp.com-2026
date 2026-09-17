@@ -34,6 +34,13 @@
   --color-birch-bark-bright: oklch(97.6% 0.012 92);
   --color-lake-night: oklch(20% 0.035 261);
 
+  /* Ink tiers — solid secondary text on cream. Pine Night's hue and chroma at
+     a raised lightness, so the value is the same on Birch Bark and on Birch
+     Bark Bright. Contrast on Birch Bark (the darker cream): ink-muted 5.1:1,
+     ink-soft 6.5:1. Text on cream never uses an alpha; see DESIGN.md. */
+  --color-ink-muted: oklch(50% 0.034 133);
+  --color-ink-soft: oklch(44.5% 0.034 133);
+
   --color-ember-red: oklch(53.5% 0.154 38);
 
   /* Semantic aliases used by components (home-hero, button, etc.) */
@@ -50,7 +57,7 @@
   --color-secondary: var(--color-forest-panel);
   --color-secondary-foreground: var(--color-birch-bark);
   --color-muted: var(--color-birch-bark-bright);
-  --color-muted-foreground: oklch(22.8% 0.034 133 / 65%);
+  --color-muted-foreground: var(--color-ink-muted);
   --color-card: var(--color-birch-bark);
   --color-card-foreground: var(--color-pine-night);
   --color-destructive: var(--color-ember-red);

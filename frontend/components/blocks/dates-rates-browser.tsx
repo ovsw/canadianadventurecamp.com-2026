@@ -13,12 +13,12 @@ import {
 /** Label colours hold 4.5:1 on cream; the bar colour carries the status. */
 function availabilityClass(status: string) {
   if (status === "full") {
-    return "text-pine-night/60";
+    return "text-ink-muted";
   }
   if (status === "limited") {
     return "text-cedar-deep";
   }
-  return "text-pine-night/70";
+  return "text-ink-muted";
 }
 
 /** Animates the displayed rate from its previous value to the active length's rate over ~620ms. */
@@ -111,7 +111,7 @@ export default function DatesRatesBrowser({
                 className={
                   selected
                     ? `focus-ring rounded-pill border border-cedar bg-cedar px-5 py-3 text-sm font-bold tracking-normal text-birch-bark ${styles.tab}`
-                    : `focus-ring rounded-pill border border-pine-night/18 bg-transparent px-5 py-3 text-sm font-bold tracking-normal text-pine-night/70 motion-reduce:transition-none ${styles.tab}`
+                    : `focus-ring rounded-pill border border-pine-night/18 bg-transparent px-5 py-3 text-sm font-bold tracking-normal text-ink-muted motion-reduce:transition-none ${styles.tab}`
                 }
                 key={length.key}
                 onClick={() => setSelectedKey(length.key)}
@@ -143,7 +143,7 @@ export default function DatesRatesBrowser({
 
       <div className="max-lg:contents lg:grid lg:grid-cols-[320px_1fr] lg:gap-14">
         <aside className="order-1 lg:order-none">
-          <p className="text-label text-pine-night/70">
+          <p className="text-label text-ink-muted">
             Per camper &middot; session rate
           </p>
           <div className="mt-3 flex items-baseline gap-2.5">
@@ -153,7 +153,7 @@ export default function DatesRatesBrowser({
             >
               {formatRate(animatedRate)}
             </span>
-            <span className="font-mono text-[14px] font-bold tracking-[0.01em] text-pine-night/85">
+            <span className="font-mono text-[14px] font-bold tracking-[0.01em] text-ink-soft">
               +tax
             </span>
           </div>
@@ -167,13 +167,13 @@ export default function DatesRatesBrowser({
 
         <div className="order-3 mt-6 flex flex-col lg:order-none lg:mt-0">
           <div className="mb-3 hidden gap-3 md:grid md:grid-cols-[7.5rem_1fr] md:gap-3.5">
-                <span className="text-label hidden self-end text-pine-night/75 md:block">
+                <span className="text-label hidden self-end text-ink-soft md:block">
               Session dates
             </span>
             <span className="relative hidden h-[15px] md:block">
               {ticks.map((tick, index) => (
                 <span
-                  className={`absolute bottom-0 font-mono text-[14px] leading-snug tracking-[0.01em] text-pine-night/70 ${index % 2 === 1 ? "hidden xl:inline" : ""}`}
+                  className={`absolute bottom-0 font-mono text-[14px] leading-snug tracking-[0.01em] text-ink-muted ${index % 2 === 1 ? "hidden xl:inline" : ""}`}
                   key={tick.date}
                   style={
                     index === 0
@@ -237,7 +237,7 @@ export default function DatesRatesBrowser({
                       >
                         {row.dates}
                       </span>
-                      <span className="font-mono text-[14px] leading-snug tracking-[0.01em] text-pine-night/70">
+                      <span className="font-mono text-[14px] leading-snug tracking-[0.01em] text-ink-muted">
                         {row.weeksLabel}
                       </span>
                     </span>

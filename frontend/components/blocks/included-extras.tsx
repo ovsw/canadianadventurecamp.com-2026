@@ -124,7 +124,7 @@ export default function IncludedExtras({
             </h3>
             {hasText(included?.note) ? (
               <p
-                className="mt-2 text-[15px] leading-snug text-pine-night/65"
+                className="mt-2 text-[15px] leading-snug text-ink-muted"
                 data-sanity={dataAttribute?.("included.note")}
               >
                 {included?.note}
@@ -153,7 +153,7 @@ export default function IncludedExtras({
                       {item.label}
                     </span>
                     {hasText(item.detail) ? (
-                      <span className="mt-1 block text-[15px] leading-snug text-pine-night/65">
+                      <span className="mt-1 block text-[15px] leading-snug text-ink-muted">
                         {item.detail}
                       </span>
                     ) : null}
@@ -172,7 +172,7 @@ export default function IncludedExtras({
             )}
             data-sanity={dataAttribute?.("extras")}
           >
-            <p className="text-label text-pine-night/75">Extra</p>
+            <p className="text-label text-ink-soft">Extra</p>
             <h3
               className="mt-4 font-display text-[1.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2rem]"
               data-sanity={dataAttribute?.("extras.heading")}
@@ -182,7 +182,7 @@ export default function IncludedExtras({
             </h3>
             {hasText(extras?.note) ? (
               <p
-                className="mt-2 text-[15px] leading-snug text-pine-night/65"
+                className="mt-2 text-[15px] leading-snug text-ink-muted"
                 data-sanity={dataAttribute?.("extras.note")}
               >
                 {extras?.note}
@@ -219,7 +219,7 @@ export default function IncludedExtras({
                       </span>
                       {hasText(item.detail) ? (
                         <span
-                          className="mt-1 block text-[15px] leading-snug text-pine-night/65"
+                          className="mt-1 block text-[15px] leading-snug text-ink-muted"
                           data-sanity={dataAttribute?.(`${itemPath}.detail`)}
                         >
                           {item.detail}
@@ -247,7 +247,7 @@ export default function IncludedExtras({
                       ) : null}
                     </span>
                     <span
-                      className="whitespace-nowrap pt-1 text-right font-mono text-[14px] font-bold tracking-[0.01em] text-pine-night/85"
+                      className="whitespace-nowrap pt-1 text-right font-mono text-[14px] font-bold tracking-[0.01em] text-ink-soft"
                       data-sanity={dataAttribute?.(`${itemPath}.price`)}
                     >
                       {item.price}

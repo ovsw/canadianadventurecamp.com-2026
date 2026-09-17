@@ -37,7 +37,7 @@ function ProfileMeta({
   return (
     <div className="flex flex-wrap items-center gap-2.5">
       <span
-        className="inline-flex items-center gap-2.5 text-label text-foreground/75"
+        className="inline-flex items-center gap-2.5 text-label text-ink-soft"
         data-sanity={memberDataAttribute?.(member._id, "role")}
       >
         <span

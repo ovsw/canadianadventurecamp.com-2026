@@ -60,7 +60,7 @@ function GroupPanelContent({
       <p
         className={cn(
           "text-label mb-2 px-2",
-          dark ? "text-birch-bark/55" : "text-pine-night/55",
+          dark ? "text-birch-bark/55" : "text-ink-muted",
         )}
       >
         {label}
@@ -104,7 +104,7 @@ function GroupPanelContent({
                     <span
                       className={cn(
                         "text-[15px] leading-tight",
-                        dark ? "text-birch-bark/65" : "text-pine-night/65",
+                        dark ? "text-birch-bark/65" : "text-ink-muted",
                       )}
                     >
                       {child.description}
@@ -247,7 +247,7 @@ export function DesktopNav({
     "-mx-1 flex min-h-11 items-center whitespace-nowrap rounded-control px-2 text-[15px] font-medium transition-colors motion-fast focus-ring",
     dark
       ? "text-birch-bark/85 hover:bg-birch-bark/8 hover:text-birch-bark"
-      : "text-pine-night/85 hover:bg-cedar/10 hover:text-cedar-deep",
+      : "text-ink-soft hover:bg-cedar/10 hover:text-cedar-deep",
   );
 
   return (
