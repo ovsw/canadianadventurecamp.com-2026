@@ -49,7 +49,8 @@ The skill's own text says: run the full test suite, run `/code-review`, commit.
 In this repo:
 
 - Run the typecheck and the single test files you touched. Do not run
-  `pnpm verify` or the full suite.
+  `pnpm verify` or the full suite while you implement. Run `pnpm verify` one
+  time before you open the pull request; it is the PR gate.
 - Run the review that [Review policy](#review-policy) routes the ticket to.
   Judge the route yourself; do not ask Ovi to trigger it.
 - Commit on the current branch. Then report: what changed, what was checked,

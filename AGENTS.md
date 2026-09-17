@@ -92,7 +92,8 @@ Add or run focused tests only when Ovi asks, or when the change involves:
 - subtle pure logic that is hard to verify manually; or
 - a regression that is expensive to reproduce.
 
-`pnpm verify` is a release and pull-request gate. Always runn it on a PR.
+`pnpm verify` is the release and pull-request gate. Do not run it while you
+implement; run it one time before you open the pull request.
 
 ## Review agents
 
@@ -149,8 +150,9 @@ separate task. Avatars live in `docs/avatars.md`.
 
 Before `/to-spec`, `/to-tickets`, `/implement`, or `/tdd` runs, read
 `docs/agents/build-flow.md`. Its architectural flag, test policy, and closing
-steps replace the ones written inside those skills. `/implement` stops after
-the commit; it does not run the full suite or `/code-review`.
+steps replace the ones written inside those skills. `/implement` does not run
+the full suite while it works; it follows that file's closing steps and its
+review sequence.
 
 ### Page Builder work
 
