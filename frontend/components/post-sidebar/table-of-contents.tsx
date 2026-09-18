@@ -27,10 +27,12 @@ function HeadingLinks({
           <a
             aria-current={activeId === heading.id ? "location" : undefined}
             className={cn(
-              "-ml-px block border-l py-1 pl-4 text-sm leading-5 underline-offset-4 transition-colors motion-fast hover:border-border-strong hover:text-foreground focus-underline",
+              "-ml-px block border-l py-1 pl-4 text-sm leading-5 underline-offset-4 transition-colors motion-fast hover:text-foreground focus-underline",
+              // Amber marks the current entry; it is never the text colour
+              // (frontend/DESIGN.md, Amber-Is-Not-Text Rule).
               activeId === heading.id
-                ? "border-primary font-semibold text-primary"
-                : "border-transparent text-muted-foreground",
+                ? "border-primary font-semibold text-foreground"
+                : "border-transparent text-muted-foreground hover:border-strong",
             )}
             href={`#${heading.id}`}
           >
