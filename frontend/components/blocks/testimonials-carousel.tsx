@@ -184,6 +184,10 @@ export default function TestimonialsCarousel({
               aria-roledescription="slide"
               className={styles.slide}
               data-active={slideIndex === index ? "true" : undefined}
+              // Dimmed neighbours stay visible for the peek effect, but
+              // `inert` keeps their links out of the tab order and their
+              // half-strength text out of the accessibility tree.
+              inert={slideIndex !== index}
               key={slide.key}
               role="group"
             >

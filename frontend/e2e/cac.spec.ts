@@ -115,8 +115,8 @@ test.describe("every prebuilt route", () => {
   // One route per template. Scanning every content document turns editor
   // mistakes (skipped heading levels in old posts) into red PRs, and the
   // route loop above already covers every document for the cheap rules.
-  // color-contrast is disabled until the design tokens meet WCAG AA; that is
-  // a design task, tracked separately.
+  // /summer-camp-activities is the published page with a testimonial
+  // carousel, whose dimmed slides are the one place color-contrast can drift.
   test("passes an axe accessibility scan on each template", async ({
     page,
     request,
@@ -126,18 +126,17 @@ test.describe("every prebuilt route", () => {
       "/",
       "/contact",
       "/blog",
+      "/summer-camp-activities",
       routes.find((route) => /^\/blog\/(?!category\/)[^/]+$/.test(route)),
       routes.find((route) => /^\/blog\/category\/[^/]+$/.test(route)),
     ].filter((route): route is string => Boolean(route));
-    expect(templates).toHaveLength(5);
+    expect(templates).toHaveLength(6);
     const violations: string[] = [];
 
     for (const route of templates) {
       await test.step(route, async () => {
         await gotoRoute(page, route);
-        const results = await new AxeBuilder({ page })
-          .disableRules(["color-contrast"])
-          .analyze();
+        const results = await new AxeBuilder({ page }).analyze();
         for (const violation of results.violations) {
           violations.push(
             `${route}: ${violation.id} (${violation.impact}) on ${violation.nodes.length} node(s) — ${violation.help}`,
