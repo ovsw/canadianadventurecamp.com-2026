@@ -100,22 +100,6 @@ be visibly identified as proposed placeholders, not attributed as genuine
 testimony. Preserve useful proposed detail instead of deleting it for lack
 of a source.
 
-### Client confirmation checklist
-
-Keep the checklist on the page's Basecamp card, in its body or a linked
-card comment. Update existing entries rather than appending duplicates.
-One entry contains:
-
-- The exact proposed claim.
-- Every location on this page, including section/field, FAQs, and metadata.
-- A request to confirm or supply replacement wording.
-- Its status: awaiting client, confirmed, or replacement supplied.
-
-Group repeated occurrences into one item. Include missing media requests.
-Link an already known shared confirmation record instead of asking the
-same camp question again. Shared client answers apply to known affected
-locations; ask before searching for further occurrences or changing other
-pages. Confirmation and propagation are later tasks, not this drafting run.
 
 ## Match presentation layouts
 
