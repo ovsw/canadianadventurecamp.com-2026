@@ -117,6 +117,9 @@ test.describe("every prebuilt route", () => {
   // route loop above already covers every document for the cheap rules.
   // /summer-camp-activities is the published page with a testimonial
   // carousel, whose dimmed slides are the one place color-contrast can drift.
+  // /canadian-adventure-camp-experience is the one page where a Big Image
+  // List sits beside Large Slides that share its title; it guards the
+  // landmark-unique fix from #150.
   test("passes an axe accessibility scan on each template", async ({
     page,
     request,
@@ -127,10 +130,11 @@ test.describe("every prebuilt route", () => {
       "/contact",
       "/blog",
       "/summer-camp-activities",
+      "/canadian-adventure-camp-experience",
       routes.find((route) => /^\/blog\/(?!category\/)[^/]+$/.test(route)),
       routes.find((route) => /^\/blog\/category\/[^/]+$/.test(route)),
     ].filter((route): route is string => Boolean(route));
-    expect(templates).toHaveLength(6);
+    expect(templates).toHaveLength(7);
     const violations: string[] = [];
 
     for (const route of templates) {
