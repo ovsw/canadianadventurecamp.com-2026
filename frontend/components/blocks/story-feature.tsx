@@ -245,7 +245,7 @@ export default function StoryFeature({
       className={cn(field.section, sectionThemeClass(background))}
       id={`story-feature-${sectionKey}`}
     >
-      <div className={cn(styles.grid, styles.reveal)}>
+      <div className={styles.grid}>
         {hasImage ? (
           <figure
             className={cn(styles.photo, "m-0 min-w-0")}
