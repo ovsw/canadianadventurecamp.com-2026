@@ -1,6 +1,6 @@
 ---
 name: page-polish
-description: "Review a drafted CAC page section by section, fix section fit and photos in a fresh Sanity draft, and report layout proposals in chat. Usage: /page-polish [<slug> | <page id> | <Basecamp card URL>]"
+description: "Review a drafted CAC page section by section, fix section fit and photos in a fresh Sanity draft, and report layout proposals in chat. Usage: /page-polish [<link to the page record, a Basecamp card today> | <slug>]"
 disable-model-invocation: true
 ---
 

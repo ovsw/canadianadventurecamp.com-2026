@@ -1,6 +1,6 @@
 ---
 name: page-polish
-description: Review a drafted CAC page section by section, fix section fit and photos in a fresh Sanity draft, and report layout proposals in chat. Takes a slug, page id, Basecamp card URL, or the top card in Polish.
+description: Review a drafted CAC page section by section, fix section fit and photos in a fresh Sanity draft, and report layout proposals in chat. Takes a link to the page's record (a Basecamp card today), a slug as fallback, or the top card in Polish.
 ---
 
 # Page polish

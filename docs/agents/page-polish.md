@@ -30,8 +30,28 @@ where they also learn Studio; realness is not the agent's concern here.
 
 ## Take the page
 
-Accept a slug, page id, or Basecamp card URL. With no target, take the top
-unclaimed card in Polish. Claim it with the protocol in "Taking a page so
+The input is a link to the record that holds the page's current facts.
+Today that is the page's Basecamp card; Ovi pastes its URL from the Kanban
+board. With no link, take the top unclaimed card in Polish.
+
+Resolve the link to the page before anything else:
+
+- **Basecamp card** (`app.basecamp.com/<account>/buckets/<project>/card_tables/cards/<id>`):
+  read it with `basecamp cards show <url> --json`. The card body carries
+  `Slug: /<slug>`, `Sanity id: <pageId>`, and the Studio preview link; the
+  brief, decisions, layout proposals, and checklist follow. Take the slug
+  and page id from the body. If either is missing, read the preview link's
+  `page/<pageId>` and `preview=...%2F<slug>` parts, and record on the card
+  what you found.
+- **Another system's link**: acceptable when its record holds the slug and
+  the Sanity page id. Read it with the MCP or skill that reaches that
+  system, and say in the report which record and fields you used.
+- **A bare slug or page id**: accepted as a fallback; then find the card by
+  listing Polish and matching the slug, because the card is still where the
+  brief and the change comment live.
+
+Confirm the resolved page exists in Sanity (`*[_type=="page" && slug.current==$slug]`
+in the `raw` perspective) before claiming. Claim it with the protocol in "Taking a page so
 nobody else works on it" in `docs/agents/page-workflow.md`, with the comment
 `Taking this page for polish. Run: <id>. Page: /<slug>.` Leave the card in
 Polish. Read the card body: the brief, the decisions, the layout proposals
