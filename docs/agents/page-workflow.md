@@ -200,7 +200,8 @@ Move the card to Ovi Polish only after the content and checklist are saved.
 Record handover and release the run's claim. Tell Ovi the card URL, the
 verified Studio URL if available, and any presentation limitations. Content
 ready and presentation work proposed are separate outcomes; a layout
-proposal does not block handover.
+proposal does not block handover. The next stage is
+`docs/agents/page-polish.md`.
 
 ## Pauses, failures, and later corrections
 
