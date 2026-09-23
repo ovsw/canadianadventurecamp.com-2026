@@ -128,7 +128,7 @@ export default function IncludedExtras({
               className={cn(
                 "grid gap-8",
                 priceTiers.length > 1 &&
-                  "sm:grid-cols-2 sm:gap-x-10 lg:grid-flow-col lg:auto-cols-fr",
+                  "sm:grid-flow-col sm:auto-cols-fr sm:gap-x-10",
               )}
             >
               {priceTiers.map((tier, index) => {
