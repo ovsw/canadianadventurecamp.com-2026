@@ -146,6 +146,11 @@ on the card. No schema/frontend work, GitHub plan, dedicated worktree, seed
 file, or review agent belongs to content drafting. Code development is a
 separate task. Avatars live in `docs/avatars.md`.
 
+`/page-polish <slug>` and `$page-polish` share `docs/agents/page-polish.md`.
+Read it before polishing a page in the Polish column: it publishes the
+baseline, judges every section's fit with screenshots, fixes what the Page
+Builder can fix, and reports layout proposals in chat only.
+
 ### Build flow
 
 Before `/to-spec`, `/to-tickets`, `/implement`, or `/tdd` runs, read
