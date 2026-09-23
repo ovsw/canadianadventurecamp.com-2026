@@ -20,7 +20,7 @@ install -m 600 frontend/.env.local.example frontend/.env.local
 install -m 600 studio/.env.local.example studio/.env.local
 ```
 
-The read token powers Sanity Presentation draft previews. The auth token powers Studio-side CLI jobs and repository-scoped Sanity MCP access in Codex. Add optional integration credentials to the local env files only when the matching feature needs them. The committed `.env.local.example` files list the supported names.
+The read token powers Sanity Presentation draft previews. The auth token powers Studio-side CLI jobs and repository-scoped Sanity MCP access in Codex. Claude Code reaches the Sanity MCP server over HTTP with OAuth instead (see `.mcp.json`): run `/mcp` once in an interactive `claude` session, pick `sanity`, and sign in; the token is stored per user and shared by every worktree. Add optional integration credentials to the local env files only when the matching feature needs them. The committed `.env.local.example` files list the supported names.
 The Studio uses `studio/.env.local` for the local Website preview and the
 committed `studio/.env.production` for the deployed Website preview and Studio
 app ID.
