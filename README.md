@@ -66,7 +66,7 @@ worktree of this repository, with port, memory, uptime, and worktree. Stop them
 with `--all`, `--here` (this worktree), `--orphans` (launcher already gone), or
 `--port <n>`. Stopping one server also stops its sibling and frees the slot.
 
-Run `pnpm verify` before opening a pull request. It checks generated Sanity types, TypeScript, lint, focused tests, and both production builds.
+Run `pnpm verify` before opening a pull request. It checks generated Sanity types, TypeScript, lint, focused tests, both production builds, and the smoke suite. GitHub Actions runs the same two halves, `pnpm verify:static` and `pnpm verify:build`, as parallel jobs under one `Release gate` check. A pull request that changes only documentation (`docs/`, Markdown files, `.claude/`, `.codex/`) skips both halves.
 
 `pnpm page-builder:new <name>` creates and registers a typed Studio schema,
 GROQ projection, and React renderer. Use `--scope content|general|home`,
