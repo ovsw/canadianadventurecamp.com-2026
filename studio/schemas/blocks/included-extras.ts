@@ -34,6 +34,37 @@ const includedItem = defineArrayMember({
   preview: { select: { title: "label", subtitle: "detail" } },
 });
 
+const priceTier = defineArrayMember({
+  name: "includedExtrasPrice",
+  title: "Price",
+  type: "object",
+  fields: [
+    defineField({
+      name: "name",
+      type: "string",
+      description: 'What the price buys, e.g. "Adult camp weekend" or "Competition 1".',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "price",
+      type: "string",
+      description: 'The number as written, e.g. "$725" or "$1,100".',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "unit",
+      type: "string",
+      description: 'Shown beside the number, e.g. "per person, plus tax".',
+    }),
+    defineField({
+      name: "note",
+      type: "string",
+      description: 'Optional one-line note, e.g. "Sept 3 to 6, 2027. Previous season\u2019s price (camp to confirm)".',
+    }),
+  ],
+  preview: { select: { title: "name", subtitle: "price" } },
+});
+
 const extraItem = defineArrayMember({
   name: "includedExtrasExtraItem",
   title: "Extra",
@@ -72,11 +103,11 @@ const extraItem = defineArrayMember({
 
 export default defineType({
   name: "includedExtras",
-  title: "Included & Extras",
+  title: "Price, Included & Extras",
   type: "object",
   icon: Scale,
   description:
-    "Two columns on a cream field: a check list of what the price includes beside a priced list of what is extra.",
+    "The price first, then two columns: a check list of what the price includes beside a priced list of what is extra.",
   fields: [
     sectionBackgroundField,
     defineField({
@@ -97,6 +128,15 @@ export default defineType({
       type: "text",
       rows: 2,
       description: "Optional. One or two sentences under the heading.",
+    }),
+    defineField({
+      name: "prices",
+      title: "Prices",
+      type: "array",
+      of: [priceTier],
+      description:
+        "The headline price, shown before the columns. Add up to three when the section compares options. Leave empty when the page already shows the price above.",
+      validation: (rule) => rule.max(3),
     }),
     defineField({
       name: "included",
@@ -154,10 +194,15 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: "title", included: "included.items", extras: "extras.items" },
-    prepare: ({ title, included, extras }) => ({
-      title: richTextToPlainText(title) || "Included & Extras",
-      subtitle: `${Array.isArray(included) ? included.length : 0} included · ${Array.isArray(extras) ? extras.length : 0} extras`,
+    select: {
+      title: "title",
+      prices: "prices",
+      included: "included.items",
+      extras: "extras.items",
+    },
+    prepare: ({ title, prices, included, extras }) => ({
+      title: richTextToPlainText(title) || "Price, Included & Extras",
+      subtitle: `${Array.isArray(prices) ? prices.length : 0} prices · ${Array.isArray(included) ? included.length : 0} included · ${Array.isArray(extras) ? extras.length : 0} extras`,
     }),
   },
 });

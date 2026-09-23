@@ -9,6 +9,13 @@ export const includedExtrasQuery = groq`
       ...
     },
     intro,
+    "prices": array::compact(prices[]{
+      _key,
+      name,
+      price,
+      unit,
+      note
+    }),
     included {
       heading,
       note,
