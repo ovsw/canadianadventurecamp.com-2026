@@ -52,13 +52,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           EVENT_NAME: ${{ github.event_name }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+        # `shell: bash` adds pipefail, so a failed page of the file list fails
+        # this job instead of classifying a partial list.
+        shell: bash
         run: |
           if [ "$EVENT_NAME" != "pull_request" ]; then
             echo "Not a pull request; running the code gate."
             echo "code=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --paginate --jq '.[].filename' \
+          EXPECTED_FILES="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.changed_files')"
+          export EXPECTED_FILES
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files" --paginate \
+            --jq '.[] | "\(.filename)\t\(.previous_filename // "")"' \
             | node scripts/gate-scope.mjs
 
   static:
