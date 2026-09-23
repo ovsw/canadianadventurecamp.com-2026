@@ -17,11 +17,14 @@ type IncludedExtrasProps = Extract<PageBlock, { _type: "includedExtras" }> & {
 };
 
 /*
- * Included & Extras — a two-plan comparison on a cream field.
+ * Price, Included & Extras — the price first, then a two-plan comparison on a
+ * cream field.
  *
- * Desktop: two cards side by side. The included card is a pale green check
- * list (positive); the extras card is a white price sheet, price on the
- * right in the mono legend. Phones: the cards stack, price stays on the row.
+ * The price sheet is a white card above the columns. One price sits beside
+ * its name; two or three prices become equal columns with a divider. Under
+ * it, the included card is a pale green check list (positive); the extras
+ * card is a white price sheet, price on the right in the mono legend.
+ * Phones: everything stacks, price stays on the row.
  */
 
 const headingComponents: PortableTextComponents = {
@@ -47,8 +50,12 @@ export default function IncludedExtras({
   footnote,
   included,
   intro,
+  prices,
   title,
 }: IncludedExtrasProps) {
+  const priceTiers = (prices ?? []).filter(
+    (tier) => hasText(tier.name) && hasText(tier.price),
+  );
   const includedItems = (included?.items ?? []).filter((item) =>
     hasText(item.label),
   );
@@ -70,6 +77,7 @@ export default function IncludedExtras({
   const headingId = `included-extras-${sectionKey}-title`;
   const includedId = `included-extras-${sectionKey}-included`;
   const extrasId = `included-extras-${sectionKey}-extras`;
+  const pricesId = `included-extras-${sectionKey}-prices`;
 
   return (
     <section
@@ -104,7 +112,92 @@ export default function IncludedExtras({
           ) : null}
         </header>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-2 lg:gap-8">
+        {priceTiers.length > 0 ? (
+          <section
+            aria-labelledby={pricesId}
+            className={cn(
+              "mt-14 rounded-[1.625rem] border border-pine-night/10 bg-white p-7 sm:p-10",
+              styles.reveal,
+            )}
+            data-sanity={dataAttribute?.("prices")}
+          >
+            <h3 className="sr-only" id={pricesId}>
+              Price
+            </h3>
+            <ul
+              className={cn(
+                "grid gap-8",
+                priceTiers.length > 1 &&
+                  "sm:grid-cols-2 sm:gap-x-10 lg:grid-flow-col lg:auto-cols-fr",
+              )}
+            >
+              {priceTiers.map((tier, index) => {
+                const tierPath = `prices[_key=="${tier._key}"]`;
+                const single = priceTiers.length === 1;
+
+                return (
+                  <li
+                    className={cn(
+                      "flex flex-col gap-3",
+                      single &&
+                        "sm:flex-row sm:items-end sm:justify-between sm:gap-10",
+                      !single &&
+                        index > 0 &&
+                        "border-t border-pine-night/10 pt-8 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-10",
+                    )}
+                    data-sanity={dataAttribute?.(tierPath)}
+                    key={tier._key}
+                  >
+                    <div className={cn("min-w-0", single && "max-w-md")}>
+                      <p
+                        className="text-label text-ink-soft"
+                        data-sanity={dataAttribute?.(`${tierPath}.name`)}
+                      >
+                        {tier.name}
+                      </p>
+                      {hasText(tier.note) ? (
+                        <p
+                          className="mt-2 text-[15px] leading-snug text-ink-muted"
+                          data-sanity={dataAttribute?.(`${tierPath}.note`)}
+                        >
+                          {tier.note}
+                        </p>
+                      ) : null}
+                    </div>
+                    <p
+                      className={cn(
+                        "flex flex-wrap items-baseline gap-x-3 gap-y-1",
+                        single ? "sm:justify-end sm:text-right" : "order-first",
+                      )}
+                    >
+                      <span
+                        className="font-display text-[clamp(2.75rem,6vw,4.25rem)] font-extrabold leading-none tracking-[-0.03em] tabular-nums"
+                        data-sanity={dataAttribute?.(`${tierPath}.price`)}
+                      >
+                        {tier.price}
+                      </span>
+                      {hasText(tier.unit) ? (
+                        <span
+                          className="font-mono text-[14px] font-bold tracking-[0.01em] text-ink-soft"
+                          data-sanity={dataAttribute?.(`${tierPath}.unit`)}
+                        >
+                          {tier.unit}
+                        </span>
+                      ) : null}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
+
+        <div
+          className={cn(
+            "grid gap-6 lg:grid-cols-2 lg:gap-8",
+            priceTiers.length > 0 ? "mt-6 lg:mt-8" : "mt-14",
+          )}
+        >
           {/* Included: pale green card (Sunlit Moss at reduced alpha), check list */}
           <section
             aria-labelledby={includedId}
