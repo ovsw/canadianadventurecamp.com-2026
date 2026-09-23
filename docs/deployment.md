@@ -11,7 +11,8 @@ The Website and Studio are separate applications.
    deployed site is indexable. Keep `development` locally and for Preview
    deployments so unfinished revisions remain `noindex`.
 4. Use `main` as the production branch.
-5. Require the GitHub `Release gate` check before pull requests can merge into `main`.
+5. A ruleset on `main` requires the GitHub `Release gate` check before a pull
+   request can merge. Repository admins may bypass it; do not.
 
 Vercel may create preview deployments for pull requests. Production deploys come only from verified revisions merged into `main`.
 

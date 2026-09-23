@@ -88,29 +88,40 @@ function motionViolations(page: Page) {
 test.describe("every prebuilt route", () => {
   test.use({ contextOptions: { reducedMotion: "reduce" }, viewport: desktop });
 
-  test("renders with landmarks, no overflow, and no reduced-motion movement", async ({
-    page,
-    request,
-  }) => {
-    test.setTimeout(180_000);
+  // The sitemap lists well over a hundred routes. Walking them in one test
+  // took 67 s of the release gate, so the walk is split into fixed shards
+  // that Playwright runs in parallel workers against the same server.
+  const routeShards = 4;
 
-    for (const route of await sitemapRoutes(request)) {
-      await test.step(route, async () => {
-        await gotoRoute(page, route);
-        await expectAccessibleRoute(page);
-        expect(
-          await motionViolations(page),
-          `${route} moves for reduced-motion visitors`,
-        ).toBe(0);
+  for (let shard = 0; shard < routeShards; shard += 1) {
+    test(`renders with landmarks, no overflow, and no reduced-motion movement (shard ${shard + 1} of ${routeShards})`, async ({
+      page,
+      request,
+    }) => {
+      test.setTimeout(180_000);
 
-        // The main navigation only exists at desktop widths; overflow only
-        // shows at phone widths. Resize in place instead of loading twice.
-        await page.setViewportSize(mobile);
-        expect(await horizontalOverflow(page), `${route} overflows at ${mobile.width}px`).toBe(0);
-        await page.setViewportSize(desktop);
-      });
-    }
-  });
+      const routes = (await sitemapRoutes(request)).filter(
+        (_, index) => index % routeShards === shard,
+      );
+
+      for (const route of routes) {
+        await test.step(route, async () => {
+          await gotoRoute(page, route);
+          await expectAccessibleRoute(page);
+          expect(
+            await motionViolations(page),
+            `${route} moves for reduced-motion visitors`,
+          ).toBe(0);
+
+          // The main navigation only exists at desktop widths; overflow only
+          // shows at phone widths. Resize in place instead of loading twice.
+          await page.setViewportSize(mobile);
+          expect(await horizontalOverflow(page), `${route} overflows at ${mobile.width}px`).toBe(0);
+          await page.setViewportSize(desktop);
+        });
+      }
+    });
+  }
 
   // One route per template. Scanning every content document turns editor
   // mistakes (skipped heading levels in old posts) into red PRs, and the
