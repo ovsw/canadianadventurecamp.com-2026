@@ -7,7 +7,9 @@
 // Reads SANITY_AUTH_TOKEN from the environment (the root script loads
 // studio/.env.local), the dev ports from .worktree-ports.json, and writes
 // <out>/<viewport>/<nn>-<sectionKey>.png. Prints one JSON line per viewport
-// with the page height and every section's height.
+// with the page height and every section's height. It stops when the rendered
+// sections do not match the draft's blocks, so a published-only render is never
+// mistaken for the draft.
 
 import { createRequire } from "node:module";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
@@ -25,7 +27,9 @@ if (!slug) {
   console.error("Usage: pnpm page:shots <slug> [--out <dir>] [--only desktop|phone]");
   process.exit(1);
 }
-const outRoot = path.resolve(flag("--out") ?? `/tmp/cac-page-shots/${slug.replace(/\//g, "_")}`);
+// The default folder name comes from the slug, so keep it to one safe path segment.
+const safeSlug = slug.replace(/[^a-zA-Z0-9-]+/g, "_").replace(/^_+|_+$/g, "") || "page";
+const outRoot = path.resolve(flag("--out") ?? `/tmp/cac-page-shots/${safeSlug}`);
 const only = flag("--only");
 const token = process.env.SANITY_AUTH_TOKEN;
 if (!token) {
@@ -61,6 +65,25 @@ if (!projectId || !dataset) {
 }
 
 const client = createClient({ projectId, dataset, apiVersion: "2025-01-01", token, useCdn: false });
+
+// The draft's own section keys are the proof that the browser shows the draft:
+// the rendered wrappers must carry exactly these keys, in this order.
+const pageDoc = await client
+  .withConfig({ perspective: "raw" })
+  .fetch(
+    `*[_type=="page" && slug.current==$slug] | order(select(_id in path("drafts.**") => 0, 1))[0]{_id, "keys": blocks[]._key}`,
+    { slug },
+  );
+if (!pageDoc) {
+  console.error(`No page document has the slug "${slug}".`);
+  process.exit(1);
+}
+const expectedKeys = pageDoc.keys ?? [];
+if (expectedKeys.length === 0) {
+  console.error(`${pageDoc._id} has no Page Builder sections to screenshot.`);
+  process.exit(1);
+}
+
 const { secret } = await createPreviewSecret(client, "page-shots", studio);
 const enableUrl =
   `${frontend}/api/draft-mode/enable?sanity-preview-secret=${encodeURIComponent(secret)}` +
@@ -119,6 +142,16 @@ async function shoot(name, viewport) {
       }
       return rows;
     });
+    const renderedKeys = sections.map((s) => s.key);
+    if (renderedKeys.length === 0) {
+      throw new Error(`No Page Builder sections rendered for /${slug} at ${page.url()}.`);
+    }
+    if (JSON.stringify(renderedKeys) !== JSON.stringify(expectedKeys)) {
+      throw new Error(
+        `Rendered sections do not match ${pageDoc._id}. Draft mode is probably off.\n` +
+          `  expected: ${expectedKeys.join(", ")}\n  rendered: ${renderedKeys.join(", ")}`,
+      );
+    }
     const pageHeight = await page.evaluate(() => document.documentElement.scrollHeight);
     let index = 0;
     for (const section of sections) {
