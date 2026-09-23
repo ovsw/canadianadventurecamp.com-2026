@@ -208,7 +208,7 @@ export default function TestimonialsCarousel({
           >
             <ChevronLeft aria-hidden="true" className="size-5" />
           </button>
-          <div className="flex items-center" role="group" aria-label="Choose a testimonial">
+          <div className="flex min-w-0 flex-wrap items-center justify-center" role="group" aria-label="Choose a testimonial">
             {slides.map((slide, slideIndex) => (
               <button
                 aria-current={slideIndex === index ? "true" : undefined}
