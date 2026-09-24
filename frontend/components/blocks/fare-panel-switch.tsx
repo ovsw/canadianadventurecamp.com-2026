@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useId, useState } from "react";
+import { useState } from "react";
 
 /** One fare, with its click-to-edit attributes resolved on the server. */
 export type FarePanelFare = {
@@ -31,7 +31,6 @@ export function FarePanelSwitch({
   sanity?: string;
 }>) {
   const [selectedKey, setSelectedKey] = useState(fares[0]?.key);
-  const groupId = useId();
   const selected = fares.find((fare) => fare.key === selectedKey) ?? fares[0];
   if (!selected) return null;
 
@@ -41,7 +40,7 @@ export function FarePanelSwitch({
         className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-pine-night/10 bg-white p-5 text-pine-night sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-7 sm:py-6"
         data-sanity={selected.sanity.fare}
       >
-        <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+        <p aria-live="polite" className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
           <span
             className="font-display text-[clamp(2.5rem,5vw,3.5rem)] font-extrabold leading-none tracking-[-0.03em] tabular-nums"
             data-sanity={selected.sanity.price}
@@ -63,23 +62,21 @@ export function FarePanelSwitch({
           <div
             aria-label="Fare"
             className="inline-flex shrink-0 self-start rounded-pill border border-pine-night/12 bg-birch-bark p-1 sm:self-auto"
-            role="radiogroup"
+            role="group"
           >
             {fares.map((fare) => {
               const active = fare.key === selected.key;
               return (
                 <button
-                  aria-checked={active}
+                  aria-pressed={active}
                   className={cn(
                     "focus-ring rounded-pill px-4 py-2 text-[14px] font-semibold leading-none transition-[background-color,color] motion-base motion-reduce:transition-none",
                     active
                       ? "bg-pine-night text-birch-bark"
                       : "text-ink-soft hover:text-pine-night",
                   )}
-                  id={`${groupId}-${fare.key}`}
                   key={fare.key}
                   onClick={() => setSelectedKey(fare.key)}
-                  role="radio"
                   type="button"
                 >
                   {fare.name}
