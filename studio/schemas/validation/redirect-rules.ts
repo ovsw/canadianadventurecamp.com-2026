@@ -225,10 +225,7 @@ function fetchValidationData(context: ValidationContext) {
 
 async function requestValidationData(context: ValidationContext) {
   const client = context.getClient({ apiVersion: "2026-03-23" });
-  const data = await client.fetch<{
-    liveRoutes: Array<{ _id: string; _type: string; slug?: string }>;
-    redirects: RedirectRecord[];
-  }>(
+  const data = (await client.fetch(
     `{
       "redirects": *[
         _type == "redirect" &&
@@ -253,7 +250,10 @@ async function requestValidationData(context: ValidationContext) {
       }
     }`,
     { currentIds: documentIds(context.document?._id) },
-  );
+  )) as {
+    liveRoutes: Array<{ _id: string; _type: string; slug?: string }>;
+    redirects: RedirectRecord[];
+  };
 
   const liveRoutes = data.liveRoutes.map((route) => ({
     _id: route._id,

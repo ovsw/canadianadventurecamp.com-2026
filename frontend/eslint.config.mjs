@@ -12,5 +12,6 @@ export default defineConfig([
     "prototype/support.js",
     "build/**",
     "next-env.d.ts",
+    "sanity.types.ts",
   ]),
 ]);
