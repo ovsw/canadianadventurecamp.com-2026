@@ -26,3 +26,17 @@
     transform: translateY(2rem);
   }
 }
+
+/* The photo is texture under the gradient: desaturated, and dimmed by the
+   mask's alpha rather than by opacity, faintest behind the heading at the top
+   and a little stronger below it, so the panel's own colour carries the text. */
+.texture {
+  filter: grayscale(1) contrast(1.1);
+  mix-blend-mode: luminosity;
+  mask-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.1) 0%,
+    rgb(0 0 0 / 0.3) 55%,
+    rgb(0 0 0 / 0.22) 100%
+  );
+}

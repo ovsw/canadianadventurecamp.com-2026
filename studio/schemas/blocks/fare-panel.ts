@@ -89,17 +89,10 @@ export default defineType({
     defineField({
       name: "image",
       type: "image",
-      title: "Panel artwork",
-      description: "Optional small photo in the top corner of the panel. Add alt text.",
+      title: "Panel texture",
+      description:
+        "Optional photo shown faintly behind the heading, as decoration. Screen readers skip it, so it needs no alt text.",
       options: { hotspot: true },
-      fields: [
-        defineField({
-          name: "alt",
-          type: "string",
-          title: "Alt Text",
-          description: "The text that describes the image for screen readers and search engines",
-        }),
-      ],
     }),
     defineField({
       name: "intro",

@@ -180,7 +180,6 @@ export type FarePanel = {
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
-    alt?: string;
     _type: "image";
   };
   intro?: string;
@@ -2760,7 +2759,6 @@ export type BLOG_INDEX_QUERY_RESULT =
               media?: unknown;
               hotspot?: SanityImageHotspot;
               crop?: SanityImageCrop;
-              alt?: string;
               _type: "image";
             } | null;
             intro: string | null;
@@ -4506,7 +4504,6 @@ export type BLOG_INDEX_QUERY_RESULT =
               media?: unknown;
               hotspot?: SanityImageHotspot;
               crop?: SanityImageCrop;
-              alt?: string;
               _type: "image";
             } | null;
             intro: string | null;
@@ -6506,7 +6503,6 @@ export type BLOG_INDEX_QUERY_RESULT =
               media?: unknown;
               hotspot?: SanityImageHotspot;
               crop?: SanityImageCrop;
-              alt?: string;
               _type: "image";
             } | null;
             intro: string | null;
@@ -8795,7 +8791,6 @@ export type HOME_PAGE_QUERY_RESULT = {
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
-          alt?: string;
           _type: "image";
         } | null;
         intro: string | null;
@@ -10846,7 +10841,6 @@ export type PAGE_QUERY_RESULT = {
           media?: unknown;
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
-          alt?: string;
           _type: "image";
         } | null;
         intro: string | null;

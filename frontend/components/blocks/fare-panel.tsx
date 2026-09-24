@@ -25,8 +25,9 @@ type FarePanelProps = Extract<PageBlock, { _type: "farePanel" }> & {
  * Fare Panel — one offer, split in two.
  *
  * Left: a dark art panel (Forest Floor into Forest Panel, with the amber
- * band glow in one corner) carrying the eyebrow, the heading, and an
- * optional small photo. Right: the intro line, a white price box with a
+ * band glow in one corner) carrying the eyebrow and the heading at the top.
+ * An optional photo sits faintly under the gradient as texture; the text is
+ * the subject, not the picture. Right: the intro line, a white price box with a
  * segmented fare switch, the note for the chosen fare, a check list of what
  * the fare includes, and one button. The panel and the price box carry their
  * own ink, so the section reads the same on green as on cream. Phones stack
@@ -119,7 +120,7 @@ export default function FarePanel({
         <div className="grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,6fr)] lg:gap-14">
           <div
             className={cn(
-              "relative flex min-h-[20rem] flex-col justify-end overflow-hidden rounded-[var(--radius-xl)] p-8 text-birch-bark sm:min-h-[26rem] sm:p-10",
+              "relative isolate flex min-h-[20rem] flex-col justify-start overflow-hidden rounded-[var(--radius-xl)] p-8 text-birch-bark sm:min-h-[26rem] sm:p-10",
               onDark
                 ? "bg-[linear-gradient(160deg,var(--color-forest-panel),var(--color-pine-night))]"
                 : "bg-[linear-gradient(160deg,var(--color-forest-floor),var(--color-forest-panel))]",
@@ -129,17 +130,16 @@ export default function FarePanel({
           >
             {hasImage ? (
               <figure
-                className="absolute top-6 right-6 m-0 size-24 overflow-hidden rounded-[var(--radius-md)] shadow-[0_12px_32px_-12px_rgba(0,0,0,0.5)] sm:top-8 sm:right-8 sm:size-32"
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 m-0"
                 data-sanity={dataAttribute?.("image")}
               >
                 <Image
-                  alt={stegaClean(image?.alt)?.trim() || ""}
-                  blurDataURL={image?.asset?.metadata?.lqip || undefined}
-                  className="object-cover"
+                  alt=""
+                  className={cn("object-cover", styles.texture)}
                   fill
-                  placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
-                  sizes="128px"
-                  src={urlFor(image!).width(320).height(320).url()}
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  src={urlFor(image!).width(1400).height(1000).url()}
                 />
               </figure>
             ) : null}
