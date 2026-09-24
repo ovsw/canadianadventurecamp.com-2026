@@ -20,9 +20,16 @@
   display: none;
 }
 
-/* Focus lands here after "Show more"; the card, not a ring, is the signal. */
+/* Focus lands here after "Show more". Pointer users see the new cards and
+   need no ring; keyboard users get one so they can see where Tab continues. */
 .item:focus {
   outline: none;
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--section-accent, var(--color-cedar));
+  outline-offset: 4px;
+  border-radius: var(--radius-lg);
 }
 
 .card {

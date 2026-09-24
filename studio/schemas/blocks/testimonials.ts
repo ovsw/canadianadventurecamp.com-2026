@@ -47,12 +47,10 @@ export default defineType({
           to: [{ type: "testimonial" }],
         }),
       ],
-      validation: (rule) =>
-        rule
-          .required()
-          .min(1)
-          .unique()
-          .error("Add at least one testimonial to this section."),
+      validation: (rule) => [
+        rule.required().min(1).error("Add at least one testimonial to this section."),
+        rule.unique().error("Each testimonial can be listed only once in this section."),
+      ],
     }),
   ],
   preview: {
