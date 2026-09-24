@@ -38,11 +38,11 @@ type QuoteWallProps = QuoteWallBlock & {
  */
 export const LONG_QUOTE_CHARS = 320;
 
-/** Cards shown before the first "Show more": two rows of three on desktop. */
-export const INITIAL_CARDS = 6;
+/** Cards shown before the first "Show more": three rows of three on desktop. */
+export const INITIAL_CARDS = 9;
 
 /** Cards each press of "Show more" reveals. */
-export const MORE_CARDS = 6;
+export const MORE_CARDS = 9;
 
 /** Heading rich text: italic gets the handwritten accent. */
 const headingComponents: PortableTextComponents = {
@@ -134,7 +134,7 @@ function QuoteCard({
  * Every selected quote as a card in a wall of columns, for pages that are
  * about the quotes rather than pages that borrow a few. Long quotes are
  * clamped with a "Read the full quote" dialog, and the wall shows the first
- * six cards with a "Show more" button for the rest.
+ * nine cards with a "Show more" button for the rest.
  */
 export default function QuoteWall({
   _key,

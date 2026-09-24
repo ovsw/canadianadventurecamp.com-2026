@@ -20,7 +20,7 @@ export default defineType({
   type: "object",
   icon: LayoutGrid,
   description:
-    "Every selected Testimonial as a card in a wall of columns, for pages that are about the quotes. Long quotes are shortened with a link to read the whole quote. After the first six cards a button shows more.",
+    "Every selected Testimonial as a card in a wall of columns, for pages that are about the quotes. Long quotes are shortened with a link to read the whole quote. After the first nine cards a button shows more.",
   fields: [
     sectionBackgroundField,
     defineField({
