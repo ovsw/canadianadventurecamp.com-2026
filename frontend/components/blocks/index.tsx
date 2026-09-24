@@ -34,6 +34,7 @@ import DirectorCta from "@/components/blocks/director-cta";
 import LargeSlides from "@/components/blocks/large-slides";
 import HeadingImage from "@/components/blocks/heading-image";
 import QuoteWall from "@/components/blocks/quote-wall";
+import FarePanel from "@/components/blocks/fare-panel";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -90,6 +91,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "largeSlides",
   "headingImage",
   "quoteWall",
+  "farePanel",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -126,6 +128,7 @@ const componentMap: Partial<{
   largeSlides: LargeSlides,
   headingImage: HeadingImage,
   quoteWall: QuoteWall,
+  farePanel: FarePanel,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };

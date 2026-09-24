@@ -25,6 +25,7 @@ import { directorCtaQuery } from "./director-cta";
 import { largeSlidesQuery } from "./large-slides";
 import { headingImageQuery } from "./heading-image";
 import { quoteWallQuery } from "./quote-wall";
+import { farePanelQuery } from "./fare-panel";
 // page-builder-generator:query-imports
 import { internationalCampersSectionQuery } from "./international-campers-section";
 
@@ -60,6 +61,7 @@ export const pageBuilderQuery = `
     ${largeSlidesQuery},
     ${headingImageQuery},
     ${quoteWallQuery},
+    ${farePanelQuery},
     ${"" /* page-builder-generator:query-spreads */}
     ${internationalCampersSectionQuery}
   }
