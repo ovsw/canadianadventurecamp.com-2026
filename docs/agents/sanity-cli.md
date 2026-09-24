@@ -1,12 +1,15 @@
 # Sanity CLI
 
-The root Studio deployment command uses Sanity's production mode. Sanity loads
-credentials from `studio/.env.local` and deployment settings from
-`studio/.env.production`, including the existing Studio app ID:
+For Studio deployment, use the guarded command. It loads the auth token from
+`studio/.env.local` and forces the preview origin and Studio app ID from
+`studio/.env.production`, overriding inherited terminal values:
 
 ```bash
 pnpm deploy:studio
 ```
+
+The guard rejects local preview addresses before build or upload. Calling
+`sanity deploy` directly bypasses it. See `docs/deployment.md` for details.
 
 The current Sanity CLI also loads `studio/.env.local` for direct commands. Run
 them from the Studio workspace so it can resolve the correct environment:
@@ -15,7 +18,7 @@ them from the Studio workspace so it can resolve the correct environment:
 pnpm --dir studio exec sanity <command>
 ```
 
-This applies to all CLI operations: `dataset import`, `dataset export`, `deploy`, `schema extract`, etc.
+Use direct CLI commands for operations such as `dataset import`, `dataset export`, and `schema extract`. Use the guarded command above for deployment.
 
 To read documents, skip the CLI: `pnpm sanity:query '<groq>' ['<json params>']` prints the result as JSON, includes drafts, and loads the token itself.
 

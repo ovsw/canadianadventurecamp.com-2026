@@ -27,6 +27,16 @@ pnpm setup:sanity-cors
 pnpm deploy:studio
 ```
 
+`pnpm deploy:studio` and `pnpm --dir studio deploy` use the same guard. They
+take the preview origin and Studio app ID from `studio/.env.production`,
+even when the terminal has local values set. The auth token comes from
+`studio/.env.local`. A missing setting, local address, or non-HTTPS preview
+stops the command before build or upload. The command always builds a fresh
+Studio; it does not accept arguments that could skip the build.
+
+Do not deploy with `sanity deploy` directly or preload `.env.local` into the
+terminal. Direct CLI deployment bypasses the guard.
+
 Studio deployment remains manual. Vercel deployment uses the existing project configuration and credentials.
 
 ## Before the first production deploy
