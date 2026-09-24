@@ -119,9 +119,12 @@ export default function DirectorCta({
 
           {/* One-sided bleed: the portrait column is the top edge on phones and
               the bottom edge on desktop, so it cancels the section padding on
-              that side only. The copy honours the padding. */}
+              that side only. The copy honours the padding. On desktop the
+              column has no height of its own: it stretches to the row the
+              copy sets, and the portrait scales to fill it, so the section
+              is as tall as its copy and never taller. */}
           <div
-            className="relative order-1 -mx-5 -mt-(--section-pad-top) h-80 overflow-hidden lg:order-2 lg:mx-0 lg:mt-0 lg:-mb-(--section-pad-bottom) lg:h-160 lg:overflow-visible"
+            className="relative order-1 -mx-5 -mt-(--section-pad-top) h-80 overflow-hidden lg:order-2 lg:mx-0 lg:mt-0 lg:-mb-(--section-pad-bottom) lg:h-auto lg:self-stretch lg:overflow-visible"
             data-sanity={dataAttribute?.("image")}
           >
             <div
@@ -135,7 +138,7 @@ export default function DirectorCta({
             {portrait ? (
               <Image
                 alt={stegaClean(portrait.alt)?.trim() || ""}
-                className={`absolute bottom-0 left-1/2 z-10 h-[300px] w-auto max-w-none -translate-x-[47%] lg:h-[580px] lg:-translate-x-1/2 ${
+                className={`absolute bottom-0 left-1/2 z-10 h-[300px] w-auto max-w-none -translate-x-[47%] lg:h-full lg:-translate-x-1/2 ${
                   onDark
                     ? "drop-shadow-[0_34px_38px_rgba(13,18,8,0.55)]"
                     : "drop-shadow-[0_28px_34px_rgba(13,18,8,0.22)]"
