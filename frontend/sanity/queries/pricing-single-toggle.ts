@@ -3,8 +3,8 @@ import { imageQuery } from "./shared/image";
 import { urlInternalHref } from "./shared/internal-href";
 
 // @sanity-typegen-ignore
-export const farePanelQuery = groq`
-  _type == "farePanel" => {
+export const pricingSingleToggleQuery = groq`
+  _type == "pricingSingleToggle" => {
     background,
     eyebrow,
     title[]{
@@ -14,7 +14,7 @@ export const farePanelQuery = groq`
       ${imageQuery}
     },
     intro,
-    "fares": array::compact(fares[]{
+    "options": array::compact(options[]{
       _key,
       name,
       price,

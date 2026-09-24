@@ -14,15 +14,15 @@ const richTextToPlainText = (value: unknown): string => {
     .trim();
 };
 
-const fare = defineArrayMember({
-  name: "farePanelFare",
-  title: "Fare",
+const option = defineArrayMember({
+  name: "pricingSingleToggleOption",
+  title: "Option",
   type: "object",
   fields: [
     defineField({
       name: "name",
       type: "string",
-      description: 'The switch label, e.g. "Round trip" or "One way". Keep it to two or three words.',
+      description: 'The toggle label, e.g. "Round trip" or "Yearly". Keep it to two or three words.',
       validation: (rule) => rule.required().max(24),
     }),
     defineField({
@@ -39,21 +39,21 @@ const fare = defineArrayMember({
     defineField({
       name: "note",
       type: "string",
-      description: 'One line under the price box for this fare, e.g. "Toronto or Huntsville to the dock and back".',
+      description: 'One line under the price box for this option, e.g. "Toronto or Huntsville to the dock and back".',
     }),
   ],
   preview: { select: { title: "name", subtitle: "price" } },
 });
 
 const fact = defineArrayMember({
-  name: "farePanelFact",
+  name: "pricingSingleToggleFact",
   title: "Fact",
   type: "object",
   fields: [
     defineField({
       name: "label",
       type: "string",
-      description: 'What the fare includes, e.g. "CAC staff on board, there and back".',
+      description: 'What the price includes, e.g. "CAC staff on board, there and back".',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -66,12 +66,12 @@ const fact = defineArrayMember({
 });
 
 export default defineType({
-  name: "farePanel",
-  title: "Fare Panel",
+  name: "pricingSingleToggle",
+  title: "Pricing: Single Plan with Toggle",
   type: "object",
   icon: Ticket,
   description:
-    "One offer, split in two: a dark art panel with the heading beside a price box with a fare switch, a check list, and one button.",
+    "One offer, split in two: a dark art panel with the heading beside a price box with a toggle between price options, a check list, and one button.",
   fields: [
     sectionBackgroundField,
     defineField({
@@ -102,17 +102,17 @@ export default defineType({
       description: "Optional. One or two sentences above the price box.",
     }),
     defineField({
-      name: "fares",
-      title: "Fares",
+      name: "options",
+      title: "Price options",
       type: "array",
-      of: [fare],
+      of: [option],
       description:
-        "The fares the reader can switch between, e.g. round trip and one way. The first is selected on load.",
+        "The prices the reader can toggle between, e.g. round trip and one way, or monthly and yearly. The first is selected on load.",
       validation: (rule) => rule.required().min(1).max(3),
     }),
     defineField({
       name: "facts",
-      title: "What the fare includes",
+      title: "What the price includes",
       type: "array",
       of: [fact],
       validation: (rule) => rule.required().min(2).max(8),
@@ -131,10 +131,10 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: "title", fares: "fares", facts: "facts", media: "image" },
-    prepare: ({ title, fares, facts, media }) => ({
-      title: richTextToPlainText(title) || "Fare Panel",
-      subtitle: `${Array.isArray(fares) ? fares.length : 0} fares · ${Array.isArray(facts) ? facts.length : 0} facts`,
+    select: { title: "title", options: "options", facts: "facts", media: "image" },
+    prepare: ({ title, options, facts, media }) => ({
+      title: richTextToPlainText(title) || "Pricing: Single Plan with Toggle",
+      subtitle: `${Array.isArray(options) ? options.length : 0} options · ${Array.isArray(facts) ? facts.length : 0} facts`,
       media,
     }),
   },

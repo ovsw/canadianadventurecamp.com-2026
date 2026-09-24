@@ -854,7 +854,7 @@
     }
   },
   {
-    "name": "farePanel",
+    "name": "pricingSingleToggle",
     "type": "type",
     "value": {
       "type": "object",
@@ -863,7 +863,7 @@
           "type": "objectAttribute",
           "value": {
             "type": "string",
-            "value": "farePanel"
+            "value": "pricingSingleToggle"
           }
         },
         "background": {
@@ -943,7 +943,7 @@
           },
           "optional": true
         },
-        "fares": {
+        "options": {
           "type": "objectAttribute",
           "value": {
             "type": "array",
@@ -982,7 +982,7 @@
                   "type": "objectAttribute",
                   "value": {
                     "type": "string",
-                    "value": "farePanelFare"
+                    "value": "pricingSingleToggleOption"
                   }
                 }
               },
@@ -1026,7 +1026,7 @@
                   "type": "objectAttribute",
                   "value": {
                     "type": "string",
-                    "value": "farePanelFact"
+                    "value": "pricingSingleToggleFact"
                   }
                 }
               },
@@ -9264,7 +9264,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "farePanel"
+                  "name": "pricingSingleToggle"
                 }
               }
             ]
@@ -9755,7 +9755,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "farePanel"
+                  "name": "pricingSingleToggle"
                 }
               }
             ]
@@ -11062,7 +11062,7 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "farePanel"
+                  "name": "pricingSingleToggle"
                 }
               }
             ]
