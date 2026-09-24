@@ -13,14 +13,14 @@
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .reveal {
-      animation: fare-panel-rise 1ms both;
+      animation: pricing-single-toggle-rise 1ms both;
       animation-range: entry 0% entry 40%;
       animation-timeline: view();
     }
   }
 }
 
-@keyframes fare-panel-rise {
+@keyframes pricing-single-toggle-rise {
   from {
     opacity: 0;
     transform: translateY(2rem);

@@ -9,27 +9,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import type { ComponentProps } from "react";
-import { FarePanelSwitch, type FarePanelFare } from "./fare-panel-switch";
+import { PricingSingleToggleSwitch, type PricingSingleToggleOption } from "./pricing-single-toggle-switch";
 import { sectionThemeClass } from "./section-theme";
-import styles from "./fare-panel.module.css";
+import styles from "./pricing-single-toggle.module.css";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
   | NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number];
 
-type FarePanelProps = Extract<PageBlock, { _type: "farePanel" }> & {
+type PricingSingleToggleProps = Extract<PageBlock, { _type: "pricingSingleToggle" }> & {
   dataAttribute?: (path: string) => string | undefined;
 };
 
 /*
- * Fare Panel — one offer, split in two.
+ * Pricing Single Toggle — one offer, split in two.
  *
  * Left: a dark art panel (Forest Floor into Forest Panel, with the amber
  * band glow in one corner) carrying the eyebrow and the heading at the top.
  * An optional photo sits faintly under the gradient as texture; the text is
  * the subject, not the picture. Right: the intro line, a white price box with a
- * segmented fare switch, the note for the chosen fare, a check list of what
- * the fare includes, and one button. The panel and the price box carry their
+ * segmented toggle between price options, the note for the chosen option, a
+ * check list of what the price includes, and one button. The panel and the price box carry their
  * own ink, so the section reads the same on green as on cream. Phones stack
  * the panel above the details.
  */
@@ -64,31 +64,31 @@ function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
 }
 
-export default function FarePanel({
+export default function PricingSingleToggle({
   _key,
   background,
   button,
   dataAttribute,
   eyebrow,
   facts,
-  fares,
+  options,
   footnote,
   image,
   intro,
   title,
-}: FarePanelProps) {
-  const fareList: FarePanelFare[] = (fares ?? [])
-    .filter((fare) => hasText(fare.name) && hasText(fare.price))
-    .map((fare) => {
-      const path = `fares[_key=="${fare._key}"]`;
+}: PricingSingleToggleProps) {
+  const optionList: PricingSingleToggleOption[] = (options ?? [])
+    .filter((option) => hasText(option.name) && hasText(option.price))
+    .map((option) => {
+      const path = `options[_key=="${option._key}"]`;
       return {
-        key: stegaClean(fare._key) ?? fare._key,
-        name: fare.name ?? "",
-        price: fare.price ?? "",
-        unit: hasText(fare.unit) ? (fare.unit ?? undefined) : undefined,
-        note: hasText(fare.note) ? (fare.note ?? undefined) : undefined,
+        key: stegaClean(option._key) ?? option._key,
+        name: option.name ?? "",
+        price: option.price ?? "",
+        unit: hasText(option.unit) ? (option.unit ?? undefined) : undefined,
+        note: hasText(option.note) ? (option.note ?? undefined) : undefined,
         sanity: {
-          fare: dataAttribute?.(path),
+          option: dataAttribute?.(path),
           price: dataAttribute?.(`${path}.price`),
           unit: dataAttribute?.(`${path}.unit`),
           note: dataAttribute?.(`${path}.note`),
@@ -97,10 +97,10 @@ export default function FarePanel({
     });
   const factList = (facts ?? []).filter((fact) => hasText(fact.label));
 
-  if (!title?.length || fareList.length < 1 || factList.length < 2) return null;
+  if (!title?.length || optionList.length < 1 || factList.length < 2) return null;
 
   const sectionKey = stegaClean(_key);
-  const headingId = `fare-panel-${sectionKey}-title`;
+  const headingId = `pricing-single-toggle-${sectionKey}-title`;
   const theme = background ?? "white";
   const onDark = theme === "green";
   const hasImage = Boolean(image?.asset?._id);
@@ -114,7 +114,7 @@ export default function FarePanel({
     <section
       aria-labelledby={headingId}
       className={cn("py-section", sectionThemeClass(theme))}
-      id={`fare-panel-${sectionKey}`}
+      id={`pricing-single-toggle-${sectionKey}`}
     >
       <div className="container-content">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,6fr)] lg:gap-14">
@@ -172,7 +172,7 @@ export default function FarePanel({
               </p>
             ) : null}
 
-            <FarePanelSwitch fares={fareList} sanity={dataAttribute?.("fares")} />
+            <PricingSingleToggleSwitch options={optionList} sanity={dataAttribute?.("options")} />
 
             <ul
               className="mt-8 grid gap-4 border-t border-current/15 pt-8"
