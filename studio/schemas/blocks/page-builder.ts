@@ -85,6 +85,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "directorCta",
   "largeSlides",
   "headingImage",
+  "pricingSingleToggle",
   // page-builder-generator:preview-types
 ]);
 
