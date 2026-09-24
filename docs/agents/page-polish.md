@@ -184,17 +184,21 @@ Post one comment on the card: the changes section by section, the ids you
 published, the backup path, and the new page height beside the old one.
 Nothing else on the card changes; the layout proposals stay in chat.
 
-Then tell Ovi, in chat:
+Then tell Ovi, in chat, the short report by default: at most six lines
+with the outcome, what changed for the reader, anything unverified or
+open, and the Studio Presentation link for his visual check,
+`http://localhost:<studioPort>/presentation?preview=%2F<slug>%3Fsanity-preview-perspective%3Ddrafts`,
+for both widths, with the sections to look at first. Say that the look is
+unverified until he has seen it. No table.
+
+Give the full report only when Ovi asks for it ("full report", "details",
+"more"):
 
 - the verdict for every section and what changed, as a table;
 - each **propose** verdict: the content, the fallback used, what the
   fallback loses, and the section that would serve it;
 - anything left open;
-- the link for his visual check, once for each width: the Studio
-  Presentation URL for the draft,
-  `http://localhost:<studioPort>/presentation?preview=%2F<slug>%3Fsanity-preview-perspective%3Ddrafts`,
-  with the sections to look at first;
-- that the look is unverified until he has seen it.
+- the visual-check links again, one for each width.
 
 Ovi decides on each proposal afterwards and asks, when he wants, for a card
 comment or a GitHub issue.
