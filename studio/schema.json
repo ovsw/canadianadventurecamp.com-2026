@@ -2341,67 +2341,6 @@
     }
   },
   {
-    "name": "testimonials",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "testimonials"
-          }
-        },
-        "background": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "sectionBackground"
-          },
-          "optional": true
-        },
-        "eyebrow": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        },
-        "heading": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "minimalRichText"
-          },
-          "optional": true
-        },
-        "testimonials": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "array",
-            "of": {
-              "type": "object",
-              "attributes": {
-                "_key": {
-                  "type": "objectAttribute",
-                  "value": {
-                    "type": "string"
-                  }
-                }
-              },
-              "rest": {
-                "type": "inline",
-                "name": "testimonial.reference"
-              }
-            }
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
     "name": "innerHero",
     "type": "type",
     "value": {
@@ -9114,21 +9053,6 @@
                 },
                 "rest": {
                   "type": "inline",
-                  "name": "testimonials"
-                }
-              },
-              {
-                "type": "object",
-                "attributes": {
-                  "_key": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "rest": {
-                  "type": "inline",
                   "name": "stackedTimeline"
                 }
               },
@@ -9591,21 +9515,6 @@
                 "rest": {
                   "type": "inline",
                   "name": "journey"
-                }
-              },
-              {
-                "type": "object",
-                "attributes": {
-                  "_key": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "rest": {
-                  "type": "inline",
-                  "name": "testimonials"
                 }
               },
               {
@@ -10898,21 +10807,6 @@
                 "rest": {
                   "type": "inline",
                   "name": "journey"
-                }
-              },
-              {
-                "type": "object",
-                "attributes": {
-                  "_key": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "rest": {
-                  "type": "inline",
-                  "name": "testimonials"
                 }
               },
               {

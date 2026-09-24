@@ -58,7 +58,6 @@ import facilitiesMapSection from "./schemas/blocks/facilities-map-section";
 import datesRatesSection from "./schemas/blocks/dates-rates-section";
 import stackedFeatureRows from "./schemas/blocks/stacked-feature-rows";
 import innerHero from "./schemas/blocks/inner-hero";
-import testimonials from "./schemas/blocks/testimonials";
 import journey from "./schemas/blocks/journey";
 import stackedTimeline from "./schemas/blocks/stacked-timeline";
 import activityCatalogue from "./schemas/blocks/activity-catalogue";
@@ -134,7 +133,6 @@ export const schemaTypes = [
   datesRatesSection,
   stackedFeatureRows,
   innerHero,
-  testimonials,
   journey,
   stackedTimeline,
   activityCatalogue,

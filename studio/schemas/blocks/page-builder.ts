@@ -16,7 +16,6 @@ export const contentPageBuilderBlockTypes = [
   "teamMembers",
   "ctaBanner",
   "journey",
-  "testimonials",
   "stackedTimeline",
   "activityCatalogue",
   "includedExtras",
@@ -76,7 +75,6 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "faqAccordion",
   "teamMembers",
   "ctaBanner",
-  "testimonials",
   "stackedTimeline",
   "activityCatalogue",
   "includedExtras",
@@ -173,7 +171,7 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
     {
       name: "people-quotes",
       title: "People & Quotes",
-      of: ["teamMembers", "testimonials", "directorCta"],
+      of: ["teamMembers", "quoteWall", "directorCta"],
     },
     {
       name: "camp-info",

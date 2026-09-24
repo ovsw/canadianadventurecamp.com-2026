@@ -80,7 +80,6 @@ export const sectionTraits: Record<Block["_type"], SectionTrait> = {
   stackedTimeline: {},
   storyFeature: { alternate: true },
   teamMembers: {},
-  testimonials: {},
   quoteWall: {},
 
 };

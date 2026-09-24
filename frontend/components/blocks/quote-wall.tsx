@@ -8,7 +8,8 @@ import {
 } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
 import { cn } from "@/lib/utils";
-import { TestimonialAvatar } from "./testimonials";
+import { urlFor } from "@/sanity/lib/image";
+import Image from "next/image";
 import QuoteWallDialog from "./quote-wall-dialog";
 import QuoteWallList from "./quote-wall-list";
 import styles from "./quote-wall.module.css";
@@ -57,6 +58,41 @@ const headingComponents: PortableTextComponents = {
 
 function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
+}
+
+/** Up to two initials from the name, for the avatar fallback. */
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter((word) => /^\p{L}/u.test(word))
+    .slice(0, 2)
+    .map((word) => Array.from(word)[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+/** Round portrait, or the person's initials when there is no photo. */
+function TestimonialAvatar({
+  image,
+  name,
+}: Readonly<{ image: TestimonialDocument["image"]; name: string }>) {
+  const hasImage = Boolean(image?.asset?._id);
+  return (
+    <span aria-hidden={hasImage ? undefined : "true"} className={styles.avatar}>
+      {hasImage && image ? (
+        <Image
+          alt={stegaClean(image.alt) || ""}
+          blurDataURL={image.asset?.metadata?.lqip || undefined}
+          className="object-cover"
+          fill
+          placeholder={image.asset?.metadata?.lqip ? "blur" : undefined}
+          sizes="44px"
+          src={urlFor(image).width(96).height(96).url()}
+        />
+      ) : (
+        <span className={styles.avatarFallback}>{initials(name)}</span>
+      )}
+    </span>
+  );
 }
 
 function QuoteCard({

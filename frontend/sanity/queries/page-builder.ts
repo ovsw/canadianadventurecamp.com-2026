@@ -14,7 +14,6 @@ import { facilitiesMapSectionQuery } from "./facilities-map-section";
 import { datesRatesSectionQuery } from "./dates-rates-section";
 import { stackedFeatureRowsQuery } from "./stacked-feature-rows";
 import { innerHeroQuery } from "./inner-hero";
-import { testimonialsQuery } from "./testimonials";
 import { journeyQuery } from "./journey";
 import { stackedTimelineQuery } from "./stacked-timeline";
 import { activityCatalogueQuery } from "./activity-catalogue";
@@ -50,7 +49,6 @@ export const pageBuilderQuery = `
     ${datesRatesSectionQuery},
     ${stackedFeatureRowsQuery},
     ${innerHeroQuery},
-    ${testimonialsQuery},
     ${journeyQuery},
     ${stackedTimelineQuery},
     ${activityCatalogueQuery},
