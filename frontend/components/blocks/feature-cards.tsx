@@ -27,7 +27,7 @@ const fields = {
     description: "text-birch-bark/70",
     groupDescription: "text-birch-bark/65",
     hairline: "bg-birch-bark/15",
-    card: "bg-forest-floor hover:bg-white/5",
+    card: "bg-forest-floor hover:bg-forest-panel",
     cardText: "text-birch-bark/65",
     link: "text-moss hover:text-sunlit-moss",
   },
@@ -38,7 +38,7 @@ const fields = {
     description: "text-ink-muted",
     groupDescription: "text-ink-muted",
     hairline: "bg-pine-night/15",
-    card: "bg-birch-bark hover:bg-pine-night/5",
+    card: "bg-birch-bark hover:bg-birch-bark-bright",
     cardText: "text-ink-muted",
     link: "text-cedar hover:text-cedar-deep",
   },
@@ -291,7 +291,7 @@ export default function FeatureCards({
                           </p>
                           <Link
                             className={cn(
-                              "focus-ring mt-5 inline-flex w-fit items-center gap-2 font-semibold",
+                              "focus-ring mt-5 inline-flex w-fit items-center gap-2 font-semibold underline-offset-4 decoration-current/40 group-hover/card:underline",
                               field.link,
                             )}
                             data-sanity={dataAttribute?.(`${cardPath}.link`)}
