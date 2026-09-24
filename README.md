@@ -97,6 +97,12 @@ pnpm setup:sanity-cors
 pnpm deploy:studio
 ```
 
+The deployment command takes the preview origin and Studio app ID from
+`studio/.env.production`, overriding values inherited from your terminal. It
+loads the auth token from `studio/.env.local` and rejects local preview
+addresses before it builds or uploads. Use this command for deployments;
+calling `sanity deploy` directly bypasses these checks.
+
 See `docs/deployment.md` for the production gate and complete deployment checklist.
 
 ## Repository layout
