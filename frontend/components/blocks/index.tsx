@@ -33,6 +33,7 @@ import BigImageList from "@/components/blocks/big-image-list";
 import DirectorCta from "@/components/blocks/director-cta";
 import LargeSlides from "@/components/blocks/large-slides";
 import HeadingImage from "@/components/blocks/heading-image";
+import QuoteWall from "@/components/blocks/quote-wall";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -88,6 +89,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "directorCta",
   "largeSlides",
   "headingImage",
+  "quoteWall",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -123,6 +125,7 @@ const componentMap: Partial<{
   directorCta: DirectorCta,
   largeSlides: LargeSlides,
   headingImage: HeadingImage,
+  quoteWall: QuoteWall,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };
@@ -264,7 +267,7 @@ export default function Blocks({
                             }).toString()
                         : undefined,
                     }
-                : block._type === "testimonials"
+                : block._type === "testimonials" || block._type === "quoteWall"
                   ? {
                       dataAttribute,
                       testimonialDataAttribute: stega
