@@ -17,8 +17,11 @@ type IncludedExtrasProps = Extract<PageBlock, { _type: "includedExtras" }> & {
 };
 
 /*
- * Price, Included & Extras — the price first, then a two-plan comparison on a
- * cream field.
+ * Price, Included & Extras — the price first, then a two-plan comparison.
+ *
+ * The cards carry their own Pine Night ink and opaque surfaces, so they read
+ * the same on a green section as on cream; they never inherit the field's text
+ * colour.
  *
  * The price sheet is a white card above the columns. One price sits beside
  * its name; two or three prices become equal columns with a divider. Under
@@ -116,7 +119,7 @@ export default function IncludedExtras({
           <section
             aria-labelledby={pricesId}
             className={cn(
-              "mt-14 rounded-[1.625rem] border border-pine-night/10 bg-white p-7 sm:p-10",
+              "mt-14 rounded-[1.625rem] border border-pine-night/10 bg-white p-7 text-pine-night sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("prices")}
@@ -198,11 +201,11 @@ export default function IncludedExtras({
             priceTiers.length > 0 ? "mt-6 lg:mt-8" : "mt-14",
           )}
         >
-          {/* Included: pale green card (Sunlit Moss at reduced alpha), check list */}
+          {/* Included: pale green card (Sunlit Moss mixed into Birch Bark), check list */}
           <section
             aria-labelledby={includedId}
             className={cn(
-              "flex flex-col rounded-[1.625rem] border border-cedar/20 bg-sunlit-moss/40 p-7 sm:p-10",
+              "flex flex-col rounded-[1.625rem] border border-cedar/20 bg-[color-mix(in_oklab,var(--color-sunlit-moss)_40%,var(--color-birch-bark))] p-7 text-pine-night sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("included")}
@@ -260,7 +263,7 @@ export default function IncludedExtras({
           <section
             aria-labelledby={extrasId}
             className={cn(
-              "flex flex-col rounded-[1.625rem] border border-pine-night/10 bg-white p-7 sm:p-10",
+              "flex flex-col rounded-[1.625rem] border border-pine-night/10 bg-white p-7 text-pine-night sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("extras")}
