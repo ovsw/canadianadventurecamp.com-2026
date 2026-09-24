@@ -69,6 +69,7 @@ import directorCta from "./schemas/blocks/director-cta";
 import largeSlides from "./schemas/blocks/large-slides";
 import headingImage from "./schemas/blocks/heading-image";
 import quoteWall from "./schemas/blocks/quote-wall";
+import farePanel from "./schemas/blocks/fare-panel";
 // page-builder-generator:block-imports
 import { internationalCampersSection } from "./schemas/blocks/international-campers-section";
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
@@ -144,6 +145,7 @@ export const schemaTypes = [
   largeSlides,
   headingImage,
   quoteWall,
+  farePanel,
   // page-builder-generator:block-types
   internationalCampersSection,
 ];

@@ -26,6 +26,7 @@ export const contentPageBuilderBlockTypes = [
   "largeSlides",
   "headingImage",
   "quoteWall",
+  "farePanel",
   // page-builder-generator:content-types
 ] as const;
 
@@ -164,6 +165,7 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
         "journey",
         "stackedTimeline",
         "includedExtras",
+        "farePanel",
         "packingChecklist",
       ],
     },
@@ -182,6 +184,7 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
         "datesRatesSection",
         "internationalCampersSection",
         "includedExtras",
+        "farePanel",
         "packingChecklist",
         "journey",
       ],
