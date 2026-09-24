@@ -25,6 +25,7 @@ export const contentPageBuilderBlockTypes = [
   "directorCta",
   "largeSlides",
   "headingImage",
+  "quoteWall",
   // page-builder-generator:content-types
 ] as const;
 

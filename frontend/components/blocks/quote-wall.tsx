@@ -1,7 +1,6 @@
 import { sectionThemeClass } from "./section-theme";
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
-import { urlFor } from "@/sanity/lib/image";
 import {
   PortableText,
   toPlainText,
@@ -9,17 +8,20 @@ import {
 } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import TestimonialsCarousel from "./testimonials-carousel";
-import styles from "./testimonials.module.css";
+import { TestimonialAvatar } from "./testimonials";
+import QuoteWallDialog from "./quote-wall-dialog";
+import QuoteWallList from "./quote-wall-list";
+import styles from "./quote-wall.module.css";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
   | NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number];
 
-type TestimonialsBlock = Extract<PageBlock, { _type: "testimonials" }>;
-type TestimonialReference = NonNullable<TestimonialsBlock["testimonials"]>[number];
-type TestimonialsProps = TestimonialsBlock & {
+type QuoteWallBlock = Extract<PageBlock, { _type: "quoteWall" }>;
+type TestimonialReference = NonNullable<QuoteWallBlock["testimonials"]>[number];
+type TestimonialDocument = NonNullable<TestimonialReference["document"]>;
+
+type QuoteWallProps = QuoteWallBlock & {
   dataAttribute?: (path: string) => string | undefined;
   testimonialDataAttribute?: (
     documentId: string,
@@ -27,7 +29,22 @@ type TestimonialsProps = TestimonialsBlock & {
   ) => string | undefined;
 };
 
-/** Heading rich text: italic gets the handwritten cedar accent (cream field). */
+/**
+ * Progressive disclosure, two levels.
+ *
+ * A quote longer than this many characters is clamped to a few lines on its
+ * card, with a link that opens the whole quote in a dialog. Expanding in place
+ * would re-pack the column layout under the reader's eyes.
+ */
+export const LONG_QUOTE_CHARS = 320;
+
+/** Cards shown before the first "Show more": three rows of three on desktop. */
+export const INITIAL_CARDS = 9;
+
+/** Cards each press of "Show more" reveals. */
+export const MORE_CARDS = 9;
+
+/** Heading rich text: italic gets the handwritten accent. */
 const headingComponents: PortableTextComponents = {
   block: { normal: ({ children }) => <>{children}</> },
   marks: {
@@ -42,51 +59,17 @@ function hasText(value?: string | null) {
   return Boolean(stegaClean(value)?.trim());
 }
 
-/** Up to two initials from the name, for the avatar fallback. */
-function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter((word) => /^\p{L}/u.test(word))
-    .slice(0, 2)
-    .map((word) => word[0]?.toUpperCase() ?? "")
-    .join("");
-}
-
-export type TestimonialDocument = NonNullable<TestimonialReference["document"]>;
-
-/** Round portrait, or the person's initials when there is no photo. */
-export function TestimonialAvatar({
-  image,
-  name,
-}: Readonly<{ image: TestimonialDocument["image"]; name: string }>) {
-  const hasImage = Boolean(image?.asset?._id);
-  return (
-    <span aria-hidden={hasImage ? undefined : "true"} className={styles.avatar}>
-      {hasImage && image ? (
-        <Image
-          alt={stegaClean(image.alt) || ""}
-          blurDataURL={image.asset?.metadata?.lqip || undefined}
-          className="object-cover"
-          fill
-          placeholder={image.asset?.metadata?.lqip ? "blur" : undefined}
-          sizes="72px"
-          src={urlFor(image).width(160).height(160).url()}
-        />
-      ) : (
-        <span className={styles.avatarFallback}>{initials(name)}</span>
-      )}
-    </span>
-  );
-}
-
-function TestimonialCard({
+function QuoteCard({
+  clamped,
   referenceDataAttribute,
   testimonial,
   testimonialDataAttribute,
 }: Readonly<{
+  /** Shorten the quote and offer the full text in a dialog. */
+  clamped: boolean;
   referenceDataAttribute?: string;
   testimonial: TestimonialDocument;
-  testimonialDataAttribute?: TestimonialsProps["testimonialDataAttribute"];
+  testimonialDataAttribute?: QuoteWallProps["testimonialDataAttribute"];
 }>) {
   const role = stegaClean(testimonial.title)?.trim();
   const origin = stegaClean(testimonial.origin)?.trim();
@@ -99,6 +82,7 @@ function TestimonialCard({
       </span>
       <blockquote
         className={styles.quoteBody}
+        data-clamped={clamped ? "" : undefined}
         data-sanity={testimonialDataAttribute?.(testimonial._id, "body")}
       >
         <PortableText
@@ -106,6 +90,11 @@ function TestimonialCard({
           value={testimonial.body ?? []}
         />
       </blockquote>
+      {clamped ? (
+        <QuoteWallDialog label="Read the full quote" name={name}>
+          <QuoteCard clamped={false} testimonial={testimonial} />
+        </QuoteWallDialog>
+      ) : null}
       <figcaption className={styles.attribution}>
         <span
           className={styles.avatarSlot}
@@ -141,7 +130,13 @@ function TestimonialCard({
   );
 }
 
-export default function Testimonials({
+/**
+ * Every selected quote as a card in a wall of columns, for pages that are
+ * about the quotes rather than pages that borrow a few. Long quotes are
+ * clamped with a "Read the full quote" dialog, and the wall shows the first
+ * nine cards with a "Show more" button for the rest.
+ */
+export default function QuoteWall({
   _key,
   background,
   dataAttribute,
@@ -149,37 +144,43 @@ export default function Testimonials({
   heading,
   testimonialDataAttribute,
   testimonials,
-}: TestimonialsProps) {
+}: QuoteWallProps) {
   const cards = (testimonials ?? []).flatMap((reference, index) => {
     const document = reference.document;
     if (!document || !hasText(document.name) || !document.body?.length) {
       return [];
     }
-    if (!hasText(toPlainText(document.body))) return [];
+    const text = stegaClean(toPlainText(document.body)).trim();
+    if (!text) return [];
 
     const path = reference._key
       ? `testimonials[_key=="${reference._key}"]`
       : `testimonials[${index}]`;
 
-    return [{ document, key: reference._key ?? document._id, path }];
+    return [
+      {
+        clamped: text.length > LONG_QUOTE_CHARS,
+        document,
+        key: reference._key ?? document._id,
+        path,
+      },
+    ];
   });
 
   if (!heading?.length || !cards.length) return null;
 
-  const headingText = stegaClean(toPlainText(heading)).trim();
-  const headingId = `testimonials-${stegaClean(_key)}-title`;
+  const theme = stegaClean(background);
+  const headingId = `quote-wall-${stegaClean(_key)}-title`;
 
   return (
     <section
       aria-labelledby={headingId}
-      className={cn(
-        "py-section",
-        sectionThemeClass(stegaClean(background)),
-      )}
-      id={`testimonials-${stegaClean(_key)}`}
+      className={cn("py-section", sectionThemeClass(theme))}
+      data-theme={theme ?? "white"}
+      id={`quote-wall-${stegaClean(_key)}`}
     >
-      <div className="grid gap-12 lg:gap-16">
-        <header className="container-content">
+      <div className="container-content grid gap-12 lg:gap-16">
+        <header>
           <div className="grid max-w-3xl gap-5">
             {hasText(eyebrow) ? (
               <p
@@ -199,19 +200,22 @@ export default function Testimonials({
           </div>
         </header>
 
-        <TestimonialsCarousel
+        <QuoteWallList
           dataSanity={dataAttribute?.("testimonials")}
-          label={headingText ? `Testimonials: ${headingText}` : "Testimonials"}
-          slides={cards.map(({ document, key, path }) => ({
+          initialCount={INITIAL_CARDS}
+          items={cards.map(({ clamped, document, key, path }) => ({
             key,
             node: (
-              <TestimonialCard
+              <QuoteCard
+                clamped={clamped}
                 referenceDataAttribute={dataAttribute?.(path)}
                 testimonial={document}
                 testimonialDataAttribute={testimonialDataAttribute}
               />
             ),
           }))}
+          onDark={theme === "green"}
+          step={MORE_CARDS}
         />
       </div>
     </section>
