@@ -23,7 +23,6 @@ import FacilitiesMapSection from "@/components/blocks/facilities-map-section";
 import DatesRatesSection from "@/components/blocks/dates-rates-section";
 import StackedFeatureRows from "@/components/blocks/stacked-feature-rows";
 import InnerHero from "@/components/blocks/inner-hero";
-import Testimonials from "@/components/blocks/testimonials";
 import Journey from "@/components/blocks/journey";
 import StackedTimeline from "@/components/blocks/stacked-timeline";
 import ActivityCatalogue from "@/components/blocks/activity-catalogue";
@@ -81,7 +80,6 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "stackedFeatureRows",
   "innerHero",
   "journey",
-  "testimonials",
   "stackedTimeline",
   "activityCatalogue",
   "includedExtras",
@@ -117,7 +115,6 @@ const componentMap: Partial<{
   datesRatesSection: DatesRatesSection,
   stackedFeatureRows: StackedFeatureRows,
   innerHero: InnerHero,
-  testimonials: Testimonials,
   journey: Journey,
   stackedTimeline: StackedTimeline,
   activityCatalogue: ActivityCatalogue,
@@ -270,7 +267,7 @@ export default function Blocks({
                             }).toString()
                         : undefined,
                     }
-                : block._type === "testimonials" || block._type === "quoteWall"
+                : block._type === "quoteWall"
                   ? {
                       dataAttribute,
                       testimonialDataAttribute: stega

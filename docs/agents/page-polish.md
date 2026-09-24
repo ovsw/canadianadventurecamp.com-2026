@@ -151,7 +151,7 @@ the source of truth for how each looks)
 | Heading and Image | A centred heading and paragraph over one full-width photo | A pause, not an argument |
 | Included and Extras | A fee: what the price includes beside priced extras | Price slot is short; "Camp to confirm" squeezes it on phones |
 | Dates and Rates, Packing Checklist, Activity Schedule, Activity Catalogue, Facilities Map, International Campers | Their named purpose | Specialised; keep to that purpose |
-| Testimonials | Quotes from Testimonial documents, one at a time | One and a half cards show on desktop |
+| Quote Wall | Quotes from Testimonial documents as a wall of cards | Long quotes open in a dialog; nine cards show before "Show more" |
 | Team Members | Selected Team Member documents, profiles or roster | |
 | FAQ Section | One accordion of FAQ documents | One per page |
 | Call to Action (`ctaBanner`) | `nudge` between sections for a small aside; `closing` only when no Director CTA closes the page | A nudge never ends the page |
