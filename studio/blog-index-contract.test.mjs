@@ -23,6 +23,7 @@ test("the shared blocks field exactly matches its authoritative inventory", () =
   assert.deepEqual([...pageBuilderBlockTypes], [
     "hero",
     "innerHero",
+    "faqHub",
     "richTextBlock",
     "benefitCards",
     "storyFeature",

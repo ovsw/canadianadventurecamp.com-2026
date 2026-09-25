@@ -34,6 +34,7 @@ import LargeSlides from "@/components/blocks/large-slides";
 import HeadingImage from "@/components/blocks/heading-image";
 import QuoteWall from "@/components/blocks/quote-wall";
 import PricingSingleToggle from "@/components/blocks/pricing-single-toggle";
+import FaqHub from "@/components/blocks/faq-hub";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
@@ -90,6 +91,7 @@ const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
   "headingImage",
   "quoteWall",
   "pricingSingleToggle",
+  "faqHub",
   // page-builder-generator:editing-types
   "internationalCampersSection",
 ]);
@@ -126,6 +128,7 @@ const componentMap: Partial<{
   headingImage: HeadingImage,
   quoteWall: QuoteWall,
   pricingSingleToggle: PricingSingleToggle,
+  faqHub: FaqHub,
   // page-builder-generator:component-map
   internationalCampersSection: InternationalCampersSection,
 };

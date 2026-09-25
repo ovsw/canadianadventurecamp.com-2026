@@ -21,3 +21,14 @@ test("rejects two FAQ sections", () => {
     "Only one FAQ section per page.",
   );
 });
+
+test("allows one FAQ hub", () => {
+  assert.equal(singleFaqBlock([{ _type: "faqHub" }]), true);
+});
+
+test("counts a hub and a curated FAQ section together", () => {
+  assert.equal(
+    singleFaqBlock([{ _type: "faqHub" }, { _type: "faqAccordion" }]),
+    "Only one FAQ section per page.",
+  );
+});

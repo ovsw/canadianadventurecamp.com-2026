@@ -30,6 +30,7 @@ export const contentPageBuilderBlockTypes = [
 ] as const;
 
 const generalOnlyPageBuilderBlockTypes = [
+  "faqHub",
   // page-builder-generator:general-types
 ] as const;
 
@@ -84,6 +85,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "largeSlides",
   "headingImage",
   "pricingSingleToggle",
+  "faqHub",
   // page-builder-generator:preview-types
 ]);
 
@@ -95,6 +97,12 @@ export function getPageBuilderPreviewImageUrl(schemaTypeName: string) {
 
 /** Every block type that opens a page. One per page, always first. */
 export const heroBlockTypes = new Set(["hero", "homeHero", "innerHero"]);
+
+/**
+ * Every block type that lists FAQs. One per page, hub or curated, so the
+ * FAQPage structured data never lists a question twice.
+ */
+export const faqBlockTypes = new Set(["faqAccordion", "faqHub"]);
 
 export function validateBlocks(
   blocks: Array<{ _type?: string; background?: string }> | undefined,
@@ -108,7 +116,7 @@ export function validateBlocks(
     return "The Hero section must be the first section";
   }
   const faqCount =
-    blocks?.filter((block) => block?._type === "faqAccordion").length ?? 0;
+    blocks?.filter((block) => faqBlockTypes.has(block?._type ?? "")).length ?? 0;
   if (faqCount > 1) return "Add no more than one FAQ section";
   const teamCount =
     blocks?.filter((block) => block?._type === "teamMembers").length ?? 0;
@@ -161,6 +169,7 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
         "benefitCards",
         "stackedFeatureRows",
         "faqAccordion",
+        "faqHub",
         "journey",
         "stackedTimeline",
         "includedExtras",

@@ -7,6 +7,8 @@ import {
 
 type FaqBlock = Extract<FaqJsonLdBlock, { _type: "faqAccordion" }>;
 type Faq = NonNullable<FaqBlock["faqs"]>[number];
+type FaqHubBlock = Extract<FaqJsonLdBlock, { _type: "faqHub" }>;
+type HubFaq = NonNullable<FaqHubBlock["faqs"]>[number];
 
 function faq(id: string, title: string | null, answer: string | null): Faq {
   return {
@@ -38,6 +40,22 @@ function faq(id: string, title: string | null, answer: string | null): Faq {
 
 function faqBlock(faqs: Faq[]): FaqBlock {
   return { _type: "faqAccordion", faqs };
+}
+
+function hubFaq(id: string, title: string, answer: string): HubFaq {
+  const { _id, title: question, answer: body } = faq(id, title, answer);
+  return {
+    _id,
+    title: question,
+    answer: body,
+    answerText: answer,
+    order: null,
+    category: { _id: "cat-1", title: "Getting there", slug: "getting-there", order: 10 },
+  };
+}
+
+function hubBlock(faqs: HubFaq[]): FaqHubBlock {
+  return { _type: "faqHub", faqs };
 }
 
 describe("createFaqPageJsonLd", () => {
@@ -98,6 +116,44 @@ describe("createFaqPageJsonLd", () => {
     ]);
 
     expect(result?.mainEntity).toHaveLength(1);
+  });
+
+  it("lists every question the FAQ hub renders", () => {
+    const result = createFaqPageJsonLd([
+      { _type: "richTextBlock" },
+      hubBlock([
+        hubFaq("faq-1", "Seat belts?", "Yes, on every coach."),
+        hubFaq("faq-2", "Fly alone?", "From age eight."),
+      ]),
+    ]);
+
+    expect(result?.mainEntity).toEqual([
+      {
+        "@type": "Question",
+        name: "Seat belts?",
+        acceptedAnswer: { "@type": "Answer", text: "Yes, on every coach." },
+      },
+      {
+        "@type": "Question",
+        name: "Fly alone?",
+        acceptedAnswer: { "@type": "Answer", text: "From age eight." },
+      },
+    ]);
+  });
+
+  it("lists a question once when a curated section and the hub both show it", () => {
+    const result = createFaqPageJsonLd([
+      faqBlock([faq("faq-1", "Seat belts?", "Yes, on every coach.")]),
+      hubBlock([
+        hubFaq("faq-1", "Seat belts?", "Yes, on every coach."),
+        hubFaq("faq-2", "Fly alone?", "From age eight."),
+      ]),
+    ]);
+
+    expect(result?.mainEntity.map(({ name }) => name)).toEqual([
+      "Seat belts?",
+      "Fly alone?",
+    ]);
   });
 
   it("excludes title-only FAQs", () => {

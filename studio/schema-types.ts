@@ -70,6 +70,7 @@ import largeSlides from "./schemas/blocks/large-slides";
 import headingImage from "./schemas/blocks/heading-image";
 import quoteWall from "./schemas/blocks/quote-wall";
 import pricingSingleToggle from "./schemas/blocks/pricing-single-toggle";
+import faqHub from "./schemas/blocks/faq-hub";
 // page-builder-generator:block-imports
 import { internationalCampersSection } from "./schemas/blocks/international-campers-section";
 import facilityMapPlacement from "./schemas/objects/facility-map-placement";
@@ -146,6 +147,7 @@ export const schemaTypes = [
   headingImage,
   quoteWall,
   pricingSingleToggle,
+  faqHub,
   // page-builder-generator:block-types
   internationalCampersSection,
 ];
