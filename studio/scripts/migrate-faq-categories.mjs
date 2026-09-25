@@ -4,19 +4,23 @@
 // then the fallback category. `order` is the FAQ's position in that section.
 //
 // Dry run:  pnpm --dir studio migrate:faq-categories
-// Apply:    pnpm --dir studio migrate:faq-categories --apply --backup=<export>.tar.gz
+// Apply:    pnpm --dir studio migrate:faq-categories --apply
 //
-// Apply refuses to run without a dataset export that passes `gzip -t`.
+// Apply first writes a raw dataset export to backups/ and stops unless it
+// passes `gzip -t`.
 // It patches each FAQ under its own id, so drafts stay drafts and published
 // documents stay published. It never publishes a draft.
 
 import { execFileSync } from "node:child_process";
-import { resolve } from "node:path";
+import { mkdirSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import process from "node:process";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { assertCacProductionTarget } from "./assert-cac-production-target.mjs";
 
 const API_VERSION = "2026-03-23";
+const studioDirectory = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const backupDirectory = resolve(studioDirectory, "../backups");
 
 const seed = (slug, title, order, description) => ({
   _id: `faqCategory-${slug}`,
@@ -174,8 +178,17 @@ export function createFaqCategoryPlans({ faqs, pages }) {
   });
 }
 
-const argValue = (name) =>
-  process.argv.find((value) => value.startsWith(`--${name}=`))?.slice(name.length + 3);
+const exportVerifiedBackup = (dataset) => {
+  const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+  const backup = resolve(backupDirectory, `${dataset}-${stamp}-faq-categories.tar.gz`);
+  mkdirSync(backupDirectory, { recursive: true });
+  execFileSync("pnpm", ["exec", "sanity", "datasets", "export", dataset, backup, "--raw"], {
+    cwd: studioDirectory,
+    stdio: "inherit",
+  });
+  execFileSync("gzip", ["-t", backup], { stdio: "inherit" });
+  console.log(`Backup verified: ${backup}`);
+};
 
 async function run() {
   const apply = process.argv.includes("--apply");
@@ -221,9 +234,7 @@ async function run() {
   console.log(JSON.stringify(summary, null, 2));
   if (!apply) return;
 
-  const backup = argValue("backup");
-  if (!backup) throw new Error("--apply needs --backup=<dataset export .tar.gz>");
-  execFileSync("gzip", ["-t", resolve(backup)], { stdio: "inherit" });
+  exportVerifiedBackup(dataset);
 
   const transaction = client.transaction();
   for (const categoryDocument of FAQ_CATEGORIES) transaction.createIfNotExists(categoryDocument);
