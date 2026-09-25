@@ -47,6 +47,18 @@ const exportVerifiedBackup = (dataset) => {
   console.log(`Backup verified: ${backup}`);
 };
 
+// GROQ drops null-valued attributes from projections and `defined(null)` is
+// false, so a page that stores `headerImage: null` would slip past a filter.
+// Read the raw documents instead; they keep the key as stored.
+async function fetchRawPages(client) {
+  const ids = await client.fetch(`*[_type == "page"] | order(_id asc)._id`, {}, { perspective: "raw" });
+  const pages = [];
+  for (let index = 0; index < ids.length; index += 100) {
+    pages.push(...(await client.getDocuments(ids.slice(index, index + 100))));
+  }
+  return pages.filter(Boolean);
+}
+
 async function run() {
   const apply = process.argv.includes("--apply");
   const { getCliClient } = await import("sanity/cli");
@@ -54,11 +66,7 @@ async function run() {
   const { dataset, projectId } = client.config();
   assertCacProductionTarget({ dataset, projectId });
 
-  const pages = await client.fetch(
-    `*[_type == "page" && defined(headerImage)] | order(_id asc) { _id, _rev, headerImage }`,
-    {},
-    { perspective: "raw" },
-  );
+  const pages = await fetchRawPages(client);
   const plans = createRemoveHeaderImagePlans(pages);
   console.log(
     JSON.stringify(
@@ -84,11 +92,7 @@ async function run() {
   }
   await transaction.commit({ visibility: "sync" });
 
-  const remaining = await client.fetch(
-    `*[_type == "page" && defined(headerImage)]._id`,
-    {},
-    { perspective: "raw" },
-  );
+  const remaining = createRemoveHeaderImagePlans(await fetchRawPages(client)).map(({ _id }) => _id);
   if (remaining.length > 0) throw new Error(`Pages still with headerImage: ${remaining.join(", ")}`);
   console.log(`Removed headerImage from ${plans.length} page document(s).`);
 }
