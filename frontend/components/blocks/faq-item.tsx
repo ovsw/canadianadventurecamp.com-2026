@@ -38,24 +38,33 @@ export function faqRuleClass(cream: boolean) {
 
 export function FaqAccordionItem({
   children,
+  compact = false,
   cream,
   question,
   value,
 }: Readonly<{
   /** The rendered answer, or nothing for a question with no answer yet. */
   children?: ReactNode;
+  /** Smaller question and tighter rows, for the hub's long lists. */
+  compact?: boolean;
   cream: boolean;
   question: ReactNode;
   value: string;
 }>) {
   return (
     <AccordionItem className={cn("border-b", faqRuleClass(cream))} value={value}>
-      <AccordionTrigger className="group items-center gap-6 py-6 font-display text-title hover:no-underline sm:py-7 sm:text-[24px] [&>svg]:hidden">
+      <AccordionTrigger
+        className={cn(
+          "group items-center gap-6 font-display hover:no-underline [&>svg]:hidden",
+          compact ? "py-4 text-[19px] sm:py-5" : "py-6 text-title sm:py-7 sm:text-[24px]",
+        )}
+      >
         <span className="text-balance">{question}</span>
         <span
           aria-hidden="true"
           className={cn(
-            "flex size-10 shrink-0 items-center justify-center rounded-full border transition-[background-color,border-color,color,transform] motion-base group-hover:border-campfire-amber group-data-[state=open]:rotate-45 group-data-[state=open]:border-campfire-amber group-data-[state=open]:bg-campfire-amber group-data-[state=open]:text-pine-night motion-reduce:transition-none",
+            "flex shrink-0 items-center justify-center rounded-full border transition-[background-color,border-color,color,transform] motion-base group-hover:border-campfire-amber group-data-[state=open]:rotate-45 group-data-[state=open]:border-campfire-amber group-data-[state=open]:bg-campfire-amber group-data-[state=open]:text-pine-night motion-reduce:transition-none",
+            compact ? "size-9" : "size-10",
             cream ? "border-pine-night/18" : "border-birch-bark/25",
           )}
         >
@@ -64,7 +73,7 @@ export function FaqAccordionItem({
       </AccordionTrigger>
       {children ? (
         <AccordionContent
-          className={cn("pb-7 text-base", cream ? "text-ink-muted" : "text-birch-bark/72")}
+          className={cn(compact ? "pb-6 text-base" : "pb-7 text-base", cream ? "text-ink-muted" : "text-birch-bark/72")}
         >
           <div className="grid max-w-[38rem] gap-4 text-pretty leading-[1.6]">{children}</div>
         </AccordionContent>

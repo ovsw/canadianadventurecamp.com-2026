@@ -169,7 +169,7 @@ export default function FaqHubBrowser({
                       open" (Ovi, 2026-09-25). */}
                   <Accordion className="w-full" collapsible type="single">
                     {group.faqs.map((faq) => (
-                      <FaqAccordionItem cream={cream} key={faq._id} question={faq.question} value={faq._id}>
+                      <FaqAccordionItem compact cream={cream} key={faq._id} question={faq.question} value={faq._id}>
                         {faq.answer}
                       </FaqAccordionItem>
                     ))}
