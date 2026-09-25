@@ -13,6 +13,9 @@ import { FaqAccordionItem, faqRuleClass } from "./faq-item";
 export type FaqHubBrowserItem = FaqHubItem & {
   /** The answer already rendered on the server. */
   answer: ReactNode;
+  /** The question as fetched, stega metadata intact, so Presentation
+      overlays can map a click on it back to the FAQ document. */
+  title: string;
 };
 
 /*
@@ -63,15 +66,21 @@ export default function FaqHubBrowser({
       : `${result.total} of ${pool} ${result.total === 1 ? "question matches" : "questions match"}`;
 
   const muted = cream ? "text-ink-muted" : "text-birch-bark/72";
+  const accent = cream ? "text-cedar" : "text-campfire-amber";
   const rule = faqRuleClass(cream);
-  const pillBase =
-    "focus-ring inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-4 py-2 text-[15px] font-semibold leading-none transition-[background-color,border-color,color] motion-base motion-reduce:transition-none lg:w-full lg:justify-between";
+  // Category pills follow the site's other selectors: the chosen one fills
+  // with the field's accent (Cedar on cream, Campfire Amber on green), the
+  // rest are hairline pills whose border turns to that accent on hover.
+  const pillBase = cn(
+    "focus-ring inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-pill border px-4 py-2 text-[15px] font-semibold leading-none transition-[background-color,border-color,color,transform] motion-base motion-reduce:transition-none lg:w-full lg:justify-between",
+    styles.pill,
+  );
   const pillRest = cream
-    ? "border-pine-night/14 text-pine-night hover:border-pine-night/40"
-    : "border-birch-bark/22 text-birch-bark hover:border-birch-bark/55";
+    ? "border-pine-night/14 text-pine-night hover:border-cedar"
+    : "border-birch-bark/22 text-birch-bark hover:border-campfire-amber";
   const pillPressed = cream
-    ? "border-pine-night bg-pine-night text-birch-bark"
-    : "border-birch-bark bg-birch-bark text-pine-night";
+    ? "border-cedar bg-cedar text-birch-bark"
+    : "border-campfire-amber bg-campfire-amber text-pine-night";
 
   return (
     <div className="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-[minmax(0,0.34fr)_minmax(0,1fr)] lg:gap-x-16 lg:gap-y-10 xl:gap-x-24">
@@ -82,7 +91,7 @@ export default function FaqHubBrowser({
         <div className="relative mt-3 max-w-[40rem]">
           <Search
             aria-hidden="true"
-            className={cn("pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2", muted)}
+            className={cn("pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2", accent)}
           />
           <Input
             autoComplete="off"
@@ -144,7 +153,13 @@ export default function FaqHubBrowser({
               const headingId = `faq-hub-${sectionKey}-${group.category._id}`;
               return (
                 <section aria-labelledby={headingId} className="scroll-mt-32" key={group.category._id}>
-                  <div className={cn("flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b pb-4", rule)}>
+                  <div className={cn("relative flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b pb-4", rule)}>
+                    {/* A short amber tick on the rule: the map-legend mark
+                        that opens each topic. */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute -bottom-px left-0 h-[3px] w-12 rounded-xs bg-campfire-amber"
+                    />
                     <h3 className="font-display text-title-lg" id={headingId}>
                       {group.category.title}
                     </h3>
@@ -157,7 +172,7 @@ export default function FaqHubBrowser({
                       open" (Ovi, 2026-09-25). */}
                   <Accordion className="w-full" collapsible type="single">
                     {group.faqs.map((faq) => (
-                      <FaqAccordionItem cream={cream} key={faq._id} question={faq.question} value={faq._id}>
+                      <FaqAccordionItem compact cream={cream} key={faq._id} question={faq.title} value={faq._id}>
                         {faq.answer}
                       </FaqAccordionItem>
                     ))}

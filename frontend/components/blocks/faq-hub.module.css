@@ -15,6 +15,14 @@
   }
 }
 
+/* Category pills lift on hover like the dates-and-rates tabs; the chosen one
+   stays put. */
+@media (prefers-reduced-motion: no-preference) {
+  .pill:not([aria-pressed="true"]):hover {
+    transform: translateY(-2px);
+  }
+}
+
 /* Phones: the category row scrolls sideways with no visible scrollbar. */
 .track {
   scrollbar-width: none;
