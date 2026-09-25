@@ -68,6 +68,32 @@ export function getBenefitCardColumnCount(cardCount: number) {
   return cardCount >= 3 ? 3 : Math.max(cardCount, 1);
 }
 
+/**
+ * Classes for the last tile so every grid row is full. A partial final row
+ * would otherwise show the hairline background as an empty grey cell, which
+ * reads as missing content rather than as part of the grid.
+ */
+export function getBenefitCardLastTileClass(cardCount: number) {
+  const columnCount = getBenefitCardColumnCount(cardCount);
+  if (columnCount < 2) return "";
+  const classes: string[] = [];
+  // Two columns from `sm`: an odd count leaves one empty cell.
+  if (cardCount % 2 === 1) classes.push("sm:col-span-2");
+  if (columnCount >= 3) {
+    const remainder = cardCount % columnCount;
+    const span = remainder === 0 ? 1 : columnCount - remainder + 1;
+    const spanClass = {
+      1: "lg:col-span-1",
+      2: "lg:col-span-2",
+      3: "lg:col-span-3",
+      4: "lg:col-span-4",
+    }[span];
+    // Only needed when the `sm` span must be reset or widened at `lg`.
+    if (spanClass && (span > 1 || classes.length)) classes.push(spanClass);
+  }
+  return classes.join(" ");
+}
+
 export default function BenefitCards({
   _key,
   cards,
@@ -83,6 +109,7 @@ export default function BenefitCards({
   const cleanKey = stegaClean(_key);
   const headingId = `benefit-cards-${cleanKey}-title`;
   const columnCount = getBenefitCardColumnCount(cards.length);
+  const lastTileClass = getBenefitCardLastTileClass(cards.length);
 
   return (
     <section
@@ -152,6 +179,7 @@ export default function BenefitCards({
                   cream
                     ? "bg-birch-bark hover:bg-pine-night/5"
                     : "bg-forest-floor hover:bg-white/5",
+                  index === cards.length - 1 && lastTileClass,
                 )}
                 key={card._key}
               >
