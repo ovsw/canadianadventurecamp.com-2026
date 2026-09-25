@@ -1,17 +1,10 @@
-import { createCustomLinkMarkRenderer } from "@/components/portable-text/custom-link-mark";
-import { simpleRichTextComponents } from "@/components/simple-rich-text";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import { Plus } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import styles from "./faq-accordion.module.css";
+import { FaqAccordionItem, faqAnswerComponents, faqRuleClass } from "./faq-item";
 import { sectionThemeClass } from "./section-theme";
 
 type PageBlock =
@@ -71,17 +64,7 @@ export default function FaqAccordion({
     },
   };
 
-  const answerComponents: PortableTextComponents = {
-    ...simpleRichTextComponents,
-    marks: {
-      ...simpleRichTextComponents?.marks,
-      customLink: createCustomLinkMarkRenderer(
-        cream
-          ? "font-medium text-cedar underline decoration-cedar/30 underline-offset-4 hover:text-cedar-deep hover:decoration-cedar-deep"
-          : "font-medium text-moss underline decoration-moss/30 underline-offset-4 hover:text-sunlit-moss hover:decoration-sunlit-moss",
-      ),
-    },
-  };
+  const answerComponents = faqAnswerComponents(cream);
 
   return (
     <section
@@ -128,11 +111,7 @@ export default function FaqAccordion({
           </header>
 
           <Accordion
-            className={cn(
-              "w-full border-t",
-              cream ? "border-pine-night/14" : "border-birch-bark/16",
-              styles.reveal,
-            )}
+            className={cn("w-full border-t", faqRuleClass(cream), styles.reveal)}
             collapsible
             data-sanity={dataAttribute?.("faqs")}
             defaultValue={defaultValue}
@@ -142,42 +121,16 @@ export default function FaqAccordion({
               const value = faq._key || faq._id;
 
               return (
-                <AccordionItem
-                  className={cn(
-                    "border-b",
-                    cream ? "border-pine-night/14" : "border-birch-bark/16",
-                  )}
+                <FaqAccordionItem
+                  cream={cream}
                   key={value}
+                  question={faq.title}
                   value={value}
                 >
-                  <AccordionTrigger className="group items-center gap-6 py-6 font-display text-title hover:no-underline sm:py-7 sm:text-[24px] [&>svg]:hidden">
-                    <span className="text-balance">{faq.title}</span>
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        "flex size-10 shrink-0 items-center justify-center rounded-full border transition-[background-color,border-color,color,transform] motion-base group-hover:border-campfire-amber group-data-[state=open]:rotate-45 group-data-[state=open]:border-campfire-amber group-data-[state=open]:bg-campfire-amber group-data-[state=open]:text-pine-night motion-reduce:transition-none",
-                        cream ? "border-pine-night/18" : "border-birch-bark/25",
-                      )}
-                    >
-                      <Plus className="size-4" strokeWidth={2} />
-                    </span>
-                  </AccordionTrigger>
                   {faq.answer?.length ? (
-                    <AccordionContent
-                      className={cn(
-                        "pb-7 text-base",
-                        cream ? "text-ink-muted" : "text-birch-bark/72",
-                      )}
-                    >
-                      <div className="grid max-w-[38rem] gap-4 text-pretty leading-[1.6]">
-                        <PortableText
-                          components={answerComponents}
-                          value={faq.answer}
-                        />
-                      </div>
-                    </AccordionContent>
+                    <PortableText components={answerComponents} value={faq.answer} />
                   ) : null}
-                </AccordionItem>
+                </FaqAccordionItem>
               );
             })}
           </Accordion>

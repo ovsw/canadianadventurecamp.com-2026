@@ -25,6 +25,7 @@ import { largeSlidesQuery } from "./large-slides";
 import { headingImageQuery } from "./heading-image";
 import { quoteWallQuery } from "./quote-wall";
 import { pricingSingleToggleQuery } from "./pricing-single-toggle";
+import { faqHubQuery } from "./faq-hub";
 // page-builder-generator:query-imports
 import { internationalCampersSectionQuery } from "./international-campers-section";
 
@@ -60,6 +61,7 @@ export const pageBuilderQuery = `
     ${headingImageQuery},
     ${quoteWallQuery},
     ${pricingSingleToggleQuery},
+    ${faqHubQuery},
     ${"" /* page-builder-generator:query-spreads */}
     ${internationalCampersSectionQuery}
   }

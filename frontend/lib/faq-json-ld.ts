@@ -14,9 +14,12 @@ type FaqAccordionBlock = Extract<
   { _type: "faqAccordion" }
 >;
 
+type FaqHubBlock = Extract<PageBuilderBlock, { _type: "faqHub" }>;
+
 export type FaqJsonLdBlock =
   | Pick<FaqAccordionBlock, "_type" | "faqs">
-  | Pick<Exclude<PageBuilderBlock, FaqAccordionBlock>, "_type">;
+  | Pick<FaqHubBlock, "_type" | "faqs">
+  | Pick<Exclude<PageBuilderBlock, FaqAccordionBlock | FaqHubBlock>, "_type">;
 
 export type FaqPageJsonLd = {
   "@context": "https://schema.org";
@@ -38,7 +41,9 @@ export function createFaqPageJsonLd(
   const mainEntity: FaqPageJsonLd["mainEntity"] = [];
 
   for (const block of blocks) {
-    if (block._type !== "faqAccordion") continue;
+    // The curated section and the hub both list FAQs; a question that
+    // appears in each still enters the FAQPage once.
+    if (block._type !== "faqAccordion" && block._type !== "faqHub") continue;
 
     for (const faq of block.faqs ?? []) {
       if (seenFaqIds.has(faq._id)) continue;

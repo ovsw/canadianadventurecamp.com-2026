@@ -62,6 +62,7 @@ export const sectionTraits: Record<Block["_type"], SectionTrait> = {
   directorCta: { tuck: true },
   facilitiesMapSection: { background: "night", tuck: true },
   faqAccordion: {},
+  faqHub: {},
   pricingSingleToggle: {},
   featureCards: { tuck: true },
   hero: { background: "photo", hero: true },
