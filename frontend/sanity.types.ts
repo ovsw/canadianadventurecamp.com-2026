@@ -1676,6 +1676,13 @@ export type Testimonial = {
   rating?: number;
 };
 
+export type FaqCategoryReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "faqCategory";
+};
+
 export type Faq = {
   _id: string;
   _type: "faq";
@@ -1684,6 +1691,20 @@ export type Faq = {
   _rev: string;
   title?: string;
   body?: SimpleRichText;
+  category?: FaqCategoryReference;
+  order?: number;
+};
+
+export type FaqCategory = {
+  _id: string;
+  _type: "faqCategory";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  order?: number;
+  description?: string;
 };
 
 export type AuthorReference = {
@@ -2096,7 +2117,9 @@ export type AllSanitySchemaTypes =
   | HomePage
   | Navigation
   | Testimonial
+  | FaqCategoryReference
   | Faq
+  | FaqCategory
   | AuthorReference
   | Post
   | Category
@@ -3796,6 +3819,14 @@ export type BLOG_INDEX_QUERY_RESULT =
       _type: "faq";
       title: string | null;
       description: null;
+      blocks: null;
+      meta: null;
+    }
+  | {
+      _id: "blogIndex";
+      _type: "faqCategory";
+      title: string | null;
+      description: string | null;
       blocks: null;
       meta: null;
     }
