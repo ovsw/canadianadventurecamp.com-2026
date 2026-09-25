@@ -52,12 +52,13 @@ export default function FaqHub({
 
   const items: FaqHubBrowserItem[] = (faqs ?? []).flatMap((faq) => {
     const question = stegaClean(faq.title)?.trim();
-    if (!question || !faq.category) return [];
+    if (!question || !faq.title || !faq.category) return [];
     return [
       {
         _id: faq._id,
         category: faq.category,
         question,
+        title: faq.title,
         answerText: stegaClean(faq.answerText) ?? "",
         answer: faq.answer?.length ? (
           <PortableText components={answerComponents} value={faq.answer} />

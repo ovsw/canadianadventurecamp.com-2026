@@ -13,6 +13,9 @@ import { FaqAccordionItem, faqRuleClass } from "./faq-item";
 export type FaqHubBrowserItem = FaqHubItem & {
   /** The answer already rendered on the server. */
   answer: ReactNode;
+  /** The question as fetched, stega metadata intact, so Presentation
+      overlays can map a click on it back to the FAQ document. */
+  title: string;
 };
 
 /*
@@ -169,7 +172,7 @@ export default function FaqHubBrowser({
                       open" (Ovi, 2026-09-25). */}
                   <Accordion className="w-full" collapsible type="single">
                     {group.faqs.map((faq) => (
-                      <FaqAccordionItem compact cream={cream} key={faq._id} question={faq.question} value={faq._id}>
+                      <FaqAccordionItem compact cream={cream} key={faq._id} question={faq.title} value={faq._id}>
                         {faq.answer}
                       </FaqAccordionItem>
                     ))}
