@@ -11,6 +11,7 @@ import {
   type DynamicFetchOptions,
 } from "@/sanity/lib/live";
 import { generatePageMetadata } from "@/sanity/lib/metadata";
+import { fetchSeoSettings } from "@/sanity/lib/seo-settings";
 import { PAGE_QUERY } from "@/sanity/queries/page";
 import type {
   PAGE_QUERY_RESULT,
@@ -47,18 +48,21 @@ export async function generateMetadata(props: {
   const slug = readPageSlug(segments);
   if (!slug) return {};
 
-  const { data: page } = (await sanityFetchMetadata({
-    query: PAGE_QUERY,
-    params: { slug },
-    perspective: "published",
-  })) as { data: PAGE_QUERY_RESULT };
+  const [{ data: page }, settings] = await Promise.all([
+    sanityFetchMetadata({
+      query: PAGE_QUERY,
+      params: { slug },
+      perspective: "published",
+    }) as Promise<{ data: PAGE_QUERY_RESULT }>,
+    fetchSeoSettings(),
+  ]);
   // The page renderer owns 404s. Metadata only sees published content, so a
   // 404 here would prevent draft-only routes from reaching Presentation.
   if (!page) return {};
   const path = pagePath(slug);
   if (!path) return {};
 
-  return generatePageMetadata({ page, path });
+  return generatePageMetadata({ page, path, settings });
 }
 
 export default async function PageRoute(props: {

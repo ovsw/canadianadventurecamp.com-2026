@@ -119,6 +119,6 @@ export async function GET(
       title,
     });
   } catch (error) {
-    return ogImageFallbackResponse(error, "Page");
+    return await ogImageFallbackResponse(error, "Page");
   }
 }

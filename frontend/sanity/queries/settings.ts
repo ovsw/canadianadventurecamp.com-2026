@@ -26,3 +26,14 @@ export const SETTINGS_QUERY = defineQuery(`
     }
   }
 `);
+
+// Site-wide search and sharing defaults. Metadata and the generated-card
+// failure path read this from the published perspective.
+export const SEO_SETTINGS_QUERY = defineQuery(`
+  *[_type == "settings" && _id == "settings"][0]{
+    seoDescription,
+    seoImage{
+      ${imageQuery}
+    }
+  }
+`);

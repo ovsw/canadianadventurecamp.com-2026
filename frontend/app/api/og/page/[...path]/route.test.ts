@@ -104,6 +104,33 @@ describe("page OG image route", () => {
     consoleError.mockRestore();
   });
 
+  it("redirects render failures to the Site sharing image when one is set", async () => {
+    routeState.renderFails = true;
+    sanityFetchMetadata.mockResolvedValueOnce({ data: { title } });
+    sanityFetchMetadata.mockResolvedValueOnce({
+      data: {
+        seoImage: {
+          asset: { _id: "image-site1234-2400x1600-jpg", mimeType: "image/jpeg" },
+        },
+      },
+    });
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const response = await get(signedUrl());
+    const location = new URL(response.headers.get("location") || "");
+
+    expect(response.status).toBe(302);
+    expect(location.origin + location.pathname).toBe(
+      "https://cdn.sanity.io/images/test-project/test/site1234-2400x1600.jpg",
+    );
+    expect(location.searchParams.get("w")).toBe("1200");
+    expect(location.searchParams.get("h")).toBe("630");
+    expect(sanityFetchMetadata).toHaveBeenLastCalledWith(
+      expect.objectContaining({ perspective: "published" }),
+    );
+    consoleError.mockRestore();
+  });
+
   it("redirects Sanity fetch failures to the prebuilt local fallback", async () => {
     sanityFetchMetadata.mockRejectedValueOnce(new Error("Sanity unavailable"));
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});

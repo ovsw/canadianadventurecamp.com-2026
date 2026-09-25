@@ -83,6 +83,6 @@ export async function GET(
 
     return await createOgImageResponse({ eyebrow: date, title });
   } catch (error) {
-    return ogImageFallbackResponse(error, "Post");
+    return await ogImageFallbackResponse(error, "Post");
   }
 }

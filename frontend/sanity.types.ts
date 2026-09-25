@@ -78,6 +78,7 @@ export type MetaImage = {
   media?: unknown; // Unable to locate the referenced type "image.media" in schema
   hotspot?: SanityImageHotspot;
   crop?: SanityImageCrop;
+  alt?: string;
   _type: "image";
 };
 
@@ -1417,6 +1418,15 @@ export type Settings = {
       _key: string;
     } & SocialLink
   >;
+  seoDescription?: string;
+  seoImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
 };
 
 export type NavigationAction = {
@@ -3770,6 +3780,7 @@ export type BLOG_INDEX_QUERY_RESULT =
           media?: unknown; // Unable to locate the referenced type "image.media" in schema
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
+          alt?: string;
           _type: "image";
         } | null;
       } | null;
@@ -3808,6 +3819,7 @@ export type BLOG_INDEX_QUERY_RESULT =
           media?: unknown; // Unable to locate the referenced type "image.media" in schema
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
+          alt?: string;
           _type: "image";
         } | null;
       } | null;
@@ -5751,6 +5763,7 @@ export type BLOG_INDEX_QUERY_RESULT =
           media?: unknown; // Unable to locate the referenced type "image.media" in schema
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
+          alt?: string;
           _type: "image";
         } | null;
       } | null;
@@ -7675,6 +7688,7 @@ export type BLOG_INDEX_QUERY_RESULT =
           media?: unknown; // Unable to locate the referenced type "image.media" in schema
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
+          alt?: string;
           _type: "image";
         } | null;
       } | null;
@@ -7705,6 +7719,7 @@ export type BLOG_INDEX_QUERY_RESULT =
           media?: unknown; // Unable to locate the referenced type "image.media" in schema
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
+          alt?: string;
           _type: "image";
         } | null;
       } | null;
@@ -7919,6 +7934,7 @@ export type CATEGORY_QUERY_RESULT = {
       media?: unknown; // Unable to locate the referenced type "image.media" in schema
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
+      alt?: string;
       _type: "image";
     } | null;
   } | null;
@@ -9942,6 +9958,7 @@ export type HOME_PAGE_QUERY_RESULT = {
       media?: unknown; // Unable to locate the referenced type "image.media" in schema
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
+      alt?: string;
       _type: "image";
     } | null;
   } | null;
@@ -11917,6 +11934,7 @@ export type PAGE_QUERY_RESULT = {
       media?: unknown; // Unable to locate the referenced type "image.media" in schema
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
+      alt?: string;
       _type: "image";
     } | null;
   } | null;
@@ -12112,6 +12130,7 @@ export type POST_QUERY_RESULT = {
       media?: unknown; // Unable to locate the referenced type "image.media" in schema
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
+      alt?: string;
       _type: "image";
     } | null;
   } | null;
@@ -12281,6 +12300,7 @@ export type PUBLISHED_POST_QUERY_RESULT = {
       media?: unknown; // Unable to locate the referenced type "image.media" in schema
       hotspot?: SanityImageHotspot;
       crop?: SanityImageCrop;
+      alt?: string;
       _type: "image";
     } | null;
   } | null;
@@ -12399,6 +12419,32 @@ export type SETTINGS_QUERY_RESULT = {
   }> | null;
 } | null;
 
+// Source: ../frontend/sanity/queries/settings.ts
+// Variable: SEO_SETTINGS_QUERY
+// Query: *[_type == "settings" && _id == "settings"][0]{    seoDescription,    seoImage{        ...,  asset->{    _id,    url,    mimeType,    metadata {      lqip,      dimensions {        width,        height      }    }  }    }  }
+export type SEO_SETTINGS_QUERY_RESULT = {
+  seoDescription: string | null;
+  seoImage: {
+    asset: {
+      _id: string;
+      url: string | null;
+      mimeType: string | null;
+      metadata: {
+        lqip: string | null;
+        dimensions: {
+          width: number | null;
+          height: number | null;
+        } | null;
+      } | null;
+    } | null;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+} | null;
+
 // Query TypeMap
 declare global {
   interface SanityQueries {
@@ -12430,6 +12476,7 @@ declare global {
     '*[_type == "post" && defined(slug)]{slug}': POSTS_SLUGS_QUERY_RESULT;
     '\n  *[\n    _type == "redirect" &&\n    !(_id in path("drafts.**")) &&\n    status == "active" &&\n    defined(source.current) &&\n    (defined(destinationReference._ref) || defined(destination.current))\n  ] | order(source.current asc) {\n    _id,\n    status,\n    source,\n    "destination": select(\n      defined(destinationReference._ref) => select(\n  destinationReference->_id == "homePage" || destinationReference->_type == "homePage" => "/",\n  destinationReference->_id == "blogIndex" || destinationReference->_type == "blogIndex" => "/blog",\n  destinationReference->_type == "post" && defined(destinationReference->slug.current) => "/blog/" + array::join(string::split(destinationReference->slug.current, "/")[@ != ""], "/"),\n  destinationReference->_type == "category" && defined(destinationReference->slug.current) => "/blog/category/" + array::join(string::split(destinationReference->slug.current, "/")[@ != ""], "/"),\n  destinationReference->_type == "page" && defined(destinationReference->slug.current) => "/" + array::join(string::split(destinationReference->slug.current, "/")[@ != ""], "/")\n),\n      destination.current\n    ),\n    permanent\n  }\n': REDIRECTS_QUERY_RESULT;
     '\n  *[_type == "settings" && _id == "settings"][0]{\n    _id,\n    _type,\n    siteName,\n    logo{\n      light{\n        \n  ...,\n  asset->{\n    _id,\n    url,\n    mimeType,\n    metadata {\n      lqip,\n      dimensions {\n        width,\n        height\n      }\n    }\n  }\n\n      },\n      dark{\n        \n  ...,\n  asset->{\n    _id,\n    url,\n    mimeType,\n    metadata {\n      lqip,\n      dimensions {\n        width,\n        height\n      }\n    }\n  }\n\n      }\n    },\n    contact{\n      email,\n      phone,\n      addressLines\n    },\n    socialLinks[]{\n      _key,\n      label,\n      url\n    }\n  }\n': SETTINGS_QUERY_RESULT;
+    '\n  *[_type == "settings" && _id == "settings"][0]{\n    seoDescription,\n    seoImage{\n      \n  ...,\n  asset->{\n    _id,\n    url,\n    mimeType,\n    metadata {\n      lqip,\n      dimensions {\n        width,\n        height\n      }\n    }\n  }\n\n    }\n  }\n': SEO_SETTINGS_QUERY_RESULT;
   }
 }
 // Lets @sanity/client releases that predate the global registry read it too
