@@ -4,6 +4,8 @@ import {
   FileText,
   User,
   ListCollapse,
+  Filter,
+  FolderTree,
   Quote,
   Menu,
   Settings,
@@ -169,11 +171,49 @@ export const structure: StructureResolver = (S) =>
       S.listItem()
         .title("FAQs")
         .icon(ListCollapse)
-        .schemaType("faq")
         .child(
-          S.documentTypeList("faq")
+          S.list()
             .title("FAQs")
-            .defaultOrdering([{ field: "title", direction: "asc" }])
+            .items([
+              S.listItem()
+                .title("All FAQs")
+                .icon(ListCollapse)
+                .schemaType("faq")
+                .child(
+                  S.documentTypeList("faq")
+                    .title("All FAQs")
+                    .defaultOrdering([{ field: "title", direction: "asc" }])
+                ),
+              S.listItem()
+                .title("FAQs by category")
+                .icon(Filter)
+                .child(
+                  S.documentTypeList("faqCategory")
+                    .title("FAQs by category")
+                    .defaultOrdering([{ field: "order", direction: "asc" }])
+                    .child((categoryId) =>
+                      S.documentList()
+                        .title("FAQs")
+                        .schemaType("faq")
+                        .filter('_type == "faq" && category._ref == $categoryId')
+                        .params({ categoryId })
+                        .defaultOrdering([
+                          { field: "order", direction: "asc" },
+                          { field: "title", direction: "asc" },
+                        ])
+                    )
+                ),
+              S.divider(),
+              S.listItem()
+                .title("FAQ categories")
+                .icon(FolderTree)
+                .schemaType("faqCategory")
+                .child(
+                  S.documentTypeList("faqCategory")
+                    .title("FAQ categories")
+                    .defaultOrdering([{ field: "order", direction: "asc" }])
+                ),
+            ])
         ),
       S.listItem()
         .title("Testimonials")

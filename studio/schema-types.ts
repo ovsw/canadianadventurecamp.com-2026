@@ -4,6 +4,7 @@ import post from "./schemas/documents/post";
 import author from "./schemas/documents/author";
 import category from "./schemas/documents/category";
 import faq from "./schemas/documents/faq";
+import faqCategory from "./schemas/documents/faq-category";
 import testimonial from "./schemas/documents/testimonial";
 import navigation, {
   navigationSchemaTypes,
@@ -81,6 +82,7 @@ export const schemaTypes = [
   author,
   category,
   faq,
+  faqCategory,
   testimonial,
   navigation,
   ...navigationSchemaTypes,
