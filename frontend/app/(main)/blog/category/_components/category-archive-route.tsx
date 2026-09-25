@@ -1,4 +1,4 @@
-import { RegularPostCard, documentDataAttribute } from "@/components/blog-card";
+import { PostGrid, documentDataAttribute } from "@/components/blog-card";
 import BreadcrumbJsonLd from "@/components/breadcrumb-json-ld";
 import BlogPagination from "@/components/blog-pagination";
 import {
@@ -61,35 +61,53 @@ export async function CategoryArchiveRoute({
         ]}
         siteUrl={siteUrl}
       />
-      <header>
-        <nav aria-label="Breadcrumb">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true"> / </span>
-          <Link href="/blog">Blog</Link>
-          <span aria-hidden="true"> / </span>
-          <span>{title}</span>
-        </nav>
-        <h1 data-sanity={fieldDataAttribute?.("title")}>{category.title}</h1>
-        {description?.trim() ? (
-          <p data-sanity={fieldDataAttribute?.("description")}>
-            {category.description}
-          </p>
-        ) : null}
-      </header>
+      {/* One section outside the Page Builder: its bottom is an edge above
+          the tucking footer, so it adds the overlap like the resolver does. */}
+      <section
+        aria-labelledby="category-title"
+        className="bg-birch-bark-bright py-section text-pine-night [--section-pad-bottom:calc(var(--section-pad)+var(--section-overlap))]"
+      >
+        <div className="container-content">
+          <header className="mb-12 max-w-3xl">
+            <nav aria-label="Breadcrumb" className="mb-5 text-eyebrow text-cedar">
+              <Link className="focus-ring underline-offset-4 hover:underline" href="/blog">
+                Blog
+              </Link>
+              <span aria-hidden="true"> / </span>
+              <span>{title}</span>
+            </nav>
+            <h1
+              className="text-balance font-display text-headline"
+              data-sanity={fieldDataAttribute?.("title")}
+              id="category-title"
+            >
+              {category.title}
+            </h1>
+            {description?.trim() ? (
+              <p
+                className="mt-5 max-w-xl text-pretty text-lg/relaxed text-ink-muted"
+                data-sanity={fieldDataAttribute?.("description")}
+              >
+                {category.description}
+              </p>
+            ) : null}
+          </header>
 
-      <section aria-labelledby="category-posts-heading">
-        <h2 id="category-posts-heading">Posts in {title}</h2>
-        <p>{getBlogResultsLabel(currentPage, posts.length, postCount)}</p>
-        {posts.length ? (
-          <div>
-            {posts.map((post) => (
-              <RegularPostCard key={post._id} post={post} stega={stega} />
-            ))}
-          </div>
-        ) : (
-          <p>No posts in this category yet.</p>
-        )}
-        <BlogPagination basePath={basePath} pagination={pagination} />
+          <h2 className="sr-only">Posts in {title}</h2>
+          {posts.length ? (
+            <PostGrid posts={posts} stega={stega} />
+          ) : (
+            <p className="text-lg text-ink-muted">No posts in this category yet.</p>
+          )}
+          {posts.length ? (
+            <footer className="mt-14 flex flex-col items-center gap-5">
+              <p className="text-label tabular-nums text-ink-muted">
+                {getBlogResultsLabel(currentPage, posts.length, postCount)}
+              </p>
+              <BlogPagination basePath={basePath} pagination={pagination} />
+            </footer>
+          ) : null}
+        </div>
       </section>
     </>
   );

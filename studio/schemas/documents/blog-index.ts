@@ -1,6 +1,6 @@
 import { Newspaper } from "lucide-react";
 import { defineField, defineType } from "sanity";
-import { contentBlocksField } from "../blocks/page-builder";
+import { blogIndexBlocksField } from "../blocks/page-builder";
 import meta from "../blocks/shared/meta";
 
 export default defineType({
@@ -24,14 +24,16 @@ export default defineType({
       type: "text",
       rows: 3,
       group: "content",
+      description:
+        "Used in search results and link previews. The page header is the Hero section below.",
       validation: (rule) =>
         rule
           .custom((value) =>
-            value?.trim() ? true : "Add a description for the Blog Index header",
+            value?.trim() ? true : "Add a description for search results",
           )
           .warning(),
     }),
-    contentBlocksField,
+    blogIndexBlocksField,
     meta,
   ],
   preview: {

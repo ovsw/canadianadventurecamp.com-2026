@@ -3,13 +3,28 @@ import {
   getBlogPaginationUrl,
   type BlogPagination as BlogPaginationData,
 } from "@/lib/blog-index";
-import Link from "next/link";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationDisabled,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 export default function BlogPagination({
   basePath,
+  hash,
+  onDark,
   pagination,
 }: {
   basePath?: string;
+  /** Fragment added to page links so a new page opens at the post list. */
+  hash?: string;
+  onDark?: boolean;
   pagination: BlogPaginationData;
 }) {
   if (pagination.totalPages <= 1) return null;
@@ -17,37 +32,55 @@ export default function BlogPagination({
     pagination.currentPage,
     pagination.totalPages,
   );
+  const pageHref = (page: number) =>
+    `${getBlogPaginationUrl(page, basePath)}${hash ? `#${hash}` : ""}`;
 
   return (
-    <nav aria-label="Pagination">
-      {pagination.hasPreviousPage ? (
-        <Link href={getBlogPaginationUrl(pagination.currentPage - 1, basePath)}>
-          {"\u2190"} Previous
-        </Link>
-      ) : (
-        <span aria-disabled="true">{"\u2190"} Previous</span>
-      )}
-      {items.map((item, index) =>
-        item === "ellipsis" ? (
-          <span aria-hidden="true" key={`ellipsis-${index}`}>...</span>
-        ) : (
-          <Link
-            aria-current={item === pagination.currentPage ? "page" : undefined}
-            aria-label={`Go to page ${item}`}
-            href={getBlogPaginationUrl(item, basePath)}
-            key={item}
-          >
-            {item}
-          </Link>
-        ),
-      )}
-      {pagination.hasNextPage ? (
-        <Link href={getBlogPaginationUrl(pagination.currentPage + 1, basePath)}>
-          Next {"\u2192"}
-        </Link>
-      ) : (
-        <span aria-disabled="true">Next {"\u2192"}</span>
-      )}
-    </nav>
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          {pagination.hasPreviousPage ? (
+            <PaginationPrevious
+              href={pageHref(pagination.currentPage - 1)}
+              onDark={onDark}
+            />
+          ) : (
+            <PaginationDisabled>
+              <ChevronLeftIcon aria-hidden="true" />
+              <span className="hidden sm:block">Previous</span>
+            </PaginationDisabled>
+          )}
+        </PaginationItem>
+        {items.map((item, index) => (
+          <PaginationItem key={item === "ellipsis" ? `ellipsis-${index}` : item}>
+            {item === "ellipsis" ? (
+              <PaginationEllipsis />
+            ) : (
+              <PaginationLink
+                aria-label={`Go to page ${item}`}
+                href={pageHref(item)}
+                isActive={item === pagination.currentPage}
+                onDark={onDark}
+              >
+                {item}
+              </PaginationLink>
+            )}
+          </PaginationItem>
+        ))}
+        <PaginationItem>
+          {pagination.hasNextPage ? (
+            <PaginationNext
+              href={pageHref(pagination.currentPage + 1)}
+              onDark={onDark}
+            />
+          ) : (
+            <PaginationDisabled>
+              <span className="hidden sm:block">Next</span>
+              <ChevronRightIcon aria-hidden="true" />
+            </PaginationDisabled>
+          )}
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   );
 }
