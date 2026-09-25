@@ -6,6 +6,7 @@ import {
   sanityFetchStaticParams,
 } from "@/sanity/lib/live";
 import { generateCategoryMetadata } from "@/sanity/lib/metadata";
+import { fetchSeoSettings } from "@/sanity/lib/seo-settings";
 import {
   CATEGORY_STATIC_PARAMS_QUERY,
   CATEGORY_QUERY,
@@ -27,13 +28,16 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const { data: category } = (await sanityFetchMetadata({
-    query: CATEGORY_QUERY,
-    params: { slug },
-    perspective: "published",
-  })) as { data: CategoryArchive | null };
+  const [{ data: category }, settings] = await Promise.all([
+    sanityFetchMetadata({
+      query: CATEGORY_QUERY,
+      params: { slug },
+      perspective: "published",
+    }) as Promise<{ data: CategoryArchive | null }>,
+    fetchSeoSettings(),
+  ]);
   if (!category) return {};
-  return generateCategoryMetadata({ category, page: 1 });
+  return generateCategoryMetadata({ category, page: 1, settings });
 }
 
 export default async function CategoryPage({ params }: Props) {

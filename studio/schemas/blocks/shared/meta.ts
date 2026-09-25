@@ -1,6 +1,7 @@
 import { defineField } from "sanity";
 import { getSeoTitleWarnings } from "../../../../shared/seo-title";
 import { studioSiteName } from "../../../site-name";
+import { SeoDescriptionInput } from "../../inputs/seo-description-input";
 import { SeoTitleInput } from "../../inputs/seo-title-input";
 
 export default defineField({
@@ -36,7 +37,10 @@ export default defineField({
     defineField({
       name: "description",
       type: "text",
-      title: "Description",
+      title: "SEO description override",
+      description:
+        "Optional. Used for search results and shared links. When empty, the content description is used, then the site-wide description from Global Settings.",
+      components: { input: SeoDescriptionInput },
     }),
     defineField({
       name: "noindex",
@@ -47,7 +51,19 @@ export default defineField({
     defineField({
       name: "image",
       type: "image",
-      title: "Image",
+      title: "Social sharing image override",
+      description:
+        "Optional. The image shown when this page is shared on social networks and in messages. Leave empty to use the Generated sharing card. Page Builder and hero photos are not used. Shared links show this image at 1200 × 630, so set the crop and hotspot to keep the important part visible.",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative text",
+          type: "string",
+          description:
+            "Optional. Describes the image for people who cannot see it. When empty, the page title is used.",
+        }),
+      ],
     }),
   ],
 });

@@ -15,6 +15,7 @@ import {
   generateBlogIndexMetadata,
   generatePageMetadata,
 } from "@/sanity/lib/metadata";
+import { fetchSeoSettings } from "@/sanity/lib/seo-settings";
 import {
   BLOG_INDEX_QUERY,
   ELIGIBLE_BLOG_POSTS_COUNT_QUERY,
@@ -65,25 +66,31 @@ export async function generateMetadata({ params }: Props) {
   const { page: segment } = await params;
   const page = parseBlogPageSegment(segment);
   if (page) {
-    const { data: blogIndex } = (await sanityFetchMetadata({
-      query: BLOG_INDEX_QUERY,
-      perspective: "published",
-    })) as { data: BLOG_INDEX_QUERY_RESULT };
-    return generateBlogIndexMetadata({ blogIndex, page });
+    const [{ data: blogIndex }, settings] = await Promise.all([
+      sanityFetchMetadata({
+        query: BLOG_INDEX_QUERY,
+        perspective: "published",
+      }) as Promise<{ data: BLOG_INDEX_QUERY_RESULT }>,
+      fetchSeoSettings(),
+    ]);
+    return generateBlogIndexMetadata({ blogIndex, page, settings });
   }
   if (/^\d+$/.test(segment)) notFound();
 
   const slug = readPostSlug(segment);
   if (!slug) notFound();
-  const { data: post } = (await sanityFetchMetadata({
-    query: PUBLISHED_POST_QUERY,
-    params: { slug },
-    perspective: "published",
-  })) as { data: POST_QUERY_RESULT };
+  const [{ data: post }, settings] = await Promise.all([
+    sanityFetchMetadata({
+      query: PUBLISHED_POST_QUERY,
+      params: { slug },
+      perspective: "published",
+    }) as Promise<{ data: POST_QUERY_RESULT }>,
+    fetchSeoSettings(),
+  ]);
   if (!post) return {};
   const path = postPath(slug);
   if (!path) return {};
-  return generatePageMetadata({ page: post, path });
+  return generatePageMetadata({ page: post, path, settings });
 }
 
 export default async function BlogSegmentPage({ params }: Props) {

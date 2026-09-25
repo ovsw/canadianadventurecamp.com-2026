@@ -9,6 +9,7 @@ import {
   sanityFetchStaticParams,
 } from "@/sanity/lib/live";
 import { generateCategoryMetadata } from "@/sanity/lib/metadata";
+import { fetchSeoSettings } from "@/sanity/lib/seo-settings";
 import {
   CATEGORY_STATIC_PARAMS_QUERY,
   CATEGORY_QUERY,
@@ -33,13 +34,16 @@ export async function generateMetadata({ params }: Props) {
   const { page: segment, slug } = await params;
   const page = parseBlogPageSegment(segment);
   if (!page) notFound();
-  const { data: category } = (await sanityFetchMetadata({
-    query: CATEGORY_QUERY,
-    params: { slug },
-    perspective: "published",
-  })) as { data: CategoryArchive | null };
+  const [{ data: category }, settings] = await Promise.all([
+    sanityFetchMetadata({
+      query: CATEGORY_QUERY,
+      params: { slug },
+      perspective: "published",
+    }) as Promise<{ data: CategoryArchive | null }>,
+    fetchSeoSettings(),
+  ]);
   if (!category) return {};
-  return generateCategoryMetadata({ category, page });
+  return generateCategoryMetadata({ category, page, settings });
 }
 
 export default async function PaginatedCategoryPage({ params }: Props) {

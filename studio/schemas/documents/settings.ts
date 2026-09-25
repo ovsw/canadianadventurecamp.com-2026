@@ -53,6 +53,7 @@ const settings = defineType({
   groups: [
     { name: "identity", title: "Identity", default: true },
     { name: "contact", title: "Contact" },
+    { name: "seo", title: "Search & sharing" },
   ],
   fields: [
     defineField({
@@ -97,6 +98,33 @@ const settings = defineType({
       group: "contact",
       of: [defineArrayMember({ type: "socialLink" })],
       validation: (rule) => rule.unique(),
+    }),
+    defineField({
+      name: "seoDescription",
+      title: "Site-wide description",
+      type: "text",
+      rows: 3,
+      group: "seo",
+      description:
+        "Optional. The last fallback for search results and shared links, used when a page has neither an SEO description nor a content description.",
+    }),
+    defineField({
+      name: "seoImage",
+      title: "Site sharing image",
+      type: "image",
+      group: "seo",
+      description:
+        "Optional. Shown on shared links when a page has no Social sharing image override and its Generated sharing card is unavailable. Shared links show this image at 1200 × 630, so set the crop and hotspot to keep the important part visible.",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative text",
+          type: "string",
+          description:
+            "Optional. Describes the image for people who cannot see it. When empty, the page title is used.",
+        }),
+      ],
     }),
   ],
   preview: {

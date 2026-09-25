@@ -60,8 +60,13 @@ describe("category routes", () => {
       1,
       expect.objectContaining({ params: { slug: "news" }, perspective: "published" }),
     );
+    // Each route shape also reads the published Site settings defaults.
     expect(sanityFetchMetadata).toHaveBeenNthCalledWith(
       2,
+      expect.objectContaining({ perspective: "published" }),
+    );
+    expect(sanityFetchMetadata).toHaveBeenNthCalledWith(
+      3,
       expect.objectContaining({ params: { slug: "news" }, perspective: "published" }),
     );
   });

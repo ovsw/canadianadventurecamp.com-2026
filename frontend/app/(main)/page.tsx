@@ -5,6 +5,7 @@ import WebsiteJsonLd from "@/components/website-json-ld";
 import { siteUrl } from "@/lib/site-url";
 import { fetchHomePage } from "@/sanity/lib/fetch";
 import { generatePageMetadata } from "@/sanity/lib/metadata";
+import { fetchSeoSettings } from "@/sanity/lib/seo-settings";
 import MissingSanityPage from "@/components/ui/missing-sanity-page";
 import {
   getDynamicFetchOptions,
@@ -17,12 +18,15 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata() {
-  const { data: page } = (await sanityFetchMetadata({
-    query: HOME_PAGE_QUERY,
-    perspective: "published",
-  })) as { data: HOME_PAGE_QUERY_RESULT };
+  const [{ data: page }, settings] = await Promise.all([
+    sanityFetchMetadata({
+      query: HOME_PAGE_QUERY,
+      perspective: "published",
+    }) as Promise<{ data: HOME_PAGE_QUERY_RESULT }>,
+    fetchSeoSettings(),
+  ]);
 
-  return generatePageMetadata({ page, path: "/" });
+  return generatePageMetadata({ page, path: "/", settings });
 }
 
 export default async function IndexPage() {

@@ -80,6 +80,11 @@ export default defineType({
       title: "Header Image",
       type: "image",
       group: "content",
+      // Retired: the Website never showed this image. The field stays
+      // registered so saved values are kept without an unknown-field warning.
+      // Use the Social sharing image override in the SEO group instead.
+      hidden: true,
+      readOnly: true,
       options: { hotspot: true },
       fields: [
         defineField({
