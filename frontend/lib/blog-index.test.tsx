@@ -4,7 +4,10 @@ import { describe, expect, it, vi } from "vitest";
 import { PostCard, documentDataAttribute } from "@/components/blog-card";
 import Blocks from "@/components/blocks";
 import LatestArticles from "@/components/blocks/latest-articles";
-import { BlogIndexRoute } from "@/app/(main)/blog/_components/blog-index-route";
+import {
+  BlogIndexRoute,
+  withBlogListingSection,
+} from "@/app/(main)/blog/_components/blog-index-route";
 import {
   fetchBlogIndex,
   fetchLatestPost,
@@ -312,6 +315,24 @@ describe("blog index", () => {
     });
     // No Hero section: the page still has its heading for assistive tech.
     expect(screen.getByRole("heading", { level: 1, name: "Blog" })).toBeInTheDocument();
+  });
+
+  it("lists the posts even when the Blog page has no Latest Posts section yet", () => {
+    const hero = { _key: "hero", _type: "innerHero" } as never;
+    const cta = { _key: "cta", _type: "directorCta" } as never;
+    const listing = { _key: "listing", _type: "latestArticles" } as never;
+
+    expect(
+      withBlogListingSection([hero, cta]).map((block) => block._type),
+    ).toEqual(["innerHero", "latestArticles", "directorCta"]);
+    expect(withBlogListingSection([]).map((block) => block._type)).toEqual([
+      "latestArticles",
+    ]);
+    expect(withBlogListingSection([hero, listing, cta])).toEqual([
+      hero,
+      listing,
+      cta,
+    ]);
   });
 
   it("shows a clear empty state when the first page has only the latest post", () => {

@@ -14,8 +14,42 @@ import {
   fetchRegularPostsCount,
 } from "@/sanity/lib/fetch";
 import type { DynamicFetchOptions } from "@/sanity/lib/live";
+import type { BLOG_INDEX_QUERY_RESULT } from "@/sanity.types";
 import { notFound } from "next/navigation";
 import { siteUrl } from "@/lib/site-url";
+
+type BlogIndexBlock = NonNullable<
+  NonNullable<BLOG_INDEX_QUERY_RESULT>["blocks"]
+>[number];
+
+/** Stands in until the Blog page holds its own Latest Posts section. */
+const fallbackListingSection: Extract<BlogIndexBlock, { _type: "latestArticles" }> = {
+  _key: "blog-listing-fallback",
+  _type: "latestArticles",
+  articles: [],
+  background: "white",
+  buttons: null,
+  description: null,
+  eyebrow: null,
+  fallbackImage: null,
+  limit: null,
+  title: "All posts",
+};
+
+/**
+ * Studio requires one Latest Posts section on the Blog page, but a stored
+ * document from before that rule has none. Add one after the Hero so the
+ * posts always list.
+ */
+export function withBlogListingSection(blocks: BlogIndexBlock[]) {
+  if (blocks.some((block) => block._type === "latestArticles")) return blocks;
+  const heroCount = blocks[0]?._type === "hero" || blocks[0]?._type === "innerHero" ? 1 : 0;
+  return [
+    ...blocks.slice(0, heroCount),
+    fallbackListingSection,
+    ...blocks.slice(heroCount),
+  ];
+}
 
 /*
  * The Blog page is built from its Page Builder sections: the Hero, the
@@ -46,7 +80,7 @@ export async function BlogIndexRoute({
   if (isBlogPageOutOfRange(currentPage, pagination.totalPages)) {
     notFound();
   }
-  const blocks = blogIndex.blocks ?? [];
+  const blocks = withBlogListingSection(blogIndex.blocks ?? []);
   const hasHero = blocks.some(
     (block) => block._type === "hero" || block._type === "innerHero",
   );
@@ -60,7 +94,7 @@ export async function BlogIndexRoute({
         ]}
         siteUrl={siteUrl}
       />
-      <FaqPageJsonLd blocks={blocks} />
+      <FaqPageJsonLd blocks={blogIndex.blocks ?? []} />
       {/* The Hero carries the page heading; without one, keep an outline. */}
       {!hasHero ? <h1 className="sr-only">{blogIndex.title}</h1> : null}
       <Blocks

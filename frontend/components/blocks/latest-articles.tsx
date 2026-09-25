@@ -23,8 +23,8 @@ type LatestArticlesProps = Extract<PageBlock, { _type: "latestArticles" }> & {
 const DEFAULT_LIMIT = 3;
 const MAX_LIMIT = 12;
 
-/** The section's id; Blog page links to page 2 and on land here. */
-const SECTION_ID = "latest-posts";
+/** The Blog page list's id; its links to page 2 and on land here. */
+const LISTING_ID = "latest-posts";
 
 const fields = {
   dark: {
@@ -90,7 +90,7 @@ export default function LatestArticles({
     <section
       aria-labelledby={headingId}
       className={cn("py-section", sectionThemeClass(background))}
-      id={SECTION_ID}
+      id={blogListing ? LISTING_ID : `latest-posts-${stegaClean(_key)}`}
     >
       <div className="container-content">
         <header className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -173,7 +173,7 @@ export default function LatestArticles({
               )}
             </p>
             <BlogPagination
-              hash={SECTION_ID}
+              hash={LISTING_ID}
               onDark={tone === "dark"}
               pagination={blogListing.pagination}
             />
