@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit",
     "migrate:activity-schedule-headings": "node --env-file=.env.local scripts/migrate-activity-schedule-headings.mjs",
     "migrate:faq-categories": "node --env-file=.env.local scripts/migrate-faq-categories.mjs",
+    "migrate:remove-page-header-image": "node --env-file=.env.local scripts/migrate-remove-page-header-image.mjs",
     "migrate:included-extras-prices": "node --env-file=.env.local scripts/migrate-included-extras-prices.mjs",
     "legacy:page": "node --env-file=.env.local scripts/print-legacy-page.mjs",
     "page:text": "node --env-file=.env.local scripts/print-page-text.mjs",

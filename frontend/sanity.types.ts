@@ -1810,15 +1810,6 @@ export type Page = {
   _rev: string;
   title?: string;
   description?: string;
-  headerImage?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    caption?: string;
-    _type: "image";
-  };
   slug?: Slug;
   blocks?: Array<
     | ({

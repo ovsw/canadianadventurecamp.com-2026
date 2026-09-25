@@ -19,7 +19,6 @@ const client = getCliClient({ apiVersion: "2026-03-23" });
 const page = await client.fetch(
   `*[_type == "page" && ${SLUG_FILTER} && !(_id in path("drafts.**"))][0]{
     _id, title, "slug": slug.current,
-    "headerImageAlt": headerImage.alt,
     "blocks": blocks[]._type,
     "legacy": migration.legacy.content.sections
   }`,
@@ -34,7 +33,6 @@ if (!page) {
 console.log(`# ${page.title}  (/${page.slug})`);
 console.log(`Document: ${page._id}`);
 console.log(`Current blocks: ${page.blocks?.length ? page.blocks.join(", ") : "none"}`);
-if (page.headerImageAlt) console.log(`Header image alt: ${page.headerImageAlt}`);
 
 for (const section of page.legacy ?? []) {
   console.log(`\n## [${section._type}]\n${sectionText(section)}`);

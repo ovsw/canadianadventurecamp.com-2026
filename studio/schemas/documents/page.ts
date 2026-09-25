@@ -76,36 +76,6 @@ export default defineType({
       group: "content",
     }),
     defineField({
-      name: "headerImage",
-      title: "Header Image",
-      type: "image",
-      group: "content",
-      // Retired: the Website never showed this image. The field stays
-      // registered so saved values are kept without an unknown-field warning.
-      // Use the Social sharing image override in the SEO group instead.
-      hidden: true,
-      readOnly: true,
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: "alt",
-          title: "Alternative Text",
-          type: "string",
-          validation: (rule) =>
-            rule.custom((value, context) => {
-              const parent = context.parent as { asset?: unknown } | undefined;
-              return parent?.asset && !value
-                ? "Describe the image for visitors who cannot see it"
-                : true;
-            }),
-        }),
-        defineField({
-          name: "caption",
-          type: "string",
-        }),
-      ],
-    }),
-    defineField({
       name: "slug",
       title: "Slug",
       type: "slug",

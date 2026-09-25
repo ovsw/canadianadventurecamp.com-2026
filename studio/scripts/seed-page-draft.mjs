@@ -11,7 +11,7 @@
 //     page: {
 //       _id: "internationalCampers",   // published id, without "drafts."
 //       slug: "international-campers", // only needed when the page is new
-//       title, description, headerImage, meta,   // optional, set when given
+//       title, description, meta,                // optional, set when given
 //       blocks: [ ...sections with _key and _type ],
 //     },
 //     documents: [ { _id: "faq-airport-1", _type: "faq", ... }, ... ],  // optional
