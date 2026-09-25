@@ -22,7 +22,7 @@ const client = getCliClient({ apiVersion: "2026-03-23" });
 
 const pages = await client.fetch(
   `*[_type == "page" && ${SLUG_FILTER}]{
-    _id, _updatedAt, title, description, "slug": slug.current, meta, headerImage, blocks
+    _id, _updatedAt, title, description, "slug": slug.current, meta, blocks
   }`,
   { slug },
   { perspective: "raw" },
@@ -46,7 +46,6 @@ if (published && draft && !publishedOnly) {
 if (page.description) console.log(`Description: ${page.description}`);
 if (page.meta?.title) console.log(`SEO title: ${page.meta.title}`);
 if (page.meta?.description) console.log(`SEO description: ${page.meta.description}`);
-if (page.headerImage?.alt) console.log(`Header image alt: ${page.headerImage.alt}`);
 
 const blocks = page.blocks ?? [];
 console.log(`Sections: ${blocks.length ? blocks.map((block) => block._type).join(", ") : "none"}`);
