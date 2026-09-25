@@ -58,21 +58,6 @@ Content available to public Website visitors.
 
 A permanent route from an old public URL to its current destination.
 
-## Search and sharing
-
-**Social sharing image override**
-
-An image chosen by an editor for a page's shared-link preview instead of its generated sharing card. It is separate from images shown in the Page Builder.
-_Avoid_: Header Image, SEO image
-
-**Generated sharing card**
-
-A branded image with the page's title, used for shared-link previews when no social sharing image override is set.
-
-**Site sharing image**
-
-The image in Site settings used when neither a social sharing image override nor a generated sharing card is available.
-
 ## Camp calendar
 
 **Season**
