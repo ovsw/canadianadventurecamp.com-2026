@@ -138,7 +138,6 @@ export default function FaqHubBrowser({
           <div className="grid gap-12 lg:gap-14">
             {result.groups.map((group) => {
               const headingId = `faq-hub-${sectionKey}-${group.category._id}`;
-              const first = group.faqs[0];
               return (
                 <section aria-labelledby={headingId} className="scroll-mt-32" key={group.category._id}>
                   <div className={cn("flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b pb-4", rule)}>
@@ -149,13 +148,10 @@ export default function FaqHubBrowser({
                       {group.faqs.length} {group.faqs.length === 1 ? "question" : "questions"}
                     </p>
                   </div>
-                  <Accordion
-                    className="w-full"
-                    collapsible
-                    defaultValue={first?._id}
-                    key={first?._id}
-                    type="single"
-                  >
+                  {/* Every question starts closed: with eleven topics on one
+                      page, one open answer per topic read as "everything is
+                      open" (Ovi, 2026-09-25). */}
+                  <Accordion className="w-full" collapsible type="single">
                     {group.faqs.map((faq) => (
                       <FaqAccordionItem cream={cream} key={faq._id} question={faq.question} value={faq._id}>
                         {faq.answer}
