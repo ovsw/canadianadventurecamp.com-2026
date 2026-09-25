@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const sanityFetchMetadata = vi.hoisted(() => vi.fn());
 const generateBlogIndexMetadata = vi.hoisted(() => vi.fn());
 const generatePageMetadata = vi.hoisted(() => vi.fn());
+const settings = vi.hoisted(() => ({ seoDescription: "Site default", seoImage: null }));
 const notFound = vi.hoisted(() =>
   vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
@@ -20,6 +21,9 @@ vi.mock("@/sanity/lib/live", () => ({
 vi.mock("@/sanity/lib/metadata", () => ({
   generateBlogIndexMetadata,
   generatePageMetadata,
+}));
+vi.mock("@/sanity/lib/seo-settings", () => ({
+  fetchSeoSettings: vi.fn(async () => settings),
 }));
 vi.mock("@/sanity/queries/blog-index", () => ({
   BLOG_INDEX_QUERY: "blog index",
@@ -55,6 +59,7 @@ describe("blog segment metadata", () => {
     expect(generatePageMetadata).toHaveBeenCalledWith({
       page: post,
       path: "/blog/first-post",
+      settings,
     });
   });
 
@@ -69,6 +74,7 @@ describe("blog segment metadata", () => {
     expect(generateBlogIndexMetadata).toHaveBeenCalledWith({
       blogIndex,
       page: 2,
+      settings,
     });
   });
 
