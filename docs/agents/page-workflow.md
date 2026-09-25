@@ -14,7 +14,8 @@ page. Factual accuracy is a later client pass: mark unconfirmed claims
 `(camp to confirm)` and put each on the page's checklist. Existing source
 facts are useful inputs, not a limit on what the draft can propose. For this
 drafting stage, this rule supersedes source-only or "do not fabricate"
-restrictions in older page guidance and PRODUCT.md. Nothing is published.
+restrictions in older page guidance and PRODUCT.md. The page is not
+published; only its page-owned supporting documents, such as FAQs, are.
 
 The result is a complete Sanity draft, its Basecamp card in Ovi Polish,
 and a traceable confirmation checklist. A temporary layout limitation is
@@ -153,11 +154,13 @@ document. On a conflict, re-read the document and reconcile the scoped
 change. Do not blindly retry or overwrite another writer's work.
 
 Use registered section types and actual schema fields. Portable Text
-blocks, spans, list items, and marks need valid keys and references. Create
-supporting drafts with the page in a transaction where supported. Follow
-the repository's draft-reference convention; do not publish supporting
-documents to make references pass. If MCP lacks the operation needed for
-a safe write, stop and report it instead of using an unsafe replacement.
+blocks, spans, list items, and marks need valid keys and references.
+Page-owned FAQs and other supporting documents are published as soon as
+they are created, in the same session, so the page draft can hold normal
+references to them. Never hand over with supporting drafts left for Ovi to
+publish by hand. The page itself stays a draft. If MCP lacks the operation
+needed for a safe write, stop and report it instead of using an unsafe
+replacement.
 
 Write and fix the dataset directly. No seed files, repeated imports,
 content artifacts, or local progress files are required or created.
