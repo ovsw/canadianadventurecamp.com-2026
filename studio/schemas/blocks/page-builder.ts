@@ -47,6 +47,11 @@ export const generalPageBuilderBlockTypes = [
 ] as const;
 
 export const pageBuilderBlockTypes = generalPageBuilderBlockTypes;
+export const blogIndexPageBuilderBlockTypes = [
+  "hero",
+  "innerHero",
+  ...contentPageBuilderBlockTypes,
+] as const;
 export const homePagePageBuilderBlockTypes = [
   "hero",
   ...homeOnlyPageBuilderBlockTypes,
@@ -129,7 +134,23 @@ export function validateBlocks(
   return true;
 }
 
-function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
+/** The Blog page lists its posts through exactly one Latest Posts section. */
+export function validateBlogIndexBlocks(
+  blocks: Array<{ _type?: string; background?: string }> | undefined,
+): true | string {
+  const pageResult = validateBlocks(blocks);
+  if (pageResult !== true) return pageResult;
+  const listingCount =
+    blocks?.filter((block) => block?._type === "latestArticles").length ?? 0;
+  return listingCount === 1
+    ? true
+    : "Add exactly one Latest Posts section. It lists the blog posts on this page.";
+}
+
+function createBlocksField(
+  blockTypes: readonly PageBuilderBlockType[],
+  validate: typeof validateBlocks = validateBlocks,
+) {
   const groups: {
     name: string;
     title: string;
@@ -205,7 +226,7 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
     type: "array",
     group: "content",
     of: blockTypes.map((type) => ({ type })),
-    validation: (rule) => rule.custom(validateBlocks),
+    validation: (rule) => rule.custom(validate),
     options: {
       insertMenu: {
         groups: groups
@@ -227,8 +248,9 @@ function createBlocksField(blockTypes: readonly PageBuilderBlockType[]) {
 }
 
 export const blocksField = createBlocksField(generalPageBuilderBlockTypes);
-export const contentBlocksField = createBlocksField(
-  contentPageBuilderBlockTypes,
+export const blogIndexBlocksField = createBlocksField(
+  blogIndexPageBuilderBlockTypes,
+  validateBlogIndexBlocks,
 );
 export const homePageBlocksField = createBlocksField(
   homePagePageBuilderBlockTypes,

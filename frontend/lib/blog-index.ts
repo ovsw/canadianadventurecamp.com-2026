@@ -1,3 +1,5 @@
+import type { BlogPost } from "@/sanity/queries/blog-index";
+
 export const BLOG_POSTS_PER_PAGE = 12;
 
 export type BlogPagination = {
@@ -7,6 +9,17 @@ export type BlogPagination = {
   itemsPerPage: number;
   totalItems: number;
   totalPages: number;
+};
+
+/**
+ * One page of the Blog page's post list. The route owns the page number, the
+ * range check, and the queries; its Latest Posts section only renders this.
+ */
+export type BlogListing = {
+  /** The newest post, shown large on page one only. */
+  featured: BlogPost | null;
+  pagination: BlogPagination;
+  posts: BlogPost[];
 };
 
 export function parseBlogPageSegment(value: string | undefined) {

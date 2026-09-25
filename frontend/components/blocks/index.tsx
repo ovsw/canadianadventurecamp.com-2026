@@ -38,6 +38,7 @@ import FaqHub from "@/components/blocks/faq-hub";
 // page-builder-generator:component-imports
 import InternationalCampersSection from "@/components/blocks/international-campers-section";
 import { dataset, projectId } from "@/sanity/lib/env";
+import type { BlogListing } from "@/lib/blog-index";
 
 type BlockEditingProps = {
   dataAttribute?: (path: string) => string | undefined;
@@ -64,7 +65,13 @@ type BlockEditingProps = {
   ) => string | undefined;
 };
 
+/** Page data a route hands to one section type. */
+type BlockPageDataProps = {
+  blogListing?: BlogListing;
+};
+
 const serverFieldEditingBlockTypes = new Set<Block["_type"]>([
+  "latestArticles",
   "faqAccordion",
   "storyFeature",
   "teamMembers",
@@ -135,11 +142,14 @@ const componentMap: Partial<{
 
 export default function Blocks({
   blocks,
+  blogListing,
   documentId,
   documentType = "page",
   stega,
 }: {
   blocks: Block[];
+  /** The Blog page's post list, rendered by its Latest Posts section. */
+  blogListing?: BlogListing;
   documentId: string;
   documentType?: "blogIndex" | "homePage" | "page";
   perspective: LivePerspective;
@@ -154,7 +164,7 @@ export default function Blocks({
 
   const wrappers = sections.map((block, index) => {
         const Component = componentMap[block._type] as React.ComponentType<
-          Block & BlockEditingProps
+          Block & BlockEditingProps & BlockPageDataProps
         >;
 
         const blockPath = `blocks[_key=="${block._key}"]`;
@@ -290,6 +300,8 @@ export default function Blocks({
                 : serverFieldEditingBlockTypes.has(block._type)
               ? { dataAttribute }
               : {};
+        const pageDataProps: BlockPageDataProps =
+          block._type === "latestArticles" && blogListing ? { blogListing } : {};
 
         return (
           <div
@@ -301,7 +313,7 @@ export default function Blocks({
             data-tuck-below={boundary.tuckBelow ? "" : undefined}
             key={block._key}
           >
-            <Component {...themedBlock} {...editingProps} />
+            <Component {...themedBlock} {...editingProps} {...pageDataProps} />
           </div>
         );
       });

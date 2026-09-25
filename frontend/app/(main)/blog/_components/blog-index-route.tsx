@@ -1,12 +1,9 @@
 import Blocks from "@/components/blocks";
 import BreadcrumbJsonLd from "@/components/breadcrumb-json-ld";
 import FaqPageJsonLd from "@/components/faq-json-ld";
-import { LatestPostCard, RegularPostCard } from "@/components/blog-card";
-import BlogPagination from "@/components/blog-pagination";
 import {
   calculateBlogPagination,
   getRegularPostQueryParams,
-  getBlogResultsLabel,
   getBlogCanonicalPath,
   isBlogPageOutOfRange,
 } from "@/lib/blog-index";
@@ -17,12 +14,15 @@ import {
   fetchRegularPostsCount,
 } from "@/sanity/lib/fetch";
 import type { DynamicFetchOptions } from "@/sanity/lib/live";
-import { createDataAttribute, stegaClean } from "next-sanity";
 import { notFound } from "next/navigation";
-import { dataset, projectId } from "@/sanity/lib/env";
-import Link from "next/link";
 import { siteUrl } from "@/lib/site-url";
 
+/*
+ * The Blog page is built from its Page Builder sections: the Hero, the
+ * Latest Posts section, and whatever follows. The route owns the page
+ * number and the post queries, and hands one page of posts to the Latest
+ * Posts section through `blogListing`.
+ */
 export async function BlogIndexRoute({
   currentPage,
   perspective,
@@ -46,22 +46,10 @@ export async function BlogIndexRoute({
   if (isBlogPageOutOfRange(currentPage, pagination.totalPages)) {
     notFound();
   }
-  const postsHeading = currentPage === 1 && latestPost ? "More posts" : "All posts";
-  const emptyPostsMessage =
-    currentPage === 1 && latestPost ? "No more posts yet." : "No posts yet.";
-  const hasRegularPosts = regularPosts.length > 0;
-
-  const fieldDataAttribute = stega
-    ? (path: "description" | "title") =>
-        createDataAttribute({
-          baseUrl: process.env.NEXT_PUBLIC_STUDIO_URL || "http://localhost:3333",
-          dataset,
-          id: blogIndex._id,
-          path,
-          projectId,
-          type: "blogIndex",
-        }).toString()
-    : undefined;
+  const blocks = blogIndex.blocks ?? [];
+  const hasHero = blocks.some(
+    (block) => block._type === "hero" || block._type === "innerHero",
+  );
 
   return (
     <>
@@ -72,53 +60,16 @@ export async function BlogIndexRoute({
         ]}
         siteUrl={siteUrl}
       />
-      <FaqPageJsonLd blocks={blogIndex.blocks ?? []} />
-      <header>
-        <nav aria-label="Breadcrumb">
-          <Link href="/">Home</Link>
-          <span aria-hidden="true"> / </span>
-          <span>Blog</span>
-        </nav>
-        <h1 data-sanity={fieldDataAttribute?.("title")}>{blogIndex.title}</h1>
-        {stegaClean(blogIndex.description)?.trim() ? (
-          <p data-sanity={fieldDataAttribute?.("description")}>
-            {blogIndex.description}
-          </p>
-        ) : null}
-      </header>
-
-      {currentPage === 1 && latestPost ? (
-        <section aria-labelledby="latest-post-heading">
-          <h2 id="latest-post-heading">Latest post</h2>
-          <LatestPostCard post={latestPost} stega={stega} />
-        </section>
-      ) : null}
-
-      <section aria-labelledby="all-posts-heading">
-        <h2 id="all-posts-heading">{postsHeading}</h2>
-        <p>
-          {getBlogResultsLabel(
-            currentPage,
-            regularPosts.length,
-            regularPostCount,
-          )}
-        </p>
-        {hasRegularPosts ? (
-          <>
-            <div>
-              {regularPosts.map((post) => (
-                <RegularPostCard key={post._id} post={post} stega={stega} />
-              ))}
-            </div>
-            <BlogPagination pagination={pagination} />
-          </>
-        ) : (
-          <p>{emptyPostsMessage}</p>
-        )}
-      </section>
-
+      <FaqPageJsonLd blocks={blocks} />
+      {/* The Hero carries the page heading; without one, keep an outline. */}
+      {!hasHero ? <h1 className="sr-only">{blogIndex.title}</h1> : null}
       <Blocks
-        blocks={blogIndex.blocks ?? []}
+        blocks={blocks}
+        blogListing={{
+          featured: currentPage === 1 ? latestPost : null,
+          pagination,
+          posts: regularPosts,
+        }}
         documentId={blogIndex._id}
         documentType="blogIndex"
         perspective={perspective}

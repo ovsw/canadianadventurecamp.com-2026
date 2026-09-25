@@ -1,7 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { RegularPostCard, documentDataAttribute } from "@/components/blog-card";
+import { PostCard, documentDataAttribute } from "@/components/blog-card";
+import Blocks from "@/components/blocks";
 import LatestArticles from "@/components/blocks/latest-articles";
 import { BlogIndexRoute } from "@/app/(main)/blog/_components/blog-index-route";
 import {
@@ -37,7 +38,7 @@ import {
   isBlogPageOutOfRange,
 } from "./blog-index";
 
-vi.mock("@/components/blocks", () => ({ default: () => null }));
+vi.mock("@/components/blocks", () => ({ default: vi.fn(() => null) }));
 vi.mock("@/components/breadcrumb-json-ld", () => ({ default: () => null }));
 vi.mock("@/components/faq-page-json-ld", () => ({ default: () => null }));
 vi.mock("@/sanity/lib/fetch", () => ({
@@ -118,17 +119,12 @@ describe("blog index", () => {
   });
 
   it("maps every visible listing-card field to Presentation", () => {
-    render(<RegularPostCard post={post} stega />);
+    render(<PostCard post={post} stega />);
 
     const postAttribute = documentDataAttribute({
       id: post._id,
       stega: true,
       type: "post",
-    });
-    const categoryAttribute = documentDataAttribute({
-      id: post.category!._id,
-      stega: true,
-      type: "category",
     });
     const article = screen.getByRole("article");
 
@@ -148,60 +144,46 @@ describe("blog index", () => {
       "data-sanity",
       postAttribute?.("excerpt"),
     );
-    expect(screen.getByRole("link", { name: "News" })).toHaveAttribute(
-      "data-sanity",
-      categoryAttribute?.("title"),
-    );
+    expect(screen.queryByRole("link", { name: "News" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Summer update" })).toHaveAttribute(
       "href",
       "/blog/summer-update",
     );
   });
 
-  it("renders latest articles as articles with canonical post and category links", () => {
+  it("shows the newest posts up to the section limit, each linking to its post", () => {
+    const articles = ["one", "two", "three", "four"].map((slug) => ({
+      ...post,
+      _id: `post-${slug}`,
+      slug: { current: slug },
+      title: `Post ${slug}`,
+    }));
     const props = {
       _key: "latest",
       _type: "latestArticles",
-      articles: [
-        {
-          _id: "post-1",
-          _type: "post",
-          category: {
-            _id: "category-1",
-            slug: { current: "news" },
-            title: "News",
-          },
-          description: "A week at camp.",
-          image,
-          publishedAt: "2026-07-01T00:00:00.000Z",
-          slug: "summer-update",
-          title: "Summer update",
-        },
-      ],
+      articles,
       background: null,
       buttons: null,
       description: null,
       eyebrow: null,
       fallbackImage: null,
-      title: "Latest articles",
+      limit: 3,
+      title: "Latest posts",
     } as unknown as ComponentProps<typeof LatestArticles>;
 
     const { container } = render(<LatestArticles {...props} />);
-    const article = container.querySelector("article");
-    expect(article).toBeInTheDocument();
-    expect(article?.closest("a")).toBeNull();
+    const cards = container.querySelectorAll("article");
+    expect(cards).toHaveLength(3);
+    expect(cards[0].closest("a")).toBeNull();
     expect(
-      within(article as HTMLElement).getByRole("link", {
-        name: "Summer update",
-      }),
-    ).toHaveAttribute("href", "/blog/summer-update");
-    expect(
-      within(article as HTMLElement).getByRole("link", { name: "News" }),
-    ).toHaveAttribute("href", "/blog/category/news");
+      within(cards[0] as HTMLElement).getByRole("link", { name: "Post one" }),
+    ).toHaveAttribute("href", "/blog/one");
+    expect(screen.queryByRole("link", { name: "News" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Pagination" })).toBeNull();
   });
 
   it("requests bounded Sanity images for listing cards", () => {
-    render(<RegularPostCard post={post} stega={false} />);
+    render(<PostCard post={post} stega={false} />);
 
     const renderedImage = screen.getByRole("img", { name: "Campers paddling" });
     expect(decodeURIComponent(renderedImage.getAttribute("src") ?? "")).toContain(
@@ -303,7 +285,7 @@ describe("blog index", () => {
     expect(getBlogResultsLabel(1, 0, 0)).toBe("No posts");
   });
 
-  it("shows a clear empty state when the first page has only the latest post", async () => {
+  it("hands page one's latest post and regular posts to the Blog page sections", async () => {
     vi.mocked(fetchBlogIndex).mockResolvedValueOnce({
       _id: "blogIndex",
       _type: "blogIndex",
@@ -323,7 +305,65 @@ describe("blog index", () => {
       }),
     );
 
-    expect(screen.getByRole("heading", { name: "More posts" })).toBeInTheDocument();
+    expect(vi.mocked(Blocks).mock.lastCall?.[0].blogListing).toEqual({
+      featured: post,
+      pagination: calculateBlogPagination(0, 1),
+      posts: [],
+    });
+    // No Hero section: the page still has its heading for assistive tech.
+    expect(screen.getByRole("heading", { level: 1, name: "Blog" })).toBeInTheDocument();
+  });
+
+  it("shows a clear empty state when the first page has only the latest post", () => {
+    const props = {
+      _key: "listing",
+      _type: "latestArticles",
+      articles: [],
+      background: null,
+      blogListing: {
+        featured: post,
+        pagination: calculateBlogPagination(0, 1),
+        posts: [],
+      },
+      title: "All the news",
+    } as unknown as ComponentProps<typeof LatestArticles>;
+
+    render(<LatestArticles {...props} />);
+
+    expect(screen.getByRole("link", { name: "Summer update" })).toHaveAttribute(
+      "href",
+      "/blog/summer-update",
+    );
     expect(screen.getByText("No more posts yet.")).toBeInTheDocument();
+  });
+
+  it("paginates the Blog page listing and opens later pages at the list", () => {
+    const props = {
+      _key: "listing",
+      _type: "latestArticles",
+      articles: [],
+      background: null,
+      blogListing: {
+        featured: null,
+        pagination: calculateBlogPagination(40, 2),
+        posts: [post],
+      },
+      title: "All the news",
+    } as unknown as ComponentProps<typeof LatestArticles>;
+
+    render(<LatestArticles {...props} />);
+
+    expect(screen.getByRole("link", { name: "Go to page 3" })).toHaveAttribute(
+      "href",
+      "/blog/3#latest-posts",
+    );
+    expect(screen.getByRole("link", { name: "Go to page 2" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("link", { name: "Go to previous page" })).toHaveAttribute(
+      "href",
+      "/blog#latest-posts",
+    );
   });
 });

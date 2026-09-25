@@ -7,7 +7,8 @@ export default defineType({
   title: "Latest Posts",
   type: "object",
   icon: Newspaper,
-  description: "Displays the latest published Blog Posts.",
+  description:
+    "Lists the newest published Blog Posts. On the Blog page it lists every post with pagination.",
   fields: [
     sectionBackgroundField,
     defineField({
@@ -28,10 +29,23 @@ export default defineType({
       description: "Optional supporting copy.",
     }),
     defineField({
+      name: "limit",
+      title: "Number of posts",
+      type: "number",
+      description: "How many of the newest posts to show (1 to 12).",
+      initialValue: 3,
+      // The Blog page lists every post with pagination instead.
+      hidden: ({ document }) => document?._type === "blogIndex",
+      validation: (rule) => rule.integer().min(1).max(12),
+    }),
+    defineField({
       name: "buttons",
       type: "array",
-      description: "Optional links shown with the section heading.",
+      description:
+        "Optional link shown beside the section heading, for example to the Blog page.",
       of: [defineArrayMember({ type: "button" })],
+      hidden: ({ document }) => document?._type === "blogIndex",
+      validation: (rule) => rule.max(1),
     }),
     defineField({
       name: "fallbackImage",

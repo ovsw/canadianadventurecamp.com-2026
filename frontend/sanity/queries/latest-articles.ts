@@ -1,5 +1,9 @@
 import { groq } from "next-sanity";
-import { blogPostOrder, publishedPostFilter } from "./blog-post-listing";
+import {
+  blogPostOrder,
+  blogPostProjection,
+  publishedPostFilter,
+} from "./blog-post-listing";
 import { imageQuery } from "./shared/image";
 import { urlInternalHref } from "./shared/internal-href";
 
@@ -9,6 +13,7 @@ export const latestArticlesQuery = groq`
     eyebrow,
     title,
     description,
+    limit,
     buttons[]{
       _key,
       _type,
@@ -29,21 +34,8 @@ export const latestArticlesQuery = groq`
       meta.noindex != true &&
       seoHideFromLists != true &&
       seoNoIndex != true
-    ] | order(${blogPostOrder})[0...6]{
-      _type,
-      _id,
-      title,
-      "description": coalesce(meta.description, pt::text(excerpt)),
-      "slug": slug.current,
-      publishedAt,
-      image{
-        ${imageQuery}
-      },
-      category->{
-        _id,
-        title,
-        slug
-      }
+    ] | order(${blogPostOrder})[0...12]{
+      ${blogPostProjection}
     }
   }
 `;

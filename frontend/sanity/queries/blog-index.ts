@@ -1,9 +1,12 @@
 import { groq } from "next-sanity";
 import { pageBuilderQuery } from "./page-builder";
-import { imageQuery } from "./shared/image";
 import { metaQuery } from "./shared/meta";
 import type { LATEST_POST_QUERY_RESULT } from "@/sanity.types";
-import { blogPostOrder, publishedPostFilter } from "./blog-post-listing";
+import {
+  blogPostOrder,
+  blogPostProjection,
+  publishedPostFilter,
+} from "./blog-post-listing";
 
 export type CategoryReference = {
   _id: string;
@@ -14,16 +17,6 @@ export type CategoryReference = {
 export type BlogPost = Omit<NonNullable<LATEST_POST_QUERY_RESULT>, "category"> & {
   category?: CategoryReference | null;
 };
-
-const blogPostProjection = `
-  _id,
-  title,
-  slug,
-  publishedAt,
-  "excerpt": pt::text(excerpt),
-  image {${imageQuery}},
-  category->{_id, title, slug}
-`;
 
 export const BLOG_INDEX_QUERY = groq`
   *[_id == "blogIndex"][0]{

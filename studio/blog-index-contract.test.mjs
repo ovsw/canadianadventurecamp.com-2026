@@ -3,8 +3,9 @@ import test from "node:test";
 
 import {
   blocksField,
-  contentBlocksField,
-  contentPageBuilderBlockTypes,
+  blogIndexBlocksField,
+  blogIndexPageBuilderBlockTypes,
+  validateBlogIndexBlocks,
   homePageBlocksField,
   homePagePageBuilderBlockTypes,
   getPageBuilderPreviewImageUrl,
@@ -92,16 +93,32 @@ test("the blocks insert menu offers list and grid views with known previews", ()
 
 test("blogIndex uses the singleton configuration", () => {
   assert.deepEqual(
-    contentBlocksField.of
+    blogIndexBlocksField.of
       .filter(({ hidden }) => !hidden)
       .map(({ type }) => type),
-    [...contentPageBuilderBlockTypes],
+    [...blogIndexPageBuilderBlockTypes],
   );
-  assert.equal(contentPageBuilderBlockTypes.includes("hero"), false);
-  assert.equal(contentPageBuilderBlockTypes.includes("innerHero"), false);
+  assert.equal(blogIndexPageBuilderBlockTypes.includes("innerHero"), true);
+  assert.equal(blogIndexPageBuilderBlockTypes.includes("homeHero"), false);
+  assert.equal(blogIndexPageBuilderBlockTypes.includes("faqHub"), false);
   assert.equal(singletonDocumentTypes.has("blogIndex"), true);
   assert.equal(singletonDocumentTypes.has("facilitiesMap"), true);
   assert.equal(singletonDocumentTypes.has("seasonsConfig"), true);
   assert.equal(singletonDocumentActions.has("duplicate"), false);
   assert.equal(singletonDocumentActions.has("delete"), false);
+});
+
+test("the blog index needs exactly one Latest Posts section", () => {
+  const hero = { _type: "innerHero" };
+  const listing = { _type: "latestArticles", background: "white" };
+  assert.equal(validateBlogIndexBlocks([hero, listing]), true);
+  assert.match(String(validateBlogIndexBlocks([hero])), /Latest Posts/);
+  assert.match(
+    String(validateBlogIndexBlocks([hero, listing, listing])),
+    /Latest Posts/,
+  );
+  assert.match(
+    String(validateBlogIndexBlocks([listing, hero])),
+    /Hero section must be the first/,
+  );
 });
