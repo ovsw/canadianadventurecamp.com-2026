@@ -41,13 +41,17 @@ export default function FaqHubBrowser({
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const searchId = useId();
-  const result = useMemo(() => filterFaqHub(items, categoryId, search), [items, categoryId, search]);
+  // The chosen category may have vanished from the data (unpublished while
+  // the page was open); resolve it once, so the filter and the buttons agree.
+  const active =
+    categoryId !== null && items.some((item) => item.category._id === categoryId)
+      ? categoryId
+      : null;
+  const result = useMemo(() => filterFaqHub(items, active, search), [items, active, search]);
   const searching = search.trim().length > 0;
   const matching = Object.values(result.counts).reduce((sum, count) => sum + count, 0);
   const activeCategory =
-    categoryId === null ? null : result.categories.find((category) => category._id === categoryId);
-  // The active category may have vanished from the data (unpublished); fall back to All.
-  const active = activeCategory ? categoryId : null;
+    active === null ? null : result.categories.find((category) => category._id === active);
 
   const pool = active === null ? items.length : countIn(items, active);
   const status = !searching
