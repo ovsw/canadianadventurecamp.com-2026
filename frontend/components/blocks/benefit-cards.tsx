@@ -175,7 +175,9 @@ export default function BenefitCards({
             return (
               <li
                 className={cn(
-                  "flex h-full flex-col gap-5 p-7 transition-colors duration-300 lg:p-8",
+                  // min-w-0 lets a card narrower than its longest word (an
+                  // email address in a title) instead of widening the grid.
+                  "flex h-full min-w-0 flex-col gap-5 p-7 transition-colors duration-300 lg:p-8",
                   cream
                     ? "bg-birch-bark hover:bg-pine-night/5"
                     : "bg-forest-floor hover:bg-white/5",
@@ -211,7 +213,7 @@ export default function BenefitCards({
                 {hasText(card.title) ? (
                   <h3
                     className={cn(
-                      "font-display text-title",
+                      "font-display text-title wrap-break-word",
                       cream ? "text-pine-night" : "text-cream",
                     )}
                     data-sanity={dataAttribute?.(`${cardPath}.title`)}
@@ -222,7 +224,7 @@ export default function BenefitCards({
                 {card.body?.length ? (
                   <div
                     className={cn(
-                      "grid gap-3 text-pretty text-[15px] leading-[1.55]",
+                      "grid gap-3 text-pretty text-[15px] leading-[1.55] wrap-break-word",
                       cream ? "text-ink-muted" : "text-birch-bark/72",
                     )}
                     data-sanity={dataAttribute?.(`${cardPath}.body`)}

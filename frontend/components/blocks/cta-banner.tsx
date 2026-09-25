@@ -94,7 +94,10 @@ function CtaButtons({
       {actions.map((action) => (
         <Button
           asChild
-          className="w-full sm:w-auto"
+          // Phones stack full-width buttons, and a label can be an email
+          // address wider than the screen. There the label wraps and the
+          // button grows past its standard height instead of overflowing.
+          className="w-full max-sm:h-auto max-sm:min-h-(--control-height) max-sm:py-3 max-sm:text-center max-sm:whitespace-normal max-sm:wrap-anywhere sm:w-auto"
           key={action.key}
           onDark={onDark}
           variant={action.variant}
