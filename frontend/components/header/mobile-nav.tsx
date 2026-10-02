@@ -51,10 +51,8 @@ export function MobileNav({
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
   const dark = theme === "dark";
-  const linkClassName = cn(
-    "flex min-h-11 items-center rounded-[var(--radius-md)] px-3 text-base font-semibold transition-colors motion-fast focus-ring",
-    dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
-  );
+  const linkClassName =
+    "flex min-h-11 items-center rounded-[var(--radius-md)] px-3 text-base font-semibold transition-colors motion-fast hover:bg-accent focus-ring";
 
   return (
     <Sheet onOpenChange={setOpen} open={open}>
@@ -62,10 +60,10 @@ export function MobileNav({
         <Button
           aria-label={open ? "Close menu" : "Open menu"}
           className={cn(
-            "border bg-transparent hover:shadow-none",
+            "border bg-transparent text-foreground hover:shadow-none",
             dark
-              ? "border-birch-bark/45 text-birch-bark hover:bg-birch-bark/8"
-              : "border-pine-night/25 text-pine-night hover:bg-cedar/8",
+              ? "border-foreground/45 hover:bg-foreground/8"
+              : "border-foreground/25 hover:bg-link/8",
           )}
           size="icon"
           variant="ghost"
@@ -75,19 +73,12 @@ export function MobileNav({
       </SheetTrigger>
       <SheetContent
         className={cn(
-          "!w-full !max-w-none gap-0 border-l px-0 sm:!max-w-md",
-          dark
-            ? "border-birch-bark/15 bg-forest-floor text-birch-bark"
-            : "border-pine-night/15 bg-birch-bark text-pine-night",
+          "!w-full !max-w-none gap-0 border-l border-foreground/15 px-0 sm:!max-w-md",
+          dark ? "field-green" : "field-cream",
         )}
         showCloseButton={false}
       >
-        <SheetHeader
-          className={cn(
-            "flex-row items-center justify-between border-b px-6 py-5",
-            dark ? "border-birch-bark/15" : "border-pine-night/15",
-          )}
-        >
+        <SheetHeader className="flex-row items-center justify-between border-b border-foreground/15 px-6 py-5">
           <div className="flex min-w-0 items-center">{brand}</div>
           <SheetTitle className="sr-only">Main navigation</SheetTitle>
           <SheetDescription className="sr-only">
@@ -97,8 +88,8 @@ export function MobileNav({
             className={cn(
               "flex size-11 items-center justify-center rounded-full border transition-colors motion-fast focus-ring",
               dark
-                ? "border-birch-bark/45 hover:bg-birch-bark/8"
-                : "border-pine-night/25 hover:bg-cedar/8",
+                ? "border-foreground/45 hover:bg-foreground/8"
+                : "border-foreground/25 hover:bg-link/8",
             )}
           >
             <X aria-hidden="true" className="size-5" />
@@ -126,10 +117,10 @@ export function MobileNav({
                         // The shared accordion tints its chevron with the cream-surface
                         // "muted" token, which disappears on the dark sheet. Retint it
                         // from the sheet's own ink and give it a tap-sized footprint.
-                        "min-h-11 items-center rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold hover:no-underline [&>svg]:size-5 [&>svg]:translate-y-0 [&>svg]:stroke-[2.25]",
+                        "min-h-11 items-center rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold hover:bg-accent hover:no-underline [&>svg]:size-5 [&>svg]:translate-y-0 [&>svg]:stroke-[2.25]",
                         dark
-                          ? "hover:bg-birch-bark/6 [&>svg]:text-birch-bark/85"
-                          : "hover:bg-cedar/8 [&>svg]:text-ink-muted",
+                          ? "[&>svg]:text-soft-foreground"
+                          : "[&>svg]:text-muted-foreground",
                       )}
                     >
                       {item.label}
@@ -138,10 +129,7 @@ export function MobileNav({
                       <div className="grid gap-1">
                         {item.links.map((child) => (
                           <HeaderLink
-                            className={cn(
-                              "flex min-h-11 items-start gap-3 rounded-[var(--radius-md)] p-3 transition-colors motion-fast focus-ring",
-                              dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
-                            )}
+                            className="flex min-h-11 items-start gap-3 rounded-[var(--radius-md)] p-3 transition-colors motion-fast hover:bg-accent focus-ring"
                             key={child.key}
                             link={child.link}
                             onClick={close}
@@ -149,10 +137,8 @@ export function MobileNav({
                             {child.icon ? (
                               <span
                                 className={cn(
-                                  "flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] [&_svg]:size-4",
-                                  dark
-                                    ? "bg-forest-panel text-campfire-amber"
-                                    : "bg-cedar/10 text-cedar",
+                                  "flex size-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-link [&_svg]:size-4",
+                                  dark ? "bg-fill-panel" : "bg-link/10",
                                 )}
                               >
                                 <NavigationIcon icon={child.icon} />
@@ -164,7 +150,7 @@ export function MobileNav({
                                 <span
                                   className={cn(
                                     "text-[15px] leading-tight",
-                                    dark ? "text-birch-bark/65" : "text-ink-muted",
+                                    dark ? "text-foreground/65" : "text-muted-foreground",
                                   )}
                                 >
                                   {child.description}
@@ -182,19 +168,14 @@ export function MobileNav({
           </nav>
           <CallDirectorsCard className="mx-4 mt-auto mb-4" onClick={close} theme={theme} />
         </div>
-        <SheetFooter
-          className={cn(
-            "gap-4 border-t p-4",
-            dark ? "border-birch-bark/15" : "border-pine-night/15",
-          )}
-        >
+        <SheetFooter className="gap-4 border-t border-foreground/15 p-4">
           {navigation.actions.map((action) => (
             <HeaderLink
               className={cn(
                 buttonVariants({ size: "default", variant: "outline" }),
                 "w-full",
                 dark &&
-                  "border-birch-bark/45 text-birch-bark hover:border-birch-bark/70 hover:bg-birch-bark/8 hover:text-birch-bark",
+                  "border-foreground/45 text-foreground hover:border-foreground/70 hover:bg-foreground/8 hover:text-foreground",
               )}
               key={action.key}
               link={action.link}

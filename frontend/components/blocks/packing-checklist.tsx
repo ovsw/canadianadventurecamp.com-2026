@@ -44,7 +44,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[var(--section-accent)] not-italic">{children}</em>
+      <em className="font-accent text-emphasis not-italic">{children}</em>
     ),
   },
 };
@@ -141,7 +141,7 @@ export default function PackingChecklist({
           <header className="max-w-[38rem]">
             {hasText(eyebrow) ? (
               <p
-                className="mb-5 text-eyebrow text-[var(--section-accent)]"
+                className="mb-5 text-eyebrow text-link"
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {eyebrow}
@@ -168,13 +168,13 @@ export default function PackingChecklist({
             <aside
               aria-label="Before you pack"
               className={cn(
-                "grid gap-5 rounded-xl border border-birch-bark/12 bg-forest-panel p-2",
+                "card-panel grid gap-5 rounded-xl border border-border p-2",
                 styles.aside,
               )}
             >
               {hasImage && image ? (
                 <figure
-                  className="relative aspect-[16/10] overflow-hidden rounded-lg bg-forest-floor"
+                  className="relative aspect-[16/10] overflow-hidden rounded-lg bg-fill-forest"
                   data-sanity={dataAttribute?.("image")}
                 >
                   <Image
@@ -190,7 +190,7 @@ export default function PackingChecklist({
               ) : null}
               {hasNote ? (
                 <div
-                  className="grid gap-3 px-5 pb-5 pt-3 text-[15px] leading-[1.55] text-birch-bark/80 [&_strong]:text-birch-bark"
+                  className="grid gap-3 px-5 pb-5 pt-3 text-[15px] leading-[1.55] text-foreground/80 [&_strong]:text-foreground"
                   data-sanity={dataAttribute?.("note")}
                 >
                   <PortableText components={noteComponents} value={note} />

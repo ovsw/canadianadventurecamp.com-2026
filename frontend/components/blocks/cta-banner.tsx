@@ -126,9 +126,9 @@ function CtaButtons({
  * the white field, a white card on cream, a Forest Panel on green.
  */
 function nudgeCardClass(theme: SectionTheme) {
-  if (theme === "green") return "bg-forest-panel text-birch-bark border-birch-bark/12";
-  if (theme === "cream") return "bg-birch-bark-bright text-pine-night border-pine-night/10";
-  return "bg-birch-bark text-pine-night border-pine-night/10";
+  if (theme === "green") return "card-panel border-border";
+  if (theme === "cream") return "card-bright border-foreground/10";
+  return "card-cream border-foreground/10";
 }
 
 export default function CtaBanner({

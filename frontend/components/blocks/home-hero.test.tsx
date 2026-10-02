@@ -62,7 +62,7 @@ describe("resolveHomeHeroButtonVariant", () => {
 
     // Poster copy: glass ghost pill, hidden on desktop.
     const poster = buttons[0]!;
-    expect(poster.className).toContain("bg-pine-night/55");
+    expect(poster.className).toContain("bg-fill-night/55");
     expect(poster.parentElement?.className).toContain("lg:hidden");
 
     // CTA-row copy: ghost pill with the play icon, hidden on phones.

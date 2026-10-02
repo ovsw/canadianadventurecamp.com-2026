@@ -33,15 +33,17 @@
 }
 
 .box:checked {
-  border-color: var(--section-accent, var(--color-sunlit-moss));
-  background-color: var(--section-accent, var(--color-sunlit-moss));
+  /* The section's accent, not --color-link: the card is a dark panel whose
+     own link token is amber, but the box follows the field (cedar on light). */
+  border-color: var(--section-accent, var(--color-fill-moss-tint));
+  background-color: var(--section-accent, var(--color-fill-moss-tint));
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316200F' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
 }
 
 .box:checked + label .text {
-  color: rgba(243, 239, 226, 0.55);
+  color: color-mix(in oklab, var(--color-foreground) 55%, transparent);
   text-decoration: line-through;
-  text-decoration-color: rgba(243, 239, 226, 0.35);
+  text-decoration-color: color-mix(in oklab, var(--color-foreground) 35%, transparent);
 }
 
 .summary::marker,

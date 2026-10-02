@@ -51,7 +51,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent not-italic text-accent">{children}</em>
+      <em className="font-accent not-italic text-emphasis">{children}</em>
     ),
   },
 };
@@ -92,7 +92,7 @@ export default function HomeHero({
   return (
     <section
       aria-labelledby={headingId}
-      className="relative flex min-h-dvh flex-col overflow-hidden bg-forest-900 lg:min-h-[min(85svh,60rem)]"
+      className="relative flex min-h-dvh flex-col overflow-hidden field-green lg:min-h-[min(85svh,60rem)]"
       data-header-overlay
       id={`hero-${stegaClean(_key)}`}
     >
@@ -125,7 +125,7 @@ export default function HomeHero({
         {/* Gradient overlays: nav-legibility fade on phones, full wash on desktop */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-pine-night/55 to-transparent to-40% lg:hidden"
+          className="absolute inset-0 bg-gradient-to-b from-fill-night/55 to-transparent to-40% lg:hidden"
         />
         <div
           aria-hidden="true"
@@ -162,7 +162,7 @@ export default function HomeHero({
       <div className="relative z-10 flex flex-1 flex-col px-content-x pb-(--section-pad-bottom) pt-7 lg:justify-end lg:pt-32 lg:pb-10">
         {/* Title */}
         <h1
-          className="mb-6 max-w-[65rem] font-display text-display-hero leading-[0.96] tracking-tight text-cream max-lg:text-[2.875rem]"
+          className="mb-6 max-w-[65rem] font-display text-display-hero leading-[0.96] tracking-tight text-foreground max-lg:text-[2.875rem]"
           data-sanity={dataAttribute?.("title")}
           id={headingId}
         >
@@ -329,7 +329,7 @@ export default function HomeHero({
                 key={stat._key}
               >
                 <span
-                  className="font-display text-xl font-bold leading-none text-cream"
+                  className="font-display text-xl font-bold leading-none text-foreground"
                   data-sanity={dataAttribute?.(`${statPath}.value`)}
                 >
                   {stat.value}

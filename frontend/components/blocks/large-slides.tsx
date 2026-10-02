@@ -36,7 +36,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[var(--section-accent)] not-italic">{children}</em>
+      <em className="font-accent text-emphasis not-italic">{children}</em>
     ),
   },
 };
@@ -118,7 +118,7 @@ export default function LargeSlides({
         <div>
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-[var(--section-accent)]"
+              className="mb-5 text-eyebrow text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}

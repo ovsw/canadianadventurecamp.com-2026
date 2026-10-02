@@ -36,15 +36,15 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent not-italic text-accent">{children}</em>
+      <em className="font-accent not-italic text-emphasis">{children}</em>
     ),
   },
 };
 
 const PINE_FADE_DESKTOP =
-  "lg:bg-[linear-gradient(90deg,rgba(22,32,15,0.97)_0%,rgba(22,32,15,0.67)_48%,rgba(22,32,15,0.18)_100%)]";
+  "lg:bg-[linear-gradient(90deg,color-mix(in_oklab,var(--color-fill-night)_97%,transparent)_0%,color-mix(in_oklab,var(--color-fill-night)_67%,transparent)_48%,color-mix(in_oklab,var(--color-fill-night)_18%,transparent)_100%)]";
 const PINE_FADE_STACKED =
-  "bg-[linear-gradient(0deg,rgba(22,32,15,0.96)_0%,rgba(22,32,15,0.82)_45%,rgba(22,32,15,0.42)_100%)]";
+  "bg-[linear-gradient(0deg,color-mix(in_oklab,var(--color-fill-night)_96%,transparent)_0%,color-mix(in_oklab,var(--color-fill-night)_82%,transparent)_45%,color-mix(in_oklab,var(--color-fill-night)_42%,transparent)_100%)]";
 const FOREST_GLOW =
   "bg-[radial-gradient(circle_at_78%_32%,#738955_0%,#738955_8%,#314625_38%,#17230f_70%)]";
 
@@ -64,7 +64,7 @@ export default function Hero({
   return (
     <section
       aria-labelledby={titleId}
-      className="relative overflow-hidden bg-pine-night text-birch-bark"
+      className="relative overflow-hidden field-night"
     >
       {/* Background: photo or forest glow */}
       {image?.asset?._id ? (
@@ -92,7 +92,7 @@ export default function Hero({
       <div className="container-content relative z-10 flex min-h-[clamp(24rem,50svh,40rem)] flex-col justify-end pb-(--section-pad-bottom) pt-28">
         {stegaClean(eyebrow)?.trim() ? (
           <p
-            className="text-eyebrow mb-5 animate-hero-rise text-accent motion-reduce:animate-none"
+            className="text-eyebrow mb-5 animate-hero-rise text-link motion-reduce:animate-none"
             data-sanity={dataAttribute?.("eyebrow")}
           >
             {eyebrow}
@@ -100,7 +100,7 @@ export default function Hero({
         ) : null}
 
         <h1
-          className="text-display-page max-w-[44rem] animate-hero-rise text-balance font-display font-extrabold text-cream [animation-delay:90ms] motion-reduce:animate-none"
+          className="text-display-page max-w-[44rem] animate-hero-rise text-balance font-display font-extrabold text-foreground [animation-delay:90ms] motion-reduce:animate-none"
           data-sanity={dataAttribute?.("title")}
           id={titleId}
         >
@@ -109,7 +109,7 @@ export default function Hero({
 
         {body?.length ? (
           <div
-            className="mt-6 max-w-xl animate-hero-rise text-base leading-relaxed text-birch-bark/75 [animation-delay:180ms] motion-reduce:animate-none"
+            className="mt-6 max-w-xl animate-hero-rise text-base leading-relaxed text-foreground/75 [animation-delay:180ms] motion-reduce:animate-none"
             data-sanity={dataAttribute?.("body")}
           >
             <PortableText components={simpleRichTextComponents} value={body} />

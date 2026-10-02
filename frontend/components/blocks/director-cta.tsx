@@ -23,7 +23,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[1.08em] font-semibold leading-none not-italic text-[var(--section-accent)]">
+      <em className="font-accent text-[1.08em] font-semibold leading-none not-italic text-emphasis">
         {children}
       </em>
     ),
@@ -131,8 +131,8 @@ export default function DirectorCta({
               aria-hidden="true"
               className={`absolute left-1/2 top-[70px] size-[330px] -translate-x-1/2 rounded-full after:absolute after:inset-0 after:rounded-full lg:left-[calc(50%_-_40px)] lg:top-auto lg:bottom-[-110px] lg:size-[600px] ${
                 onDark
-                  ? "bg-forest-panel after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_16%,transparent),transparent_70%)]"
-                  : "bg-[color-mix(in_oklab,var(--color-sunlit-moss)_45%,var(--section-surface))] after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-campfire-amber)_14%,transparent),transparent_70%)]"
+                  ? "bg-fill-panel after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-mark)_16%,transparent),transparent_70%)]"
+                  : "bg-[color-mix(in_oklab,var(--color-fill-moss-tint)_45%,var(--color-background))] after:bg-[radial-gradient(55%_45%_at_50%_42%,color-mix(in_oklab,var(--color-mark)_14%,transparent),transparent_70%)]"
               }`}
             />
             {portrait ? (
@@ -140,8 +140,8 @@ export default function DirectorCta({
                 alt={stegaClean(portrait.alt)?.trim() || ""}
                 className={`absolute bottom-0 left-1/2 z-10 h-[300px] w-auto max-w-none -translate-x-[47%] lg:h-full lg:-translate-x-1/2 ${
                   onDark
-                    ? "drop-shadow-[0_34px_38px_rgba(13,18,8,0.55)]"
-                    : "drop-shadow-[0_28px_34px_rgba(13,18,8,0.22)]"
+                    ? "drop-shadow-[0_34px_38px_color-mix(in_oklab,var(--color-scrim)_55%,transparent)]"
+                    : "drop-shadow-[0_28px_34px_color-mix(in_oklab,var(--color-scrim)_22%,transparent)]"
                 }`}
                 height={portraitHeight}
                 sizes="(max-width: 1023px) 400px, 827px"
@@ -151,7 +151,7 @@ export default function DirectorCta({
             ) : null}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-30 bg-gradient-to-b from-transparent to-[var(--section-surface)] lg:hidden"
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-30 bg-gradient-to-b from-transparent to-background lg:hidden"
             />
           </div>
         </div>

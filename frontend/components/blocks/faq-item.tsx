@@ -14,26 +14,25 @@ import type { ReactNode } from "react";
  * One question in an FAQ accordion: the display-face question, a round plus
  * that turns into a cross when open, and the answer underneath. Shared by
  * the curated FAQ Section and the FAQ hub so the two read as one component.
- * `cream` picks the ink for cream and white fields; the dark field uses the
- * birch tints.
+ * Text and link colours follow the field's job tokens; `cream` only picks
+ * the hairline and ring alphas, which differ between the light and dark
+ * fields.
  */
 
-export function faqAnswerComponents(cream: boolean): PortableTextComponents {
+export function faqAnswerComponents(): PortableTextComponents {
   return {
     ...simpleRichTextComponents,
     marks: {
       ...simpleRichTextComponents?.marks,
       customLink: createCustomLinkMarkRenderer(
-        cream
-          ? "font-medium text-cedar underline decoration-cedar/30 underline-offset-4 hover:text-cedar-deep hover:decoration-cedar-deep"
-          : "font-medium text-moss underline decoration-moss/30 underline-offset-4 hover:text-sunlit-moss hover:decoration-sunlit-moss",
+        "font-medium text-prose-link underline decoration-prose-link/30 underline-offset-4 hover:text-prose-link-hover hover:decoration-prose-link-hover",
       ),
     },
   };
 }
 
 export function faqRuleClass(cream: boolean) {
-  return cream ? "border-pine-night/14" : "border-birch-bark/16";
+  return cream ? "border-foreground/14" : "border-foreground/16";
 }
 
 export function FaqAccordionItem({
@@ -63,9 +62,9 @@ export function FaqAccordionItem({
         <span
           aria-hidden="true"
           className={cn(
-            "flex shrink-0 items-center justify-center rounded-full border transition-[background-color,border-color,color,transform] motion-base group-hover:border-campfire-amber group-data-[state=open]:rotate-45 group-data-[state=open]:border-campfire-amber group-data-[state=open]:bg-campfire-amber group-data-[state=open]:text-pine-night motion-reduce:transition-none",
+            "flex shrink-0 items-center justify-center rounded-full border transition-[background-color,border-color,color,transform] motion-base group-hover:border-mark group-data-[state=open]:rotate-45 group-data-[state=open]:border-mark group-data-[state=open]:bg-primary group-data-[state=open]:text-primary-foreground motion-reduce:transition-none",
             compact ? "size-9" : "size-10",
-            cream ? "border-pine-night/18" : "border-birch-bark/25",
+            cream ? "border-foreground/18" : "border-foreground/25",
           )}
         >
           <Plus className="size-4" strokeWidth={2} />
@@ -73,7 +72,7 @@ export function FaqAccordionItem({
       </AccordionTrigger>
       {children ? (
         <AccordionContent
-          className={cn(compact ? "pb-6 text-base" : "pb-7 text-base", cream ? "text-ink-muted" : "text-birch-bark/72")}
+          className={cn(compact ? "pb-6 text-base" : "pb-7 text-base", "text-muted-foreground")}
         >
           <div className="grid max-w-[38rem] gap-4 text-pretty leading-[1.6]">{children}</div>
         </AccordionContent>

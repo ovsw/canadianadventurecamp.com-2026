@@ -40,7 +40,7 @@ export function Header({
                     variant: "outline",
                   }),
                   theme === "dark" &&
-                    "border-birch-bark/45 text-birch-bark hover:border-birch-bark/70 hover:bg-birch-bark/8 hover:text-birch-bark",
+                    "border-foreground/45 text-foreground hover:border-foreground/70 hover:bg-foreground/8 hover:text-foreground",
                 )}
                 key={action.key}
                 link={action.link}

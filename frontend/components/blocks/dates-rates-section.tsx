@@ -52,7 +52,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[clamp(2.75rem,5vw,4.5rem)] font-semibold not-italic leading-none text-[var(--section-accent)]">
+      <em className="font-accent text-[clamp(2.75rem,5vw,4.5rem)] font-semibold not-italic leading-none text-emphasis">
         {children}
       </em>
     ),
@@ -135,7 +135,7 @@ export default function DatesRatesSection({
         <div className="mb-12 grid gap-8 lg:grid-cols-[1fr_400px] lg:items-end">
           <header>
             <p
-              className={`mb-5 text-eyebrow text-[var(--section-accent)] ${styles.reveal}`}
+              className={`mb-5 text-eyebrow text-link ${styles.reveal}`}
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -160,7 +160,7 @@ export default function DatesRatesSection({
             </div>
             {detailsText ? (
               <a
-                className={`focus-ring mt-4 inline-flex w-fit items-center gap-[9px] border-b-2 border-[var(--section-accent)] pb-1 font-semibold text-[var(--section-accent)] transition-opacity hover:opacity-75 motion-reduce:transition-none ${styles.detailsLink}`}
+                className={`focus-ring mt-4 inline-flex w-fit items-center gap-[9px] border-b-2 border-link pb-1 font-semibold text-link transition-opacity hover:opacity-75 motion-reduce:transition-none ${styles.detailsLink}`}
                 data-sanity={dataAttribute?.("detailsLinkText")}
                 href={detailsHref}
               >
@@ -198,7 +198,7 @@ export default function DatesRatesSection({
                   )}
                   key={item._key}
                 >
-                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-[var(--section-accent)]" />
+                  <Check aria-hidden="true" className="mt-1 size-4 shrink-0 text-link" />
                   <span className="text-pretty text-base/relaxed font-semibold text-current [overflow-wrap:anywhere]">
                     {item.label}
                   </span>
@@ -231,7 +231,7 @@ export default function DatesRatesSection({
                   >
                     <Icon
                       aria-hidden="true"
-                      className="mt-1 size-5 shrink-0 text-[var(--section-accent)]"
+                      className="mt-1 size-5 shrink-0 text-link"
                     />
                     <div className="min-w-0">
                       <PortableText

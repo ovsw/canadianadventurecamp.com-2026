@@ -77,7 +77,7 @@ function TestimonialAvatar({
 }: Readonly<{ image: TestimonialDocument["image"]; name: string }>) {
   const hasImage = Boolean(image?.asset?._id);
   return (
-    <span aria-hidden={hasImage ? undefined : "true"} className={styles.avatar}>
+    <span aria-hidden={hasImage ? undefined : "true"} className={cn("card-panel", styles.avatar)}>
       {hasImage && image ? (
         <Image
           alt={stegaClean(image.alt) || ""}
@@ -112,7 +112,7 @@ function QuoteCard({
   const name = stegaClean(testimonial.name) ?? "";
 
   return (
-    <figure className={styles.card} data-sanity={referenceDataAttribute}>
+    <figure className={cn("card-cream", styles.card)} data-sanity={referenceDataAttribute}>
       <span aria-hidden="true" className={styles.quoteMark}>
         &ldquo;
       </span>

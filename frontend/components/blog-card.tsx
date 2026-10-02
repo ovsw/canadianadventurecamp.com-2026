@@ -19,16 +19,14 @@ export type PostCardTone = "dark" | "light";
 
 const tones = {
   dark: {
-    card: "border-birch-bark/15 bg-forest-panel",
-    eyebrow: "text-campfire-amber",
-    media: "bg-pine-night",
-    muted: "text-birch-bark/70",
+    card: "border-foreground/15 bg-card text-card-foreground",
+    media: "bg-fill-night",
+    muted: "text-foreground/70",
   },
   light: {
-    card: "border-pine-night/12 bg-birch-bark-bright",
-    eyebrow: "text-cedar",
-    media: "bg-birch-bark",
-    muted: "text-ink-muted",
+    card: "border-border bg-card text-card-foreground",
+    media: "bg-fill-cream",
+    muted: "text-muted-foreground",
   },
 } as const;
 
@@ -38,7 +36,7 @@ const tones = {
  * shows the focus ring while its link has keyboard focus.
  */
 const cardShell =
-  "group/post relative flex flex-col overflow-hidden rounded-lg border transition-[translate,box-shadow] motion-base hover:-translate-y-0.5 hover:shadow-interactive-lift has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-3 has-[a:focus-visible]:outline-campfire-amber motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+  "group/post relative flex flex-col overflow-hidden rounded-lg border transition-[translate,box-shadow] motion-base hover:-translate-y-0.5 hover:shadow-interactive-lift has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-3 has-[a:focus-visible]:outline-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0";
 const stretchedLink = "outline-none after:absolute after:inset-0";
 
 function getPostHref(post: BlogPost) {
@@ -236,7 +234,7 @@ export function FeaturedPostCard({
       />
       <div className="flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-end lg:justify-between lg:gap-16 lg:p-10">
         <div className="max-w-3xl">
-          <p className={cn("mb-3 text-eyebrow", colors.eyebrow)}>Latest post</p>
+          <p className="mb-3 text-eyebrow text-link">Latest post</p>
           <h3
             className="text-balance font-display text-title-lg sm:text-4xl sm:leading-[1.05] sm:tracking-tight"
             data-sanity={dataAttribute?.("title")}

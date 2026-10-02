@@ -37,7 +37,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent not-italic text-accent">{children}</em>
+      <em className="font-accent not-italic text-emphasis">{children}</em>
     ),
   },
 };
@@ -63,7 +63,7 @@ export default function InnerHero({
   return (
     <section
       aria-labelledby={headingId}
-      className="relative flex flex-col overflow-hidden bg-pine-night text-birch-bark lg:block lg:min-h-[min(88svh,52rem)]"
+      className="relative flex flex-col overflow-hidden field-night lg:block lg:min-h-[min(88svh,52rem)]"
       data-header-overlay={hasImage ? "" : undefined}
       // Empty space in the hero focuses the background image: the copy fields
       // below carry their own data-sanity, so clicks resolve to the nearest
@@ -97,25 +97,25 @@ export default function InnerHero({
             so the left text column keeps its contrast floor */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-pine-night/60 via-transparent to-pine-night/70 lg:hidden"
+          className="absolute inset-0 bg-gradient-to-b from-fill-night/60 via-transparent to-fill-night/70 lg:hidden"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 hidden lg:block lg:bg-[linear-gradient(90deg,rgba(22,32,15,0.9)_0%,rgba(22,32,15,0.55)_45%,rgba(22,32,15,0.12)_100%)]"
+          className="absolute inset-0 hidden lg:block lg:bg-[linear-gradient(90deg,color-mix(in_oklab,var(--color-fill-night)_90%,transparent)_0%,color-mix(in_oklab,var(--color-fill-night)_55%,transparent)_45%,color-mix(in_oklab,var(--color-fill-night)_12%,transparent)_100%)]"
         />
         {/* Header band on desktop: the side wash thins out to 12% at the
             right edge, which is where the call action and Enroll sit. The
             see-through header (data-header-overlay) relies on the hero for its
             contrast floor, so this band carries the top of the photo down to
-            pine-night at about 60% across the header row, then fades before
+            the night fill at about 60% across the header row, then fades before
             the copy. The home hero has the same band in its top wash. */}
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 hidden h-56 lg:block lg:bg-[linear-gradient(180deg,rgba(22,32,15,0.82)_0%,rgba(22,32,15,0.45)_45%,rgba(22,32,15,0)_100%)]"
+          className="absolute inset-x-0 top-0 hidden h-56 lg:block lg:bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-fill-night)_82%,transparent)_0%,color-mix(in_oklab,var(--color-fill-night)_45%,transparent)_45%,color-mix(in_oklab,var(--color-fill-night)_0%,transparent)_100%)]"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 hidden h-1/2 lg:block lg:bg-[linear-gradient(0deg,rgba(22,32,15,0.92)_0%,rgba(22,32,15,0)_100%)]"
+          className="absolute inset-x-0 bottom-0 hidden h-1/2 lg:block lg:bg-[linear-gradient(0deg,color-mix(in_oklab,var(--color-fill-night)_92%,transparent)_0%,color-mix(in_oklab,var(--color-fill-night)_0%,transparent)_100%)]"
         />
       </div>
 
@@ -124,7 +124,7 @@ export default function InnerHero({
         <div className="lg:pb-12">
           {stegaClean(eyebrow)?.trim() ? (
             <p
-              className="text-eyebrow mb-5 animate-hero-rise text-accent motion-reduce:animate-none"
+              className="text-eyebrow mb-5 animate-hero-rise text-link motion-reduce:animate-none"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -132,7 +132,7 @@ export default function InnerHero({
           ) : null}
 
           <h1
-            className="text-display-page max-w-[46rem] animate-hero-rise text-balance font-display font-extrabold text-cream [animation-delay:90ms] motion-reduce:animate-none"
+            className="text-display-page max-w-[46rem] animate-hero-rise text-balance font-display font-extrabold text-foreground [animation-delay:90ms] motion-reduce:animate-none"
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
@@ -141,7 +141,7 @@ export default function InnerHero({
 
           {stegaClean(body)?.trim() ? (
             <p
-              className="mt-6 max-w-xl animate-hero-rise text-base leading-relaxed text-birch-bark/80 [animation-delay:180ms] motion-reduce:animate-none lg:text-lg"
+              className="mt-6 max-w-xl animate-hero-rise text-base leading-relaxed text-foreground/80 [animation-delay:180ms] motion-reduce:animate-none lg:text-lg"
               data-sanity={dataAttribute?.("body")}
             >
               {body}
@@ -192,26 +192,26 @@ export default function InnerHero({
             on desktop. Hairlines are cream at reduced alpha, never a grey. */}
         {factList.length ? (
           <dl
-            className="mt-10 grid grid-cols-2 border-t border-birch-bark/20 lg:mt-0 lg:flex"
+            className="mt-10 grid grid-cols-2 border-t border-foreground/20 lg:mt-0 lg:flex"
             data-sanity={dataAttribute?.("facts")}
           >
             {factList.map((fact) => {
               const factPath = `facts[_key=="${fact._key}"]`;
               return (
                 <div
-                  className="flex flex-col gap-1.5 py-4 pr-4 even:border-l even:border-birch-bark/20 even:pl-4 [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-birch-bark/20 lg:flex-1 lg:border-l lg:border-birch-bark/20 lg:py-6 lg:pl-8 lg:pr-0 lg:first:border-l-0 lg:first:pl-0 lg:[&:nth-child(n+3)]:border-t-0"
+                  className="flex flex-col gap-1.5 py-4 pr-4 even:border-l even:border-foreground/20 even:pl-4 [&:nth-child(n+3)]:border-t [&:nth-child(n+3)]:border-foreground/20 lg:flex-1 lg:border-l lg:border-foreground/20 lg:py-6 lg:pl-8 lg:pr-0 lg:first:border-l-0 lg:first:pl-0 lg:[&:nth-child(n+3)]:border-t-0"
                   key={fact._key}
                 >
                   {/* dt/dd keep source order for assistive tech; the value
                       is shown above its label with flex order */}
                   <dt
-                    className="order-2 text-[14px] leading-snug text-birch-bark/75"
+                    className="order-2 text-[14px] leading-snug text-foreground/75"
                     data-sanity={dataAttribute?.(`${factPath}.label`)}
                   >
                     {fact.label}
                   </dt>
                   <dd
-                    className="order-1 font-display text-2xl font-bold leading-none tracking-tight text-cream lg:text-[1.75rem]"
+                    className="order-1 font-display text-2xl font-bold leading-none tracking-tight text-foreground lg:text-[1.75rem]"
                     data-sanity={dataAttribute?.(`${factPath}.value`)}
                   >
                     {fact.value}

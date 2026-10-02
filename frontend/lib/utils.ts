@@ -18,6 +18,7 @@ const twMerge = extendTailwindMerge({
         "text-title-lg",
         "text-eyebrow",
         "text-label",
+        "text-step-number",
       ],
     },
   },

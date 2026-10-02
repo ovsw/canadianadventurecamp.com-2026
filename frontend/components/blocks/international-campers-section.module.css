@@ -24,7 +24,7 @@
 /* Route row: EN ROUTE label only visible on hover/focus by default,
    always visible when the row is the active selection. */
 .routeRow[aria-pressed="true"] {
-  background: rgba(243, 239, 226, 0.06);
+  background: color-mix(in oklab, var(--color-foreground) 6%, transparent);
 }
 
 .routeRow[aria-pressed="true"] .enRouteLabel {
@@ -32,9 +32,9 @@
 }
 
 .routeRow[aria-pressed="true"] span:first-child {
-  border-color: rgba(232, 162, 59, 0.6);
-  background: rgba(232, 162, 59, 0.15);
-  color: #e8a23b;
+  border-color: color-mix(in oklab, var(--color-link) 60%, transparent);
+  background: color-mix(in oklab, var(--color-link) 15%, transparent);
+  color: var(--color-link);
 }
 
 /* Hide EN ROUTE label when list column is narrow (below xl). */

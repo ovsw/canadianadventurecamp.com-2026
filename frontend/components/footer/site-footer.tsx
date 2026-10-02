@@ -19,7 +19,7 @@ function LinkList({ links }: { links: FooterLinkModel[] }) {
         return (
           <li key={link.key}>
             <FooterLink link={link} dataSanity={undefined}>
-              <span className="flex items-center gap-2.5 text-[14.5px] text-birch-bark/75 transition-colors duration-200 hover:text-campfire-amber">
+              <span className="flex items-center gap-2.5 text-[14.5px] text-foreground/75 transition-colors duration-200 hover:text-link">
                 {socialIcon ? (
                   <FooterIcon className="size-4 shrink-0" name={socialIcon} />
                 ) : null}
@@ -38,7 +38,7 @@ function FooterColumn({ column }: { column: FooterColumnModel }) {
   return (
     <section aria-labelledby={headingId}>
       <h2
-        className="mb-[19px] font-display text-[15px] font-bold tracking-[0.02em] text-birch-bark"
+        className="mb-[19px] font-display text-[15px] font-bold tracking-[0.02em] text-foreground"
         id={headingId}
       >
         {column.heading}
@@ -60,8 +60,8 @@ function FooterAction({
       <span
         className={
           primary
-            ? "inline-flex items-center rounded-pill bg-campfire-amber px-[30px] py-4 font-bold text-pine-night transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-campfire-amber-deep motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-            : "inline-flex items-center rounded-pill border-[1.5px] border-birch-bark/50 px-[30px] py-[15.5px] font-semibold text-birch-bark transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-birch-bark/90 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            ? "inline-flex items-center rounded-pill bg-primary px-[30px] py-4 font-bold text-primary-foreground transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-primary-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            : "inline-flex items-center rounded-pill border-[1.5px] border-foreground/50 px-[30px] py-[15.5px] font-semibold text-foreground transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-foreground/90 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         }
       >
         {link.label}
@@ -79,26 +79,26 @@ export function SiteFooter({
 }) {
   return (
     <footer
-      className="relative z-[1] -mt-(--section-overlap) rounded-t-section bg-pine-night px-content-x pb-8 pt-16 text-birch-bark/75 phone:pb-10 phone:pt-[100px]"
+      className="relative z-[1] -mt-(--section-overlap) field-night rounded-t-section px-content-x pb-8 pt-16 text-foreground/75 phone:pb-10 phone:pt-[100px]"
       data-footer-state="ready"
     >
       <div className="mx-auto max-w-[1320px]">
         <div className="flex flex-wrap items-end justify-between gap-[34px] pb-[70px]">
           <div>
             <p
-              className="text-eyebrow mb-5 text-campfire-amber"
+              className="text-eyebrow mb-5 text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {model.eyebrow}
             </p>
             <h2
-              className="text-headline font-display text-birch-bark"
+              className="text-headline font-display text-foreground"
               id="site-footer-heading"
             >
               <span data-sanity={dataAttribute?.("heading")}>{model.heading}</span>
               <br />
               <span
-                className="font-accent text-[1.15em] font-semibold text-campfire-amber"
+                className="font-accent text-[1.15em] font-semibold text-emphasis"
                 data-sanity={dataAttribute?.("accent")}
               >
                 {model.accent}
@@ -118,7 +118,7 @@ export function SiteFooter({
 
         {/* Below 1280px the contact block takes its own row. The four link
             columns stay together until they pair up below tablet width. */}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-11 border-y border-birch-bark/15 py-[60px] tablet:grid-cols-4 min-[1280px]:grid-cols-[1.5fr_repeat(4,1fr)] min-[1280px]:gap-12">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-11 border-y border-border py-[60px] tablet:grid-cols-4 min-[1280px]:grid-cols-[1.5fr_repeat(4,1fr)] min-[1280px]:gap-12">
           <section
             aria-label="Canadian Adventure Camp contact information"
             className="col-span-full min-[1280px]:col-span-1"
@@ -149,11 +149,11 @@ export function SiteFooter({
                 <li className="contents" key={link.key}>
                   <ContactIcon
                     aria-hidden="true"
-                    className="mt-px size-4 text-birch-bark/55"
+                    className="mt-px size-4 text-foreground/55"
                     strokeWidth={1.8}
                   />
                   <FooterLink link={link}>
-                    <span className="whitespace-pre-line font-mono text-sm leading-6 tracking-[0.02em] text-birch-bark/75 transition-colors duration-200 hover:text-campfire-amber">
+                    <span className="whitespace-pre-line font-mono text-sm leading-6 tracking-[0.02em] text-foreground/75 transition-colors duration-200 hover:text-link">
                       <span className="sr-only">
                         {icon === "pin"
                           ? "Address: "
@@ -175,7 +175,7 @@ export function SiteFooter({
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-[26px] gap-y-3 pt-7 text-[14px] text-birch-bark/75">
+        <div className="flex flex-wrap items-center gap-x-[26px] gap-y-3 pt-7 text-[14px] text-foreground/75">
           <p className="desktop:mr-auto">
             ©
             <span data-sanity={dataAttribute?.("copyrightStartYear")}>
@@ -187,7 +187,7 @@ export function SiteFooter({
           </p>
           {model.legalLinks.map((link) => (
             <FooterLink key={link.key} link={link}>
-              <span className="transition-colors duration-200 hover:text-campfire-amber">
+              <span className="transition-colors duration-200 hover:text-link">
                 {link.label}
               </span>
             </FooterLink>

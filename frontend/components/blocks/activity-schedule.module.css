@@ -6,7 +6,7 @@
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.8;
-  -webkit-text-stroke: 0.15625rem var(--color-campfire-amber);
+  -webkit-text-stroke: 0.15625rem var(--color-mark);
 }
 
 @media (prefers-reduced-motion: no-preference) {

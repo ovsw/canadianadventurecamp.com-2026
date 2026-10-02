@@ -55,7 +55,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">{children}</em>
+      <em className="font-accent text-emphasis not-italic">{children}</em>
     ),
   },
 };
@@ -120,10 +120,10 @@ export default function PricingSingleToggle({
         <div className="grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,6fr)] lg:gap-14">
           <div
             className={cn(
-              "relative isolate flex min-h-[20rem] flex-col justify-start overflow-hidden rounded-[var(--radius-xl)] p-8 text-birch-bark sm:min-h-[26rem] sm:p-10",
+              "on-dark relative isolate flex min-h-[20rem] flex-col justify-start overflow-hidden rounded-[var(--radius-xl)] p-8 text-foreground sm:min-h-[26rem] sm:p-10",
               onDark
-                ? "bg-[linear-gradient(160deg,var(--color-forest-panel),var(--color-pine-night))]"
-                : "bg-[linear-gradient(160deg,var(--color-forest-floor),var(--color-forest-panel))]",
+                ? "bg-[linear-gradient(160deg,var(--color-fill-panel),var(--color-fill-night))]"
+                : "bg-[linear-gradient(160deg,var(--color-fill-forest),var(--color-fill-panel))]",
               styles.panel,
               styles.reveal,
             )}
@@ -146,7 +146,7 @@ export default function PricingSingleToggle({
             <div className="relative max-w-[26rem]">
               {hasText(eyebrow) ? (
                 <p
-                  className="mb-4 text-eyebrow text-campfire-amber"
+                  className="mb-4 text-eyebrow text-link"
                   data-sanity={dataAttribute?.("eyebrow")}
                 >
                   {eyebrow}
@@ -186,7 +186,7 @@ export default function PricingSingleToggle({
                 >
                   <Check
                     aria-hidden="true"
-                    className="mt-1 size-4.5 shrink-0 text-[var(--section-accent)]"
+                    className="mt-1 size-4.5 shrink-0 text-link"
                     strokeWidth={3}
                   />
                   <span className="min-w-0">

@@ -42,7 +42,7 @@ export default function HomeHeroVideoLightbox({
       <DialogTrigger asChild>
         <Button
           className={
-            glass ? "bg-pine-night/55 backdrop-blur-sm" : undefined
+            glass ? "bg-fill-night/55 backdrop-blur-sm" : undefined
           }
           key={buttonKey}
           lift={false}

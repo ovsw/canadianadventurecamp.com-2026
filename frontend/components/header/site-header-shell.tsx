@@ -61,9 +61,7 @@ export function SiteHeaderShell({
     <header
       className={cn(
         "sticky top-0 z-60 w-full border-b transition-[transform,background-color,border-color] duration-300 ease-reveal motion-reduce:transition-none",
-        theme === "dark"
-          ? "border-birch-bark/15 bg-pine-night text-birch-bark"
-          : "border-pine-night/15 bg-birch-bark text-pine-night",
+        theme === "dark" ? "field-night border-border" : "field-cream border-foreground/15",
         visible ? "translate-y-0" : "-translate-y-full",
       )}
       data-at-top={atTop}

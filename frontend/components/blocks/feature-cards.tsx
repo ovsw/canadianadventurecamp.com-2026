@@ -18,41 +18,31 @@ type FeatureCardsProps = Extract<PageBlock, { _type: "featureCards" }> & {
   dataAttribute?: (path: string) => string | undefined;
 };
 
-/** Field-dependent colour recipes so the two variants stay in one component. */
+/** The field utility on the section root re-points the job tokens, so only
+ *  the recipes that differ between the two grounds stay here: secondary text
+ *  alphas and the card fill pair. */
 const fields = {
   dark: {
-    section: "text-birch-bark",
-    eyebrow: "text-campfire-amber",
-    accent: "text-campfire-amber",
-    description: "text-birch-bark/70",
-    groupDescription: "text-birch-bark/65",
-    hairline: "bg-birch-bark/15",
-    card: "bg-forest-floor hover:bg-forest-panel",
-    cardText: "text-birch-bark/65",
-    link: "text-moss hover:text-sunlit-moss",
+    description: "text-foreground/70",
+    groupDescription: "text-foreground/65",
+    card: "bg-fill-forest hover:bg-fill-panel",
+    cardText: "text-foreground/65",
   },
   cream: {
-    section: "text-pine-night",
-    eyebrow: "text-cedar",
-    accent: "text-cedar",
-    description: "text-ink-muted",
-    groupDescription: "text-ink-muted",
-    hairline: "bg-pine-night/15",
-    card: "bg-birch-bark hover:bg-birch-bark-bright",
-    cardText: "text-ink-muted",
-    link: "text-cedar hover:text-cedar-deep",
+    description: "text-muted-foreground",
+    groupDescription: "text-muted-foreground",
+    card: "card-cream hover:bg-fill-bright",
+    cardText: "text-muted-foreground",
   },
 } as const;
 
-type Field = (typeof fields)[keyof typeof fields];
-
-function headingComponents(field: Field): PortableTextComponents {
+function headingComponents(): PortableTextComponents {
   return {
     block: { normal: ({ children }) => <>{children}</> },
     marks: {
       strong: ({ children }) => <strong>{children}</strong>,
       em: ({ children }) => (
-        <em className={cn("font-accent not-italic", field.accent)}>
+        <em className="font-accent not-italic text-emphasis">
           {children}
         </em>
       ),
@@ -133,14 +123,14 @@ export default function FeatureCards({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("py-section", field.section, sectionThemeClass(background))}
+      className={cn("py-section", sectionThemeClass(background))}
       id={`features-${stegaClean(_key)}`}
     >
       <div className="container-content">
         <header className={cn("mb-14 max-w-3xl", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className={cn("mb-5 text-eyebrow", field.eyebrow)}
+              className="mb-5 text-eyebrow text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -152,7 +142,7 @@ export default function FeatureCards({
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
-            <PortableText components={headingComponents(field)} value={title} />
+            <PortableText components={headingComponents()} value={title} />
           </h2>
 
           {hasText(description) ? (
@@ -209,8 +199,7 @@ export default function FeatureCards({
 
                 <ol
                   className={cn(
-                    "grid list-none gap-px overflow-hidden rounded-lg p-0 md:grid-cols-2",
-                    field.hairline,
+                    "grid list-none gap-px overflow-hidden rounded-lg bg-foreground/15 p-0 md:grid-cols-2",
                     columnCount === 3 && "lg:grid-cols-3",
                     columnCount === 4 && "lg:grid-cols-4",
                   )}
@@ -232,7 +221,7 @@ export default function FeatureCards({
                         key={card._key}
                       >
                         <div
-                          className="relative aspect-video overflow-hidden bg-forest-panel"
+                          className="relative aspect-video overflow-hidden bg-fill-panel on-dark"
                           data-sanity={dataAttribute?.(`${cardPath}.image`)}
                         >
                           {card.image?.asset?._id ? (
@@ -263,11 +252,11 @@ export default function FeatureCards({
                               inside a glass capsule (The Pill Is a Button Rule). */}
                           <span
                             aria-hidden="true"
-                            className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pine-night/70 to-transparent"
+                            className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-fill-night/70 to-transparent"
                           />
                           <span
                             aria-hidden="true"
-                            className="absolute left-6 top-5 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-birch-bark transition-colors duration-300 group-hover/card:text-campfire-amber"
+                            className="absolute left-6 top-5 font-mono text-[14px] leading-snug font-medium tracking-[0.01em] text-foreground transition-colors duration-300 group-hover/card:text-link"
                           >
                             {number}
                           </span>
@@ -291,8 +280,7 @@ export default function FeatureCards({
                           </p>
                           <Link
                             className={cn(
-                              "focus-ring mt-5 inline-flex w-fit items-center gap-2 font-semibold underline-offset-4 decoration-current/40 group-hover/card:underline",
-                              field.link,
+                              "focus-ring mt-5 inline-flex w-fit items-center gap-2 font-semibold text-prose-link underline-offset-4 decoration-current/40 group-hover/card:underline hover:text-prose-link-hover",
                             )}
                             data-sanity={dataAttribute?.(`${cardPath}.link`)}
                             href={href}

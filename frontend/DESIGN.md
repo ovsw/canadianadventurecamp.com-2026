@@ -15,6 +15,9 @@ colors:
   moss: "#A9C46C"
   lake-night: "#0D1626"
   ember-red: "#B4441F"
+  navigation-yellow: "#E1C981"
+  ink-soft: "#4D5845"
+  ink-muted: "#5C6854"
 typography:
   display:
     fontFamily: "Bricolage Grotesque, sans-serif"
@@ -153,6 +156,11 @@ Confirmed rejections: no soft pastel "summer camp" palette, no rounded-bubbly ki
 
 A forest at dusk, lit by one fire.
 
+Colour has two layers, both in `frontend/app/globals.css`:
+
+1. **Brand colours** (`--brand-*` in `:root`). The palette below and in the frontmatter: thirteen named colours and the two ink tiers. It sits outside Tailwind's `@theme`, so Tailwind makes no classes for it and component code cannot use it.
+2. **Job tokens** (`--color-*` in `@theme`). Each says what a colour is for (background, foreground, link, primary…) and points at a brand colour. Tailwind makes classes for them (`bg-primary`, `text-link`, `border-border`, `text-foreground/60`). Component code uses only these.
+
 ### Primary
 - **Campfire Amber** (`{colors.campfire-amber}`): the only accent. Primary buttons, the handwritten script word in a headline, eyebrow labels on dark fields, hover fills on arrows and bars, "sold out" stamps, text selection. **Campfire Amber Deep** (`{colors.campfire-amber-deep}`) is its pressed/hover state.
 
@@ -180,9 +188,10 @@ reads the same on Birch Bark and on Birch Bark Bright.
 | **Ink Soft** (`ink-soft`) | `oklch(44.5% 0.034 133)` | 6.5:1 | prices, dates, check items, near-primary supporting text |
 | **Ink Muted** (`ink-muted`) | `oklch(50% 0.034 133)` | 5.1:1 | card descriptions, labels, captions, nav sub-lines, FAQ answers |
 
-`--color-muted-foreground` is Ink Muted, so shadcn-derived components (card
-descriptions, placeholders, breadcrumbs, dialog descriptions) land on a tier
-without per-component edits.
+The job tokens `muted-foreground` (Ink Muted) and `soft-foreground` (Ink
+Soft) carry the tiers, so shadcn-derived components (card descriptions,
+placeholders, breadcrumbs, dialog descriptions) land on a tier without
+per-component edits.
 
 **Contrast margin.** Every piece of text on cream reaches at least 5:1 against
 Birch Bark, the darker of the two creams. WCAG 2.2 AA asks for 4.5:1; the extra
@@ -194,7 +203,70 @@ Translucent neutrals still do the quiet work everywhere text is not involved:
 hairlines are Birch Bark at 12-22% on dark and Pine Night at 10-18% on cream.
 Text on dark fields stays Birch Bark at 66-75%; it passes at those values.
 
+### Job tokens
+
+**Field tokens.** These follow the ground (see Fields below). The `@theme` defaults are the Cream values.
+- `background`: the section ground.
+- `foreground`: headings and primary text.
+- `soft-foreground`: near-primary supporting text: prices, dates, check items, labels, long copy (Ink Soft on cream, Birch Bark at 85% on dark).
+- `muted-foreground`: descriptions, captions, FAQ answers, nav sub-lines (Ink Muted on cream, Birch Bark at 72% on dark).
+- `muted`: a quiet fill for placeholders and table stripes.
+- `card`, `card-foreground`: the natural card on this ground and its text.
+- `popover`, `popover-foreground`: menus and popovers.
+- `border`: hairlines, dividers and card edges, the field's text colour at 12% (15% on Night). Other alphas are written as `border-foreground/NN`.
+- `input`: form field borders.
+- `ring`: focus rings (the `focus-ring` utility). Campfire Amber on every field in code; see The Field Ring Rule for the intended cream variant.
+- `link`, `link-hover`: links, eyebrows, check marks, arrows, counters and other small accent text. Cedar on light fields, Campfire Amber on dark fields.
+- `link-foreground`: text on a link-coloured fill: selected tabs and chips.
+- `prose-link`, `prose-link-hover`: links inside running text and card copy. Cedar on light fields, Moss on dark fields.
+- `emphasis`: the script phrase in a headline. Heading sizes only.
+- `accent`, `accent-foreground`: the shadcn meaning, a quiet hover or selected background (Cedar at 8% on light, Birch Bark at 6% on dark). It is not amber.
+
+**Action tokens.** These are the same on every field.
+- `primary`, `primary-foreground`, `primary-hover`: Campfire Amber with Pine Night text, Campfire Amber Deep on hover. The main action, such as Enroll.
+- `secondary`, `secondary-foreground`: Forest Panel with Birch Bark text. The shadcn subtle fill (ghost hover, badges).
+- `destructive`, `destructive-foreground`: Ember Red with Birch Bark Bright text. Errors and the "Full" session marker.
+- `mark`: Campfire Amber. Brand marks that are not text: dots, bars, rules, photo rings, list bullets, text strokes.
+- `handwriting`: Forest Floor. Green ink for handwritten entries on a note card (the sample-day builder), large script only.
+- `scrim`: shadow ink. Dark scrims and glass fills over photos and the map.
+
+**Fills.** The same on every field: named fills for cards, media frames, chips and bars that keep one colour whatever the ground. Each has a `-foreground` pair except `fill-moss`. Make a coloured card with a `card-*` utility, which paints the fill and re-points the text tokens inside it (`foreground`, `soft-foreground`, `muted-foreground`, `border`, `link`, `prose-link`, `emphasis`, `accent`), so the card reads correctly on any field. The bare `fill-*` tokens are for placeholders, dots, bars and gradients.
+- `fill-night` (Pine Night): the darkest ground as a fill; media placeholders.
+- `fill-forest` (Forest Floor): tiles and the nav sheet.
+- `fill-panel` (Forest Panel) → `card-panel`: dark panels and media frames. Birch Bark text 11.7:1, at 72% 6.8:1; amber links 6.2:1; moss prose links 6.9:1.
+- `fill-cream` (Birch Bark) → `card-cream`: cream cards and photo mats. Ink Muted 5.1:1, Cedar 4.9:1.
+- `fill-bright` (Birch Bark Bright) → `card-bright`: near-white cards and sheets. Ink Muted 5.9:1, Cedar 5.3:1.
+- `fill-amber` (Campfire Amber) → `card-amber`: stamps, highlight cards, selected chips. Only Pine Night passes as small text (7.7:1; at 62% it would be 3.5:1), so every text token inside is solid ink.
+- `fill-moss-tint` (Sunlit Moss) → `card-moss-tint`: Sunlit Moss at 40% over Birch Bark, the "Included" panel. Ink Muted 4.6:1; small accent text takes Cedar Deep (6.9:1) because Cedar is under 4.5:1 here.
+- `fill-yellow` (Navigation Yellow): the activity catalogue jump bar only.
+- `fill-cedar` (Cedar): green bars and check circles, Birch Bark text 4.9:1.
+- `fill-moss` (Moss): open-session bars and timeline dots.
+- `fill-lake` (Lake Night): the globe container only.
+
+### Fields
+
+A field is a ground. Editors pick White, Cream or Green for each section in Studio; `sectionThemeClass()` in `frontend/components/blocks/section-theme.ts` maps the stored value to the utilities `field-white`, `field-cream` and `field-green`. Night is the fixed darkest ground (`field-night`): the header in its dark state, the footer, media heroes, the international campers globe and the island map. Each utility paints the ground and re-points the field tokens for everything inside, so the same markup is correct on every ground with no "on dark" branches. `on-light` and `on-dark` apply the same token sets without painting, for copy over a photo, a video or a gradient. The last section before the dark footer cannot be Green.
+
+| Token | White | Cream | Green | Night |
+| --- | --- | --- | --- | --- |
+| `background` | birch bark bright | birch bark | forest floor | pine night |
+| `foreground` | pine night | pine night | birch bark | birch bark |
+| `soft-foreground` | ink soft | ink soft | birch bark 85% | birch bark 85% |
+| `muted-foreground` | ink muted | ink muted | birch bark 72% | birch bark 72% |
+| `muted`, `card`, `popover` | birch bark bright | birch bark bright | forest panel | forest panel |
+| `border` | pine night 12% | pine night 12% | birch bark 12% | birch bark 15% |
+| `input` | pine night 20% | pine night 20% | birch bark 28% | birch bark 28% |
+| `link`, `emphasis` | cedar | cedar | campfire amber | campfire amber |
+| `link-hover` | cedar deep | cedar deep | campfire amber deep | campfire amber deep |
+| `link-foreground` | birch bark | birch bark | pine night | pine night |
+| `prose-link` / `-hover` | cedar / cedar deep | cedar / cedar deep | moss / sunlit moss | moss / sunlit moss |
+| `accent` | cedar 8% | cedar 8% | birch bark 6% | birch bark 6% |
+
+`--section-accent` and `--section-surface` are stand-ins that older blocks still read; the field utilities keep them equal to `link` and `background`.
+
 ### Named Rules
+**The Job Token Rule.** Component code uses only job tokens (`bg-primary`, `text-link`, `text-foreground/60`, `card-panel`…). Brand colours exist only in `globals.css`, and Tailwind generates no classes for them. A rebrand changes one file. Blocks do not branch on the editor theme to pick a colour: the field utility already re-points the contextual tokens. Branch only when the design really differs between fields, and then with job tokens on both sides.
+
 **The One Fire Rule.** Campfire Amber touches at most a few elements per viewport: one button, one script word, one label. Its scarcity is what makes it read as "act here."
 
 **Section backgrounds.** Editors choose White (Birch Bark Bright), Cream (Birch Bark), or Green (Forest Floor) with a compact select. Use adjacent backgrounds to separate content where needed. The final section above the dark footer must be White or Cream. Maps, globes, and media heroes keep their fixed backgrounds; maps and globes must be followed by a light section.
@@ -258,6 +330,7 @@ Three breakpoints: phone below 640px, tablet 640-1023px, desktop 1024px and up. 
 Depth is tonal. Forest Panel sits on Forest Floor; Forest Floor sits on Pine Night; Birch Bark cards sit on Birch Bark Bright. Hairlines (translucent cream or translucent pine) separate rather than shadows. Shadows exist for two reasons only: something is media-heavy and meant to feel physical (the island map, the globe, the hero video frame), or something has been lifted by the cursor.
 
 ### Shadow Vocabulary
+Shadows are cast in shadow ink (`--brand-shadow-ink`, Pine Night pulled 42% towards black: rgb 13 18 8) or plain black, through `color-mix()`, so a palette change reaches them. Use the named tokens (`shadow-lift`, `shadow-media-rest`, `shadow-globe-rest`, `shadow-card-rest-cream`, `shadow-stamp`, `shadow-hero-cta`); write an arbitrary shadow only with `var(--color-scrim)` or `var(--color-fill-night)` inside it, never a literal.
 - **Lift** (`box-shadow: 0 40px 70px -22px rgba(13,18,8,.65)`): hover state for tilting program and activity cards, paired with a -8px translateY and 1.06 image scale.
 - **Media rest** (`box-shadow: 0 36px 70px rgba(13,18,8,.45)`): heavy media containers at rest on dark fields (island walk, globe uses `0 42px 84px rgba(0,0,0,.5)`).
 - **Card rest, cream** (`box-shadow: 0 22px 44px rgba(22,32,15,.12)`): light cards that float on the cream field (pricing, testimonial portraits).
@@ -351,6 +424,7 @@ Every section opens the same way: Archivo eyebrow (14px, 600 weight, amber or ce
 
 ### Don't:
 - **Don't** introduce a second accent or a new grey; the palette is thirteen named colours, the two ink tiers derived from Pine Night, and their alphas.
+- **Don't** write a brand colour name (`pine-night`, `birch-bark`, `campfire-amber`, `cedar`…) in a block or a CSS module; it compiles to nothing. Use the job token for the role (The Job Token Rule).
 - **Don't** set cream text with an alpha (`text-pine-night/70` and friends); pick an ink tier instead.
 - **Don't** colour small text with Campfire Amber on cream (The Amber-Is-Not-Text Rule).
 - **Don't** use Caveat for more than one phrase per section or for any UI text.

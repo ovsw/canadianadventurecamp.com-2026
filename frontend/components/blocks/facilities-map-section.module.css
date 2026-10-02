@@ -4,8 +4,8 @@
 .section {
   position: relative;
   overflow: hidden;
-  background: var(--color-pine-night);
-  color: var(--color-birch-bark);
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
 .glow {
@@ -14,8 +14,8 @@
   pointer-events: none;
   background: radial-gradient(
     760px circle at 16% 10%,
-    rgb(82 112 51 / 26%),
-    rgb(82 112 51 / 0%) 70%
+    color-mix(in oklab, var(--color-fill-cedar) 26%, transparent),
+    color-mix(in oklab, var(--color-fill-cedar) 0%, transparent) 70%
   );
 }
 
@@ -34,7 +34,7 @@
 
 .eyebrow {
   margin-bottom: 20px;
-  color: var(--color-campfire-amber);
+  color: var(--color-link);
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 600;
@@ -43,7 +43,7 @@
 
 .title {
   margin: 0;
-  color: var(--color-birch-bark);
+  color: var(--color-foreground);
   font-family: var(--font-display), sans-serif;
   font-size: 58px;
   font-weight: 800;
@@ -54,7 +54,7 @@
 
 .title em,
 .mapHeading em {
-  color: var(--color-campfire-amber);
+  color: var(--color-emphasis);
   font-family: var(--font-accent), cursive;
   font-style: normal;
   font-weight: 600;
@@ -67,7 +67,7 @@
 .introduction {
   max-width: 400px;
   margin: 0 0 6px auto;
-  color: rgb(243 239 226 / 72%);
+  color: var(--color-muted-foreground);
   font-size: 16.5px;
   line-height: 1.6;
 }
@@ -89,7 +89,7 @@
   height: 560px;
   overflow: hidden;
   border-radius: var(--radius-xl);
-  background: var(--color-forest-panel);
+  background: var(--color-fill-panel);
   box-shadow: 0 36px 70px rgb(0 0 0 / 50%);
 }
 
@@ -120,7 +120,11 @@
   z-index: 2;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(0deg, rgb(13 18 8 / 74%), rgb(13 18 8 / 0%) 40%);
+  background: linear-gradient(
+    0deg,
+    color-mix(in oklab, var(--color-scrim) 74%, transparent),
+    color-mix(in oklab, var(--color-scrim) 0%, transparent) 40%
+  );
 }
 
 /* Markers and captions are chips, not buttons: a mark or a word on the
@@ -129,7 +133,7 @@
 .carouselCaption,
 .mapChip,
 .coordinateChip {
-  color: var(--color-birch-bark);
+  color: var(--color-foreground);
   font-family: var(--font-mono);
   font-size: 14px;
   white-space: nowrap;
@@ -153,10 +157,10 @@
   place-items: center;
   padding: 0 0 3px;
   transform: translateY(-50%);
-  border: 1px solid rgb(243 239 226 / 28%);
+  border: 1px solid color-mix(in oklab, var(--color-foreground) 28%, transparent);
   border-radius: 50%;
-  background: rgb(13 18 8 / 70%);
-  color: var(--color-birch-bark);
+  background: color-mix(in oklab, var(--color-scrim) 70%, transparent);
+  color: var(--color-foreground);
   cursor: pointer;
   font-size: 22px;
   line-height: 1;
@@ -164,8 +168,8 @@
 
 .carouselButton:hover,
 .carouselButton:focus-visible {
-  border-color: var(--color-campfire-amber);
-  background: rgb(13 18 8 / 75%);
+  border-color: var(--color-link);
+  background: color-mix(in oklab, var(--color-scrim) 75%, transparent);
 }
 
 .carouselPrevious {
@@ -192,14 +196,14 @@
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgb(243 239 226 / 42%);
+  background: color-mix(in oklab, var(--color-foreground) 42%, transparent);
   cursor: pointer;
   transition: width 0.4s ease;
 }
 
 .carouselDotActive {
   width: 27px;
-  background: var(--color-campfire-amber);
+  background: var(--color-mark);
 }
 
 .bigTopHeading {
@@ -227,12 +231,12 @@
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.9;
-  -webkit-text-stroke: 2.5px var(--color-campfire-amber);
+  -webkit-text-stroke: 2.5px var(--color-mark);
 }
 
 .metricUnit {
   padding-bottom: 8px;
-  color: var(--color-campfire-amber);
+  color: var(--color-link);
   font-size: 52px;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -242,7 +246,7 @@
 .metricTagline {
   display: block;
   margin-top: 6px;
-  color: var(--color-birch-bark);
+  color: var(--color-foreground);
   font-family: var(--font-accent), cursive;
   font-size: 29px;
   font-weight: 600;
@@ -251,7 +255,7 @@
 
 .bigTopBody {
   max-width: 520px;
-  color: rgb(243 239 226 / 75%);
+  color: color-mix(in oklab, var(--color-foreground) 75%, transparent);
   font-size: 17px;
   line-height: 1.62;
 }
@@ -267,7 +271,7 @@
 
 .mapHeading {
   margin: 0 0 50px;
-  color: var(--color-birch-bark);
+  color: var(--color-foreground);
   font-size: 38px;
   font-weight: 800;
   letter-spacing: -0.015em;
@@ -286,7 +290,7 @@
 .mapScroller {
   overflow-x: auto;
   overscroll-behavior-inline: contain;
-  scrollbar-color: var(--color-campfire-amber) var(--color-pine-night);
+  scrollbar-color: var(--color-mark) var(--color-background);
 }
 
 .mapViewport {
@@ -295,9 +299,9 @@
   width: 100%;
   /* Fallback only; the component sets the uploaded image's real ratio inline. */
   aspect-ratio: 1320 / 766;
-  border: 1px solid rgb(243 239 226 / 14%);
+  border: 1px solid color-mix(in oklab, var(--color-foreground) 14%, transparent);
   border-radius: var(--radius-xl);
-  background: var(--color-lake-night);
+  background: var(--color-fill-lake);
   box-shadow: 0 42px 84px rgb(0 0 0 / 50%);
 }
 
@@ -313,12 +317,16 @@
   background:
     linear-gradient(
       180deg,
-      rgb(13 18 8 / 56%),
-      rgb(13 18 8 / 4%) 26%,
-      rgb(13 18 8 / 4%) 58%,
-      rgb(13 18 8 / 50%)
+      color-mix(in oklab, var(--color-scrim) 56%, transparent),
+      color-mix(in oklab, var(--color-scrim) 4%, transparent) 26%,
+      color-mix(in oklab, var(--color-scrim) 4%, transparent) 58%,
+      color-mix(in oklab, var(--color-scrim) 50%, transparent)
     ),
-    radial-gradient(circle, transparent 44%, rgb(13 18 8 / 48%));
+    radial-gradient(
+      circle,
+      transparent 44%,
+      color-mix(in oklab, var(--color-scrim) 48%, transparent)
+    );
 }
 
 .mapPath {
@@ -340,23 +348,23 @@
 }
 
 .mapPathShadow {
-  stroke: rgb(13 18 8 / 50%);
+  stroke: color-mix(in oklab, var(--color-scrim) 50%, transparent);
   stroke-width: 10;
 }
 
 .mapPathDashed {
-  stroke: rgb(243 239 226 / 70%);
+  stroke: color-mix(in oklab, var(--color-foreground) 70%, transparent);
   stroke-width: 3;
   stroke-dasharray: 8 14;
 }
 
 .mapPathGlow {
-  stroke: rgb(232 162 59 / 28%);
+  stroke: color-mix(in oklab, var(--color-mark) 28%, transparent);
   stroke-width: 16;
 }
 
 .mapPathProgress {
-  stroke: var(--color-campfire-amber);
+  stroke: var(--color-mark);
   stroke-width: 6;
 }
 
@@ -381,9 +389,9 @@
   width: 15px;
   height: 15px;
   transform: translate(-50%, -50%) rotate(45deg);
-  border: 2px solid rgb(13 18 8 / 60%);
+  border: 2px solid color-mix(in oklab, var(--color-scrim) 60%, transparent);
   border-radius: 4px;
-  background: var(--color-birch-bark);
+  background: var(--color-fill-cream);
 }
 
 .stopProminent .stopDot {
@@ -392,13 +400,13 @@
 }
 
 .stopActive .stopDot {
-  background: var(--color-campfire-amber);
+  background: var(--color-mark);
 }
 
 .stopActive::before {
   position: absolute;
   inset: 0;
-  border: 1.5px solid var(--color-campfire-amber);
+  border: 1.5px solid var(--color-mark);
   border-radius: 50%;
   content: "";
   opacity: 0.65;
@@ -413,7 +421,7 @@
   /* The 0.13em tracking makes each character ~1.2ch wide, so the cap
      budgets 15ch of glyphs plus padding; long single words stay inside. */
   max-width: calc(15ch + 24px);
-  color: var(--color-birch-bark);
+  color: var(--color-foreground);
   font-family: var(--font-mono);
   font-size: 14.5px;
   font-weight: 700;
@@ -434,7 +442,7 @@
    wrapped lines fuse into one continuous shape. */
 .stopLabelText {
   padding: 3px 11px;
-  background: rgb(13 18 8 / 74%);
+  background: color-mix(in oklab, var(--color-scrim) 74%, transparent);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -449,15 +457,15 @@
 }
 
 .stopActive .stopLabel {
-  color: var(--color-campfire-amber);
-  filter: drop-shadow(1.5px 0 0 var(--color-campfire-amber))
-    drop-shadow(-1.5px 0 0 var(--color-campfire-amber))
-    drop-shadow(0 1.5px 0 var(--color-campfire-amber))
-    drop-shadow(0 -1.5px 0 var(--color-campfire-amber));
+  color: var(--color-link);
+  filter: drop-shadow(1.5px 0 0 var(--color-mark))
+    drop-shadow(-1.5px 0 0 var(--color-mark))
+    drop-shadow(0 1.5px 0 var(--color-mark))
+    drop-shadow(0 -1.5px 0 var(--color-mark));
 }
 
 .stopActive .stopLabelText {
-  background: rgb(13 18 8);
+  background: var(--color-scrim);
 }
 
 /* transform-origin sits on the marker-facing edge so the label grows away
@@ -517,10 +525,12 @@
   width: 22px;
   height: 22px;
   transform: translate(-50%, -50%);
-  border: 3px solid var(--color-pine-night);
+  border: 3px solid var(--color-fill-night);
   border-radius: 50%;
-  background: var(--color-campfire-amber);
-  box-shadow: 0 0 0 8px rgb(232 162 59 / 25%), 0 0 34px rgb(232 162 59 / 65%);
+  background: var(--color-mark);
+  box-shadow:
+    0 0 0 8px color-mix(in oklab, var(--color-mark) 25%, transparent),
+    0 0 34px color-mix(in oklab, var(--color-mark) 65%, transparent);
 }
 
 .mapTopBar {
@@ -540,7 +550,7 @@
 }
 
 .coordinateChip {
-  color: rgb(243 239 226 / 75%);
+  color: color-mix(in oklab, var(--color-foreground) 75%, transparent);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.1em;
 }
@@ -554,10 +564,10 @@
   width: 46px;
   height: 46px;
   place-items: center;
-  border: 1px solid rgb(243 239 226 / 22%);
+  border: 1px solid color-mix(in oklab, var(--color-foreground) 22%, transparent);
   border-radius: 50%;
-  background: rgb(13 18 8 / 72%);
-  color: var(--color-birch-bark);
+  background: color-mix(in oklab, var(--color-scrim) 72%, transparent);
+  color: var(--color-foreground);
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 700;
@@ -567,7 +577,7 @@
 .compassArrow {
   display: block;
   margin-bottom: 2px;
-  color: var(--color-campfire-amber);
+  color: var(--color-link);
   font-size: 14px;
 }
 
@@ -578,9 +588,9 @@
   left: 22px;
   width: 318px;
   padding: 22px 26px;
-  border: 1px solid rgb(243 239 226 / 18%);
+  border: 1px solid color-mix(in oklab, var(--color-foreground) 18%, transparent);
   border-radius: 20px;
-  background: rgb(13 18 8 / 80%);
+  background: color-mix(in oklab, var(--color-scrim) 80%, transparent);
 }
 
 .facilityCardMeta {
@@ -588,7 +598,7 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
-  color: rgb(243 239 226 / 55%);
+  color: color-mix(in oklab, var(--color-foreground) 55%, transparent);
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 500;
@@ -596,14 +606,14 @@
 }
 
 .facilityNumber {
-  color: var(--color-campfire-amber);
+  color: var(--color-link);
   font-variant-numeric: tabular-nums;
 }
 
 .facilityRule {
   flex: 1;
   height: 1px;
-  background: rgb(243 239 226 / 18%);
+  background: color-mix(in oklab, var(--color-foreground) 18%, transparent);
 }
 
 .tourControl {
@@ -617,10 +627,10 @@
   justify-content: center;
   gap: 8px;
   padding: 0 17px;
-  border: 1px solid rgb(243 239 226 / 28%);
+  border: 1px solid color-mix(in oklab, var(--color-foreground) 28%, transparent);
   border-radius: 999px;
-  background: rgb(13 18 8 / 82%);
-  color: var(--color-birch-bark);
+  background: color-mix(in oklab, var(--color-scrim) 82%, transparent);
+  color: var(--color-foreground);
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 700;
@@ -634,21 +644,21 @@
 }
 
 .tourControl:hover {
-  border-color: var(--color-campfire-amber);
-  color: var(--color-campfire-amber);
+  border-color: var(--color-link);
+  color: var(--color-link);
 }
 
 .tourControl:active {
-  background: rgb(13 18 8 / 95%);
+  background: color-mix(in oklab, var(--color-scrim) 95%, transparent);
 }
 
 .tourControl:focus-visible {
-  outline: 2px solid var(--color-campfire-amber);
+  outline: 2px solid var(--color-ring);
   outline-offset: 3px;
 }
 
 .facilityName {
-  color: var(--color-campfire-amber);
+  color: var(--color-emphasis);
   font-family: var(--font-accent), cursive;
   font-size: 35px;
   font-weight: 600;
@@ -657,7 +667,7 @@
 
 .facilityDescription {
   margin: 9px 0 0;
-  color: rgb(243 239 226 / 78%);
+  color: color-mix(in oklab, var(--color-foreground) 78%, transparent);
   font-size: 14px;
   line-height: 1.55;
 }
@@ -670,7 +680,7 @@
   padding: 10px 10px 0;
   transform: rotate(3deg);
   border-radius: 8px;
-  background: var(--color-birch-bark-bright);
+  background: var(--color-fill-bright);
   box-shadow: 0 30px 60px rgb(0 0 0 / 55%);
   transition: transform 0.35s ease;
 }
@@ -688,7 +698,7 @@
 
 .facilityPhoto figcaption {
   padding: 11px 4px;
-  color: rgb(22 32 15 / 65%);
+  color: color-mix(in oklab, var(--color-fill-bright-foreground) 65%, transparent);
   font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.4;

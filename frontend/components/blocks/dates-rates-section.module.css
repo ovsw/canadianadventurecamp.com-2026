@@ -27,7 +27,9 @@
   }
 }
 
-/* Duration tabs: lift + cedar border on hover for unselected tabs. */
+/* Duration tabs: lift + accent border on hover for unselected tabs. The
+   accent is the section's (--section-accent is set by the field utilities
+   only), not the browser's cream ink set. */
 @media (prefers-reduced-motion: no-preference) {
   .tab {
     transition:
@@ -85,7 +87,7 @@
   margin-inline: var(--bar-gap);
   border-radius: var(--radius-xs);
   background: var(--section-accent);
-  color: var(--color-birch-bark);
+  color: var(--color-link-foreground);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -99,20 +101,20 @@
 }
 
 .barLimited {
-  background: var(--color-campfire-amber);
-  color: var(--color-pine-night);
+  background: var(--color-fill-amber);
+  color: var(--color-fill-amber-foreground);
 }
 
 .barFull {
   background: repeating-linear-gradient(
     135deg,
-    rgba(22, 32, 15, 0.3) 0 5px,
-    rgba(22, 32, 15, 0.1) 5px 11px
+    color-mix(in oklab, var(--color-fill-night) 30%, transparent) 0 5px,
+    color-mix(in oklab, var(--color-fill-night) 10%, transparent) 5px 11px
   );
 }
 
 .dates {
-  color: rgba(22, 32, 15, 0.62);
+  color: color-mix(in oklab, var(--color-foreground) 62%, transparent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -123,16 +125,16 @@
 
 .row[data-open="true"]:hover .bar,
 .row[data-open="true"]:focus-visible .bar {
-  background: var(--color-campfire-amber);
-  color: var(--color-pine-night);
+  background: var(--color-fill-amber);
+  color: var(--color-fill-amber-foreground);
 }
 
 .row[data-open="true"]:hover .barLimited,
 .row[data-open="true"]:focus-visible .barLimited {
-  background: var(--color-campfire-amber-deep);
+  background: var(--color-primary-hover);
 }
 
 .row[data-open="true"]:hover .dates,
 .row[data-open="true"]:focus-visible .dates {
-  color: var(--color-pine-night);
+  color: var(--color-foreground);
 }
