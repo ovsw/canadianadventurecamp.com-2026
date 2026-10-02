@@ -60,7 +60,7 @@ export function SiteHeaderShell({
   return (
     <header
       className={cn(
-        "sticky top-0 z-60 w-full border-b transition-[transform,background-color,border-color] duration-300 ease-reveal motion-reduce:transition-none",
+        "sticky top-0 z-60 w-full rounded-b-[var(--radius-lg)] border-b transition-[transform,background-color,border-color] duration-300 ease-reveal motion-reduce:transition-none",
         theme === "dark" ? "field-night border-border" : "field-cream border-foreground/15",
         visible ? "translate-y-0" : "-translate-y-full",
       )}
