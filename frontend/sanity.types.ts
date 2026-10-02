@@ -780,72 +780,6 @@ export type LatestArticles = {
   };
 };
 
-export type Hero1 = {
-  _type: "hero-1";
-  tagLine?: string;
-  title?: string;
-  body?: BlockContent;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  links?: Array<
-    {
-      _key: string;
-    } & Link
-  >;
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
-export type BlockContent = Array<
-  | {
-      children?: Array<{
-        marks?: Array<string>;
-        text?: string;
-        _type: "span";
-        _key: string;
-      }>;
-      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
-      listItem?: "bullet" | "number";
-      markDefs?: Array<
-        {
-          _key: string;
-        } & CustomLink
-      >;
-      level?: number;
-      _type: "block";
-      _key: string;
-    }
-  | {
-      asset?: SanityImageAssetReference;
-      media?: unknown;
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      alt?: string;
-      _type: "image";
-      _key: string;
-    }
->;
-
 export type Hero = {
   _type: "hero";
   eyebrow?: string;
@@ -1072,6 +1006,52 @@ export type Link = {
   href?: string;
   target?: boolean;
   buttonVariant?: ButtonVariant;
+};
+
+export type BlockContent = Array<
+  | {
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "blockquote";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<
+        {
+          _key: string;
+        } & CustomLink
+      >;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }
+  | {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+      _key: string;
+    }
+>;
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
 };
 
 export type FooterColumn = {
@@ -2085,10 +2065,6 @@ export type AllSanitySchemaTypes =
   | FaqReference
   | FaqAccordion
   | LatestArticles
-  | Hero1
-  | SanityImageCrop
-  | SanityImageHotspot
-  | BlockContent
   | Hero
   | SeasonSession
   | FacilityReference
@@ -2110,6 +2086,9 @@ export type AllSanitySchemaTypes =
   | SectionBackground
   | ColorVariant
   | Link
+  | BlockContent
+  | SanityImageCrop
+  | SanityImageHotspot
   | FooterColumn
   | FooterContactLink
   | FooterLogo
