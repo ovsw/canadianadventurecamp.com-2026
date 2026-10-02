@@ -109,7 +109,7 @@ async function shoot(name, viewport) {
     await page.addStyleTag({
       content:
         "*{animation:none!important;transition:none!important;opacity:1!important}" +
-        "sanity-visual-editing,nextjs-portal{display:none!important}",
+        "sanity-visual-editing,nextjs-portal,a[href='#main-content']{display:none!important}",
     });
     await page.evaluate(() => {
       document.querySelector("header")?.style.setProperty("display", "none");

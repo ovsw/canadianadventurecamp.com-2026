@@ -91,6 +91,7 @@ const pageBuilderPreviewBlockTypes = new Set<PageBuilderBlockType>([
   "headingImage",
   "pricingSingleToggle",
   "faqHub",
+  "quoteWall",
   // page-builder-generator:preview-types
 ]);
 

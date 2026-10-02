@@ -64,7 +64,6 @@ export default function RootLayout({
       lang="en"
       className={`${bricolage.variable} ${archivo.variable} ${caveat.variable}`}
     >
-      <link rel="icon" href="/favicon.ico" />
       <body>
         {children}
         <Toaster position="top-center" richColors />
