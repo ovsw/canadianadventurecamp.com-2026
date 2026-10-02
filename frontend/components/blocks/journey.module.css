@@ -51,14 +51,14 @@
   width: var(--journey-dot);
   height: var(--journey-dot);
   border-radius: 999px;
-  background: var(--color-moss);
+  background: var(--color-fill-moss);
   box-shadow: 0 0 0 4px color-mix(in oklch, currentColor 85%, transparent);
   transition: background-color 0.2s ease, transform 0.35s var(--ease-overshoot);
 }
 
 .stop:hover .dot,
 .stop:focus-visible .dot {
-  background: var(--color-campfire-amber);
+  background: var(--color-mark);
   transform: scale(1.35);
 }
 

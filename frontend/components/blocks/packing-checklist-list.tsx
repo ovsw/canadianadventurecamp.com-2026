@@ -205,7 +205,7 @@ export default function PackingChecklistList({
     <div ref={rootRef}>
       <div
         className={cn(
-          "flex flex-col gap-4 border-y border-birch-bark/12 py-5 sm:flex-row sm:items-center sm:justify-between",
+          "flex flex-col gap-4 border-y border-border py-5 sm:flex-row sm:items-center sm:justify-between",
           styles.toolbar,
         )}
       >
@@ -246,10 +246,10 @@ export default function PackingChecklistList({
           return (
             <details
               className={cn(
-                "group/card rounded-xl border bg-forest-panel text-birch-bark",
+                "group/card card-panel rounded-xl border",
                 leaveAtHome
-                  ? "border-dashed border-birch-bark/25"
-                  : "border-birch-bark/12",
+                  ? "border-dashed border-foreground/25"
+                  : "border-border",
                 styles.card,
               )}
               key={group.key}
@@ -268,7 +268,7 @@ export default function PackingChecklistList({
                 >
                   {group.title}
                 </h3>
-                <span className="flex shrink-0 items-center gap-3 text-label text-birch-bark/60">
+                <span className="flex shrink-0 items-center gap-3 text-label text-foreground/60">
                   {leaveAtHome ? (
                     <span>{group.items.length} things</span>
                   ) : (
@@ -304,9 +304,9 @@ export default function PackingChecklistList({
                       >
                         <X
                           aria-hidden="true"
-                          className="mt-1 size-4 shrink-0 text-birch-bark/55"
+                          className="mt-1 size-4 shrink-0 text-foreground/55"
                         />
-                        <span className="text-[15px] leading-[1.5] text-birch-bark/80">
+                        <span className="text-[15px] leading-[1.5] text-foreground/80">
                           {item.label}
                         </span>
                       </li>
@@ -336,7 +336,7 @@ export default function PackingChecklistList({
                         {item.quantity ? (
                           <>
                             {/* The space keeps the accessible name "Label × 14". */}{" "}
-                            <span className="text-label text-birch-bark/55">
+                            <span className="text-label text-foreground/55">
                               × {item.quantity}
                             </span>
                           </>

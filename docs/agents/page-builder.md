@@ -175,6 +175,24 @@ Preserve each document's draft or published state.
 For visual changes, treat the existing design system as the default:
 
 - Reuse tokens from `frontend/app/globals.css`.
+- Colour follows the Job Token Rule in `frontend/DESIGN.md` § Colors. Component
+  code uses only job tokens (`text-foreground`, `text-muted-foreground`,
+  `text-link`, `text-emphasis`, `bg-primary`, `border-border`, `bg-card`,
+  `bg-fill-panel`…). Brand colour names (`pine-night`, `birch-bark`,
+  `campfire-amber`, `cedar`…) exist only in `globals.css` and compile to no
+  class; a brand name in a block is a bug.
+- The section root gets `sectionThemeClass(background)`, which applies a
+  field utility (`field-white`, `field-cream`, `field-green`). The field
+  re-points the contextual tokens for everything inside, so a block does not
+  branch on the theme to pick colours: `text-link` is Cedar on cream and
+  Campfire Amber on green by itself. Branch only when the design really
+  differs between fields.
+- A coloured card that keeps one fill on every background uses a `card-*`
+  utility (`card-panel`, `card-cream`, `card-bright`, `card-amber`,
+  `card-moss-tint`); copy over a photo or a gradient gets `on-dark` or
+  `on-light`. Inside either, keep using the contextual tokens.
+- Hairlines are the field's text colour at a low alpha: `border-border`
+  (12%) or `border-foreground/NN`. Never a literal colour.
 - Reuse the section shell (`sectionThemeClass`, `py-section`, `container-content`), shared buttons, and nearby block patterns before adding a new primitive.
 - Check the full page and mobile layout, not only the section in isolation.
 - Introduce a one-off value or variant only when the design intentionally requires it.

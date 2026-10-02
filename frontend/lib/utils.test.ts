@@ -3,11 +3,14 @@ import { cn } from "./utils";
 
 describe("cn", () => {
   it("keeps design-system text utilities next to a text colour", () => {
-    expect(cn("mb-5 text-eyebrow", "text-cedar")).toBe(
-      "mb-5 text-eyebrow text-cedar",
+    expect(cn("mb-5 text-eyebrow", "text-link")).toBe(
+      "mb-5 text-eyebrow text-link",
     );
-    expect(cn("text-label", "text-pine-night/60")).toBe(
-      "text-label text-pine-night/60",
+    expect(cn("text-label", "text-foreground/60")).toBe(
+      "text-label text-foreground/60",
+    );
+    expect(cn("text-step-number", "text-link")).toBe(
+      "text-step-number text-link",
     );
   });
 

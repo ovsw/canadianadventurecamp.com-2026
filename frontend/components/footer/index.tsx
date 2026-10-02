@@ -10,7 +10,7 @@ export { SiteFooter } from "./site-footer";
 function FooterUnavailable() {
   return (
     <footer
-      className="bg-pine-night px-content-x py-10 text-birch-bark"
+      className="field-night px-content-x py-10"
       data-footer-state="unavailable"
     >
       Footer information is temporarily unavailable.

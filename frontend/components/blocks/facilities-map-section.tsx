@@ -176,7 +176,7 @@ export default function FacilitiesMapSection({
   return (
     <section
       aria-labelledby={headingId}
-      className={`${styles.section} px-content-x py-section`}
+      className={`field-night ${styles.section} px-content-x py-section`}
       id={`facilities-${sectionKey}`}
     >
       <div className={styles.glow} />

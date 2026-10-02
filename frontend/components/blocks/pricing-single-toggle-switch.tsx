@@ -37,7 +37,7 @@ export function PricingSingleToggleSwitch({
   return (
     <div data-sanity={sanity}>
       <div
-        className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-pine-night/10 bg-white p-5 text-pine-night sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-7 sm:py-6"
+        className="on-light flex flex-col gap-5 rounded-[var(--radius-lg)] border border-foreground/10 bg-white p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-7 sm:py-6"
         data-sanity={selected.sanity.option}
       >
         <p aria-live="polite" className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
@@ -50,7 +50,7 @@ export function PricingSingleToggleSwitch({
           </span>
           {selected.unit ? (
             <span
-              className="text-[15px] font-medium text-ink-soft"
+              className="text-[15px] font-medium text-soft-foreground"
               data-sanity={selected.sanity.unit}
             >
               {selected.unit}
@@ -61,7 +61,7 @@ export function PricingSingleToggleSwitch({
         {options.length > 1 ? (
           <div
             aria-label="Price option"
-            className="inline-flex shrink-0 self-start rounded-pill border border-pine-night/12 bg-birch-bark p-1 sm:self-auto"
+            className="inline-flex shrink-0 self-start rounded-pill border border-foreground/12 bg-fill-cream p-1 sm:self-auto"
             role="group"
           >
             {options.map((option) => {
@@ -72,8 +72,8 @@ export function PricingSingleToggleSwitch({
                   className={cn(
                     "focus-ring rounded-pill px-4 py-2 text-[14px] font-semibold leading-none transition-[background-color,color] motion-base motion-reduce:transition-none",
                     active
-                      ? "bg-pine-night text-birch-bark"
-                      : "text-ink-soft hover:text-pine-night",
+                      ? "bg-fill-night text-fill-night-foreground"
+                      : "text-soft-foreground hover:text-foreground",
                   )}
                   key={option.key}
                   onClick={() => setSelectedKey(option.key)}

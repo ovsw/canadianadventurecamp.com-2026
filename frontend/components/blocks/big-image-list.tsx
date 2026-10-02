@@ -24,7 +24,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-campfire-amber not-italic">{children}</em>
+      <em className="font-accent text-primary not-italic">{children}</em>
     ),
   },
 };
@@ -68,7 +68,7 @@ export default function BigImageList({
           <div>
             {hasText(eyebrow) ? (
               <p
-                className="mb-5 text-eyebrow text-campfire-amber"
+                className="mb-5 text-eyebrow text-primary"
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {eyebrow}
@@ -148,7 +148,7 @@ export default function BigImageList({
                   </p>
                 </div>
                 <figure
-                  className="relative aspect-[3/2] w-full overflow-hidden rounded-md bg-forest-panel shadow-media-rest"
+                  className="relative aspect-[3/2] w-full overflow-hidden rounded-md bg-fill-panel shadow-media-rest"
                   data-sanity={dataAttribute?.(`${stopPath}.image`)}
                 >
                   {stop.image?.asset?._id ? (
@@ -166,7 +166,7 @@ export default function BigImageList({
                   ) : (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-0 flex items-center justify-center font-display text-6xl text-birch-bark/20"
+                      className="absolute inset-0 flex items-center justify-center font-display text-6xl text-fill-panel-foreground/20"
                     >
                       {number}
                     </span>

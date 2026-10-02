@@ -41,7 +41,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="block font-accent text-[clamp(2.625rem,5vw,4.25rem)] font-semibold not-italic leading-none text-campfire-amber">
+      <em className="block font-accent text-[clamp(2.625rem,5vw,4.25rem)] font-semibold not-italic leading-none text-emphasis">
         {children}
       </em>
     ),
@@ -69,25 +69,25 @@ export default function InternationalCampersSection({
   return (
     <section
       aria-labelledby={headingId}
-      className="relative overflow-hidden bg-pine-night text-birch-bark"
+      className="field-night relative overflow-hidden"
       id={`international-${stegaClean(_key)}`}
     >
       {/* Subtle green radial glow */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(720px_circle_at_72%_52%,rgba(82,112,51,.28),transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(720px_circle_at_72%_52%,color-mix(in_oklab,var(--color-fill-cedar)_28%,transparent),transparent_70%)]" />
 
       <div className="container-content relative py-section">
         {/* Row 1: Eyebrow + Heading | Description + Link */}
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-[70px]">
           <div>
             <p
-              className={`text-eyebrow mb-5 text-campfire-amber ${styles.reveal}`}
+              className={`text-eyebrow mb-5 text-link ${styles.reveal}`}
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
             </p>
 
             <h2
-              className={`font-display text-display-page font-extrabold leading-[1.02] tracking-tight text-birch-bark ${styles.reveal}`}
+              className={`font-display text-display-page font-extrabold leading-[1.02] tracking-tight text-foreground ${styles.reveal}`}
               data-sanity={dataAttribute?.("heading")}
               id={headingId}
             >
@@ -97,7 +97,7 @@ export default function InternationalCampersSection({
 
           <div className="lg:flex lg:flex-col lg:justify-end">
             <p
-              className={`max-w-[500px] text-[17px] leading-relaxed text-birch-bark/75 ${styles.reveal}`}
+              className={`max-w-[500px] text-[17px] leading-relaxed text-foreground/75 ${styles.reveal}`}
               data-sanity={dataAttribute?.("description")}
             >
               {description}
@@ -105,7 +105,7 @@ export default function InternationalCampersSection({
 
             {href && cleanLinkLabel && (
               <Link
-                className={`mt-6 inline-flex w-auto self-start items-center gap-2 rounded-pill border border-dashed border-birch-bark/35 px-5 py-3 text-sm font-semibold text-birch-bark/65 transition-colors hover:border-campfire-amber hover:text-campfire-amber focus-ring motion-reduce:transition-none ${styles.reveal}`}
+                className={`mt-6 inline-flex w-auto self-start items-center gap-2 rounded-pill border border-dashed border-foreground/35 px-5 py-3 text-sm font-semibold text-foreground/65 transition-colors hover:border-link hover:text-link focus-ring motion-reduce:transition-none ${styles.reveal}`}
                 data-sanity={dataAttribute?.("linkLabel")}
                 href={href}
                 {...(stegaClean(link?.openInNewTab) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -122,9 +122,9 @@ export default function InternationalCampersSection({
           <InternationalCampersGlobe routes={routes} destination={destination}>
             <div className={styles.reveal}>
               {/* List header */}
-              <div className="-mx-3.5 flex items-center gap-[9px] border-b border-birch-bark/[.22] px-3.5 pb-3">
-                <span className="h-[7px] w-[7px] rounded-full bg-campfire-amber" />
-                <span className="font-mono text-[14px] leading-snug font-medium tracking-[.01em] text-birch-bark/75">
+              <div className="-mx-3.5 flex items-center gap-[9px] border-b border-foreground/[.22] px-3.5 pb-3">
+                <span className="h-[7px] w-[7px] rounded-full bg-mark" />
+                <span className="font-mono text-[14px] leading-snug font-medium tracking-[.01em] text-foreground/75">
                   Campers join us from
                 </span>
               </div>
@@ -136,30 +136,30 @@ export default function InternationalCampersSection({
                   <button
                     type="button"
                     data-route={route.code}
-                    className={`group flex w-full items-center gap-4 border-b border-dashed border-birch-bark/[.13] px-3.5 py-3 -mx-3.5 transition-colors hover:bg-birch-bark/[.06] focus-visible:outline-2 focus-visible:outline-campfire-amber focus-visible:outline-offset-[-2px] ${styles.routeRow}`}
+                    className={`group flex w-full items-center gap-4 border-b border-dashed border-foreground/[.13] px-3.5 py-3 -mx-3.5 transition-colors hover:bg-foreground/[.06] focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-[-2px] ${styles.routeRow}`}
                     aria-label={`${route.city}, ${route.country}${route.pickup ? " - pickup hub" : ""}`}
                   >
                     {/* Airport code badge */}
                     <span className={`shrink-0 rounded-lg border px-0 py-1.5 text-center font-mono text-[14px] font-bold tracking-[.01em] w-[58px] transition-colors ${
                       route.pickup
-                        ? "border-campfire-amber/60 bg-campfire-amber/15 text-campfire-amber"
-                        : "border-birch-bark/20 bg-birch-bark/[.06] text-birch-bark/70 group-hover:border-birch-bark/40"
+                        ? "border-link/60 bg-link/15 text-link"
+                        : "border-foreground/20 bg-foreground/[.06] text-foreground/70 group-hover:border-foreground/40"
                     }`}>
                       {route.code}
                     </span>
 
                     {/* City + country */}
                     <span className="flex min-w-0 items-baseline gap-2.5 flex-wrap">
-                      <span className="font-display text-[18.5px] font-bold text-birch-bark">
+                      <span className="font-display text-[18.5px] font-bold text-foreground">
                         {route.city}
                       </span>
-                      <span className="text-[14px] leading-snug text-birch-bark/75">
+                      <span className="text-[14px] leading-snug text-foreground/75">
                         {route.country}
                       </span>
                     </span>
 
                     {/* EN ROUTE indicator - hidden when list is narrow */}
-                    <span className={`ml-auto font-mono text-[14px] leading-snug font-medium tracking-[.01em] text-campfire-amber opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${styles.enRouteLabel}`}>
+                    <span className={`ml-auto font-mono text-[14px] leading-snug font-medium tracking-[.01em] text-link opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${styles.enRouteLabel}`}>
                       EN ROUTE ✦
                     </span>
                   </button>

@@ -13,12 +13,12 @@ import {
 /** Label colours hold 4.5:1 on cream; the bar colour carries the status. */
 function availabilityClass(status: string) {
   if (status === "full") {
-    return "text-ink-muted";
+    return "text-muted-foreground";
   }
   if (status === "limited") {
-    return "text-cedar-deep";
+    return "text-link-hover";
   }
-  return "text-ink-muted";
+  return "text-muted-foreground";
 }
 
 /** Animates the displayed rate from its previous value to the active length's rate over ~620ms. */
@@ -95,7 +95,10 @@ export default function DatesRatesBrowser({
   });
 
   return (
-    <div className="md:rounded-[1.75rem] md:border md:border-pine-night/10 md:bg-birch-bark-bright md:p-8 md:shadow-[0_30px_70px_rgba(22,32,15,0.12)]">
+    // The browser keeps the cream ink set on every field (on-light); its open
+    // bars and tab hover borders still read --section-accent, which only the
+    // field utilities set, so they follow the section's own accent.
+    <div className="on-light md:rounded-[1.75rem] md:border md:border-foreground/10 md:bg-fill-bright md:p-8 md:shadow-[0_30px_70px_color-mix(in_oklab,var(--color-fill-night)_12%,transparent)]">
       <div className="flex flex-col lg:block">
       <div className="max-lg:contents lg:mb-9 lg:flex lg:flex-wrap lg:items-center lg:gap-3">
         <div
@@ -110,8 +113,8 @@ export default function DatesRatesBrowser({
                 aria-selected={selected}
                 className={
                   selected
-                    ? `focus-ring rounded-pill border border-cedar bg-cedar px-5 py-3 text-sm font-bold tracking-normal text-birch-bark ${styles.tab}`
-                    : `focus-ring rounded-pill border border-pine-night/18 bg-transparent px-5 py-3 text-sm font-bold tracking-normal text-ink-muted motion-reduce:transition-none ${styles.tab}`
+                    ? `focus-ring rounded-pill border border-link bg-link px-5 py-3 text-sm font-bold tracking-normal text-link-foreground ${styles.tab}`
+                    : `focus-ring rounded-pill border border-foreground/18 bg-transparent px-5 py-3 text-sm font-bold tracking-normal text-muted-foreground motion-reduce:transition-none ${styles.tab}`
                 }
                 key={length.key}
                 onClick={() => setSelectedKey(length.key)}
@@ -128,7 +131,7 @@ export default function DatesRatesBrowser({
         {portalLink ? (
           <div className="order-4 mt-8 lg:order-none lg:ml-auto lg:mt-0">
             <a
-              className="focus-ring inline-flex w-fit items-center gap-1.5 text-[15px] font-semibold text-cedar underline decoration-cedar/30 underline-offset-4 transition-colors hover:text-cedar-deep hover:decoration-cedar-deep motion-reduce:transition-none"
+              className="focus-ring inline-flex w-fit items-center gap-1.5 text-[15px] font-semibold text-link underline decoration-link/30 underline-offset-4 transition-colors hover:text-link-hover hover:decoration-link-hover motion-reduce:transition-none"
               data-sanity={portalLink.dataSanity}
               href={portalLink.href}
               rel={portalLink.openInNewTab ? "noopener noreferrer" : undefined}
@@ -143,7 +146,7 @@ export default function DatesRatesBrowser({
 
       <div className="max-lg:contents lg:grid lg:grid-cols-[320px_1fr] lg:gap-14">
         <aside className="order-1 lg:order-none">
-          <p className="text-label text-ink-muted">
+          <p className="text-label text-muted-foreground">
             Per camper &middot; session rate
           </p>
           <div className="mt-3 flex items-baseline gap-2.5">
@@ -153,12 +156,12 @@ export default function DatesRatesBrowser({
             >
               {formatRate(animatedRate)}
             </span>
-            <span className="font-mono text-[14px] font-bold tracking-[0.01em] text-ink-soft">
+            <span className="font-mono text-[14px] font-bold tracking-[0.01em] text-soft-foreground">
               +tax
             </span>
           </div>
           <p
-            className="mt-3 font-accent text-3xl font-semibold leading-tight text-cedar"
+            className="mt-3 font-accent text-3xl font-semibold leading-tight text-emphasis"
             data-sanity={activeLength.descriptionAttribute}
           >
             {activeLength.description}
@@ -167,13 +170,13 @@ export default function DatesRatesBrowser({
 
         <div className="order-3 mt-6 flex flex-col lg:order-none lg:mt-0">
           <div className="mb-3 hidden gap-3 md:grid md:grid-cols-[7.5rem_1fr] md:gap-3.5">
-                <span className="text-label hidden self-end text-ink-soft md:block">
+                <span className="text-label hidden self-end text-soft-foreground md:block">
               Session dates
             </span>
             <span className="relative hidden h-[15px] md:block">
               {ticks.map((tick, index) => (
                 <span
-                  className={`absolute bottom-0 font-mono text-[14px] leading-snug tracking-[0.01em] text-ink-muted ${index % 2 === 1 ? "hidden xl:inline" : ""}`}
+                  className={`absolute bottom-0 font-mono text-[14px] leading-snug tracking-[0.01em] text-muted-foreground ${index % 2 === 1 ? "hidden xl:inline" : ""}`}
                   key={tick.date}
                   style={
                     index === 0
@@ -200,9 +203,9 @@ export default function DatesRatesBrowser({
               <span />
               {/* Dividers mark the true date positions; bars inset from them. */}
               <span className="relative block">
-                <span className="absolute inset-y-0 left-1/4 border-l border-dashed border-pine-night/14" />
-                <span className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14" />
-                <span className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14" />
+                <span className="absolute inset-y-0 left-1/4 border-l border-dashed border-foreground/14" />
+                <span className="absolute inset-y-0 left-1/2 border-l border-dashed border-foreground/14" />
+                <span className="absolute inset-y-0 left-3/4 border-l border-dashed border-foreground/14" />
               </span>
             </div>
             {slots.map(({ isOpenSlot, row }, index) => {
@@ -237,17 +240,17 @@ export default function DatesRatesBrowser({
                       >
                         {row.dates}
                       </span>
-                      <span className="font-mono text-[14px] leading-snug tracking-[0.01em] text-ink-muted">
+                      <span className="font-mono text-[14px] leading-snug tracking-[0.01em] text-muted-foreground">
                         {row.weeksLabel}
                       </span>
                     </span>
                     <span
-                      className={`${styles.track} relative block h-10 overflow-hidden rounded-xs bg-pine-night/5`}
+                      className={`${styles.track} relative block h-10 overflow-hidden rounded-xs bg-foreground/5`}
                     >
                       {/* Mobile dividers: the desktop overlay grid is hidden below md. */}
-                      <span aria-hidden="true" className="absolute inset-y-0 left-1/4 border-l border-dashed border-pine-night/14 md:hidden" />
-                      <span aria-hidden="true" className="absolute inset-y-0 left-1/2 border-l border-dashed border-pine-night/14 md:hidden" />
-                      <span aria-hidden="true" className="absolute inset-y-0 left-3/4 border-l border-dashed border-pine-night/14 md:hidden" />
+                      <span aria-hidden="true" className="absolute inset-y-0 left-1/4 border-l border-dashed border-foreground/14 md:hidden" />
+                      <span aria-hidden="true" className="absolute inset-y-0 left-1/2 border-l border-dashed border-foreground/14 md:hidden" />
+                      <span aria-hidden="true" className="absolute inset-y-0 left-3/4 border-l border-dashed border-foreground/14 md:hidden" />
                       <span
                         className={`${styles.bar} inline-flex items-center justify-center font-mono text-[14px] font-bold tracking-[0.01em] ${isFull ? styles.barFull : ""} ${row.status === "limited" ? styles.barLimited : ""}`}
                         data-sanity={row.availabilityStatusAttribute}
@@ -283,7 +286,6 @@ export default function DatesRatesBrowser({
         </div>
       </div>
       </div>
-
     </div>
   );
 }

@@ -60,7 +60,7 @@ function GroupPanelContent({
       <p
         className={cn(
           "text-label mb-2 px-2",
-          dark ? "text-birch-bark/55" : "text-ink-muted",
+          dark ? "text-foreground/55" : "text-muted-foreground",
         )}
       >
         {label}
@@ -70,20 +70,17 @@ function GroupPanelContent({
           <div className="grid content-start gap-1" key={columnIndex}>
             {column.map((child) => (
               <HeaderLink
-                className={cn(
-                  "group/nav-link flex items-start gap-3 rounded-[var(--radius-md)] px-2 py-2.5 transition-colors motion-fast focus-ring",
-                  dark ? "hover:bg-birch-bark/6" : "hover:bg-cedar/8",
-                )}
+                className="group/nav-link flex items-start gap-3 rounded-[var(--radius-md)] px-2 py-2.5 transition-colors motion-fast hover:bg-accent focus-ring"
                 key={child.key}
                 link={child.link}
               >
                 {child.icon ? (
                   <span
                     className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors motion-fast [&_svg]:size-5",
+                      "flex size-10 shrink-0 items-center justify-center rounded-full text-link transition-colors motion-fast [&_svg]:size-5",
                       dark
-                        ? "bg-forest-floor text-campfire-amber group-hover/nav-link:bg-forest-floor/75"
-                        : "bg-cedar/10 text-cedar group-hover/nav-link:bg-cedar/15",
+                        ? "bg-fill-forest group-hover/nav-link:bg-fill-forest/75"
+                        : "bg-link/10 group-hover/nav-link:bg-link/15",
                     )}
                   >
                     <NavigationIcon icon={child.icon} />
@@ -94,17 +91,14 @@ function GroupPanelContent({
                     {child.label}
                     <ChevronRight
                       aria-hidden="true"
-                      className={cn(
-                        "size-4 shrink-0 opacity-0 transition-all motion-fast group-hover/nav-link:translate-x-0.5 group-hover/nav-link:opacity-100",
-                        dark ? "text-campfire-amber" : "text-cedar",
-                      )}
+                      className="size-4 shrink-0 text-link opacity-0 transition-all motion-fast group-hover/nav-link:translate-x-0.5 group-hover/nav-link:opacity-100"
                     />
                   </span>
                   {child.description ? (
                     <span
                       className={cn(
                         "text-[15px] leading-tight",
-                        dark ? "text-birch-bark/65" : "text-ink-muted",
+                        dark ? "text-foreground/65" : "text-muted-foreground",
                       )}
                     >
                       {child.description}
@@ -238,16 +232,14 @@ export function DesktopNav({
     : { duration: 0 };
   const fade = { duration: prefersReducedMotion ? 0 : 0.14 };
   // The open trigger and its panel are one surface, so they share a colour.
-  const panelSurfaceClassName = dark
-    ? "bg-forest-panel text-birch-bark"
-    : "bg-birch-bark-bright text-pine-night";
+  const panelSurfaceClassName = "bg-card text-card-foreground";
   const primaryLinkClassName = cn(
     // px-2 -mx-1 keeps the same flow width as the old px-1 while giving the
     // hover pill room around the label.
-    "-mx-1 flex min-h-11 items-center whitespace-nowrap rounded-control px-2 text-[15px] font-medium transition-colors motion-fast focus-ring",
+    "-mx-1 flex min-h-11 items-center whitespace-nowrap rounded-control px-2 text-[15px] font-medium text-soft-foreground transition-colors motion-fast focus-ring",
     dark
-      ? "text-birch-bark/85 hover:bg-birch-bark/8 hover:text-birch-bark"
-      : "text-ink-soft hover:bg-cedar/10 hover:text-cedar-deep",
+      ? "hover:bg-foreground/8 hover:text-foreground"
+      : "hover:bg-link/10 hover:text-link-hover",
   );
 
   return (
@@ -278,10 +270,7 @@ export function DesktopNav({
             className={cn(
               primaryLinkClassName,
               "mx-0 gap-1.5 px-2.5",
-              isActive && [
-                panelSurfaceClassName,
-                dark ? "hover:text-birch-bark" : "hover:text-pine-night",
-              ],
+              isActive && [panelSurfaceClassName, "hover:text-card-foreground"],
             )}
             key={item.key}
             onClick={(event) => {
@@ -327,11 +316,9 @@ export function DesktopNav({
             <motion.div
               animate={{ height: placement?.height ?? "auto" }}
               className={cn(
-                "relative overflow-hidden rounded-[var(--radius-md)] border",
+                "relative overflow-hidden rounded-[var(--radius-md)] border border-border",
                 panelSurfaceClassName,
-                dark
-                  ? "border-birch-bark/15 shadow-lift"
-                  : "border-pine-night/12 shadow-card-rest-cream",
+                dark ? "shadow-lift" : "shadow-card-rest-cream",
               )}
               initial={false}
               transition={morph}

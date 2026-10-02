@@ -23,7 +23,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[var(--section-accent)] not-italic">
+      <em className="font-accent text-emphasis not-italic">
         {children}
       </em>
     ),
@@ -77,7 +77,7 @@ export default function Journey({
         <header className="max-w-3xl">
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-[var(--section-accent)]"
+              className="mb-5 text-eyebrow text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -163,7 +163,7 @@ export default function Journey({
                 {stop.image?.asset?._id ? (
                   <figure
                     className={cn(
-                      "relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-birch-bark/12 bg-forest-panel",
+                      "relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-fill-panel-foreground/12 bg-fill-panel",
                       styles.figure,
                     )}
                     data-sanity={dataAttribute?.(`${stopPath}.image`)}
@@ -184,7 +184,7 @@ export default function Journey({
                   <div
                     aria-hidden="true"
                     className={cn(
-                      "flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-birch-bark/12 bg-forest-panel",
+                      "flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-fill-panel-foreground/12 bg-fill-panel",
                       styles.figure,
                     )}
                     data-sanity={dataAttribute?.(`${stopPath}.image`)}

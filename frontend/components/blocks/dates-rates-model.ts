@@ -191,7 +191,7 @@ export function prepareLengths({
             season._id,
             `${path}.availabilityStatus`,
           ),
-          barClass: status === "full" ? "stripedFull" : "bg-cedar",
+          barClass: status === "full" ? "stripedFull" : "bg-fill-cedar",
           dates: `${formatShortDate(startDate)}-${formatShortDate(endDate)}`,
           isFull: status === "full",
           label,

@@ -3,64 +3,126 @@
 /*
  * Canadian Adventure Camp — Design System
  *
- * Tokens from DESIGN.md and .impeccable/design.json.
+ * Tokens from DESIGN.md.
  * Font families are loaded via next/font/google in layout.tsx and injected as
  * CSS variables (--font-display, --font-body, --font-accent). The mono/label
  * stack is a system font — no web font needed.
  *
- * Colour names follow the prototype palette (13 named colours + translucent
- * derivatives). Only the named stops are registered — no 50-950 ramps.
+ * Colour has two layers:
+ *   1. Brand colours (--brand-*) in :root. They are the palette (13 named
+ *      colours and the two ink tiers). They sit outside @theme, so Tailwind
+ *      makes no classes for them: component code cannot use them.
+ *   2. Job tokens (--color-*) in @theme. Each says what a colour is for
+ *      (background, foreground, link, primary…) and points at a brand colour.
+ *      Component code uses only these. The field utilities (field-white,
+ *      field-cream, field-green, field-night) and the card-* utilities
+ *      re-point the contextual ones, so one piece of markup is right on any
+ *      ground. See DESIGN.md § Colors.
  */
 
 /* ------------------------------------------------------------------ */
-/* Theme                                                               */
+/* Brand colours (layer 1: the palette, never used in components)      */
 /* ------------------------------------------------------------------ */
 
-@theme {
-  /* ---- Colours ---- */
-  --color-campfire-amber: oklch(76.3% 0.141 73);
-  --color-navigation-yellow: oklch(84% 0.095 92);
-  --color-campfire-amber-deep: oklch(67.3% 0.135 71);
+:root {
+  --brand-campfire-amber: oklch(76.3% 0.141 73);
+  --brand-campfire-amber-deep: oklch(67.3% 0.135 71);
+  --brand-navigation-yellow: oklch(84% 0.095 92);
 
-  --color-cedar: oklch(50.7% 0.095 131);
-  --color-cedar-deep: oklch(40.7% 0.079 131);
-  --color-sunlit-moss: oklch(86.4% 0.096 122);
-  --color-moss: oklch(78% 0.118 123);
+  --brand-cedar: oklch(50.7% 0.095 131);
+  --brand-cedar-deep: oklch(40.7% 0.079 131);
+  --brand-sunlit-moss: oklch(86.4% 0.096 122);
+  --brand-moss: oklch(78% 0.118 123);
 
-  --color-pine-night: oklch(22.8% 0.034 133);
-  --color-forest-floor: oklch(37.7% 0.07 130);
-  --color-forest-panel: oklch(30% 0.047 134);
-  --color-birch-bark: oklch(95.2% 0.018 93);
-  --color-birch-bark-bright: oklch(97.6% 0.012 92);
-  --color-lake-night: oklch(20% 0.035 261);
+  --brand-pine-night: oklch(22.8% 0.034 133);
+  --brand-forest-floor: oklch(37.7% 0.07 130);
+  --brand-forest-panel: oklch(30% 0.047 134);
+  --brand-birch-bark: oklch(95.2% 0.018 93);
+  --brand-birch-bark-bright: oklch(97.6% 0.012 92);
+  --brand-lake-night: oklch(20% 0.035 261);
 
   /* Ink tiers — solid secondary text on cream. Pine Night's hue and chroma at
      a raised lightness, so the value is the same on Birch Bark and on Birch
      Bark Bright. Contrast on Birch Bark (the darker cream): ink-muted 5.1:1,
      ink-soft 6.5:1. Text on cream never uses an alpha; see DESIGN.md. */
-  --color-ink-muted: oklch(50% 0.034 133);
-  --color-ink-soft: oklch(44.5% 0.034 133);
+  --brand-ink-muted: oklch(50% 0.034 133);
+  --brand-ink-soft: oklch(44.5% 0.034 133);
 
-  --color-ember-red: oklch(53.5% 0.154 38);
+  --brand-ember-red: oklch(53.5% 0.154 38);
 
-  /* Semantic aliases used by components (home-hero, button, etc.) */
-  --color-cream: var(--color-birch-bark);
-  --color-accent: var(--color-campfire-amber);
-  --color-accent-hover: var(--color-campfire-amber-deep);
-  --color-forest-900: var(--color-forest-floor);
+  /* Shadow ink: Pine Night pulled towards black, the colour every resting
+     and lifted shadow is cast in. Derived, so a palette change reaches it. */
+  --brand-shadow-ink: color-mix(in srgb, var(--brand-pine-night) 58%, black);
+}
 
-  /* shadcn/ui semantic tokens — mapped to the camp palette */
-  --color-background: var(--color-birch-bark);
-  --color-foreground: var(--color-pine-night);
-  --color-primary: var(--color-campfire-amber);
-  --color-primary-foreground: var(--color-pine-night);
-  --color-secondary: var(--color-forest-panel);
-  --color-secondary-foreground: var(--color-birch-bark);
-  --color-muted: var(--color-birch-bark-bright);
-  --color-muted-foreground: var(--color-ink-muted);
-  --color-card: var(--color-birch-bark);
-  --color-card-foreground: var(--color-pine-night);
-  --color-destructive: var(--color-ember-red);
+/* ------------------------------------------------------------------ */
+/* Theme (layer 2: job tokens)                                         */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  /* ---- Field tokens ----
+     These follow the ground. The defaults are the Cream field; field-white,
+     field-green and field-night re-point them (see "Fields" below), and the
+     card-* utilities re-point them inside a coloured card. */
+  --color-background: var(--brand-birch-bark); /* the section's ground */
+  --color-foreground: var(--brand-pine-night); /* headings and primary text */
+  --color-soft-foreground: var(--brand-ink-soft); /* near-primary supporting text: prices, dates, labels, long copy */
+  --color-muted-foreground: var(--brand-ink-muted); /* descriptions, captions, FAQ answers, sub-lines */
+  --color-muted: var(--brand-birch-bark-bright); /* quiet fill: placeholders, table stripes */
+  --color-card: var(--brand-birch-bark-bright); /* the natural card on this ground */
+  --color-card-foreground: var(--brand-pine-night);
+  --color-popover: var(--brand-birch-bark-bright); /* menus and popovers */
+  --color-popover-foreground: var(--brand-pine-night);
+  --color-border: color-mix(in oklab, var(--brand-pine-night) 12%, transparent); /* hairlines, dividers, card edges */
+  --color-input: color-mix(in oklab, var(--brand-pine-night) 20%, transparent); /* form field borders */
+  --color-ring: var(--brand-campfire-amber); /* focus rings (the focus-ring utility) */
+  --color-link: var(--brand-cedar); /* links, eyebrows, check marks, small accent text */
+  --color-link-hover: var(--brand-cedar-deep);
+  --color-link-foreground: var(--brand-birch-bark); /* text on a link-coloured fill: selected tabs and chips */
+  --color-prose-link: var(--brand-cedar); /* links inside running text and card copy */
+  --color-prose-link-hover: var(--brand-cedar-deep);
+  --color-emphasis: var(--brand-cedar); /* the script phrase in a headline */
+  --color-accent: color-mix(in oklab, var(--brand-cedar) 8%, transparent); /* shadcn: quiet hover and selected background */
+  --color-accent-foreground: var(--brand-pine-night);
+
+  /* ---- Action tokens (the same on every field) ---- */
+  --color-primary: var(--brand-campfire-amber); /* the main action: Enroll */
+  --color-primary-foreground: var(--brand-pine-night);
+  --color-primary-hover: var(--brand-campfire-amber-deep);
+  --color-secondary: var(--brand-forest-panel); /* shadcn: the subtle dark fill (ghost hover, badges) */
+  --color-secondary-foreground: var(--brand-birch-bark);
+  --color-destructive: var(--brand-ember-red); /* errors and the "Full" session marker */
+  --color-destructive-foreground: var(--brand-birch-bark-bright);
+  --color-mark: var(--brand-campfire-amber); /* brand marks: dots, bars, rules, photo rings, bullets, text strokes */
+  --color-handwriting: var(--brand-forest-floor); /* green ink for handwritten entries on a note card (large script only) */
+
+  /* ---- Fills (the same on every field) ----
+     Named fills for cards, media frames, chips and bars that keep one colour
+     whatever the ground. For a card with text inside, use the card-*
+     utilities below: they paint the fill and re-point the text tokens. The
+     bare fill tokens are for placeholders, dots, bars and gradients. */
+  --color-fill-night: var(--brand-pine-night); /* the darkest ground: heroes, header, footer, map, media placeholders */
+  --color-fill-night-foreground: var(--brand-birch-bark);
+  --color-fill-forest: var(--brand-forest-floor); /* the green ground as a fill: tiles, the nav sheet */
+  --color-fill-forest-foreground: var(--brand-birch-bark);
+  --color-fill-panel: var(--brand-forest-panel); /* dark panels and media frames */
+  --color-fill-panel-foreground: var(--brand-birch-bark);
+  --color-fill-cream: var(--brand-birch-bark); /* cream cards and photo mats */
+  --color-fill-cream-foreground: var(--brand-pine-night);
+  --color-fill-bright: var(--brand-birch-bark-bright); /* near-white cards and sheets */
+  --color-fill-bright-foreground: var(--brand-pine-night);
+  --color-fill-amber: var(--brand-campfire-amber); /* stamps, highlight cards, selected chips */
+  --color-fill-amber-foreground: var(--brand-pine-night);
+  --color-fill-yellow: var(--brand-navigation-yellow); /* the activity catalogue jump bar only */
+  --color-fill-yellow-foreground: var(--brand-pine-night);
+  --color-fill-cedar: var(--brand-cedar); /* green bars and check circles */
+  --color-fill-cedar-foreground: var(--brand-birch-bark);
+  --color-fill-moss: var(--brand-moss); /* open-session bars and timeline dots */
+  --color-fill-moss-tint: var(--brand-sunlit-moss); /* the soft green tint behind panels and portraits */
+  --color-fill-moss-tint-foreground: var(--brand-pine-night);
+  --color-fill-lake: var(--brand-lake-night); /* the globe container only */
+  --color-fill-lake-foreground: var(--brand-birch-bark);
+  --color-scrim: var(--brand-shadow-ink); /* dark scrims and glass fills over photos and the map */
 
   /* ---- Typography ---- */
 
@@ -86,12 +148,14 @@
      padding from section-boundaries.ts would never apply. */
   --spacing-gutter: 56px;
 
-  /* ---- Shadows ---- */
-  --shadow-lift: 0 40px 70px -22px rgba(13, 18, 8, 0.65);
-  --shadow-media-rest: 0 36px 70px rgba(13, 18, 8, 0.45);
+  /* ---- Shadows ----
+     Cast in shadow ink (see the brand layer) or plain black, through
+     color-mix, so a palette change reaches them. */
+  --shadow-lift: 0 40px 70px -22px color-mix(in oklab, var(--brand-shadow-ink) 65%, transparent);
+  --shadow-media-rest: 0 36px 70px color-mix(in oklab, var(--brand-shadow-ink) 45%, transparent);
   --shadow-globe-rest: 0 42px 84px rgba(0, 0, 0, 0.5);
-  --shadow-card-rest-cream: 0 22px 44px rgba(22, 32, 15, 0.12);
-  --shadow-stamp: 0 10px 24px rgba(13, 18, 8, 0.35);
+  --shadow-card-rest-cream: 0 22px 44px color-mix(in oklab, var(--brand-pine-night) 12%, transparent);
+  --shadow-stamp: 0 10px 24px color-mix(in oklab, var(--brand-shadow-ink) 35%, transparent);
   --shadow-hero-cta: 0 12px 32px rgba(0, 0, 0, 0.35);
 
   /* ---- Container ---- */
@@ -132,8 +196,8 @@
   --section-pad-bottom: var(--section-pad);
   /* Dark band surface: a warm glow near the top, a shadow settling at the
      bottom, and a grain over both. Tune here. */
-  --band-glow: color-mix(in oklch, var(--color-campfire-amber) 14%, transparent);
-  --band-shade: color-mix(in oklch, var(--color-pine-night) 45%, transparent);
+  --band-glow: color-mix(in oklch, var(--brand-campfire-amber) 14%, transparent);
+  --band-shade: color-mix(in oklch, var(--brand-pine-night) 45%, transparent);
   --grain-size: 180px;
   --grain-opacity: 0.45;
   --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
@@ -436,9 +500,282 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
 
 @utility focus-ring {
   &:focus-visible {
-    outline: 2px solid var(--color-campfire-amber);
+    outline: 2px solid var(--color-ring);
     outline-offset: 3px;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Fields                                                              */
+/* ------------------------------------------------------------------ */
+
+/* A field is a ground. Each utility paints it and re-points the contextual
+   job tokens for everything inside, so the same markup is right on every
+   ground with no "on dark" branches. Editors choose White, Cream or Green
+   for a section; sectionThemeClass() in components/blocks/section-theme.ts
+   maps the stored value to field-white, field-cream or field-green. Night
+   is the fixed darkest ground: the header, the footer, media heroes and the
+   island map. --section-accent and --section-surface are stand-ins that
+   older blocks still read; they follow the link and background tokens.
+
+   The light and dark token sets are repeated in on-light and on-dark, which
+   re-point the tokens without painting, for text over a photo or a gradient.
+   Keep the four lists in step. */
+
+@utility field-white {
+  --color-background: var(--brand-birch-bark-bright);
+  --color-foreground: var(--brand-pine-night);
+  --color-soft-foreground: var(--brand-ink-soft);
+  --color-muted-foreground: var(--brand-ink-muted);
+  --color-muted: var(--brand-birch-bark-bright);
+  --color-card: var(--brand-birch-bark-bright);
+  --color-card-foreground: var(--brand-pine-night);
+  --color-popover: var(--brand-birch-bark-bright);
+  --color-popover-foreground: var(--brand-pine-night);
+  --color-border: color-mix(in oklab, var(--brand-pine-night) 12%, transparent);
+  --color-input: color-mix(in oklab, var(--brand-pine-night) 20%, transparent);
+  --color-link: var(--brand-cedar);
+  --color-link-hover: var(--brand-cedar-deep);
+  --color-link-foreground: var(--brand-birch-bark);
+  --color-prose-link: var(--brand-cedar);
+  --color-prose-link-hover: var(--brand-cedar-deep);
+  --color-emphasis: var(--brand-cedar);
+  --color-accent: color-mix(in oklab, var(--brand-cedar) 8%, transparent);
+  --color-accent-foreground: var(--brand-pine-night);
+  --section-accent: var(--color-link);
+  --section-surface: var(--color-background);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+@utility field-cream {
+  --color-background: var(--brand-birch-bark);
+  --color-foreground: var(--brand-pine-night);
+  --color-soft-foreground: var(--brand-ink-soft);
+  --color-muted-foreground: var(--brand-ink-muted);
+  --color-muted: var(--brand-birch-bark-bright);
+  --color-card: var(--brand-birch-bark-bright);
+  --color-card-foreground: var(--brand-pine-night);
+  --color-popover: var(--brand-birch-bark-bright);
+  --color-popover-foreground: var(--brand-pine-night);
+  --color-border: color-mix(in oklab, var(--brand-pine-night) 12%, transparent);
+  --color-input: color-mix(in oklab, var(--brand-pine-night) 20%, transparent);
+  --color-link: var(--brand-cedar);
+  --color-link-hover: var(--brand-cedar-deep);
+  --color-link-foreground: var(--brand-birch-bark);
+  --color-prose-link: var(--brand-cedar);
+  --color-prose-link-hover: var(--brand-cedar-deep);
+  --color-emphasis: var(--brand-cedar);
+  --color-accent: color-mix(in oklab, var(--brand-cedar) 8%, transparent);
+  --color-accent-foreground: var(--brand-pine-night);
+  --section-accent: var(--color-link);
+  --section-surface: var(--color-background);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Green: the editor's dark field. Birch Bark text at 72% for secondary copy
+   (5.4:1 on Forest Floor), amber for links and the script phrase, moss for
+   links inside running text. */
+@utility field-green {
+  --color-background: var(--brand-forest-floor);
+  --color-foreground: var(--brand-birch-bark);
+  --color-soft-foreground: color-mix(in oklab, var(--brand-birch-bark) 85%, transparent);
+  --color-muted-foreground: color-mix(in oklab, var(--brand-birch-bark) 72%, transparent);
+  --color-muted: var(--brand-forest-panel);
+  --color-card: var(--brand-forest-panel);
+  --color-card-foreground: var(--brand-birch-bark);
+  --color-popover: var(--brand-forest-panel);
+  --color-popover-foreground: var(--brand-birch-bark);
+  --color-border: color-mix(in oklab, var(--brand-birch-bark) 12%, transparent);
+  --color-input: color-mix(in oklab, var(--brand-birch-bark) 28%, transparent);
+  --color-link: var(--brand-campfire-amber);
+  --color-link-hover: var(--brand-campfire-amber-deep);
+  --color-link-foreground: var(--brand-pine-night);
+  --color-prose-link: var(--brand-moss);
+  --color-prose-link-hover: var(--brand-sunlit-moss);
+  --color-emphasis: var(--brand-campfire-amber);
+  --color-accent: color-mix(in oklab, var(--brand-birch-bark) 6%, transparent);
+  --color-accent-foreground: var(--brand-birch-bark);
+  --section-accent: var(--color-link);
+  --section-surface: var(--color-background);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Night: the fixed darkest ground. Same text treatment as Green; hairlines
+   sit at 15% because the ground is darker. */
+@utility field-night {
+  --color-background: var(--brand-pine-night);
+  --color-foreground: var(--brand-birch-bark);
+  --color-soft-foreground: color-mix(in oklab, var(--brand-birch-bark) 85%, transparent);
+  --color-muted-foreground: color-mix(in oklab, var(--brand-birch-bark) 72%, transparent);
+  --color-muted: var(--brand-forest-panel);
+  --color-card: var(--brand-forest-panel);
+  --color-card-foreground: var(--brand-birch-bark);
+  --color-popover: var(--brand-forest-panel);
+  --color-popover-foreground: var(--brand-birch-bark);
+  --color-border: color-mix(in oklab, var(--brand-birch-bark) 15%, transparent);
+  --color-input: color-mix(in oklab, var(--brand-birch-bark) 28%, transparent);
+  --color-link: var(--brand-campfire-amber);
+  --color-link-hover: var(--brand-campfire-amber-deep);
+  --color-link-foreground: var(--brand-pine-night);
+  --color-prose-link: var(--brand-moss);
+  --color-prose-link-hover: var(--brand-sunlit-moss);
+  --color-emphasis: var(--brand-campfire-amber);
+  --color-accent: color-mix(in oklab, var(--brand-birch-bark) 6%, transparent);
+  --color-accent-foreground: var(--brand-birch-bark);
+  --section-accent: var(--color-link);
+  --section-surface: var(--color-background);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Token-only variants: the Cream and Night sets without a painted ground,
+   for copy that sits over a photo, a video or a gradient. They leave
+   --section-accent alone: it belongs to the section's field. */
+@utility on-light {
+  --color-foreground: var(--brand-pine-night);
+  --color-soft-foreground: var(--brand-ink-soft);
+  --color-muted-foreground: var(--brand-ink-muted);
+  --color-muted: var(--brand-birch-bark-bright);
+  --color-card: var(--brand-birch-bark-bright);
+  --color-card-foreground: var(--brand-pine-night);
+  --color-popover: var(--brand-birch-bark-bright);
+  --color-popover-foreground: var(--brand-pine-night);
+  --color-border: color-mix(in oklab, var(--brand-pine-night) 12%, transparent);
+  --color-input: color-mix(in oklab, var(--brand-pine-night) 20%, transparent);
+  --color-link: var(--brand-cedar);
+  --color-link-hover: var(--brand-cedar-deep);
+  --color-link-foreground: var(--brand-birch-bark);
+  --color-prose-link: var(--brand-cedar);
+  --color-prose-link-hover: var(--brand-cedar-deep);
+  --color-emphasis: var(--brand-cedar);
+  --color-accent: color-mix(in oklab, var(--brand-cedar) 8%, transparent);
+  --color-accent-foreground: var(--brand-pine-night);
+  color: var(--color-foreground);
+}
+
+@utility on-dark {
+  --color-foreground: var(--brand-birch-bark);
+  --color-soft-foreground: color-mix(in oklab, var(--brand-birch-bark) 85%, transparent);
+  --color-muted-foreground: color-mix(in oklab, var(--brand-birch-bark) 72%, transparent);
+  --color-muted: var(--brand-forest-panel);
+  --color-card: var(--brand-forest-panel);
+  --color-card-foreground: var(--brand-birch-bark);
+  --color-popover: var(--brand-forest-panel);
+  --color-popover-foreground: var(--brand-birch-bark);
+  --color-border: color-mix(in oklab, var(--brand-birch-bark) 15%, transparent);
+  --color-input: color-mix(in oklab, var(--brand-birch-bark) 28%, transparent);
+  --color-link: var(--brand-campfire-amber);
+  --color-link-hover: var(--brand-campfire-amber-deep);
+  --color-link-foreground: var(--brand-pine-night);
+  --color-prose-link: var(--brand-moss);
+  --color-prose-link-hover: var(--brand-sunlit-moss);
+  --color-emphasis: var(--brand-campfire-amber);
+  --color-accent: color-mix(in oklab, var(--brand-birch-bark) 6%, transparent);
+  --color-accent-foreground: var(--brand-birch-bark);
+  color: var(--color-foreground);
+}
+
+/* ------------------------------------------------------------------ */
+/* Cards                                                               */
+/* ------------------------------------------------------------------ */
+
+/* A coloured card is a small field: it paints its fill and re-points the
+   text tokens inside it, so a cream card on the Green field does not inherit
+   amber links and translucent cream text. Small-text contrast on each fill
+   (WCAG AA asks 4.5:1): panel — birch bark 11.7:1, at 72% 6.8:1, amber
+   6.2:1, moss 6.9:1; cream and bright — ink muted 5.1:1 and 5.9:1, cedar
+   4.9:1; amber — pine night 7.7:1 (at 62% it would be 3.5:1, so secondary
+   text on amber stays solid); moss tint — ink muted 4.6:1, cedar deep 6.9:1. */
+@utility card-panel {
+  background-color: var(--color-fill-panel);
+  color: var(--color-fill-panel-foreground);
+  --color-foreground: var(--brand-birch-bark);
+  --color-soft-foreground: color-mix(in oklab, var(--brand-birch-bark) 85%, transparent);
+  --color-muted-foreground: color-mix(in oklab, var(--brand-birch-bark) 72%, transparent);
+  --color-border: color-mix(in oklab, var(--brand-birch-bark) 12%, transparent);
+  --color-link: var(--brand-campfire-amber);
+  --color-link-hover: var(--brand-campfire-amber-deep);
+  --color-link-foreground: var(--brand-pine-night);
+  --color-prose-link: var(--brand-moss);
+  --color-prose-link-hover: var(--brand-sunlit-moss);
+  --color-emphasis: var(--brand-campfire-amber);
+  --color-accent: color-mix(in oklab, var(--brand-birch-bark) 6%, transparent);
+  --color-accent-foreground: var(--brand-birch-bark);
+}
+
+@utility card-cream {
+  background-color: var(--color-fill-cream);
+  color: var(--color-fill-cream-foreground);
+  --color-foreground: var(--brand-pine-night);
+  --color-soft-foreground: var(--brand-ink-soft);
+  --color-muted-foreground: var(--brand-ink-muted);
+  --color-border: color-mix(in oklab, var(--brand-pine-night) 12%, transparent);
+  --color-link: var(--brand-cedar);
+  --color-link-hover: var(--brand-cedar-deep);
+  --color-link-foreground: var(--brand-birch-bark);
+  --color-prose-link: var(--brand-cedar);
+  --color-prose-link-hover: var(--brand-cedar-deep);
+  --color-emphasis: var(--brand-cedar);
+  --color-accent: color-mix(in oklab, var(--brand-cedar) 8%, transparent);
+  --color-accent-foreground: var(--brand-pine-night);
+}
+
+@utility card-bright {
+  background-color: var(--color-fill-bright);
+  color: var(--color-fill-bright-foreground);
+  --color-foreground: var(--brand-pine-night);
+  --color-soft-foreground: var(--brand-ink-soft);
+  --color-muted-foreground: var(--brand-ink-muted);
+  --color-border: color-mix(in oklab, var(--brand-pine-night) 12%, transparent);
+  --color-link: var(--brand-cedar);
+  --color-link-hover: var(--brand-cedar-deep);
+  --color-link-foreground: var(--brand-birch-bark);
+  --color-prose-link: var(--brand-cedar);
+  --color-prose-link-hover: var(--brand-cedar-deep);
+  --color-emphasis: var(--brand-cedar);
+  --color-accent: color-mix(in oklab, var(--brand-cedar) 8%, transparent);
+  --color-accent-foreground: var(--brand-pine-night);
+}
+
+/* Amber: only Pine Night passes as small text on it, so every text token is
+   solid ink. */
+@utility card-amber {
+  background-color: var(--color-fill-amber);
+  color: var(--color-fill-amber-foreground);
+  --color-foreground: var(--brand-pine-night);
+  --color-soft-foreground: var(--brand-pine-night);
+  --color-muted-foreground: var(--brand-pine-night);
+  --color-border: color-mix(in oklab, var(--brand-pine-night) 20%, transparent);
+  --color-link: var(--brand-pine-night);
+  --color-link-hover: var(--brand-pine-night);
+  --color-link-foreground: var(--brand-campfire-amber);
+  --color-prose-link: var(--brand-pine-night);
+  --color-prose-link-hover: var(--brand-pine-night);
+  --color-emphasis: var(--brand-pine-night);
+  --color-accent: color-mix(in oklab, var(--brand-pine-night) 8%, transparent);
+  --color-accent-foreground: var(--brand-pine-night);
+}
+
+/* Moss tint: Sunlit Moss at 40% over Birch Bark, the "included" panel. Small
+   accent text takes Cedar Deep because Cedar is under 4.5:1 here. */
+@utility card-moss-tint {
+  background-color: color-mix(in oklab, var(--color-fill-moss-tint) 40%, var(--color-fill-cream));
+  color: var(--color-fill-moss-tint-foreground);
+  --color-foreground: var(--brand-pine-night);
+  --color-soft-foreground: var(--brand-ink-soft);
+  --color-muted-foreground: var(--brand-ink-muted);
+  --color-border: color-mix(in oklab, var(--brand-cedar) 20%, transparent);
+  --color-link: var(--brand-cedar-deep);
+  --color-link-hover: var(--brand-cedar-deep);
+  --color-link-foreground: var(--brand-birch-bark);
+  --color-prose-link: var(--brand-cedar-deep);
+  --color-prose-link-hover: var(--brand-cedar-deep);
+  --color-emphasis: var(--brand-cedar-deep);
+  --color-accent: color-mix(in oklab, var(--brand-cedar) 8%, transparent);
+  --color-accent-foreground: var(--brand-pine-night);
 }
 
 /* ------------------------------------------------------------------ */
@@ -453,12 +790,9 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
 /* Border utilities                                                    */
 /* ------------------------------------------------------------------ */
 
+/* A stronger hairline; follows the field's text colour. */
 @utility border-strong {
-  border-color: rgba(22, 32, 15, 0.18);
-}
-
-@utility edge-on-dark-strong {
-  border-color: rgba(243, 239, 226, 0.22);
+  border-color: color-mix(in oklab, var(--color-foreground) 18%, transparent);
 }
 
 /* ------------------------------------------------------------------ */
@@ -480,8 +814,8 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
 
 body {
   font-family: var(--font-body);
-  color: var(--color-pine-night);
-  background-color: var(--color-birch-bark);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

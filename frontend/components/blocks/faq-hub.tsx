@@ -48,7 +48,7 @@ export default function FaqHub({
   const cream = stegaClean(background) !== "green";
   const sectionKey = stegaClean(_key);
   const headingId = `faq-hub-${sectionKey}-title`;
-  const answerComponents = faqAnswerComponents(cream);
+  const answerComponents = faqAnswerComponents();
 
   const items: FaqHubBrowserItem[] = (faqs ?? []).flatMap((faq) => {
     const question = stegaClean(faq.title)?.trim();
@@ -73,10 +73,7 @@ export default function FaqHub({
       strong: ({ children }) => <strong>{children}</strong>,
       em: ({ children }) => (
         <em
-          className={cn(
-            "font-accent not-italic",
-            cream ? "text-cedar" : "text-campfire-amber",
-          )}
+          className="font-accent not-italic text-emphasis"
         >
           {children}
         </em>
@@ -95,10 +92,7 @@ export default function FaqHub({
         <header className={cn("max-w-[40rem]", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className={cn(
-                "mb-5 text-eyebrow",
-                cream ? "text-cedar" : "text-campfire-amber",
-              )}
+              className="mb-5 text-eyebrow text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -113,10 +107,7 @@ export default function FaqHub({
           </h2>
           {hasText(subtitle) ? (
             <p
-              className={cn(
-                "mt-6 text-pretty text-[17px] leading-[1.6]",
-                cream ? "text-ink-muted" : "text-birch-bark/72",
-              )}
+              className="mt-6 text-pretty text-[17px] leading-[1.6] text-muted-foreground"
               data-sanity={dataAttribute?.("subtitle")}
             >
               {subtitle}

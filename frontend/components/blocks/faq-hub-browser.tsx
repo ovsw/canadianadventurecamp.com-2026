@@ -65,8 +65,8 @@ export default function FaqHubBrowser({
       ? "No questions match"
       : `${result.total} of ${pool} ${result.total === 1 ? "question matches" : "questions match"}`;
 
-  const muted = cream ? "text-ink-muted" : "text-birch-bark/72";
-  const accent = cream ? "text-cedar" : "text-campfire-amber";
+  const muted = "text-muted-foreground";
+  const accent = "text-link";
   const rule = faqRuleClass(cream);
   // Category pills follow the site's other selectors: the chosen one fills
   // with the field's accent (Cedar on cream, Campfire Amber on green), the
@@ -76,11 +76,9 @@ export default function FaqHubBrowser({
     styles.pill,
   );
   const pillRest = cream
-    ? "border-pine-night/14 text-pine-night hover:border-cedar"
-    : "border-birch-bark/22 text-birch-bark hover:border-campfire-amber";
-  const pillPressed = cream
-    ? "border-cedar bg-cedar text-birch-bark"
-    : "border-campfire-amber bg-campfire-amber text-pine-night";
+    ? "border-foreground/14 text-foreground hover:border-link"
+    : "border-foreground/22 text-foreground hover:border-link";
+  const pillPressed = "border-link bg-link text-link-foreground";
 
   return (
     <div className="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-[minmax(0,0.34fr)_minmax(0,1fr)] lg:gap-x-16 lg:gap-y-10 xl:gap-x-24">
@@ -97,9 +95,10 @@ export default function FaqHubBrowser({
             autoComplete="off"
             className={cn(
               "pl-12 pr-4",
+              "border-input text-foreground",
               cream
-                ? "border-pine-night/20 bg-white/70 text-pine-night placeholder:text-ink-muted/80"
-                : "border-birch-bark/28 bg-birch-bark/8 text-birch-bark placeholder:text-birch-bark/55",
+                ? "bg-white/70 placeholder:text-muted-foreground/80"
+                : "bg-foreground/8 placeholder:text-foreground/55",
             )}
             enterKeyHint="search"
             id={searchId}
@@ -158,7 +157,7 @@ export default function FaqHubBrowser({
                         that opens each topic. */}
                     <span
                       aria-hidden="true"
-                      className="absolute -bottom-px left-0 h-[3px] w-12 rounded-xs bg-campfire-amber"
+                      className="absolute -bottom-px left-0 h-[3px] w-12 rounded-xs bg-mark"
                     />
                     <h3 className="font-display text-title-lg" id={headingId}>
                       {group.category.title}
@@ -194,7 +193,7 @@ export default function FaqHubBrowser({
               <a
                 className={cn(
                   "focus-ring font-semibold underline underline-offset-4",
-                  cream ? "text-cedar hover:text-cedar-deep" : "text-campfire-amber",
+                  cream ? "text-link hover:text-link-hover" : "text-link",
                 )}
                 href={CALL_DIRECTORS_HREF}
               >

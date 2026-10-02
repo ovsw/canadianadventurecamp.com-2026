@@ -15,7 +15,7 @@ export default async function MainLayout({
   return (
     <>
       <a
-        className="fixed top-4 left-4 z-80 -translate-y-[calc(100%+2rem)] rounded-control bg-pine-night px-4 py-3 font-semibold text-birch-bark transition-transform focus:translate-y-0 focus:outline-2 focus:outline-offset-2 focus:outline-campfire-amber motion-reduce:transition-none"
+        className="fixed top-4 left-4 z-80 -translate-y-[calc(100%+2rem)] rounded-control bg-fill-night px-4 py-3 font-semibold text-fill-night-foreground transition-transform focus:translate-y-0 focus:outline-2 focus:outline-offset-2 focus:outline-ring motion-reduce:transition-none"
         href="#main-content"
       >
         Skip to content

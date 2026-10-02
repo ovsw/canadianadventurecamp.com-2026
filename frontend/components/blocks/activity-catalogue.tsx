@@ -73,9 +73,9 @@ function ActivityCard({
       className="group/card min-w-0"
       data-sanity={referenceDataAttribute}
     >
-      <div className={cn("flex h-full flex-col overflow-hidden rounded-lg border bg-forest-panel", styles.card)}>
+      <div className={cn("card-panel flex h-full flex-col overflow-hidden rounded-lg border", styles.card)}>
       <div
-        className="relative aspect-[4/3] overflow-hidden bg-forest-floor"
+        className="relative aspect-[4/3] overflow-hidden bg-fill-forest"
         data-sanity={activityDataAttribute?.(activity._id, "image")}
       >
         {image ? (
@@ -100,7 +100,7 @@ function ActivityCard({
              still need a photo. Never an empty or broken image. */
           <div
             aria-label="Photo to come"
-            className="absolute inset-0 grid place-items-center border-b border-dotted border-birch-bark/18 text-birch-bark/60"
+            className="absolute inset-0 grid place-items-center border-b border-dotted border-foreground/18 text-foreground/60"
             role="img"
           >
             <span className="flex flex-col items-center gap-2">
@@ -113,14 +113,14 @@ function ActivityCard({
 
       <div className="flex flex-1 flex-col gap-1.5 px-5 pt-4.5 pb-5">
         <h4
-          className="font-display text-[17px] font-bold leading-tight tracking-[-0.01em] text-birch-bark sm:text-xl"
+          className="font-display text-[17px] font-bold leading-tight tracking-[-0.01em] text-foreground sm:text-xl"
           data-sanity={activityDataAttribute?.(activity._id, "title")}
         >
           {title}
         </h4>
         {line ? (
           <p
-            className="text-pretty text-[15px] leading-[1.5] text-birch-bark/70"
+            className="text-pretty text-[15px] leading-[1.5] text-foreground/70"
             data-sanity={activityDataAttribute?.(activity._id, "line")}
           >
             {line}
@@ -130,7 +130,7 @@ function ActivityCard({
         {programHref ? (
           <div className="mt-auto pt-2">
             <Link
-              className="focus-ring inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-sunlit-moss underline-offset-[0.2em] transition-colors motion-base hover:text-birch-bark hover:underline"
+              className="focus-ring inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-prose-link-hover underline-offset-[0.2em] transition-colors motion-base hover:text-foreground hover:underline"
               data-sanity={activityDataAttribute?.(activity._id, "program")}
               href={programHref}
             >

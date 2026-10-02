@@ -35,7 +35,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent text-[var(--section-accent)] not-italic">{children}</em>
+      <em className="font-accent text-emphasis not-italic">{children}</em>
     ),
   },
 };
@@ -92,7 +92,7 @@ export default function IncludedExtras({
         <header className={cn("max-w-3xl", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className="mb-5 text-eyebrow text-[var(--section-accent)]"
+              className="mb-5 text-eyebrow text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -119,7 +119,7 @@ export default function IncludedExtras({
           <section
             aria-labelledby={pricesId}
             className={cn(
-              "mt-14 rounded-[1.625rem] border border-pine-night/10 bg-white p-7 text-pine-night sm:p-10",
+              "on-light mt-14 rounded-[1.625rem] border border-foreground/10 bg-white p-7 sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("prices")}
@@ -146,21 +146,21 @@ export default function IncludedExtras({
                         "sm:flex-row sm:items-end sm:justify-between sm:gap-10",
                       !single &&
                         index > 0 &&
-                        "border-t border-pine-night/10 pt-8 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-10",
+                        "border-t border-foreground/10 pt-8 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-10",
                     )}
                     data-sanity={dataAttribute?.(tierPath)}
                     key={tier._key}
                   >
                     <div className={cn("min-w-0", single && "max-w-md")}>
                       <p
-                        className="text-label text-ink-soft"
+                        className="text-label text-soft-foreground"
                         data-sanity={dataAttribute?.(`${tierPath}.name`)}
                       >
                         {tier.name}
                       </p>
                       {hasText(tier.note) ? (
                         <p
-                          className="mt-2 text-[15px] leading-snug text-ink-muted"
+                          className="mt-2 text-[15px] leading-snug text-muted-foreground"
                           data-sanity={dataAttribute?.(`${tierPath}.note`)}
                         >
                           {tier.note}
@@ -181,7 +181,7 @@ export default function IncludedExtras({
                       </span>
                       {hasText(tier.unit) ? (
                         <span
-                          className="font-mono text-[14px] font-bold tracking-[0.01em] text-ink-soft"
+                          className="font-mono text-[14px] font-bold tracking-[0.01em] text-soft-foreground"
                           data-sanity={dataAttribute?.(`${tierPath}.unit`)}
                         >
                           {tier.unit}
@@ -205,12 +205,12 @@ export default function IncludedExtras({
           <section
             aria-labelledby={includedId}
             className={cn(
-              "flex flex-col rounded-[1.625rem] border border-cedar/20 bg-[color-mix(in_oklab,var(--color-sunlit-moss)_40%,var(--color-birch-bark))] p-7 text-pine-night sm:p-10",
+              "card-moss-tint flex flex-col rounded-[1.625rem] border border-border p-7 sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("included")}
           >
-            <p className="text-label text-cedar-deep">Included</p>
+            <p className="text-label text-link">Included</p>
             <h3
               className="mt-4 font-display text-[1.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2rem]"
               data-sanity={dataAttribute?.("included.heading")}
@@ -220,14 +220,14 @@ export default function IncludedExtras({
             </h3>
             {hasText(included?.note) ? (
               <p
-                className="mt-2 text-[15px] leading-snug text-ink-muted"
+                className="mt-2 text-[15px] leading-snug text-muted-foreground"
                 data-sanity={dataAttribute?.("included.note")}
               >
                 {included?.note}
               </p>
             ) : null}
             <ul
-              className="mt-8 divide-y divide-pine-night/12 border-t border-pine-night/12"
+              className="mt-8 divide-y divide-foreground/12 border-t border-foreground/12"
               data-sanity={dataAttribute?.("included.items")}
             >
               {includedItems.map((item) => (
@@ -240,7 +240,7 @@ export default function IncludedExtras({
                 >
                   <span
                     aria-hidden="true"
-                    className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-cedar text-birch-bark"
+                    className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-fill-cedar text-fill-cedar-foreground"
                   >
                     <Check className="size-3.5" strokeWidth={3} />
                   </span>
@@ -249,7 +249,7 @@ export default function IncludedExtras({
                       {item.label}
                     </span>
                     {hasText(item.detail) ? (
-                      <span className="mt-1 block text-[15px] leading-snug text-ink-muted">
+                      <span className="mt-1 block text-[15px] leading-snug text-muted-foreground">
                         {item.detail}
                       </span>
                     ) : null}
@@ -263,12 +263,12 @@ export default function IncludedExtras({
           <section
             aria-labelledby={extrasId}
             className={cn(
-              "flex flex-col rounded-[1.625rem] border border-pine-night/10 bg-white p-7 text-pine-night sm:p-10",
+              "on-light flex flex-col rounded-[1.625rem] border border-foreground/10 bg-white p-7 sm:p-10",
               styles.reveal,
             )}
             data-sanity={dataAttribute?.("extras")}
           >
-            <p className="text-label text-ink-soft">Extra</p>
+            <p className="text-label text-soft-foreground">Extra</p>
             <h3
               className="mt-4 font-display text-[1.75rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2rem]"
               data-sanity={dataAttribute?.("extras.heading")}
@@ -278,14 +278,14 @@ export default function IncludedExtras({
             </h3>
             {hasText(extras?.note) ? (
               <p
-                className="mt-2 text-[15px] leading-snug text-ink-muted"
+                className="mt-2 text-[15px] leading-snug text-muted-foreground"
                 data-sanity={dataAttribute?.("extras.note")}
               >
                 {extras?.note}
               </p>
             ) : null}
             <ul
-              className="mt-8 divide-y divide-pine-night/10 border-t border-pine-night/10"
+              className="mt-8 divide-y divide-foreground/10 border-t border-foreground/10"
               data-sanity={dataAttribute?.("extras.items")}
             >
               {extraItems.map((item) => {
@@ -302,7 +302,7 @@ export default function IncludedExtras({
                   >
                     <span
                       aria-hidden="true"
-                      className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-pine-night/25 text-pine-night"
+                      className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border border-foreground/25 text-foreground"
                     >
                       <Plus className="size-3.5" strokeWidth={2.5} />
                     </span>
@@ -315,7 +315,7 @@ export default function IncludedExtras({
                       </span>
                       {hasText(item.detail) ? (
                         <span
-                          className="mt-1 block text-[15px] leading-snug text-ink-muted"
+                          className="mt-1 block text-[15px] leading-snug text-muted-foreground"
                           data-sanity={dataAttribute?.(`${itemPath}.detail`)}
                         >
                           {item.detail}
@@ -323,7 +323,7 @@ export default function IncludedExtras({
                       ) : null}
                       {link ? (
                         <Link
-                          className="focus-ring mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-cedar transition-colors hover:text-cedar-deep motion-reduce:transition-none"
+                          className="focus-ring mt-2 inline-flex items-center gap-1.5 text-[15px] font-semibold text-link transition-colors hover:text-link-hover motion-reduce:transition-none"
                           data-sanity={dataAttribute?.(`${itemPath}.link`)}
                           href={link.href}
                           rel={
@@ -343,7 +343,7 @@ export default function IncludedExtras({
                       ) : null}
                     </span>
                     <span
-                      className="whitespace-nowrap pt-1 text-right font-mono text-[14px] font-bold tracking-[0.01em] text-ink-soft"
+                      className="whitespace-nowrap pt-1 text-right font-mono text-[14px] font-bold tracking-[0.01em] text-soft-foreground"
                       data-sanity={dataAttribute?.(`${itemPath}.price`)}
                     >
                       {item.price}

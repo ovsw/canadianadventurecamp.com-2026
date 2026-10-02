@@ -65,11 +65,11 @@ export async function CategoryArchiveRoute({
           the tucking footer, so it adds the overlap like the resolver does. */}
       <section
         aria-labelledby="category-title"
-        className="bg-birch-bark-bright py-section text-pine-night [--section-pad-bottom:calc(var(--section-pad)+var(--section-overlap))]"
+        className="field-white py-section [--section-pad-bottom:calc(var(--section-pad)+var(--section-overlap))]"
       >
         <div className="container-content">
           <header className="mb-12 max-w-3xl">
-            <nav aria-label="Breadcrumb" className="mb-5 text-eyebrow text-cedar">
+            <nav aria-label="Breadcrumb" className="mb-5 text-eyebrow text-link">
               <Link className="focus-ring underline-offset-4 hover:underline" href="/blog">
                 Blog
               </Link>
@@ -85,7 +85,7 @@ export async function CategoryArchiveRoute({
             </h1>
             {description?.trim() ? (
               <p
-                className="mt-5 max-w-xl text-pretty text-lg/relaxed text-ink-muted"
+                className="mt-5 max-w-xl text-pretty text-lg/relaxed text-muted-foreground"
                 data-sanity={fieldDataAttribute?.("description")}
               >
                 {category.description}
@@ -97,11 +97,11 @@ export async function CategoryArchiveRoute({
           {posts.length ? (
             <PostGrid posts={posts} stega={stega} />
           ) : (
-            <p className="text-lg text-ink-muted">No posts in this category yet.</p>
+            <p className="text-lg text-muted-foreground">No posts in this category yet.</p>
           )}
           {posts.length ? (
             <footer className="mt-14 flex flex-col items-center gap-5">
-              <p className="text-label tabular-nums text-ink-muted">
+              <p className="text-label tabular-nums text-muted-foreground">
                 {getBlogResultsLabel(currentPage, posts.length, postCount)}
               </p>
               <BlogPagination basePath={basePath} pagination={pagination} />

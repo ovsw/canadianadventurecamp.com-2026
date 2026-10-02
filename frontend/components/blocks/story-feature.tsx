@@ -40,68 +40,48 @@ type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
  * Rule). Phones stack: photo first at 4:3, then the copy.
  */
 
-/** Field-dependent colour recipes so the two variants stay in one component. */
+/** The field utility on the section root re-points the job tokens, so only
+ *  the recipes whose alpha differs between the two grounds stay here. */
 const fields = {
   dark: {
-    section: "text-birch-bark",
-    eyebrow: "text-campfire-amber",
-    accent: "text-campfire-amber",
-    body: "text-birch-bark/72",
-    quote: "text-birch-bark",
-    chipTitle: "text-birch-bark/60",
-    checkItem: "text-birch-bark/85",
-    check: "text-campfire-amber",
-    link: "text-campfire-amber decoration-campfire-amber/40 hover:text-campfire-amber-deep hover:decoration-campfire-amber-deep",
-    media: "bg-pine-night",
+    chipTitle: "text-foreground/60",
+    link: "text-link decoration-link/40 hover:text-link-hover hover:decoration-link-hover",
+    media: "bg-fill-night",
     onDark: true,
   },
   cream: {
-    section: "text-pine-night",
-    eyebrow: "text-cedar",
-    accent: "text-cedar",
-    body: "text-ink-muted",
-    quote: "text-pine-night",
-    chipTitle: "text-ink-muted",
-    checkItem: "text-ink-soft",
-    check: "text-cedar",
-    link: "text-cedar decoration-cedar/30 hover:text-cedar-deep hover:decoration-cedar-deep",
-    media: "bg-pine-night/10",
+    chipTitle: "text-muted-foreground",
+    link: "text-link decoration-link/30 hover:text-link-hover hover:decoration-link-hover",
+    media: "bg-foreground/10",
     onDark: false,
   },
 } as const;
 
 type Field = (typeof fields)[keyof typeof fields];
 
-function headingComponents(field: Field): PortableTextComponents {
-  return {
-    block: { normal: ({ children }) => <>{children}</> },
-    marks: {
-      strong: ({ children }) => <strong>{children}</strong>,
-      em: ({ children }) => (
-        <em className={cn("font-accent not-italic", field.accent)}>{children}</em>
-      ),
-    },
-  };
-}
+const headingComponents: PortableTextComponents = {
+  block: { normal: ({ children }) => <>{children}</> },
+  marks: {
+    strong: ({ children }) => <strong>{children}</strong>,
+    em: ({ children }) => (
+      <em className="font-accent not-italic text-emphasis">{children}</em>
+    ),
+  },
+};
 
 function richTextComponents(field: Field): Partial<PortableTextComponents> {
   return {
     block: {
       normal: ({ children }) => <p>{children}</p>,
       blockquote: ({ children }) => (
-        <blockquote
-          className={cn(
-            "my-2 border-l-2 border-campfire-amber pl-5 font-display text-title sm:text-[26px]",
-            field.quote,
-          )}
-        >
+        <blockquote className="my-2 border-l-2 border-mark pl-5 font-display text-title text-foreground sm:text-[26px]">
           {children}
         </blockquote>
       ),
     },
     list: {
       bullet: ({ children }) => (
-        <ul className="list-disc space-y-2 pl-6 marker:text-campfire-amber">
+        <ul className="list-disc space-y-2 pl-6 marker:text-mark">
           {children}
         </ul>
       ),
@@ -113,7 +93,7 @@ function richTextComponents(field: Field): Partial<PortableTextComponents> {
     },
     marks: {
       strong: ({ children }) => (
-        <strong className={cn("font-semibold", field.quote)}>{children}</strong>
+        <strong className="font-semibold text-foreground">{children}</strong>
       ),
       em: ({ children }) => <em>{children}</em>,
       customLink: createCustomLinkMarkRenderer(
@@ -203,13 +183,13 @@ function KeyDetails({
       >
         {items.map((item) => (
           <li
-            className={cn("inline-flex items-center gap-1.5 text-[15px] leading-[1.45]", field.checkItem)}
+            className="inline-flex items-center gap-1.5 text-[15px] leading-[1.45] text-soft-foreground"
             data-sanity={dataAttribute?.(`keyDetails.items[${item.index}]`)}
             key={`${item.value}-${item.index}`}
           >
             <Check
               aria-hidden="true"
-              className={cn("size-4 shrink-0", field.check)}
+              className="size-4 shrink-0 text-link"
               strokeWidth={2.5}
             />
             {item.value}
@@ -242,7 +222,7 @@ export default function StoryFeature({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn(field.section, sectionThemeClass(background))}
+      className={sectionThemeClass(background)}
       id={`story-feature-${sectionKey}`}
     >
       <div className={styles.grid}>
@@ -277,7 +257,7 @@ export default function StoryFeature({
           <header>
             {displayEyebrow ? (
               <p
-                className={cn("mb-5 text-eyebrow", field.eyebrow)}
+                className="mb-5 text-eyebrow text-link"
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {displayEyebrow}
@@ -288,16 +268,13 @@ export default function StoryFeature({
               data-sanity={dataAttribute?.("title")}
               id={headingId}
             >
-              <PortableText components={headingComponents(field)} value={title} />
+              <PortableText components={headingComponents} value={title} />
             </h2>
           </header>
 
           {richText?.length ? (
             <div
-              className={cn(
-                "flex flex-col gap-4 text-pretty text-[17px] leading-[1.6]",
-                field.body,
-              )}
+              className="flex flex-col gap-4 text-pretty text-[17px] leading-[1.6] text-muted-foreground"
               data-sanity={dataAttribute?.("richText")}
             >
               <PortableText components={richTextComponents(field)} value={richText} />

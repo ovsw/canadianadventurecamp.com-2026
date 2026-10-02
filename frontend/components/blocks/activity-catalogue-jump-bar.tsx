@@ -108,7 +108,7 @@ export default function ActivityCatalogueJumpBar({
       <nav
         aria-labelledby="activity-catalogue-jump-bar-label"
         className={cn(
-          "sticky z-40 flex items-center gap-4 border border-pine-night/15 bg-navigation-yellow py-3 sm:gap-5",
+          "on-light sticky z-40 flex items-center gap-4 border border-foreground/15 bg-fill-yellow py-3 sm:gap-5",
           stuck ? "rounded-b-lg rounded-t-none" : "rounded-lg",
           styles.jumpBar,
         )}
@@ -117,7 +117,7 @@ export default function ActivityCatalogueJumpBar({
         ref={navRef}
       >
         <span
-          className="shrink-0 border-r border-pine-night/20 pr-4 text-label font-semibold text-ink-muted sm:pr-5"
+          className="shrink-0 border-r border-foreground/20 pr-4 text-label font-semibold text-muted-foreground sm:pr-5"
           id="activity-catalogue-jump-bar-label"
         >
           Activity Categories
@@ -136,7 +136,7 @@ export default function ActivityCatalogueJumpBar({
                 <a
                   aria-current={current ? "location" : undefined}
                   className={cn(
-                    "focus-ring inline-flex min-h-11 items-center whitespace-nowrap py-2 text-base font-semibold text-pine-night underline-offset-4 transition-colors motion-base",
+                    "focus-ring inline-flex min-h-11 items-center whitespace-nowrap py-2 text-base font-semibold text-foreground underline-offset-4 transition-colors motion-base",
                     current
                       ? "underline decoration-2"
                       : "hover:underline",

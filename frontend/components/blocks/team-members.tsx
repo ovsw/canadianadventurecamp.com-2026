@@ -37,7 +37,7 @@ function ProfileMeta({
   return (
     <div className="flex flex-wrap items-center gap-2.5">
       <span
-        className="inline-flex items-center gap-2.5 text-label text-ink-soft"
+        className="inline-flex items-center gap-2.5 text-label text-soft-foreground"
         data-sanity={memberDataAttribute?.(member._id, "role")}
       >
         <span
@@ -292,10 +292,10 @@ export default function TeamMembers({
       className={cn(
         "py-section",
         stegaClean(background) === "green"
-          ? "bg-forest-floor text-birch-bark [&_.text-foreground]:!text-birch-bark [&_.text-muted-foreground]:!text-birch-bark/72"
+          ? "field-green"
           : stegaClean(background) === "cream"
-            ? "bg-birch-bark"
-            : "bg-birch-bark-bright",
+            ? "field-cream"
+            : "field-white",
       )}
       data-sanity={dataAttribute?.("background")}
       id="team"

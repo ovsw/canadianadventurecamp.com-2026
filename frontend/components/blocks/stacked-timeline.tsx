@@ -22,38 +22,32 @@ type StackedTimelineProps = Extract<PageBlock, { _type: "stackedTimeline" }> & {
 type TimelineItem = NonNullable<StackedTimelineProps["items"]>[number];
 type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
 
+/** The field utility on the section root re-points the job tokens, so only
+ *  the recipes whose alpha differs between the two grounds stay here. */
 const fields = {
   dark: {
-    section: "text-birch-bark",
-    accent: "text-campfire-amber",
-    body: "text-birch-bark/72",
-    label: "text-birch-bark/60",
-    number: "text-campfire-amber/80",
-    card: "border-birch-bark/12 bg-forest-panel",
-    media: "bg-pine-night",
+    label: "text-foreground/60",
+    number: "text-link/80",
+    media: "bg-fill-night",
     onDark: true,
   },
   cream: {
-    section: "text-pine-night",
-    accent: "text-cedar",
-    body: "text-ink-muted",
-    label: "text-ink-muted",
-    number: "text-cedar",
-    card: "border-pine-night/12 bg-birch-bark-bright",
-    media: "bg-pine-night/10",
+    label: "text-muted-foreground",
+    number: "text-link",
+    media: "bg-foreground/10",
     onDark: false,
   },
 } as const;
 
 type Field = (typeof fields)[keyof typeof fields];
 
-function headingComponents(field: Field): PortableTextComponents {
+function headingComponents(): PortableTextComponents {
   return {
     block: { normal: ({ children }) => <>{children}</> },
     marks: {
       strong: ({ children }) => <strong>{children}</strong>,
       em: ({ children }) => (
-        <em className={cn("font-accent not-italic", field.accent)}>
+        <em className="font-accent not-italic text-emphasis">
           {children}
         </em>
       ),
@@ -147,7 +141,7 @@ export default function StackedTimeline({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("py-section", field.section, sectionThemeClass(background))}
+      className={cn("py-section", sectionThemeClass(background))}
       id={`stacked-timeline-${sectionKey}`}
     >
       <div className="container-content">
@@ -155,7 +149,7 @@ export default function StackedTimeline({
           <header className={cn("max-w-[34rem]", styles.intro)}>
             {hasText(eyebrow) ? (
               <p
-                className={`mb-5 text-eyebrow ${field.accent}`}
+                className="mb-5 text-eyebrow text-link"
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {eyebrow}
@@ -166,11 +160,11 @@ export default function StackedTimeline({
               data-sanity={dataAttribute?.("title")}
               id={headingId}
             >
-              <PortableText components={headingComponents(field)} value={title} />
+              <PortableText components={headingComponents()} value={title} />
             </h2>
             {hasText(intro) ? (
               <p
-                className={cn("mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6]", field.body)}
+                className="mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-muted-foreground"
                 data-sanity={dataAttribute?.("intro")}
               >
                 {intro}
@@ -198,8 +192,7 @@ export default function StackedTimeline({
                   aria-describedby={textId}
                   aria-labelledby={labelId}
                   className={cn(
-                    "focus-ring rounded-xl border p-2",
-                    field.card,
+                    "focus-ring rounded-xl border border-border bg-card p-2 text-card-foreground",
                     styles.reveal,
                   )}
                   data-timeline-item={number}
@@ -262,7 +255,7 @@ export default function StackedTimeline({
                       {item.title}
                     </h3>
                     <p
-                      className={cn("mt-2 max-w-[34rem] text-pretty text-[15px] leading-[1.55]", field.body)}
+                      className="mt-2 max-w-[34rem] text-pretty text-[15px] leading-[1.55] text-muted-foreground"
                       data-sanity={dataAttribute?.(`${itemPath}.text`)}
                       id={textId}
                     >

@@ -31,9 +31,10 @@ export function CallDirectorsCard({
       aria-label={`${CALL_DIRECTORS_LABEL} at ${CALL_DIRECTORS_PHONE}`}
       className={cn(
         "group grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-[var(--radius-lg)] border p-4 transition-[background-color,border-color,translate] motion-base hover:-translate-y-0.5 active:translate-y-0 focus-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+        "bg-card",
         dark
-          ? "border-birch-bark/12 bg-forest-panel hover:border-birch-bark/28"
-          : "border-pine-night/10 bg-birch-bark-bright hover:border-cedar/45",
+          ? "border-foreground/12 hover:border-foreground/28"
+          : "border-foreground/10 hover:border-link/45",
         className,
       )}
       href={CALL_DIRECTORS_HREF}
@@ -43,7 +44,7 @@ export function CallDirectorsCard({
         alt=""
         className={cn(
           "size-14 rounded-full border-2 object-cover transition-transform motion-base group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100",
-          dark ? "border-birch-bark/25" : "border-pine-night/15",
+          dark ? "border-foreground/25" : "border-foreground/15",
         )}
         height={56}
         src="/images/justin-anna-gerson-thumbnail.jpg"
@@ -53,18 +54,13 @@ export function CallDirectorsCard({
         <strong className="text-base leading-tight font-bold">
           {CALL_DIRECTORS_LABEL}
         </strong>
-        <span
-          className={cn(
-            "font-mono text-[22px] leading-none font-bold tracking-[0.01em]",
-            dark ? "text-campfire-amber" : "text-cedar",
-          )}
-        >
+        <span className="font-mono text-[22px] leading-none font-bold tracking-[0.01em] text-link">
           {CALL_DIRECTORS_PHONE}
         </span>
         <span
           className={cn(
             "text-[14px] leading-snug",
-            dark ? "text-birch-bark/70" : "text-ink-muted",
+            dark ? "text-foreground/70" : "text-muted-foreground",
           )}
         >
           Ask about fit, dates, or travel.
@@ -72,7 +68,7 @@ export function CallDirectorsCard({
       </span>
       <span
         aria-hidden="true"
-        className="flex size-12 shrink-0 items-center justify-center rounded-full bg-campfire-amber text-pine-night transition-[background-color,transform] motion-base group-hover:bg-campfire-amber-deep group-hover:-rotate-12 motion-reduce:transition-none motion-reduce:group-hover:rotate-0"
+        className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[background-color,transform] motion-base group-hover:bg-primary-hover group-hover:-rotate-12 motion-reduce:transition-none motion-reduce:group-hover:rotate-0"
       >
         <Phone className="size-5" strokeWidth={2.25} />
       </span>

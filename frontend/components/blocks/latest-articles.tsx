@@ -26,18 +26,16 @@ const MAX_LIMIT = 12;
 /** The Blog page list's id; its links to page 2 and on land here. */
 const LISTING_ID = "latest-posts";
 
+/** The field utility on the section root re-points the job tokens, so only
+ *  the secondary-text recipes, whose alpha differs on Green, stay here. */
 const fields = {
   dark: {
-    description: "text-birch-bark/70",
-    eyebrow: "text-campfire-amber",
-    link: "text-moss hover:text-sunlit-moss",
-    muted: "text-birch-bark/70",
+    description: "text-foreground/70",
+    muted: "text-foreground/70",
   },
   light: {
-    description: "text-ink-muted",
-    eyebrow: "text-cedar",
-    link: "text-cedar hover:text-cedar-deep",
-    muted: "text-ink-muted",
+    description: "text-muted-foreground",
+    muted: "text-muted-foreground",
   },
 } as const;
 
@@ -97,7 +95,7 @@ export default function LatestArticles({
           <div className="max-w-3xl">
             {hasText(eyebrow) ? (
               <p
-                className={cn("mb-5 text-eyebrow", field.eyebrow)}
+                className="mb-5 text-eyebrow text-link"
                 data-sanity={dataAttribute?.("eyebrow")}
               >
                 {eyebrow}
@@ -121,10 +119,7 @@ export default function LatestArticles({
           </div>
           {button && buttonHref && buttonLabel ? (
             <Link
-              className={cn(
-                "focus-ring group/link inline-flex w-fit shrink-0 items-center gap-2 font-semibold underline-offset-4 decoration-current/40 hover:underline",
-                field.link,
-              )}
+              className="focus-ring group/link inline-flex w-fit shrink-0 items-center gap-2 font-semibold text-prose-link underline-offset-4 decoration-current/40 hover:text-prose-link-hover hover:underline"
               data-sanity={dataAttribute?.(`buttons[_key=="${button._key}"]`)}
               href={buttonHref}
               rel={stegaClean(button.openInNewTab) ? "noopener noreferrer" : undefined}

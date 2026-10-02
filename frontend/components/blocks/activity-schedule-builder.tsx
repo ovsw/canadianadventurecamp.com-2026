@@ -245,7 +245,7 @@ export default function ActivityScheduleBuilder({
             return (
               <button
                 aria-pressed={selected}
-                className="focus-ring rounded-pill border border-current/30 px-5 py-3 text-sm font-semibold transition-[background-color,border-color,color] duration-150 hover:border-campfire-amber hover:bg-birch-bark/[0.06] motion-reduce:transition-none data-[selected=true]:border-campfire-amber data-[selected=true]:bg-campfire-amber data-[selected=true]:text-pine-night"
+                className="focus-ring rounded-pill border border-current/30 px-5 py-3 text-sm font-semibold transition-[background-color,border-color,color] duration-150 hover:border-primary hover:bg-fill-cream/[0.06] motion-reduce:transition-none data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground"
                 data-sanity={activity.titleDataAttribute}
                 data-selected={selected}
                 key={activity._key}
@@ -266,14 +266,14 @@ export default function ActivityScheduleBuilder({
       </div>
 
       <div className="relative w-full max-w-[22rem] justify-self-center md:order-1 md:self-start md:justify-self-start lg:max-w-none lg:justify-self-stretch">
-        <div className="relative -rotate-1 rounded-2xl bg-birch-bark-bright p-7 text-pine-night shadow-2xl motion-reduce:rotate-0">
+        <div className="card-bright relative -rotate-1 rounded-2xl p-7 shadow-2xl motion-reduce:rotate-0">
           <div className="mb-3 flex items-start justify-between gap-4">
             <p
               className="font-accent text-4xl font-semibold"
               data-sanity={camperNamesDataAttribute}
             >
               {hasManualSelection ? (
-                <span className="text-ember-red underline decoration-2 underline-offset-4">
+                <span className="text-destructive underline decoration-2 underline-offset-4">
                   Your
                 </span>
               ) : (
@@ -282,7 +282,7 @@ export default function ActivityScheduleBuilder({
               {day}
             </p>
             {fullDay ? (
-              <span className="mt-1 shrink-0 -rotate-6 font-accent text-2xl font-semibold leading-none text-ember-red">
+              <span className="mt-1 shrink-0 -rotate-6 font-accent text-2xl font-semibold leading-none text-destructive">
                 Full day!
               </span>
             ) : null}
@@ -294,14 +294,14 @@ export default function ActivityScheduleBuilder({
 
               return (
                 <li
-                  className="flex min-h-12 items-center gap-4 border-b border-dashed border-pine-night/20 py-2"
+                  className="flex min-h-12 items-center gap-4 border-b border-dashed border-foreground/20 py-2"
                   key={time}
                 >
-                  <span className="w-12 shrink-0 font-body text-sm leading-snug font-medium tracking-normal text-ink-muted">
+                  <span className="w-12 shrink-0 font-body text-sm leading-snug font-medium tracking-normal text-muted-foreground">
                     {time}
                   </span>
                   <span
-                    className={`font-accent text-3xl leading-none text-forest-floor ${lastAdded === activity?._id ? styles.activityReveal : ""}`}
+                    className={`font-accent text-3xl leading-none text-handwriting ${lastAdded === activity?._id ? styles.activityReveal : ""}`}
                   >
                     {activity?.title || ""}
                   </span>
@@ -311,14 +311,14 @@ export default function ActivityScheduleBuilder({
           </ol>
 
           <div className="mt-4 flex items-center justify-between gap-4">
-            <p className="font-body text-sm leading-snug font-medium tracking-normal text-ink-muted">
+            <p className="font-body text-sm leading-snug font-medium tracking-normal text-muted-foreground">
               Rebuilt fresh every morning
             </p>
             {hasMounted && prefersReducedMotion === false ? (
               <button
                 aria-label={`${isAutomationPaused ? "Resume" : "Pause"} automatic schedule`}
                 aria-pressed={isAutomationPaused}
-                className="focus-ring grid size-9 shrink-0 place-items-center rounded-full border border-pine-night/20 text-ink-muted transition-colors hover:border-pine-night/45 hover:text-pine-night motion-reduce:transition-none"
+                className="focus-ring grid size-9 shrink-0 place-items-center rounded-full border border-foreground/20 text-muted-foreground transition-colors hover:border-foreground/45 hover:text-foreground motion-reduce:transition-none"
                 onClick={toggleAutomation}
                 type="button"
               >

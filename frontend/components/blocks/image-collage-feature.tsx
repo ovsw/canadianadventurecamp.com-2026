@@ -48,7 +48,7 @@ const headingComponents: PortableTextComponents = {
   marks: {
     strong: ({ children }) => <strong>{children}</strong>,
     em: ({ children }) => (
-      <em className="font-accent not-italic text-[var(--section-accent)]">{children}</em>
+      <em className="font-accent not-italic text-emphasis">{children}</em>
     ),
   },
 };
@@ -83,7 +83,7 @@ export default function ImageCollageFeature({
         <div className={styles.reveal}>
           {cleanEyebrow ? (
             <p
-              className="mb-5 text-eyebrow text-[var(--section-accent)]"
+              className="mb-5 text-eyebrow text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {cleanEyebrow}
@@ -122,7 +122,7 @@ export default function ImageCollageFeature({
                 <li className="flex items-baseline gap-4" key={point._key}>
                   <span
                     aria-hidden="true"
-                    className="relative top-px size-2.5 shrink-0 rotate-45 rounded-xs bg-campfire-amber"
+                    className="relative top-px size-2.5 shrink-0 rotate-45 rounded-xs bg-mark"
                   />
                   <p className="text-base/relaxed text-current">
                     <strong className="mb-1 block" data-sanity={dataAttribute?.(`${pointPath}.title`)}>
@@ -141,7 +141,7 @@ export default function ImageCollageFeature({
             <div className="mt-8 w-fit" data-sanity={dataAttribute?.("cta")}>
               <Button
                 asChild
-                    className="text-[var(--section-accent)] hover:opacity-80"
+                    className="text-link hover:opacity-80"
                 variant="link"
               >
                 <Link
@@ -195,7 +195,7 @@ export default function ImageCollageFeature({
           {secondaryImage?.asset?._id ? (
             <div
               className={cn(
-                "absolute bottom-0 left-0 h-[42%] w-[46%] -rotate-3 overflow-hidden rounded-lg border-[0.625rem] border-birch-bark shadow-card-rest-cream",
+                "absolute bottom-0 left-0 h-[42%] w-[46%] -rotate-3 overflow-hidden rounded-lg border-[0.625rem] border-fill-cream shadow-card-rest-cream",
                 styles.secondaryReveal,
               )}
               data-sanity={dataAttribute?.("secondaryImage")}

@@ -128,7 +128,7 @@ export default function ActivitySchedule({
             activities={activities}
             activitiesLink={
               <Link
-                className="focus-ring w-fit rounded-pill border border-dashed border-current/35 px-5 py-3 text-sm font-semibold transition-colors hover:border-campfire-amber hover:text-campfire-amber motion-reduce:transition-none"
+                className="focus-ring w-fit rounded-pill border border-dashed border-current/35 px-5 py-3 text-sm font-semibold transition-colors hover:border-primary hover:text-primary motion-reduce:transition-none"
                 href="/summer-camp-activities"
                 key="activities-link"
               >

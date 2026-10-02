@@ -26,24 +26,15 @@ type BenefitCardsProps = Extract<PageBlock, { _type: "benefitCards" }> & {
  */
 type Field = { cream: boolean };
 
-function headingComponents({ cream }: Field): PortableTextComponents {
-  return {
-    block: { normal: ({ children }) => <>{children}</> },
-    marks: {
-      strong: ({ children }) => <strong>{children}</strong>,
-      em: ({ children }) => (
-        <em
-          className={cn(
-            "font-accent not-italic",
-            cream ? "text-cedar" : "text-campfire-amber",
-          )}
-        >
-          {children}
-        </em>
-      ),
-    },
-  };
-}
+const headingComponents: PortableTextComponents = {
+  block: { normal: ({ children }) => <>{children}</> },
+  marks: {
+    strong: ({ children }) => <strong>{children}</strong>,
+    em: ({ children }) => (
+      <em className="font-accent not-italic text-emphasis">{children}</em>
+    ),
+  },
+};
 
 function bodyComponents({ cream }: Field): PortableTextComponents {
   return {
@@ -52,8 +43,10 @@ function bodyComponents({ cream }: Field): PortableTextComponents {
       ...simpleRichTextComponents?.marks,
       customLink: createCustomLinkMarkRenderer(
         cream
-          ? "font-medium text-cedar underline decoration-cedar/30 underline-offset-4 hover:text-cedar-deep hover:decoration-cedar-deep"
-          : "font-medium text-sunlit-moss underline decoration-sunlit-moss/40 underline-offset-4 hover:text-cream hover:decoration-cream",
+          ? "font-medium text-prose-link underline decoration-prose-link/30 underline-offset-4 hover:text-prose-link-hover hover:decoration-prose-link-hover"
+          : // On the Green field the link rests on the prose hover colour
+            // (Sunlit Moss) and brightens to the foreground (Birch Bark).
+            "font-medium text-prose-link-hover underline decoration-prose-link-hover/40 underline-offset-4 hover:text-foreground hover:decoration-foreground",
       ),
     },
   };
@@ -124,10 +117,7 @@ export default function BenefitCards({
         <header className={cn("max-w-3xl", styles.reveal)}>
           {hasText(eyebrow) ? (
             <p
-              className={cn(
-                "mb-5 text-eyebrow",
-                cream ? "text-cedar" : "text-campfire-amber",
-              )}
+              className="mb-5 text-eyebrow text-link"
               data-sanity={dataAttribute?.("eyebrow")}
             >
               {eyebrow}
@@ -138,14 +128,11 @@ export default function BenefitCards({
             data-sanity={dataAttribute?.("title")}
             id={headingId}
           >
-            <PortableText components={headingComponents({ cream })} value={title} />
+            <PortableText components={headingComponents} value={title} />
           </h2>
           {hasText(intro) ? (
             <p
-              className={cn(
-                "mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6]",
-                cream ? "text-ink-muted" : "text-birch-bark/72",
-              )}
+              className="mt-6 max-w-[38rem] text-pretty text-[17px] leading-[1.6] text-muted-foreground"
               data-sanity={dataAttribute?.("intro")}
             >
               {intro}
@@ -155,8 +142,7 @@ export default function BenefitCards({
 
         <ol
           className={cn(
-            "mt-12 grid list-none gap-px overflow-hidden rounded-lg p-0 lg:mt-16",
-            cream ? "bg-pine-night/15" : "bg-birch-bark/15",
+            "mt-12 grid list-none gap-px overflow-hidden rounded-lg bg-foreground/15 p-0 lg:mt-16",
             columnCount >= 2 && "sm:grid-cols-2",
             columnCount === 3 && "lg:grid-cols-3",
             columnCount === 4 && "lg:grid-cols-4",
@@ -179,8 +165,8 @@ export default function BenefitCards({
                   // email address in a title) instead of widening the grid.
                   "flex h-full min-w-0 flex-col gap-5 p-7 transition-colors duration-300 lg:p-8",
                   cream
-                    ? "bg-birch-bark hover:bg-pine-night/5"
-                    : "bg-forest-floor hover:bg-white/5",
+                    ? "card-cream hover:bg-foreground/5"
+                    : "bg-fill-forest hover:bg-white/5",
                   index === cards.length - 1 && lastTileClass,
                 )}
                 key={card._key}
@@ -191,8 +177,8 @@ export default function BenefitCards({
                     className={cn(
                       "flex size-11 items-center justify-center rounded-full border [&_svg]:size-5",
                       cream
-                        ? "border-pine-night/18 text-cedar"
-                        : "border-birch-bark/22 text-moss",
+                        ? "border-foreground/18 text-link"
+                        : "border-foreground/22 text-prose-link",
                     )}
                     data-sanity={dataAttribute?.(`${cardPath}.icon`)}
                   >
@@ -204,7 +190,7 @@ export default function BenefitCards({
                     aria-hidden="true"
                     className={cn(
                       "text-label",
-                      cream ? "text-ink-muted" : "text-birch-bark/45",
+                      cream ? "text-muted-foreground" : "text-foreground/45",
                     )}
                   >
                     {String(index + 1).padStart(2, "0")}
@@ -212,10 +198,7 @@ export default function BenefitCards({
                 </div>
                 {hasText(card.title) ? (
                   <h3
-                    className={cn(
-                      "font-display text-title wrap-break-word",
-                      cream ? "text-pine-night" : "text-cream",
-                    )}
+                    className="font-display text-title text-foreground wrap-break-word"
                     data-sanity={dataAttribute?.(`${cardPath}.title`)}
                   >
                     {card.title}
@@ -223,10 +206,7 @@ export default function BenefitCards({
                 ) : null}
                 {card.body?.length ? (
                   <div
-                    className={cn(
-                      "grid gap-3 text-pretty text-[15px] leading-[1.55] wrap-break-word",
-                      cream ? "text-ink-muted" : "text-birch-bark/72",
-                    )}
+                    className="grid gap-3 text-pretty text-[15px] leading-[1.55] text-muted-foreground wrap-break-word"
                     data-sanity={dataAttribute?.(`${cardPath}.body`)}
                   >
                     <PortableText
