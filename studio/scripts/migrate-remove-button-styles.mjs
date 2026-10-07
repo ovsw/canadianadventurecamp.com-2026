@@ -27,8 +27,9 @@ const backupDirectory = resolve(studioDirectory, "../backups");
 /** The style field each retired shape stored, keyed by the object's `_type`. */
 const RETIRED_STYLE_FIELDS = { button: "variant", buttonLink: "variant", link: "buttonVariant" };
 
+// JSON.stringify gives the double-quoted, escaped string JSONMatch expects.
 const arraySegment = (item, index) =>
-  typeof item?._key === "string" ? `[_key=="${item._key}"]` : `[${index}]`;
+  typeof item?._key === "string" ? `[_key==${JSON.stringify(item._key)}]` : `[${index}]`;
 
 /** Every patch path below `value` that holds a retired button style. */
 export function findButtonStylePaths(value, path) {

@@ -41,6 +41,13 @@ test("finds rich text button marks and retired link styles", () => {
   assert.deepEqual(plan.paths, ['body[_key=="p"].markDefs[_key=="m"].variant', "legacy.buttonVariant"]);
 });
 
+test("escapes quotes in array keys, so every patch path parses", () => {
+  const [plan] = createRemoveButtonStylePlans([
+    { _id: "odd", _rev: "r1", buttons: [button('a"b', "outline")] },
+  ]);
+  assert.deepEqual(plan.paths, ['buttons[_key=="a\\"b"].variant']);
+});
+
 test("leaves section variants and documents without button styles alone", () => {
   const plans = createRemoveButtonStylePlans([
     { _id: "clean", _rev: "r1", blocks: [{ _key: "c", _type: "ctaBanner", variant: "nudge", buttons: [{ _key: "a", _type: "button", text: "Go" }] }] },
