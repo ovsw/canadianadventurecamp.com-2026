@@ -9,9 +9,9 @@ import { Check } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import Image from "next/image";
 import Link from "next/link";
-import type { ComponentProps } from "react";
 import styles from "./story-feature.module.css";
 import { sectionThemeClass } from "./section-theme";
+import { sectionButtonVariant, SectionButtonIcon } from "./section-buttons";
 
 type StoryFeatureBlock = Extract<
   NonNullable<NonNullable<PAGE_QUERY_RESULT>["blocks"]>[number],
@@ -22,7 +22,6 @@ type StoryFeatureProps = StoryFeatureBlock & {
   dataAttribute?: (path: string) => string | undefined;
 };
 
-type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
 
 /*
  * Story feature — one photo, one story, one or two actions.
@@ -103,13 +102,6 @@ function richTextComponents(field: Field): Partial<PortableTextComponents> {
   };
 }
 
-function getButtonVariant(variant?: string | null): ButtonVariant {
-  const cleanVariant = stegaClean(variant);
-  return cleanVariant === "secondary" || cleanVariant === "outline"
-    ? "outline"
-    : "primary";
-}
-
 function StoryButtons({
   buttons,
   dataAttribute,
@@ -129,12 +121,12 @@ function StoryButtons({
       className="mt-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
       data-sanity={dataAttribute?.("buttons")}
     >
-      {links.slice(0, 2).map((button) => (
+      {links.slice(0, 2).map((button, index) => (
         <Button
           asChild
           key={button.key}
           onDark={field.onDark}
-          variant={getButtonVariant(button.variant)}
+          variant={sectionButtonVariant(index)}
         >
           <Link
             data-sanity={dataAttribute?.(`buttons[_key=="${button._key}"]`)}
@@ -142,6 +134,7 @@ function StoryButtons({
             rel={stegaClean(button.openInNewTab) ? "noopener noreferrer" : undefined}
             target={stegaClean(button.openInNewTab) ? "_blank" : undefined}
           >
+            <SectionButtonIcon icon={button.icon} />
             {button.label}
           </Link>
         </Button>

@@ -1,4 +1,5 @@
 import { sectionThemeClass, type SectionTheme } from "./section-theme";
+import { sectionButtonVariant, SectionButtonIcon } from "./section-buttons";
 import { Button } from "@/components/ui/button";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { cn } from "@/lib/utils";
@@ -6,7 +7,6 @@ import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import Link from "next/link";
-import type { ComponentProps } from "react";
 import styles from "./cta-banner.module.css";
 
 type PageBlock =
@@ -32,26 +32,6 @@ type CtaBannerProps = CtaBannerBlock & {
  * on scroll; reduced motion skips it.
  */
 
-type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
-
-/** An editor's stored button variant wins when it is one we render. */
-function resolveCtaButtonVariant(
-  variant: string | null | undefined,
-  index: number,
-): ButtonVariant {
-  const cleanVariant = stegaClean(variant);
-  if (
-    cleanVariant === "default" ||
-    cleanVariant === "secondary" ||
-    cleanVariant === "outline" ||
-    cleanVariant === "ghost" ||
-    cleanVariant === "link"
-  ) {
-    return cleanVariant;
-  }
-  return index === 0 ? "default" : "outline";
-}
-
 export function resolveCtaBannerVariant(variant?: string | null) {
   return stegaClean(variant) === "nudge" ? "nudge" : "closing";
 }
@@ -71,17 +51,17 @@ function CtaButtons({
     return [
       {
         href,
+        icon: button.icon,
         key: button._key ?? `${href}-${index}`,
         label: stegaClean(button.text)?.trim() || "Learn more",
         openInNewTab: Boolean(stegaClean(button.openInNewTab)),
         path: `buttons[_key=="${button._key}"]`,
-        storedVariant: button.variant,
       },
     ];
-  }).map(({ storedVariant, ...action }, index) => ({
+  }).map((action, index) => ({
     ...action,
     primary: index === 0,
-    variant: resolveCtaButtonVariant(storedVariant, index),
+    variant: sectionButtonVariant(index),
   }));
 
   if (!actions.length) return null;
@@ -108,6 +88,7 @@ function CtaButtons({
             rel={action.openInNewTab ? "noopener noreferrer" : undefined}
             target={action.openInNewTab ? "_blank" : undefined}
           >
+            <SectionButtonIcon icon={action.icon} />
             {action.label}
             {action.openInNewTab ? (
               <ArrowUpRight aria-hidden="true" className="size-4" />

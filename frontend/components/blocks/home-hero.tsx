@@ -4,13 +4,12 @@ import { stegaClean } from "next-sanity";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import HomeHeroBackgroundVideo from "@/components/blocks/home-hero-background-video";
 import { Button } from "@/components/ui/button";
-import { NavigationIcon } from "@/components/header/navigation-icon";
+import { sectionButtonVariant, SectionButtonIcon } from "@/components/blocks/section-buttons";
 import HomeHeroVideoLightbox from "@/components/blocks/home-hero-video-lightbox";
 import { simpleRichTextComponents } from "@/components/simple-rich-text";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
 import type { HOME_PAGE_QUERY_RESULT, PAGE_QUERY_RESULT } from "@/sanity.types";
-import type { ComponentProps } from "react";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -21,27 +20,6 @@ type HomeHeroBlock = Extract<PageBlock, { _type: "homeHero" }>;
 type HomeHeroProps = HomeHeroBlock & {
   dataAttribute?: (path: string) => string | undefined;
 };
-
-type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
-
-export function resolveHomeHeroButtonVariant(
-  variant: string | null | undefined,
-  index: number,
-): ButtonVariant {
-  const cleanVariant = stegaClean(variant);
-
-  if (
-    cleanVariant === "default" ||
-    cleanVariant === "secondary" ||
-    cleanVariant === "outline" ||
-    cleanVariant === "ghost" ||
-    cleanVariant === "link"
-  ) {
-    return cleanVariant;
-  }
-
-  return index === 0 ? "outline" : "ghost";
-}
 
 /** Minimal rich text: bold/italic only, italic gets the accent (handwritten) style. */
 const headingComponents: PortableTextComponents = {
@@ -204,12 +182,7 @@ export default function HomeHero({
               {ctaButtons.map((button, index) => {
                 const href = getSafeLinkHref(button.href);
                 const label = stegaClean(button.text) || "Learn more";
-                const variant = resolveHomeHeroButtonVariant(
-                  button.variant,
-                  index,
-                );
-                const iconName = stegaClean(button.icon?.name)?.trim();
-                const iconSvg = stegaClean(button.icon?.svg)?.trim();
+                const variant = sectionButtonVariant(index);
                 if (!href) return null;
 
                 return (
@@ -233,11 +206,7 @@ export default function HomeHero({
                         stegaClean(button.openInNewTab) ? "_blank" : undefined
                       }
                     >
-                      {iconName && iconSvg ? (
-                        <NavigationIcon
-                          icon={{ name: iconName, svg: iconSvg }}
-                        />
-                      ) : null}
+                      <SectionButtonIcon icon={button.icon} />
                       {label}
                     </Link>
                   </Button>
@@ -258,7 +227,7 @@ export default function HomeHero({
           ) : null}
 
           {/* CTAs — phone plate: the buttons side by side above the stats,
-              order and style straight from the Studio array */}
+              order from the Studio array, style from position */}
           {ctaButtons.length ? (
             <div
               className="mt-auto flex w-full items-stretch gap-3 lg:hidden"
@@ -267,12 +236,7 @@ export default function HomeHero({
               {ctaButtons.map((button, index) => {
                 const href = getSafeLinkHref(button.href);
                 const label = stegaClean(button.text) || "Learn more";
-                const variant = resolveHomeHeroButtonVariant(
-                  button.variant,
-                  index,
-                );
-                const iconName = stegaClean(button.icon?.name)?.trim();
-                const iconSvg = stegaClean(button.icon?.svg)?.trim();
+                const variant = sectionButtonVariant(index);
                 if (!href) return null;
 
                 return (
@@ -297,11 +261,7 @@ export default function HomeHero({
                         stegaClean(button.openInNewTab) ? "_blank" : undefined
                       }
                     >
-                      {iconName && iconSvg ? (
-                        <NavigationIcon
-                          icon={{ name: iconName, svg: iconSvg }}
-                        />
-                      ) : null}
+                      <SectionButtonIcon icon={button.icon} />
                       {label}
                     </Link>
                   </Button>

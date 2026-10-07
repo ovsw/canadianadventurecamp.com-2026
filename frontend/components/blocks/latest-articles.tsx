@@ -8,6 +8,7 @@ import { ArrowRight } from "lucide-react";
 import { stegaClean } from "next-sanity";
 import Link from "next/link";
 import { sectionThemeClass } from "./section-theme";
+import { SectionButtonIcon } from "./section-buttons";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -125,6 +126,7 @@ export default function LatestArticles({
               rel={stegaClean(button.openInNewTab) ? "noopener noreferrer" : undefined}
               target={stegaClean(button.openInNewTab) ? "_blank" : undefined}
             >
+              <SectionButtonIcon icon={button.icon} />
               {buttonLabel}
               <ArrowRight
                 aria-hidden="true"

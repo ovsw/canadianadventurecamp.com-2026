@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { describe, expect, it } from "vitest";
-import HomeHero, { resolveHomeHeroButtonVariant } from "./home-hero";
+import HomeHero from "./home-hero";
+import { sectionButtonVariant } from "./section-buttons";
 import { getHomeHeroVideoEmbedUrl } from "./home-hero-video";
 
 const loneVideoButtonHero: ComponentProps<typeof HomeHero> = {
@@ -32,18 +33,11 @@ const loneVideoButtonHero: ComponentProps<typeof HomeHero> = {
   disableVideo: null,
 };
 
-describe("resolveHomeHeroButtonVariant", () => {
-  it("keeps the style selected in Sanity", () => {
-    expect(resolveHomeHeroButtonVariant("outline", 0)).toBe("outline");
-    expect(resolveHomeHeroButtonVariant("ghost", 1)).toBe("ghost");
-  });
-
-  it("keeps a lone button visible when its style is missing", () => {
-    expect(resolveHomeHeroButtonVariant(undefined, 0)).toBe("outline");
-  });
-
-  it("uses ghost as the second-button fallback", () => {
-    expect(resolveHomeHeroButtonVariant(undefined, 1)).toBe("ghost");
+describe("HomeHero", () => {
+  it("styles buttons by position: the first is primary, later ones outline", () => {
+    expect(sectionButtonVariant(0)).toBe("primary");
+    expect(sectionButtonVariant(1)).toBe("outline");
+    expect(sectionButtonVariant(2)).toBe("outline");
   });
 
   it("recognizes a video button without depending on its array position", () => {
@@ -85,7 +79,6 @@ describe("resolveHomeHeroButtonVariant", () => {
             icon: null,
             openInNewTab: false,
             text: null,
-            variant: "outline",
           },
         ]}
       />,

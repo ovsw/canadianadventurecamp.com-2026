@@ -1,4 +1,5 @@
 import { sectionThemeClass } from "./section-theme";
+import { sectionButtonVariant, SectionButtonIcon } from "./section-buttons";
 import { Button } from "@/components/ui/button";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
@@ -95,7 +96,7 @@ export default function DirectorCta({
                       className="w-full lg:w-auto"
                       key={button._key ?? `${href}-${index}`}
                       onDark={onDark}
-                      variant={index === 0 ? "default" : "outline"}
+                      variant={sectionButtonVariant(index)}
                     >
                       <Link
                         data-sanity={dataAttribute?.(`buttons[_key=="${button._key}"]`)}
@@ -103,6 +104,7 @@ export default function DirectorCta({
                         rel={openInNewTab ? "noopener noreferrer" : undefined}
                         target={openInNewTab ? "_blank" : undefined}
                       >
+                        <SectionButtonIcon icon={button.icon} />
                         {label}
                         {openInNewTab ? (
                           <ArrowUpRight aria-hidden="true" className="size-4" />

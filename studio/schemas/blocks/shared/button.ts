@@ -4,28 +4,16 @@ import NavigationIconInput, {
 } from "../../inputs/navigation-icon-input";
 import { isNavigationIconName } from "../../inputs/lucide-icon-catalog";
 
+/**
+ * Editors choose a button's words, destination, and icon, never its style.
+ * Each section styles its buttons from their position: the first is the
+ * primary action, later ones are quieter.
+ */
 export default defineType({
   name: "button",
   title: "Button",
   type: "object",
   fields: [
-    defineField({
-      name: "variant",
-      type: "string",
-      hidden: ({ document }) =>
-        document?._type === "blogPostSettings" || document?._type === "settings",
-      initialValue: "default",
-      options: {
-        layout: "radio",
-        list: [
-          { title: "Default", value: "default" },
-          { title: "Secondary", value: "secondary" },
-          { title: "Outline", value: "outline" },
-          { title: "Ghost", value: "ghost" },
-          { title: "Link", value: "link" },
-        ],
-      },
-    }),
     defineField({
       name: "text",
       title: "Button Text",
@@ -37,6 +25,9 @@ export default defineType({
       title: "Icon",
       type: "object",
       description: "Optional icon shown before the button text.",
+      // The blog post sidebar picks each action's icon from its destination.
+      hidden: ({ document }) =>
+        document?._type === "blogPostSettings" || document?._type === "settings",
       components: {
         input: NavigationIconInput,
       },

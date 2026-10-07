@@ -26,10 +26,8 @@ import seasonsConfig from "./schemas/documents/seasons-config";
 
 // Schema UI shared objects
 import blockContent from "./schemas/blocks/shared/block-content";
-import link from "./schemas/blocks/shared/link";
 import { colorVariant } from "./schemas/blocks/shared/color-variant";
 import { sectionBackground } from "./schemas/blocks/shared/section-background";
-import { buttonVariant } from "./schemas/blocks/shared/button-variant";
 import customUrl from "./schemas/blocks/shared/custom-url";
 import customLink from "./schemas/blocks/shared/custom-link";
 import button from "./schemas/blocks/shared/button";
@@ -102,10 +100,8 @@ export const schemaTypes = [
   ...footerSchemaTypes,
   // shared objects
   blockContent,
-  link,
   colorVariant,
   sectionBackground,
-  buttonVariant,
   customUrl,
   customLink,
   button,

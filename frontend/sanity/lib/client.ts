@@ -13,7 +13,6 @@ export const client = createClient({
     filter: (props) => {
       // Disable stega for specific field names that commonly need cleaning
       const fieldsToDisableStega = [
-        "buttonVariant",
         "colorVariant",
         "sectionWidth",
         "indicators",

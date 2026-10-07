@@ -22,21 +22,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* `default` is the CMS's name for the primary role; both are kept so
-           stored Sanity documents keep resolving. See BUTTON_VARIANTS. */
-        default:
-          "bg-primary text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground",
         primary:
           "bg-primary text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground",
-        /* `secondary` is the CMS's name for the outline role. Text and border
-           follow the field, so the outline is right on Green too. */
-        secondary:
-          "border border-current bg-transparent text-foreground hover:border-primary/30 hover:bg-card hover:text-card-foreground",
+        /* Text and border follow the field, so the outline is right on Green
+           too. */
         outline:
           "border border-current bg-transparent text-foreground hover:border-primary/30 hover:bg-card hover:text-card-foreground",
         ghost: "hover:bg-secondary hover:text-secondary-foreground hover:shadow-none",
         link: "text-primary underline-offset-4 hover:underline hover:shadow-none hover:translate-y-0",
-        destructive: "bg-destructive text-destructive-foreground hover:brightness-110",
       },
       size: {
         /* Rare. The one action in a section built around a monumental
@@ -71,7 +64,7 @@ const buttonVariants = cva(
     },
     compoundVariants: [
       {
-        variant: ["outline", "secondary"],
+        variant: "outline",
         onDark: true,
         class:
           "text-white hover:border-white/45 hover:bg-white/10 hover:text-white",

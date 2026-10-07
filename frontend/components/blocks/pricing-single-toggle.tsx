@@ -8,9 +8,9 @@ import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
-import type { ComponentProps } from "react";
 import { PricingSingleToggleSwitch, type PricingSingleToggleOption } from "./pricing-single-toggle-switch";
 import { sectionThemeClass } from "./section-theme";
+import { sectionButtonVariant, SectionButtonIcon } from "./section-buttons";
 import styles from "./pricing-single-toggle.module.css";
 
 type PageBlock =
@@ -34,21 +34,6 @@ type PricingSingleToggleProps = Extract<PageBlock, { _type: "pricingSingleToggle
  * the panel above the details.
  */
 
-type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
-
-function resolveButtonVariant(variant: string | null | undefined): ButtonVariant {
-  const clean = stegaClean(variant);
-  if (
-    clean === "default" ||
-    clean === "secondary" ||
-    clean === "outline" ||
-    clean === "ghost" ||
-    clean === "link"
-  ) {
-    return clean;
-  }
-  return "default";
-}
 
 const headingComponents: PortableTextComponents = {
   block: { normal: ({ children }) => <>{children}</> },
@@ -209,13 +194,14 @@ export default function PricingSingleToggle({
                   asChild
                   className="w-full sm:w-auto"
                   onDark={onDark}
-                  variant={resolveButtonVariant(button?.variant)}
+                  variant={sectionButtonVariant(0)}
                 >
                   <Link
                     href={action.href}
                     rel={openInNewTab ? "noopener noreferrer" : undefined}
                     target={openInNewTab ? "_blank" : undefined}
                   >
+                    <SectionButtonIcon icon={button?.icon} />
                     {action.label}
                     {openInNewTab ? (
                       <ArrowUpRight aria-hidden="true" className="size-4" />
