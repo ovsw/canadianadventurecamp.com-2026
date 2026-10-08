@@ -363,6 +363,8 @@ Tactile and confident. Everything that can be touched answers: pills lift, arrow
 - **Ghost on cream:** transparent, 1.5px Pine Night at 25%, Pine Night text, 600 weight, 12px 24px.
 - **Arrow trailing:** "Enroll →" style arrows are text glyphs; in cards the arrow is a 26px circle outline that fills amber and rotates -45deg on hover.
 
+**The Position Rule.** Editors never choose a button's style. A section styles its buttons from their place in the Studio array: the first is primary, every later one is outline (`sectionButtonVariant`). Editors choose the words, the destination, and an optional icon, which shows before the label. Decided 2026-10-07.
+
 ### Chips / Labels
 - **Style:** a mark then a word. Archivo 14px, normal case, modest tracking, no container, no border, no fill, no radius. The mark is a 6-8px dot, a 16px check, or a mono number, in the field's accent (Campfire Amber on dark, Cedar on cream); the word is the field's text colour at 70-85%. Chips in a row sit 20px apart with no dividers.
 - **On media:** the same, set over a soft Pine Night gradient at the image edge rather than inside a glass capsule.

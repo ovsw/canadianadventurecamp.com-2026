@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
-import { resolveHomeHeroButtonVariant } from "@/components/blocks/home-hero";
+import { sectionButtonVariant, SectionButtonIcon } from "@/components/blocks/section-buttons";
 import { Button } from "@/components/ui/button";
 import { getSafeLinkHref } from "@/lib/safe-href";
 import { urlFor } from "@/sanity/lib/image";
@@ -163,7 +163,7 @@ export default function InnerHero({
                     key={button._key}
                     lift={false}
                     onDark
-                    variant={resolveHomeHeroButtonVariant(button.variant, index)}
+                    variant={sectionButtonVariant(index)}
                   >
                     <Link
                       data-sanity={dataAttribute?.(
@@ -179,6 +179,7 @@ export default function InnerHero({
                         stegaClean(button.openInNewTab) ? "_blank" : undefined
                       }
                     >
+                      <SectionButtonIcon icon={button.icon} />
                       {label}
                     </Link>
                   </Button>

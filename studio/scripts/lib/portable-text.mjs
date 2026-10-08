@@ -66,13 +66,12 @@ export const external = (url, openInNewTab = false) => ({
   external: url,
 });
 
-/** Button variants: default (amber), secondary, outline, ghost, link. */
-export const button = (key, text, url, variant = "default") => ({
+/** A section button. Its style comes from its position, so there is none to set. */
+export const button = (key, text, url) => ({
   _key: key,
   _type: "button",
   text,
   url,
-  variant,
 });
 
 export const reference = (key, documentId) => ({

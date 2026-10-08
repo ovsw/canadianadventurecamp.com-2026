@@ -7,9 +7,9 @@ import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import Image from "next/image";
 import Link from "next/link";
 import { stegaClean } from "next-sanity";
-import type { ComponentProps } from "react";
 import styles from "./stacked-timeline.module.css";
 import { sectionThemeClass } from "./section-theme";
+import { sectionButtonVariant, SectionButtonIcon } from "./section-buttons";
 
 type PageBlock =
   | NonNullable<NonNullable<HOME_PAGE_QUERY_RESULT>["blocks"]>[number]
@@ -20,7 +20,6 @@ type StackedTimelineProps = Extract<PageBlock, { _type: "stackedTimeline" }> & {
 };
 
 type TimelineItem = NonNullable<StackedTimelineProps["items"]>[number];
-type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>;
 
 /** The field utility on the section root re-points the job tokens, so only
  *  the recipes whose alpha differs between the two grounds stay here. */
@@ -63,13 +62,6 @@ function formatNumber(index: number) {
   return String(index + 1).padStart(2, "0");
 }
 
-function getButtonVariant(variant?: string | null): ButtonVariant {
-  const cleanVariant = stegaClean(variant);
-  return cleanVariant === "secondary" || cleanVariant === "outline"
-    ? "outline"
-    : "primary";
-}
-
 /**
  * Cards the renderer can show: title and one line are required by the schema
  * and by the renderer, so a half-filled card never breaks the sequence.
@@ -99,18 +91,19 @@ function TimelineButtons({
       className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
       data-sanity={dataAttribute?.("buttons")}
     >
-      {links.slice(0, 2).map((button) => (
+      {links.slice(0, 2).map((button, index) => (
         <Button
           asChild
           key={button.key}
           onDark={field.onDark}
-          variant={getButtonVariant(button.variant)}
+          variant={sectionButtonVariant(index)}
         >
           <Link
             href={button.href}
             rel={stegaClean(button.openInNewTab) ? "noopener noreferrer" : undefined}
             target={stegaClean(button.openInNewTab) ? "_blank" : undefined}
           >
+            <SectionButtonIcon icon={button.icon} />
             {stegaClean(button.text)?.trim() || "Continue"}
           </Link>
         </Button>
