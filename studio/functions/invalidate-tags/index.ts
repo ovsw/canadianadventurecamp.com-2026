@@ -23,14 +23,32 @@ export const handler = syncTagInvalidateEventHandler(
     // Always release the change, as Sanity requires. Sanity does not run the
     // function again, so holding done() back after a failure would only stop
     // open pages from refreshing.
-    try {
-      const response = await done(syncTags);
-      console.log("Released the change to open pages: HTTP", response.status);
-    } catch (error) {
-      console.error("Sanity did not accept done()", error);
-    }
+    await releaseToOpenPages(syncTags, done);
   },
 );
+
+async function releaseToOpenPages(
+  syncTags: string[],
+  done: (syncTags: string[]) => Promise<Response>,
+) {
+  for (let attempt = 1; attempt <= TRIES; attempt++) {
+    try {
+      const response = await done(syncTags);
+      if (response.ok) {
+        console.log("Released the change to open pages: HTTP", response.status);
+        return;
+      }
+      console.error(
+        `Try ${attempt}: Sanity did not accept done(): HTTP ${response.status}`,
+      );
+    } catch (error) {
+      console.error(`Try ${attempt}: Sanity did not accept done()`, error);
+    }
+  }
+  console.error(
+    "Sanity did not accept done(). Open pages get the change only after a reload.",
+  );
+}
 
 async function expireOnWebsite(syncTags: string[]) {
   const url = process.env.REVALIDATE_TAGS_URL;

@@ -70,19 +70,30 @@ live content updates" setup:
 The secret is kept only in Vercel, in the function's variables, and in the
 local `frontend/.env.local`. The route refuses a call without it.
 
-Set or change a function variable, deploy a changed function, and check its
-log after a publish, from the repository root:
+Deploy a changed function, set its variables, and check its log after a
+publish, from the repository root. A variable can be added only to a deployed
+function, so on the first deployment run `blueprints deploy` first. Add both
+variables before you check a publish:
 
 ```bash
-pnpm --dir studio exec sanity functions env add invalidate-tags <KEY> <VALUE>
 pnpm --dir studio exec sanity blueprints plan
 pnpm --dir studio exec sanity blueprints deploy
+pnpm --dir studio exec sanity functions env add invalidate-tags <KEY> <VALUE>
 pnpm --dir studio exec sanity functions logs invalidate-tags
 ```
 
 A good run logs "The Website expired N sync tags" and "Released the change to
-open pages: HTTP 2xx". Test the function without a publish with
-`pnpm --dir studio exec sanity functions test invalidate-tags --data '{"syncTags":["test"]}' --timeout 20`.
+open pages: HTTP 2xx".
+
+`sanity functions test` runs the function on this computer, without the
+deployed function's variables. Give them on the command line, or the function
+skips the Website and only calls `done()`:
+
+```bash
+REVALIDATE_TAGS_URL=https://cacweb-2026.vercel.app/api/revalidate-tags \
+SANITY_REVALIDATE_SECRET="$(grep '^SANITY_REVALIDATE_SECRET=' frontend/.env.local | cut -d= -f2-)" \
+pnpm --dir studio exec sanity functions test invalidate-tags --data '{"syncTags":["test"]}' --timeout 20
+```
 
 A new checkout links to the stack with
 `pnpm --dir studio exec sanity blueprints config --edit --project-id bf76qlx9 --stack production`
