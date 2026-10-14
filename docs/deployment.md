@@ -39,6 +39,56 @@ terminal. Direct CLI deployment bypasses the guard.
 
 Studio deployment remains manual. Vercel deployment uses the existing project configuration and credentials.
 
+## Content goes live on publish
+
+The Website keeps the Sanity content of each page in its cache, and each
+cached read carries Sanity's sync tags: labels for the content it used.
+`<SanityLive />` expires them only while a visitor has a page open, so the
+Sanity Function `invalidate-tags` (`studio/functions/invalidate-tags`) does it
+on every publish, with no visitor needed. This is next-sanity's "guaranteed
+live content updates" setup:
+
+1. After a publish, Sanity calls the function with the sync tags of the
+   changed content.
+2. The function sends them to `/api/revalidate-tags`, which expires each one.
+   Every page that shows the change (for example, the footer on every page)
+   is fresh on its next visit, and no other page is.
+3. The function calls `done()`. Only then does Sanity tell open pages about
+   the change (`<SanityLive waitFor="function" />` in production), so they
+   never reload the old version. Preview deployments and local development
+   keep the default behaviour, because the function expires only the
+   production Website's cache.
+
+| Setting | Value |
+| --- | --- |
+| Blueprint | `studio/sanity.blueprint.ts`, stack `production` in project `bf76qlx9` |
+| Function | `invalidate-tags`, for the `production` dataset |
+| Function variable `REVALIDATE_TAGS_URL` | `https://cacweb-2026.vercel.app/api/revalidate-tags`; change it to the custom domain at launch |
+| Function variable `SANITY_REVALIDATE_SECRET` | The same value as the Website's |
+| Website variable `SANITY_REVALIDATE_SECRET` | In Vercel, Production, sensitive |
+
+The secret is kept only in Vercel, in the function's variables, and in the
+local `frontend/.env.local`. The route refuses a call without it.
+
+Set or change a function variable, deploy a changed function, and check its
+log after a publish, from the repository root:
+
+```bash
+pnpm --dir studio exec sanity functions env add invalidate-tags <KEY> <VALUE>
+pnpm --dir studio exec sanity blueprints plan
+pnpm --dir studio exec sanity blueprints deploy
+pnpm --dir studio exec sanity functions logs invalidate-tags
+```
+
+A good run logs "The Website expired N sync tags" and "Released the change to
+open pages: HTTP 2xx". Test the function without a publish with
+`pnpm --dir studio exec sanity functions test invalidate-tags --data '{"syncTags":["test"]}' --timeout 20`.
+
+A new checkout links to the stack with
+`pnpm --dir studio exec sanity blueprints config --edit --project-id bf76qlx9 --stack production`
+(the link is in the ignored `studio/.sanity/`). Function runs are part of the
+Sanity plan's included usage; each publish uses one.
+
 ## Before the first production deploy
 
 - Run `pnpm verify`.
