@@ -324,6 +324,15 @@ body:has([data-header-overlay]) header[data-site-header][data-at-top="true"] {
   opacity: var(--grain-opacity);
 }
 
+/* A dark band already stacks above the band it tucks under, so its leading
+   tucker needs no z-index of its own. Left at 1, it ties with the overlay
+   and paints over it by DOM order: the tucker loses the glow and the next
+   section in the band shows a colour step at the seam. */
+[data-band="green"] > [data-tuck],
+[data-band="night"] > [data-tuck] {
+  z-index: auto;
+}
+
 [data-band-tuck]::before,
 [data-band-tuck]::after {
   top: calc(-1 * var(--section-overlap));

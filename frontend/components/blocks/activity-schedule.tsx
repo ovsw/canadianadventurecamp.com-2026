@@ -104,7 +104,8 @@ export default function ActivitySchedule({
       id={`activities-${stegaClean(_key)}`}
     >
       <div className="container-content">
-        <div className="border-t border-current/20">
+        {/* The rule marks an edge; at a seam the shared ground already joins the two sections. */}
+        <div className="border-t border-current/20 [[data-seam-top]_&]:border-t-0">
           {/* Header row: count and heading read as one line */}
           <header
             className={`flex flex-col gap-6 md:flex-row md:items-center md:gap-5 ${styles.reveal}`}
