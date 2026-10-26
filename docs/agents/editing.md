@@ -182,9 +182,11 @@ Rules:
   `_key`.
 - **Unpublished changes by Ovi.** Before you change a page or any other
   document, look for its draft (`drafts.<id>`). When a draft exists that
-  this task did not make, the document holds Ovi's unfinished work, and a
-  publish would publish it too. Do not change that document. Tell the client
-  that Ovi is still working on it, and escalate to Ovi.
+  this task did not make, the document holds unpublished changes, usually
+  Ovi's. You may still change it. Say in the plan, in one line, that the
+  page has other unpublished changes and that a publish puts them live too.
+- When a member asks you to publish drafts that already exist, also Ovi's
+  drafts made in Studio, publish them.
 - Clark may change the words, links, prices, dates and photos inside an
   existing section, on any page the client asks about. Read the page first and
   change only the fields that the request names; keep every `_key`.
