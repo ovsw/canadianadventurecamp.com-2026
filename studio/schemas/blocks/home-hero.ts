@@ -63,13 +63,11 @@ export default defineType({
       validation: (rule) => rule.max(2),
     }),
     defineField({
-      name: "videoUrl",
-      title: "Background Video URL",
-      type: "url",
+      name: "video",
+      title: "Background Video",
+      type: "mux.video",
       description:
-        "Direct link to an mp4 video file. Plays muted and looped behind the hero.",
-      validation: (rule) =>
-        rule.uri({ scheme: ["http", "https"] }),
+        "Plays muted and looped behind the hero. Upload a new video or pick one from the Videos library. Keep it short (10 to 30 seconds) and without important sound.",
     }),
     defineField({
       name: "disableVideo",
@@ -77,7 +75,7 @@ export default defineType({
       type: "boolean",
       initialValue: false,
       description:
-        "Show the background image instead of the video. Turns the video off without deleting its URL.",
+        "Show the background image instead of the video. Turns the video off without removing it.",
     }),
     defineField({
       name: "filmButton",

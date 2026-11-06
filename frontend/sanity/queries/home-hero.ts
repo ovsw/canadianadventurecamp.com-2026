@@ -16,7 +16,9 @@ export const homeHeroQuery = groq`
     "buttons": array::compact(buttons[]{
       ${buttonQuery}
     }),
-    videoUrl,
+    "videoPlaybackId": select(
+      video.asset->status == "ready" => video.asset->playbackId
+    ),
     disableVideo,
     filmButton {
       label,

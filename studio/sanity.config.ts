@@ -3,6 +3,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { presentationTool } from "sanity/presentation";
 import { media, mediaAssetSource } from "sanity-plugin-media";
+import { muxInput } from "sanity-plugin-mux-input";
 import { requireStudioEnvironmentValue } from "./environment";
 import { schemaTypes } from "./schema-types";
 import { resolve } from "./presentation/resolve";
@@ -84,5 +85,19 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
     media(),
+    // Mux hosts the site's videos. Uploads are locked to settings that the
+    // home hero's background player can stream: basic quality (fMP4
+    // segments; plus serves MPEG-TS, which the player cannot read), public
+    // playback, and at most 1080p. Only administrators can change the API
+    // token, which lives in the `secrets.mux` document.
+    muxInput({
+      video_quality: "basic",
+      max_resolution_tier: "1080p",
+      defaultPublic: true,
+      defaultSigned: false,
+      disableUploadConfig: true,
+      acceptedMimeTypes: ["video/*"],
+      allowedRolesForConfiguration: ["administrator"],
+    }),
   ],
 });

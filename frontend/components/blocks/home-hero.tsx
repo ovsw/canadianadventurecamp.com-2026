@@ -51,12 +51,14 @@ export default function HomeHero({
   shortBody,
   stats,
   title,
-  videoUrl,
+  videoPlaybackId,
 }: HomeHeroProps) {
   if (!title?.length) return null;
 
   const headingId = `home-hero-${stegaClean(_key)}-title`;
-  const cleanVideoUrl = disableVideo ? undefined : stegaClean(videoUrl)?.trim();
+  const playbackId = disableVideo
+    ? undefined
+    : stegaClean(videoPlaybackId)?.trim();
   const posterUrl =
     image?.asset?._id
       ? urlFor(image).width(1920).height(1080).fit("crop").url()
@@ -96,8 +98,8 @@ export default function HomeHero({
             src={urlFor(image).width(1920).height(1080).fit("crop").url()}
           />
         ) : null}
-        {cleanVideoUrl ? (
-          <HomeHeroBackgroundVideo poster={posterUrl} src={cleanVideoUrl} />
+        {playbackId ? (
+          <HomeHeroBackgroundVideo playbackId={playbackId} poster={posterUrl} />
         ) : null}
 
         {/* Gradient overlays: nav-legibility fade on phones, full wash on desktop */}
