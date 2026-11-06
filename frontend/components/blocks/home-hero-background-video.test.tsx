@@ -21,7 +21,7 @@ describe("HomeHeroBackgroundVideo", () => {
   it("does not mount an autoplay video when reduced motion is requested", () => {
     mockReducedMotion(true);
     const { container } = render(
-      <HomeHeroBackgroundVideo poster="/poster.jpg" src="/hero.mp4" />,
+      <HomeHeroBackgroundVideo playbackId="abc123" poster="/poster.jpg" />,
     );
 
     expect(container.querySelector("video")).toBeNull();
@@ -30,7 +30,7 @@ describe("HomeHeroBackgroundVideo", () => {
   it("autoplays the muted background video when motion is allowed", () => {
     mockReducedMotion(false);
     const { container } = render(
-      <HomeHeroBackgroundVideo poster="/poster.jpg" src="/hero.mp4" />,
+      <HomeHeroBackgroundVideo playbackId="abc123" poster="/poster.jpg" />,
     );
 
     const video = container.querySelector("video");

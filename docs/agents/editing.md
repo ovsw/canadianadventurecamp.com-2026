@@ -275,7 +275,7 @@ Section library:
 - **The island map**: marker positions and the map image (see "Activities
   and facilities").
 - **The International Campers globe**: its list of cities is in the code.
-- The home page's background video and film button, apart from their words.
+- The home page's film button, apart from its words.
 - Any `_id`, `_type`, `slug` or `meta` field, and anything in a dataset other
   than `production`.
 - **Layout and visual bugs.** When something on the website looks wrong (a
@@ -303,6 +303,26 @@ Section library:
 - The photos must show what the text says. Campers on a camper page, adults
   on the adult camp page, coaches on a coach page. When a photo does not fit
   its text, say so and ask.
+
+## The home page's background video
+
+The home hero's **Background Video** field (`video`) holds a Mux video. Mux
+streams it; Studio keeps one `mux.videoAsset` document for each video, listed
+in the **Videos** tool.
+
+- To swap the video, point the field at a video that is already in the
+  Videos library: set `video.asset._ref` to that `mux.videoAsset` `_id`, with
+  `_weak: true`, using `patchDraft`. Pick only a video whose `status` is
+  `ready`.
+- Clark cannot upload a video. A new video is uploaded by the client in
+  Studio: open the home page, then **Background Video**, then upload or drag
+  the file in. Uploads are already set up to play as a background, so the
+  client does not choose any upload settings. Tell the client to keep it
+  short (10 to 30 seconds) and without important sound: it plays muted.
+- **Disable Background Video** turns the video off and shows the background
+  image. The image is also the poster while the video loads, so keep it.
+- Never edit a `mux.videoAsset` document or the `secrets.mux` document: they
+  hold Mux's own data and the Mux API key.
 
 ## How things are written on this site
 

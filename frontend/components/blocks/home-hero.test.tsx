@@ -29,7 +29,7 @@ const loneVideoButtonHero: ComponentProps<typeof HomeHero> = {
       style: "normal",
     },
   ],
-  videoUrl: null,
+  videoPlaybackId: null,
   disableVideo: null,
 };
 
