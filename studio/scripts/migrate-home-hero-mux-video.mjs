@@ -15,6 +15,7 @@
 
 import { randomUUID } from "node:crypto";
 import process from "node:process";
+import { pathToFileURL } from "node:url";
 import { createClient } from "@sanity/client";
 import { assertCacProductionTarget } from "./assert-cac-production-target.mjs";
 
@@ -146,7 +147,7 @@ async function run() {
   console.log("Committed transaction", result.transactionId);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   run().catch((error) => {
     console.error(error);
     process.exit(1);
