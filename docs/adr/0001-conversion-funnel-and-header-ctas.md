@@ -44,5 +44,5 @@ number visible in the header itself.
   "Request Info".
 - The fit quiz and its artifact generator are marketing assets to build and
   maintain outside the page-builder scope.
-- CONTEXT.md's funnel terms (Fit quiz, Director call, Lead, Qualified lead)
+- GLOSSARY.md's funnel terms (Fit quiz, Director call, Lead, Qualified lead)
   reflect this model; "Info request" was removed.
