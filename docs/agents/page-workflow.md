@@ -65,7 +65,7 @@ Never infer ownership from a branch name or replay a cached mutation.
 ## Brief and selective research
 
 Read the page's avatar row and relevant profiles in `docs/avatars.md`,
-`CONTEXT.md` "Conversion funnel" and "Copy voice", and the relevant CTA
+`GLOSSARY.md` "Conversion funnel" and "Copy voice", and the relevant CTA
 rules in `docs/adr/0001-conversion-funnel-and-header-ctas.md`. Keep the
 reader restrictions, such as Rachel not receiving a fit quiz and Maya not
 receiving a form. Use `frontend/PRODUCT.md` for useful camp context.
